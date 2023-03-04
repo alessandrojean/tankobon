@@ -1,0 +1,69 @@
+application.version: ${version}
+
+logging:
+  logback:
+    rollingpolicy:
+      max-history: 7
+      total-size-cap: 1GB
+      clean-history-on-start: true
+      max-file-size: 10MB
+  file:
+    name: \${tankobon.config-dir}/logs/tankobon.log
+  level:
+    org.apache.activemq.audit: WARN
+
+tankobon:
+  database:
+    file: \${tankobon.config-dir}/database.sqlite
+  config-dir: \${user.home}/.tankobon
+  session-timeout: 7d
+
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/{vendor}
+    mixed: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  artemis:
+    broker-url: tcp://localhost:18515
+    embedded:
+      persistent: true
+      data-directory: \${tankobon.config-dir}/artemis
+  web:
+    resources:
+      add-mappings: false
+  config:
+    import:
+      - optional:file:\${tankobon.config-dir}/application.yml
+      - optional:file:\${tankobon.config-dir}/application.yaml
+      - optional:file:\${tankobon.config-dir}/application.properties
+
+server:
+  forward-headers-strategy: framework
+  shutdown: graceful
+  error:
+    include-message: always
+
+management:
+  endpoints.web.exposure.include: "*"
+  endpoint:
+    health:
+      roles: ADMIN
+      show-details: when_authorized
+      shutdown:
+        enabled: true
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+springdoc:
+  group-configs:
+    - group: REST API
+      paths-to-match: /api/**
+  swagger-ui:
+    groups-order: asc
+    operations-sorter: alpha
+    disable-swagger-default-url: true

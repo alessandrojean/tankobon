@@ -1,0 +1,16 @@
+application.version: TESTING
+
+tankobon:
+  database:
+    file: ":memory:"
+
+spring:
+  flyway:
+    enabled: true
+  artemis:
+    embedded:
+      persistent: false
+
+logging:
+  level:
+    io.github.alessandrojean.tankobon: DEBUG

@@ -1,0 +1,23 @@
+tankobon:
+  database:
+    file: ':memory:'
+  cors.allowed-origins:
+    - http://localhost:8081
+  config-dir: ${rootDir}/config-dir
+
+logging:
+  level:
+    org.apache.activemq.audit.message: WARN
+    io.github.alessandrojean.tankobon: DEBUG
+  logback:
+    rollingpolicy:
+      max-history: 1
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+springdoc:
+  cache:
+    disable: true

@@ -1,0 +1,9 @@
+tankobon:
+  workspace: localdb
+  database:
+    file: \${tankobon.config-dir}/\${tankobon.workspace}.sqlite
+
+spring:
+  artemis:
+    embedded:
+      data-directory: \${tankobon.config-dir}/artemis/\${tankobon.workspace}
