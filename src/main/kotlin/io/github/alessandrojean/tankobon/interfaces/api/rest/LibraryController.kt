@@ -2,7 +2,6 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.Library
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
-import io.github.alessandrojean.tankobon.domain.model.ROLE_USER
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.LibraryLifecycle
@@ -10,7 +9,6 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -240,8 +238,7 @@ class LibraryController(
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner user does not exist")
     }
 
-    val toUpdate = Library(
-      id = libraryId,
+    val toUpdate = existing.copy(
       name = library.name,
       description = library.description,
       ownerId = library.ownerId,

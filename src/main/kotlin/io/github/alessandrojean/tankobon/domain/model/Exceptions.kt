@@ -15,3 +15,4 @@ open class CodedException : Exception {
 fun Exception.withCode(code: String) = CodedException(this, code)
 
 class UserEmailAlreadyExistsException(message: String, code: String = "") : CodedException(message, code)
+class DuplicateNameException(message: String, code: String = "") : CodedException(message, code)
