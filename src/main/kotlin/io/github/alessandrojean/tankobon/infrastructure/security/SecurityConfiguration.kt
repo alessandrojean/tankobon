@@ -5,10 +5,10 @@ import io.github.alessandrojean.tankobon.domain.model.ROLE_USER
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.web.SecurityFilterChain
@@ -36,6 +36,7 @@ class SecurityConfiguration(
           .requestMatchers(
             "/api/v1/system-status",
             "/api/v1/claim",
+            "/api",
             "/set-cookie",
             "/error**",
             "/css/**",
@@ -43,8 +44,6 @@ class SecurityConfiguration(
             "/js/**",
             "/favicon.ico",
             "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
             "/",
             "/index.html",
           )

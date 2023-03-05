@@ -63,7 +63,3 @@ springdoc:
   group-configs:
     - group: REST API
       paths-to-match: /api/**
-  swagger-ui:
-    groups-order: asc
-    operations-sorter: alpha
-    disable-swagger-default-url: true
