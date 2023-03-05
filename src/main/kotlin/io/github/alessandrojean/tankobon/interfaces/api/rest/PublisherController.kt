@@ -1,15 +1,15 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
-import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
-import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
+import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
-import io.github.alessandrojean.tankobon.domain.service.CollectionLifecycle
+import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
+import io.github.alessandrojean.tankobon.domain.service.PublisherLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -34,19 +34,19 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("api", produces = [MediaType.APPLICATION_JSON_VALUE])
-@Tag(name = "collections", description = "Operations regarding collections")
-class CollectionsController(
+@Tag(name = "publishers", description = "Operations regarding publishers")
+class PublisherController(
   private val libraryRepository: LibraryRepository,
-  private val collectionRepository: CollectionRepository,
-  private val collectionLifecycle: CollectionLifecycle,
+  private val publisherRepository: PublisherRepository,
+  private val publisherLifecycle: PublisherLifecycle,
 ) {
 
-  @GetMapping("v1/libraries/{libraryId}/collections")
-  @Operation(summary = "Get all collections from a library by its id")
+  @GetMapping("v1/libraries/{libraryId}/publishers")
+  @Operation(summary = "Get all publishers from a library by its id")
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<CollectionDto> {
+  ): List<PublisherDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
 
@@ -54,38 +54,38 @@ class CollectionsController(
       throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
     }
 
-    return collectionRepository
+    return publisherRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
   }
 
-  @GetMapping("v1/collections/{collectionId}")
-  @Operation(summary = "Get a collection by its id")
+  @GetMapping("v1/publishers/{publisherId}")
+  @Operation(summary = "Get a publisher by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
-      description = "The collection exists and the user has access to it",
+      description = "The publisher exists and the user has access to it",
       content = [
         Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "The collection exists and the user doesn't have access to it",
+      description = "The publisher exists and the user doesn't have access to it",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The collection does not exist",
+      description = "The publisher does not exist",
       content = [Content()]
     ),
   )
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable collectionId: String,
-  ): CollectionDto {
-    return collectionRepository.findByIdOrNull(collectionId)?.let {
+    @PathVariable publisherId: String,
+  ): PublisherDto {
+    return publisherRepository.findByIdOrNull(publisherId)?.let {
       val library = libraryRepository.findById(it.libraryId)
 
       if (!principal.user.canAccessLibrary(library)) {
@@ -96,24 +96,24 @@ class CollectionsController(
     } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/collections")
-  @Operation(summary = "Create a new collection in a library")
+  @PostMapping("v1/libraries/{libraryId}/publishers")
+  @Operation(summary = "Create a new publisher in a library")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
-      description = "The collection was created with success",
+      description = "The publisher was created with success",
       content = [
         Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
-      description = "A collection with this name already exists in the library specified",
+      description = "A publisher with this name already exists in the library specified",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to create a collection for a library the user does not have access",
+      description = "Attempted to create a publisher for a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
@@ -126,8 +126,8 @@ class CollectionsController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
     @Valid @RequestBody
-    collection: CollectionCreationDto,
-  ): CollectionDto {
+    publisher: PublisherCreationDto,
+  ): PublisherDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
 
@@ -136,11 +136,11 @@ class CollectionsController(
     }
 
     return try {
-      collectionLifecycle
-        .addCollection(
-          Collection(
-            name = collection.name,
-            description = collection.description,
+      publisherLifecycle
+        .addPublisher(
+          Publisher(
+            name = publisher.name,
+            description = publisher.description,
             libraryId = libraryId
           )
         )
@@ -152,31 +152,31 @@ class CollectionsController(
     }
   }
 
-  @DeleteMapping("v1/collections/{collectionId}")
+  @DeleteMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete an existing collection by its id")
+  @Operation(summary = "Delete an existing publisher by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "204",
-      description = "The collection was deleted with success",
+      description = "The publisher was deleted with success",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to delete a collection from a library the user does not have access",
+      description = "Attempted to delete a publisher from a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The collection does not exist",
+      description = "The publisher does not exist",
       content = [Content()]
     ),
   )
   fun deleteOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable collectionId: String
+    @PathVariable publisherId: String
   ) {
-    val existing = collectionRepository.findByIdOrNull(collectionId)
+    val existing = publisherRepository.findByIdOrNull(publisherId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     val library = libraryRepository.findById(existing.libraryId)
@@ -186,44 +186,44 @@ class CollectionsController(
     }
 
     try {
-      collectionLifecycle.deleteCollection(existing)
+      publisherLifecycle.deletePublisher(existing)
     } catch (e: Exception) {
       throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
     }
   }
 
-  @PutMapping("v1/collections/{collectionId}")
+  @PutMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify an existing collection by its id")
+  @Operation(summary = "Modify an existing publisher by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "204",
-      description = "The collection was modified with success",
+      description = "The publisher was modified with success",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "400",
-      description = "A collection with this name already exists",
+      description = "A publisher with this name already exists",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to modify a collection from a library the user does not have access",
+      description = "Attempted to modify a publisher from a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The collection does not exist",
+      description = "The publisher does not exist",
       content = [Content()]
     ),
   )
   fun updateOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable collectionId: String,
+    @PathVariable publisherId: String,
     @Valid @RequestBody
-    collection: CollectionUpdateDto
+    publisher: PublisherUpdateDto
   ) {
-    val existing = collectionRepository.findByIdOrNull(collectionId)
+    val existing = publisherRepository.findByIdOrNull(publisherId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     val library = libraryRepository.findById(existing.libraryId)
@@ -233,12 +233,12 @@ class CollectionsController(
     }
 
     val toUpdate = existing.copy(
-      name = collection.name,
-      description = collection.description,
+      name = publisher.name,
+      description = publisher.description,
     )
 
     try {
-      collectionLifecycle.updateCollection(toUpdate)
+      publisherLifecycle.updatePublisher(toUpdate)
     } catch(e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {

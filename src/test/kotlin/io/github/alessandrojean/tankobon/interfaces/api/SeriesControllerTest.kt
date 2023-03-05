@@ -118,7 +118,7 @@ class SeriesControllerTest(
 
     @Test
     @WithMockCustomUser(roles = [ROLE_ADMIN])
-    fun `it should return no content of an admin deletes a series from any user`() {
+    fun `it should return no content if an admin deletes a series from any user`() {
       seriesLifecycle.addSeries(series)
 
       mockMvc.delete("/api/v1/series/${series.id}")

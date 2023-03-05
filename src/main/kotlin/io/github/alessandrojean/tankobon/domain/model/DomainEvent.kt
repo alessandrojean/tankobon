@@ -17,4 +17,8 @@ sealed class DomainEvent : Serializable {
   data class SeriesAdded(val series: Series) : DomainEvent()
   data class SeriesUpdated(val series: Series) : DomainEvent()
   data class SeriesDeleted(val series: Series) : DomainEvent()
+
+  data class PublisherAdded(val publisher: Publisher) : DomainEvent()
+  data class PublisherUpdated(val publisher: Publisher) : DomainEvent()
+  data class PublisherDeleted(val publisher: Publisher) : DomainEvent()
 }
