@@ -13,4 +13,8 @@ sealed class DomainEvent : Serializable {
   data class CollectionAdded(val collection: Collection) : DomainEvent()
   data class CollectionUpdated(val collection: Collection) : DomainEvent()
   data class CollectionDeleted(val collection: Collection) : DomainEvent()
+
+  data class SeriesAdded(val series: Series) : DomainEvent()
+  data class SeriesUpdated(val series: Series) : DomainEvent()
+  data class SeriesDeleted(val series: Series) : DomainEvent()
 }

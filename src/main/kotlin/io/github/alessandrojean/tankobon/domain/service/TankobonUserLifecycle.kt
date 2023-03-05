@@ -77,7 +77,7 @@ class TankobonUserLifecycle(
 
     expireSessions(user)
 
-    eventPublisher.publishEvent(DomainEvent.UserUpdated(user))
+    eventPublisher.publishEvent(DomainEvent.UserDeleted(user))
   }
 
   fun expireSessions(user: TankobonUser) {
