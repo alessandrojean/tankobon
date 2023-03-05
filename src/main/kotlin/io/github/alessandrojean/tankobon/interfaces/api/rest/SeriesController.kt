@@ -6,7 +6,6 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.service.SeriesLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesUpdateDto
@@ -67,7 +66,7 @@ class SeriesController(
       responseCode = "200",
       description = "The series exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = SeriesDto::class))
       ]
     ),
     ApiResponse(
@@ -103,7 +102,7 @@ class SeriesController(
       responseCode = "200",
       description = "The series was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = SeriesDto::class))
       ]
     ),
     ApiResponse(

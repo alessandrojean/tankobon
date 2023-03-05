@@ -1,14 +1,14 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
+import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
-import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.persistence.ContributorRoleRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
-import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
-import io.github.alessandrojean.tankobon.domain.service.StoreLifecycle
+import io.github.alessandrojean.tankobon.domain.service.ContributorRoleLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleCreationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -33,19 +33,19 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("api", produces = [MediaType.APPLICATION_JSON_VALUE])
-@Tag(name = "stores", description = "Operations regarding stores")
-class StoreController(
+@Tag(name = "contributor-roles", description = "Operations regarding contributor roles")
+class ContributorRoleController(
   private val libraryRepository: LibraryRepository,
-  private val storeRepository: StoreRepository,
-  private val storeLifecycle: StoreLifecycle,
+  private val contributorRoleRepository: ContributorRoleRepository,
+  private val contributorRoleLifecycle: ContributorRoleLifecycle,
 ) {
 
-  @GetMapping("v1/libraries/{libraryId}/stores")
-  @Operation(summary = "Get all stores from a library by its id")
+  @GetMapping("v1/libraries/{libraryId}/contributor-roles")
+  @Operation(summary = "Get all contributor roles from a library by its id")
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<StoreDto> {
+  ): List<ContributorRoleDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
 
@@ -53,38 +53,38 @@ class StoreController(
       throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
     }
 
-    return storeRepository
+    return contributorRoleRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
   }
 
-  @GetMapping("v1/stores/{storeId}")
-  @Operation(summary = "Get a store by its id")
+  @GetMapping("v1/contributor-roles/{contributorRoleId}")
+  @Operation(summary = "Get a contributor role by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
-      description = "The store exists and the user has access to it",
+      description = "The contributor role exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = StoreDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ContributorRoleDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "The store exists and the user doesn't have access to it",
+      description = "The contributor role exists and the user doesn't have access to it",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The store does not exist",
+      description = "The contributor role does not exist",
       content = [Content()]
     ),
   )
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable storeId: String,
-  ): StoreDto {
-    return storeRepository.findByIdOrNull(storeId)?.let {
+    @PathVariable contributorRoleId: String,
+  ): ContributorRoleDto {
+    return contributorRoleRepository.findByIdOrNull(contributorRoleId)?.let {
       val library = libraryRepository.findById(it.libraryId)
 
       if (!principal.user.canAccessLibrary(library)) {
@@ -95,24 +95,24 @@ class StoreController(
     } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/stores")
-  @Operation(summary = "Create a new store in a library")
+  @PostMapping("v1/libraries/{libraryId}/contributor-roles")
+  @Operation(summary = "Create a new contributor role in a library")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
-      description = "The store was created with success",
+      description = "The contributor role was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = StoreDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ContributorRoleDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
-      description = "A store with this name already exists in the library specified",
+      description = "A contributor role with this name already exists in the library specified",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to create a store for a library the user does not have access",
+      description = "Attempted to create a contributor role for a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
@@ -125,8 +125,8 @@ class StoreController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
     @Valid @RequestBody
-    store: StoreCreationDto,
-  ): StoreDto {
+    contributorRole: ContributorRoleCreationDto,
+  ): ContributorRoleDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
 
@@ -135,11 +135,11 @@ class StoreController(
     }
 
     return try {
-      storeLifecycle
-        .addStore(
-          Store(
-            name = store.name,
-            description = store.description,
+      contributorRoleLifecycle
+        .addContributorRole(
+          ContributorRole(
+            name = contributorRole.name,
+            description = contributorRole.description,
             libraryId = libraryId
           )
         )
@@ -151,31 +151,31 @@ class StoreController(
     }
   }
 
-  @DeleteMapping("v1/stores/{storeId}")
+  @DeleteMapping("v1/contributor-roles/{contributorRoleId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete an existing store by its id")
+  @Operation(summary = "Delete an existing contributor role by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "204",
-      description = "The store was deleted with success",
+      description = "The contributor role was deleted with success",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to delete a store from a library the user does not have access",
+      description = "Attempted to delete a contributor role from a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The store does not exist",
+      description = "The contributor role does not exist",
       content = [Content()]
     ),
   )
   fun deleteOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable storeId: String
+    @PathVariable contributorRoleId: String
   ) {
-    val existing = storeRepository.findByIdOrNull(storeId)
+    val existing = contributorRoleRepository.findByIdOrNull(contributorRoleId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     val library = libraryRepository.findById(existing.libraryId)
@@ -185,44 +185,44 @@ class StoreController(
     }
 
     try {
-      storeLifecycle.deleteStore(existing)
+      contributorRoleLifecycle.deleteContributorRole(existing)
     } catch (e: Exception) {
       throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
     }
   }
 
-  @PutMapping("v1/stores/{storeId}")
+  @PutMapping("v1/contributor-roles/{contributorRoleId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify an existing store by its id")
+  @Operation(summary = "Modify an existing contributor role by its id")
   @ApiResponses(
     ApiResponse(
       responseCode = "204",
-      description = "The store was modified with success",
+      description = "The contributor role was modified with success",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "400",
-      description = "A store with this name already exists",
+      description = "A contributor role with this name already exists",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
-      description = "Attempted to modify a store from a library the user does not have access",
+      description = "Attempted to modify a contributor role from a library the user does not have access",
       content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
-      description = "The store does not exist",
+      description = "The contributor role does not exist",
       content = [Content()]
     ),
   )
   fun updateOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable storeId: String,
+    @PathVariable contributorRoleId: String,
     @Valid @RequestBody
-    store: StoreUpdateDto
+    contributorRole: ContributorRoleUpdateDto
   ) {
-    val existing = storeRepository.findByIdOrNull(storeId)
+    val existing = contributorRoleRepository.findByIdOrNull(contributorRoleId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     val library = libraryRepository.findById(existing.libraryId)
@@ -232,12 +232,12 @@ class StoreController(
     }
 
     val toUpdate = existing.copy(
-      name = store.name,
-      description = store.description,
+      name = contributorRole.name,
+      description = contributorRole.description,
     )
 
     try {
-      storeLifecycle.updateStore(toUpdate)
+      contributorRoleLifecycle.updateContributorRole(toUpdate)
     } catch(e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {

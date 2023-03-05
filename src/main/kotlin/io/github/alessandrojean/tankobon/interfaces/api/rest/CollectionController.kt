@@ -9,7 +9,6 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -67,7 +66,7 @@ class CollectionController(
       responseCode = "200",
       description = "The collection exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = CollectionDto::class))
       ]
     ),
     ApiResponse(
@@ -103,7 +102,7 @@ class CollectionController(
       responseCode = "200",
       description = "The collection was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = CollectionDto::class))
       ]
     ),
     ApiResponse(

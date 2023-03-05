@@ -6,7 +6,6 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.service.PublisherLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
@@ -67,7 +66,7 @@ class PublisherController(
       responseCode = "200",
       description = "The publisher exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = PublisherDto::class))
       ]
     ),
     ApiResponse(
@@ -103,7 +102,7 @@ class PublisherController(
       responseCode = "200",
       description = "The publisher was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = PublisherDto::class))
       ]
     ),
     ApiResponse(

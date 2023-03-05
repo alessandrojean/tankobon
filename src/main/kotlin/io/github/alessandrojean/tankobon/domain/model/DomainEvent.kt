@@ -25,4 +25,8 @@ sealed class DomainEvent : Serializable {
   data class StoreAdded(val store: Store) : DomainEvent()
   data class StoreUpdated(val store: Store) : DomainEvent()
   data class StoreDeleted(val store: Store) : DomainEvent()
+
+  data class ContributorRoleAdded(val contributorRole: ContributorRole) : DomainEvent()
+  data class ContributorRoleUpdated(val contributorRole: ContributorRole) : DomainEvent()
+  data class ContributorRoleDeleted(val contributorRole: ContributorRole) : DomainEvent()
 }
