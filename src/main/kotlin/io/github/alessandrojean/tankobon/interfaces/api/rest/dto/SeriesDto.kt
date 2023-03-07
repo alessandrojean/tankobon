@@ -1,27 +1,42 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Series
+import jakarta.validation.constraints.NotBlank
 
-data class SeriesDto(
-  val id: String,
+data class SeriesEntityDto(
+  override val id: String,
+  override val attributes: EntityAttributesDto,
+  override var relationships: List<RelationDto>? = null,
+) : EntityDto {
+  override val type = EntityType.SERIES
+}
+
+data class SeriesAttributesDto(
   val name: String,
   val description: String,
-  val libraryId: String,
+) : EntityAttributesDto()
+
+fun Series.toDto(libraryAttributes: LibraryAttributesDto? = null) = SeriesEntityDto(
+  id = id,
+  attributes = toAttributesDto(),
+  relationships = listOf(
+    RelationDto(
+      id = libraryId,
+      type = RelationshipType.LIBRARY,
+      attributes = libraryAttributes,
+    )
+  )
 )
 
-fun Series.toDto(): SeriesDto = SeriesDto(
-  id = id,
-  name = name,
-  description = description,
-  libraryId = libraryId,
-)
+fun Series.toAttributesDto() = SeriesAttributesDto(name, description)
 
 data class SeriesCreationDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
+  @get:NotBlank val library: String,
 )
 
 data class SeriesUpdateDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
 )

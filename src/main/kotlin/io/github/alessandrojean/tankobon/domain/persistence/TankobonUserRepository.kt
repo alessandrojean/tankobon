@@ -7,6 +7,7 @@ interface TankobonUserRepository {
   fun findByEmailIgnoreCaseOrNull(email: String): TankobonUser?
 
   fun findAll(): Collection<TankobonUser>
+  fun findAllByIds(userIds: Collection<String>): Collection<TankobonUser>
 
   fun existsByEmailIgnoreCase(email: String): Boolean
 

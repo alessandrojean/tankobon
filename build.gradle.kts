@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.data:spring-data-commons")
 	implementation("org.springframework.session:spring-session-core")
 	implementation("com.github.gotson:spring-session-caffeine:1.0.3")
 
@@ -65,12 +66,22 @@ dependencies {
 		implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:$springdocVersion")
 		implementation("org.springdoc:springdoc-openapi-starter-common:$springdocVersion")
 	}
+
+	run {
+		val luceneVersion = "9.5.0"
+		implementation("org.apache.lucene:lucene-core:$luceneVersion")
+		implementation("org.apache.lucene:lucene-analysis-common:$luceneVersion")
+		implementation("org.apache.lucene:lucene-queryparser:$luceneVersion")
+	}
 }
 
 tasks {
 	withType<KotlinCompile> {
 		kotlinOptions {
-			freeCompilerArgs = listOf("-Xjsr305=strict")
+			freeCompilerArgs = listOf(
+				"-Xjsr305=strict",
+				"-opt-in=kotlin.time.ExperimentalTime"
+			)
 			jvmTarget = "17"
 		}
 	}

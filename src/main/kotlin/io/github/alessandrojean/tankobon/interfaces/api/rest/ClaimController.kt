@@ -2,7 +2,8 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.service.TankobonUserLifecycle
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -40,7 +41,7 @@ class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
       responseCode = "200",
       description = "Server was claimed with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = UserDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
@@ -58,20 +59,20 @@ class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
     @RequestHeader("X-Tankobon-Password")
     @Parameter(description = "Password of the new admin user to be created")
     password: String,
-  ): UserDto {
+  ): ResponseDto {
     if (userLifecycle.countUsers() > 0) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, "This server has already been claimed")
     }
 
-    return userLifecycle
-      .createUser(
-        TankobonUser(
-          email = email,
-          password = password,
-          isAdmin = true
-        )
+    val admin = userLifecycle.createUser(
+      TankobonUser(
+        email = email,
+        password = password,
+        isAdmin = true
       )
-      .toDto()
+    )
+
+    return SuccessEntityResponseDto(admin.toDto())
   }
 
   data class ClaimStatus(

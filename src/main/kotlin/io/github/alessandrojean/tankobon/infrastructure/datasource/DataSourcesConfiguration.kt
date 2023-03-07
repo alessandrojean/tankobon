@@ -17,6 +17,11 @@ class DataSourcesConfiguration(
   @Bean("sqliteDataSource")
   @Primary
   fun sqliteDataSource(): DataSource {
+    val extraPragmas = tankobonProperties.database.pragmas.let {
+      if (it.isEmpty()) ""
+      else "?" + it.entries.joinToString("&") { (key, value) -> "$key=$value" }
+    }
+
     val sqliteUdfDataSource = DataSourceBuilder.create()
       .driverClassName("org.sqlite.JDBC")
       .url("jdbc:sqlite:${tankobonProperties.database.file}")
@@ -24,10 +29,16 @@ class DataSourcesConfiguration(
       .build()
 
     sqliteUdfDataSource.setEnforceForeignKeys(true)
+    with(tankobonProperties.database) {
+      journalMode?.let { sqliteUdfDataSource.setJournalMode(it.name) }
+      busyTimeout?.let { sqliteUdfDataSource.config.busyTimeout = it.toMillis().toInt() }
+    }
 
     val poolSize = when {
       tankobonProperties.database.file.contains(":memory:") -> 1
+      tankobonProperties.database.poolSize != null -> tankobonProperties.database.poolSize!!
       else -> Runtime.getRuntime().availableProcessors()
+        .coerceAtMost(tankobonProperties.database.maxPoolSize)
     }
 
     return HikariDataSource(

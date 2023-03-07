@@ -12,6 +12,8 @@ interface PublisherRepository {
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 
+  fun getLibraryIdOrNull(publisherId: String): String?
+
   fun insert(publisher: Publisher)
   fun update(publisher: Publisher)
 

@@ -12,6 +12,8 @@ interface PersonRepository {
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 
+  fun getLibraryIdOrNull(personId: String): String?
+
   fun insert(person: Person)
   fun update(person: Person)
 

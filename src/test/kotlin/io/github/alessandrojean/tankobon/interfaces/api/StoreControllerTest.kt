@@ -81,8 +81,9 @@ class StoreControllerTest(
       mockMvc.get("/api/v1/libraries/${library.id}/stores")
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$.[0].id") { value(store.id) }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value(store.id) }
         }
     }
   }
@@ -94,10 +95,16 @@ class StoreControllerTest(
     fun `it should return bad request when creating a store with a duplicate name in the library`() {
       storeLifecycle.addStore(store)
 
-      val jsonString = """{"name": "${store.name.lowercase()}", "description": ""}"""
+      val jsonString = """
+        {
+          "name": "${store.name.lowercase()}",
+          "description": "",
+          "library": "${library.id}"
+        }
+      """.trimIndent()
 
       mockMvc
-        .post("/api/v1/libraries/${library.id}/stores") {
+        .post("/api/v1/stores") {
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }

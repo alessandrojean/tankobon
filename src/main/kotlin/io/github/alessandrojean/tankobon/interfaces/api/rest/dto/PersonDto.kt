@@ -1,27 +1,42 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Person
+import jakarta.validation.constraints.NotBlank
 
-data class PersonDto(
-  val id: String,
+data class PersonEntityDto(
+  override val id: String,
+  override val attributes: PersonAttributesDto,
+  override var relationships: List<RelationDto>? = null,
+) : EntityDto {
+  override val type = EntityType.PERSON
+}
+
+data class PersonAttributesDto(
   val name: String,
   val description: String,
-  val libraryId: String,
+) : EntityAttributesDto()
+
+fun Person.toDto(libraryAttributesDto: LibraryAttributesDto? = null) = PersonEntityDto(
+  id = id,
+  attributes = toAttributesDto(),
+  relationships = listOf(
+    RelationDto(
+      id = libraryId,
+      type = RelationshipType.LIBRARY,
+      attributes = libraryAttributesDto,
+    )
+  )
 )
 
-fun Person.toDto(): PersonDto = PersonDto(
-  id = id,
-  name = name,
-  description = description,
-  libraryId = libraryId,
-)
+fun Person.toAttributesDto() = PersonAttributesDto(name, description)
 
 data class PersonCreationDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
+  @get:NotBlank val library: String,
 )
 
 data class PersonUpdateDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
 )

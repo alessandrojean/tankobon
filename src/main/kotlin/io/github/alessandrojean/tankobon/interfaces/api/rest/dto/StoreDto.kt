@@ -1,27 +1,42 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import jakarta.validation.constraints.NotBlank
 
-data class StoreDto(
-  val id: String,
+data class StoreEntityDto(
+  override val id: String,
+  override val attributes: StoreAttributesDto,
+  override var relationships: List<RelationDto>? = null,
+) : EntityDto {
+  override val type = EntityType.STORE
+}
+
+data class StoreAttributesDto(
   val name: String,
   val description: String,
-  val libraryId: String,
+) : EntityAttributesDto()
+
+fun Store.toDto(libraryAttributes: LibraryAttributesDto? = null) = StoreEntityDto(
+  id = id,
+  attributes = toAttributesDto(),
+  relationships = listOf(
+    RelationDto(
+      id = id,
+      type = RelationshipType.LIBRARY,
+      attributes = libraryAttributes
+    )
+  )
 )
 
-fun Store.toDto(): StoreDto = StoreDto(
-  id = id,
-  name = name,
-  description = description,
-  libraryId = libraryId,
-)
+fun Store.toAttributesDto() = StoreAttributesDto(name, description)
 
 data class StoreCreationDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
+  @get:NotBlank val library: String,
 )
 
 data class StoreUpdateDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
 )

@@ -81,8 +81,9 @@ class TagControllerTest(
       mockMvc.get("/api/v1/libraries/${library.id}/tags")
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$.[0].id") { value(tag.id) }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value(tag.id) }
         }
     }
   }
@@ -94,10 +95,16 @@ class TagControllerTest(
     fun `it should return bad request when creating a tag with a duplicate name in the library`() {
       tagLifecycle.addTag(tag)
 
-      val jsonString = """{"name": "${tag.name.lowercase()}", "description": ""}"""
+      val jsonString = """
+        {
+          "name": "${tag.name.lowercase()}",
+          "description": "",
+          "library": "${library.id}"
+        }
+      """.trimIndent()
 
       mockMvc
-        .post("/api/v1/libraries/${library.id}/tags") {
+        .post("/api/v1/tags") {
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }

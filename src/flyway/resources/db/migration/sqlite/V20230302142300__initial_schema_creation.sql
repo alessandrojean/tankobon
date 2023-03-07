@@ -102,61 +102,56 @@ create table if not exists Book(
   code varchar not null unique,
   barcode varchar default null,
   collection_id varchar not null,
-  series_id varchar default null,
   store_id varchar default null,
+  series_id varchar default null,
   title varchar not null,
+  number varchar not null default "0",
   is_in_library boolean not null default 1,
+  dimension_width_cm float not null,
+  dimension_height_cm float not null,
   paid_price_currency varchar(3) not null,
   paid_price_value float not null,
+  label_price_currency varchar(3) not null,
+  label_price_value float not null,
   bought_at datetime default null,
+  billed_at datetime default null,
+  arrived_at datetime default null,
+  synopsis varchar not null default '',
+  page_count int not null default 0,
   notes varchar not null default '',
 
   foreign key (collection_id) references Collection (id) on delete set null,
-  foreign key (series_id) references Series (id) on delete set null,
-  foreign key (store_id) references Store (id) on delete set null
+  foreign key (store_id) references Store (id) on delete set null,
+  foreign key (series_id) references Series (id) on delete set null
 );
 
-create table if not exists Book_Metadata(
-  book_id varchar not null primary key,
-  created_at datetime not null default CURRENT_TIMESTAMP,
-  modified_at datetime not null default CURRENT_TIMESTAMP,
-  number varchar not null default "0",
-  dimension_width_cm float not null,
-  dimension_height_cm float not null,
-  label_price_currency varchar(3) not null,
-  label_price_value float not null,
-  synopsis varchar not null default "",
-  page_count int not null default 0,
-
-  foreign key (book_id) references Book (id) on delete cascade
-);
-
-create table if not exists Book_Metadata_Publisher(
+create table if not exists Book_Publisher(
   book_id varchar not null,
   publisher_id varchar not null,
 
   primary key (book_id, publisher_id),
-  foreign key (book_id) references Book_Metadata (book_id) on delete cascade,
+  foreign key (book_id) references Book (id) on delete cascade,
   foreign key (publisher_id) references Publisher (id) on delete cascade
 );
 
 create table if not exists Book_Contributor(
+  id varchar not null,
   book_id varchar not null,
   person_id varchar not null,
   role_id varchar not null,
 
-  primary key (book_id, person_id, role_id),
-  foreign key (book_id) references Book_Metadata (book_id) on delete cascade,
+  primary key (id, book_id, person_id, role_id),
+  foreign key (book_id) references Book (id) on delete cascade,
   foreign key (person_id) references Person (id) on delete cascade,
   foreign key (role_id) references Contributor_Role (id) on delete cascade
 );
 
-create table if not exists Book_Metadata_Tag(
+create table if not exists Book_Tag(
   book_id varchar not null,
   tag_id varchar not null,
 
   primary key (book_id, tag_id),
-  foreign key (book_id) references Book_Metadata (book_id) on delete cascade,
+  foreign key (book_id) references Book (id) on delete cascade,
   foreign key (tag_id) references Tag (id) on delete cascade
 );
 

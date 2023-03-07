@@ -47,6 +47,12 @@ class PersonDao(
         .and(TablePerson.LIBRARY_ID.eq(libraryId))
     )
 
+  override fun getLibraryIdOrNull(personId: String): String? =
+    dsl.select(TablePerson.LIBRARY_ID)
+      .from(TablePerson)
+      .where(TablePerson.ID.eq(personId))
+      .fetchOne(TablePerson.LIBRARY_ID)
+
   @Transactional
   override fun insert(person: Person) {
     dsl.insertInto(TablePerson)

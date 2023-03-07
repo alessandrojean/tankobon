@@ -12,6 +12,8 @@ interface StoreRepository {
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 
+  fun getLibraryIdOrNull(storeId: String): String?
+
   fun insert(store: Store)
   fun update(store: Store)
 

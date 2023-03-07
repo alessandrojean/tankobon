@@ -5,11 +5,15 @@ import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
 import io.github.alessandrojean.tankobon.domain.persistence.ContributorRoleRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.service.ContributorRoleLifecycle
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -38,6 +43,7 @@ class ContributorRoleController(
   private val libraryRepository: LibraryRepository,
   private val contributorRoleRepository: ContributorRoleRepository,
   private val contributorRoleLifecycle: ContributorRoleLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/contributor-roles")
@@ -45,18 +51,26 @@ class ContributorRoleController(
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<ContributorRoleDto> {
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    return contributorRoleRepository
+    val roles = contributorRoleRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
+
+    val expanded = referenceExpansion.expand(
+      entities = roles,
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessCollectionResponseDto(expanded)
   }
 
   @GetMapping("v1/contributor-roles/{contributorRoleId}")
@@ -66,7 +80,7 @@ class ContributorRoleController(
       responseCode = "200",
       description = "The contributor role exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = ContributorRoleDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
@@ -83,67 +97,70 @@ class ContributorRoleController(
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable contributorRoleId: String,
-  ): ContributorRoleDto {
-    return contributorRoleRepository.findByIdOrNull(contributorRoleId)?.let {
-      val library = libraryRepository.findById(it.libraryId)
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val contributorRole = contributorRoleRepository.findByIdOrNull(contributorRoleId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      if (!principal.user.canAccessLibrary(library)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    val library = libraryRepository.findById(contributorRole.libraryId)
 
-      it.toDto()
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val expanded = referenceExpansion.expand(
+      entity = contributorRole.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(expanded)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/contributor-roles")
-  @Operation(summary = "Create a new contributor role in a library")
+  @PostMapping("v1/contributor-roles")
+  @Operation(summary = "Create a new contributor role")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
       description = "The contributor role was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = ContributorRoleDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A contributor role with this name already exists in the library specified",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to create a contributor role for a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
     @Valid @RequestBody
     contributorRole: ContributorRoleCreationDto,
-  ): ContributorRoleDto {
-    val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(contributorRole.library)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the requested library")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      contributorRoleLifecycle
-        .addContributorRole(
-          ContributorRole(
-            name = contributorRole.name,
-            description = contributorRole.description,
-            libraryId = libraryId
-          )
+      val created = contributorRoleLifecycle.addContributorRole(
+        ContributorRole(
+          name = contributorRole.name,
+          description = contributorRole.description,
+          libraryId = contributorRole.library
         )
-        .toDto()
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {

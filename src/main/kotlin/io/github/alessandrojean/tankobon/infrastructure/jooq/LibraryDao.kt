@@ -2,8 +2,6 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Library
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
-import io.github.alessandrojean.tankobon.jooq.Tables.LIBRARY as TableLibrary
-import io.github.alessandrojean.tankobon.jooq.Tables.USER_LIBRARY_SHARING as TableUserLibrarySharing
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.ResultQuery
@@ -11,6 +9,8 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
+import io.github.alessandrojean.tankobon.jooq.Tables.LIBRARY as TableLibrary
+import io.github.alessandrojean.tankobon.jooq.Tables.USER_LIBRARY_SHARING as TableUserLibrarySharing
 
 @Component
 class LibraryDao(
@@ -59,6 +59,13 @@ class LibraryDao(
     selectBase()
       .where(TableLibrary.ID.`in`(libraryIds))
       .fetchAndMap()
+
+  override fun getAllowedToViewLibrariesIds(userId: String): Collection<String> =
+    dsl.select(TableLibrary.ID, TableUserLibrarySharing.USER_ID)
+      .from(TableLibrary)
+      .leftJoin(TableUserLibrarySharing)
+      .on(TableLibrary.ID.eq(TableUserLibrarySharing.LIBRARY_ID))
+      .fetch(TableLibrary.ID)
 
   @Transactional
   override fun insert(library: Library) {

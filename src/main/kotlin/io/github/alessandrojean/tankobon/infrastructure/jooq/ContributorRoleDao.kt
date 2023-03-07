@@ -47,6 +47,12 @@ class ContributorRoleDao(
         .and(TableContributorRole.LIBRARY_ID.eq(libraryId))
     )
 
+  override fun getLibraryIdOrNull(contributorRoleId: String): String? =
+    dsl.select(TableContributorRole.LIBRARY_ID)
+      .from(TableContributorRole)
+      .where(TableContributorRole.ID.eq(contributorRoleId))
+      .fetchOne(TableContributorRole.LIBRARY_ID)
+
   @Transactional
   override fun insert(contributorRole: ContributorRole) {
     dsl.insertInto(TableContributorRole)

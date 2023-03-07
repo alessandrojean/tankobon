@@ -9,8 +9,9 @@ interface LibraryRepository {
   fun findByOwnerIdIncludingShared(ownerId: String): Collection<Library>
 
   fun findAll(): Collection<Library>
-
   fun findAllByIds(libraryIds: Collection<String>): Collection<Library>
+
+  fun getAllowedToViewLibrariesIds(userId: String): Collection<String>
 
   fun insert(library: Library)
   fun update(library: Library)

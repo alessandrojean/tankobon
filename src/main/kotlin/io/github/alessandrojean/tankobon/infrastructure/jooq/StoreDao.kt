@@ -47,6 +47,12 @@ class StoreDao(
         .and(TableStore.LIBRARY_ID.eq(libraryId))
     )
 
+  override fun getLibraryIdOrNull(storeId: String): String? =
+    dsl.select(TableStore.LIBRARY_ID)
+      .from(TableStore)
+      .where(TableStore.ID.eq(storeId))
+      .fetchOne(TableStore.LIBRARY_ID)
+
   @Transactional
   override fun insert(store: Store) {
     dsl.insertInto(TableStore)

@@ -12,6 +12,8 @@ interface TagRepository {
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 
+  fun getLibraryIdOrNull(tagId: String): String?
+
   fun insert(tag: Tag)
   fun update(tag: Tag)
 

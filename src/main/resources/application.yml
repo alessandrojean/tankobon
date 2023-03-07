@@ -15,6 +15,8 @@ logging:
 tankobon:
   database:
     file: \${tankobon.config-dir}/database.sqlite
+  lucene:
+    data-directory: \${tankobon.config-dir}/lucene
   config-dir: \${user.home}/.tankobon
   session-timeout: 7d
 

@@ -37,4 +37,8 @@ sealed class DomainEvent : Serializable {
   data class TagAdded(val tag: Tag) : DomainEvent()
   data class TagUpdated(val tag: Tag) : DomainEvent()
   data class TagDeleted(val tag: Tag) : DomainEvent()
+
+  data class BookAdded(val book: Book) : DomainEvent()
+  data class BookUpdated(val book: Book) : DomainEvent()
+  data class BookDeleted(val book: Book) : DomainEvent()
 }

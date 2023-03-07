@@ -5,11 +5,15 @@ import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.service.PublisherLifecycle
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -38,6 +43,7 @@ class PublisherController(
   private val libraryRepository: LibraryRepository,
   private val publisherRepository: PublisherRepository,
   private val publisherLifecycle: PublisherLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/publishers")
@@ -45,18 +51,26 @@ class PublisherController(
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<PublisherDto> {
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    return publisherRepository
+    val publishers = publisherRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
+
+    val expanded = referenceExpansion.expand(
+      entities = publishers,
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessCollectionResponseDto(expanded)
   }
 
   @GetMapping("v1/publishers/{publisherId}")
@@ -66,84 +80,85 @@ class PublisherController(
       responseCode = "200",
       description = "The publisher exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = PublisherDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "403",
       description = "The publisher exists and the user doesn't have access to it",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The publisher does not exist",
-      content = [Content()]
     ),
   )
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable publisherId: String,
-  ): PublisherDto {
-    return publisherRepository.findByIdOrNull(publisherId)?.let {
-      val library = libraryRepository.findById(it.libraryId)
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val publisher = publisherRepository.findByIdOrNull(publisherId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      if (!principal.user.canAccessLibrary(library)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    val library = libraryRepository.findById(publisher.libraryId)
 
-      it.toDto()
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val expanded = referenceExpansion.expand(
+      entity = publisher.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(expanded)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/publishers")
+  @PostMapping("v1/publishers")
   @Operation(summary = "Create a new publisher in a library")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
       description = "The publisher was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = PublisherDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A publisher with this name already exists in the library specified",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to create a publisher for a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
     @Valid @RequestBody
     publisher: PublisherCreationDto,
-  ): PublisherDto {
-    val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(publisher.library)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the requested library")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      publisherLifecycle
-        .addPublisher(
-          Publisher(
-            name = publisher.name,
-            description = publisher.description,
-            libraryId = libraryId
-          )
+      val created = publisherLifecycle.addPublisher(
+        Publisher(
+          name = publisher.name,
+          description = publisher.description,
+          libraryId = publisher.library
         )
-        .toDto()
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {
@@ -158,17 +173,14 @@ class PublisherController(
     ApiResponse(
       responseCode = "204",
       description = "The publisher was deleted with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to delete a publisher from a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The publisher does not exist",
-      content = [Content()]
     ),
   )
   fun deleteOne(
@@ -198,22 +210,18 @@ class PublisherController(
     ApiResponse(
       responseCode = "204",
       description = "The publisher was modified with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A publisher with this name already exists",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to modify a publisher from a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The publisher does not exist",
-      content = [Content()]
     ),
   )
   fun updateOne(

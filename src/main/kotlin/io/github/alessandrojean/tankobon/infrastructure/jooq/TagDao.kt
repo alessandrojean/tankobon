@@ -47,6 +47,12 @@ class TagDao(
         .and(TableTag.LIBRARY_ID.eq(libraryId))
     )
 
+  override fun getLibraryIdOrNull(tagId: String): String? =
+    dsl.select(TableTag.LIBRARY_ID)
+      .from(TableTag)
+      .where(TableTag.ID.eq(tagId))
+      .fetchOne(TableTag.LIBRARY_ID)
+
   @Transactional
   override fun insert(tag: Tag) {
     dsl.insertInto(TableTag)

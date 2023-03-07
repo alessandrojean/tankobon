@@ -5,11 +5,18 @@ import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.LibraryLifecycle
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.isIncluded
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -40,6 +47,7 @@ class LibraryController(
   private val libraryRepository: LibraryRepository,
   private val libraryLifecycle: LibraryLifecycle,
   private val userRepository: TankobonUserRepository,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
 
   @GetMapping("api/v1/libraries")
@@ -47,7 +55,8 @@ class LibraryController(
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(required = false) ownerId: String?,
-  ): List<LibraryDto> {
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
     val libraries = when {
       principal.user.isAdmin && ownerId.isNullOrEmpty() ->
         libraryRepository.findAll()
@@ -58,21 +67,31 @@ class LibraryController(
       else -> libraryRepository.findByOwnerIdIncludingShared(principal.user.id)
     }
 
-    return libraries
+    val dtos = libraries
       .sortedBy { it.name.lowercase() }
-      .map { it.toDto(showSharedUsersIds = false) }
+      .map { it.toDto() }
+      .let { referenceExpansion.expand(it, includes.toRelationshipTypeSet()) }
+
+    return SuccessCollectionResponseDto(dtos)
   }
 
   @GetMapping("api/v1/users/{userId}/libraries")
   @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
   @Operation(summary = "Get all libraries owned by a user by its id")
-  fun getByOwnerId(@PathVariable userId: String): List<LibraryDto> {
-    val existingUser = userRepository.findByIdOrNull(userId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+  fun getByOwnerId(
+    @PathVariable userId: String,
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val user = userRepository.findByIdOrNull(userId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    val userAttributes = user.toAttributesDto()
+      .takeIf { includes.isIncluded(RelationshipType.OWNER) }
 
-    return libraryRepository.findByOwnerId(existingUser.id)
+    val libraries = libraryRepository.findByOwnerId(user.id)
       .sortedBy { it.name.lowercase() }
-      .map { it.toDto(showSharedUsersIds = false) }
+      .map { it.toDto(userAttributes) }
+
+    return SuccessCollectionResponseDto(libraries)
   }
 
   @GetMapping("api/v1/libraries/{libraryId}")
@@ -82,7 +101,7 @@ class LibraryController(
       responseCode = "200",
       description = "The library exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
@@ -99,14 +118,21 @@ class LibraryController(
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): LibraryDto {
-    return libraryRepository.findByIdOrNull(libraryId)?.let {
-      if (!principal.user.canAccessLibrary(it)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(libraryId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      it.toDto(showSharedUsersIds = true)
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val libraryDto = referenceExpansion.expand(
+      entity = library.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(libraryDto)
   }
 
   @PostMapping("api/v1/libraries")
@@ -116,43 +142,41 @@ class LibraryController(
       responseCode = "200",
       description = "The library was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = LibraryDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
       description = "The owner user does not exist",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to create a library for other user with a non-admin user",
-      content = [Content()]
     ),
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
     library: LibraryCreationDto
-  ): LibraryDto {
-    val ownerId = library.ownerId ?: principal.user.id
+  ): ResponseDto {
+    val ownerId = library.owner ?: principal.user.id
     val owner = userRepository.findByIdOrNull(ownerId)
-      ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner does not exist")
+      ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-    if (owner.id == library.ownerId && !principal.user.isAdmin) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can create libraries for other users")
+    if (owner.id == library.owner && !principal.user.isAdmin) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      libraryLifecycle
-        .addLibrary(
-          Library(
-            name = library.name,
-            description = library.description,
-            ownerId = owner.id
-          )
+      val created = libraryLifecycle.addLibrary(
+        Library(
+          name = library.name,
+          description = library.description,
+          ownerId = owner.id
         )
-        .toDto(showSharedUsersIds = false)
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: Exception) {
       throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
     }
@@ -165,17 +189,14 @@ class LibraryController(
     ApiResponse(
       responseCode = "204",
       description = "The library was deleted with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to delete other user library with a non-admin user",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun deleteOne(
@@ -186,7 +207,7 @@ class LibraryController(
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (existing.ownerId != principal.user.id && !principal.user.isAdmin) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can delete libraries from other users")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     try {
@@ -203,22 +224,18 @@ class LibraryController(
     ApiResponse(
       responseCode = "204",
       description = "The library was modified with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "400",
       description = "The owner user does not exist",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to change the library owner with a non-admin user",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun updateOne(
@@ -230,19 +247,19 @@ class LibraryController(
     val existing = libraryRepository.findByIdOrNull(libraryId)
       ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-    if (existing.ownerId != library.ownerId && !principal.user.isAdmin) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can change the owner of a library")
+    if (existing.ownerId != library.owner && !principal.user.isAdmin) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    if (existing.ownerId != library.ownerId && userRepository.findByIdOrNull(library.ownerId) == null) {
-      throw ResponseStatusException(HttpStatus.BAD_REQUEST, "The owner user does not exist")
+    if (existing.ownerId != library.owner && userRepository.findByIdOrNull(library.owner) == null) {
+      throw ResponseStatusException(HttpStatus.BAD_REQUEST)
     }
 
     val toUpdate = existing.copy(
       name = library.name,
       description = library.description,
-      ownerId = library.ownerId,
-      sharedUsersIds = library.sharedUsersIds,
+      ownerId = library.owner,
+      sharedUsersIds = library.sharedUsers,
     )
 
     try {

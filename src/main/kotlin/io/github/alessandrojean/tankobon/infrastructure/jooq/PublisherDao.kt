@@ -47,6 +47,12 @@ class PublisherDao(
         .and(TablePublisher.LIBRARY_ID.eq(libraryId))
     )
 
+  override fun getLibraryIdOrNull(publisherId: String): String? =
+    dsl.select(TablePublisher.LIBRARY_ID)
+      .from(TablePublisher)
+      .where(TablePublisher.ID.eq(publisherId))
+      .fetchOne(TablePublisher.LIBRARY_ID)
+
   @Transactional
   override fun insert(publisher: Publisher) {
     dsl.insertInto(TablePublisher)

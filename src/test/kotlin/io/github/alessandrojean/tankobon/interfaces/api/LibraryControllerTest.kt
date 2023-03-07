@@ -86,8 +86,9 @@ class LibraryControllerTest(
       mockMvc.get(route)
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$[0].id") { value("1") }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value("1") }
         }
     }
 

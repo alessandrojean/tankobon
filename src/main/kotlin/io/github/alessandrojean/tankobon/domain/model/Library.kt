@@ -1,8 +1,8 @@
 package io.github.alessandrojean.tankobon.domain.model
 
 import java.io.Serializable
-import java.util.UUID
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class Library(
   val name: String,
@@ -15,3 +15,7 @@ data class Library(
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt,
 ) : Auditable, Serializable
+
+interface LibraryItem {
+  val libraryId: String
+}

@@ -35,6 +35,7 @@ class CollectionControllerTest(
   @Autowired private val userRepository: TankobonUserRepository,
 ) {
 
+  private val admin = TankobonUser("admin@example.org", "", true, id = "0")
   private val owner = TankobonUser("user@example.org", "", true, id = "1")
   private val user = TankobonUser("user2@example.org", "", false, id = "2")
   private val library = makeLibrary("Library", "", id = "1", ownerId = "1")
@@ -42,6 +43,7 @@ class CollectionControllerTest(
 
   @BeforeAll
   fun setup() {
+    userRepository.insert(admin)
     userRepository.insert(owner)
     userRepository.insert(user)
     libraryRepository.insert(library)
@@ -81,8 +83,9 @@ class CollectionControllerTest(
       mockMvc.get("/api/v1/libraries/${library.id}/collections")
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$.[0].id") { value(collection.id) }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value(collection.id) }
         }
     }
   }
@@ -94,10 +97,16 @@ class CollectionControllerTest(
     fun `it should return bad request when creating a collection with a duplicate name in the library`() {
       collectionLifecycle.addCollection(collection)
 
-      val jsonString = """{"name": "${collection.name.lowercase()}", "description": ""}"""
+      val jsonString = """
+        {
+          "name": "${collection.name.lowercase()}",
+          "description": "",
+          "library": "${library.id}"
+        }
+      """.trimIndent()
 
       mockMvc
-        .post("/api/v1/libraries/${library.id}/collections") {
+        .post("/api/v1/collections") {
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }

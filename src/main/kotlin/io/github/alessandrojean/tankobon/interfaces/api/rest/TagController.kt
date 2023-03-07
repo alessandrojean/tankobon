@@ -4,12 +4,16 @@ import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
 import io.github.alessandrojean.tankobon.domain.model.Tag
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.TagLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -38,6 +43,7 @@ class TagController(
   private val libraryRepository: LibraryRepository,
   private val tagRepository: TagRepository,
   private val tagLifecycle: TagLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/tags")
@@ -45,18 +51,26 @@ class TagController(
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<TagDto> {
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    return tagRepository
+    val tags = tagRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
+
+    val expanded = referenceExpansion.expand(
+      entities = tags,
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessCollectionResponseDto(expanded)
   }
 
   @GetMapping("v1/tags/{tagId}")
@@ -66,84 +80,85 @@ class TagController(
       responseCode = "200",
       description = "The tag exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = TagDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "403",
       description = "The tag exists and the user doesn't have access to it",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The tag does not exist",
-      content = [Content()]
     ),
   )
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable tagId: String,
-  ): TagDto {
-    return tagRepository.findByIdOrNull(tagId)?.let {
-      val library = libraryRepository.findById(it.libraryId)
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val tag = tagRepository.findByIdOrNull(tagId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      if (!principal.user.canAccessLibrary(library)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    val library = libraryRepository.findById(tag.libraryId)
 
-      it.toDto()
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val expanded = referenceExpansion.expand(
+      entity = tag.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(expanded)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/tags")
-  @Operation(summary = "Create a new tag in a library")
+  @PostMapping("v1/tags")
+  @Operation(summary = "Create a new tag")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
       description = "The tag was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = TagDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A tag with this name already exists in the library specified",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to create a tag for a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
     @Valid @RequestBody
     tag: TagCreationDto,
-  ): TagDto {
-    val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(tag.library)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the requested library")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      tagLifecycle
-        .addTag(
-          Tag(
-            name = tag.name,
-            description = tag.description,
-            libraryId = libraryId
-          )
+      val created = tagLifecycle.addTag(
+        Tag(
+          name = tag.name,
+          description = tag.description,
+          libraryId = tag.library,
         )
-        .toDto()
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {
@@ -158,17 +173,14 @@ class TagController(
     ApiResponse(
       responseCode = "204",
       description = "The tag was deleted with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to delete a tag from a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The tag does not exist",
-      content = [Content()]
     ),
   )
   fun deleteOne(

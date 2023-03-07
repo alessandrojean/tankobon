@@ -2,6 +2,8 @@ tankobon:
   workspace: localdb
   database:
     file: \${tankobon.config-dir}/\${tankobon.workspace}.sqlite
+  lucene:
+    data-directory: \${tankobon.config-dir}/lucene/\${tankobon.workspace}
 
 spring:
   artemis:

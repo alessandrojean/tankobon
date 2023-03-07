@@ -1,17 +1,14 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
-import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
+import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.jooq.tables.records.UserRecord
-import io.github.alessandrojean.tankobon.jooq.Tables.USER as TableUser
-import io.github.alessandrojean.tankobon.jooq.Tables.USER_LIBRARY_SHARING as TableUserLibrarySharing
 import org.jooq.DSLContext
-import org.jooq.Record
-import org.jooq.ResultQuery
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
+import io.github.alessandrojean.tankobon.jooq.Tables.USER as TableUser
 
 @Component
 class TankobonUserDao(
@@ -32,6 +29,12 @@ class TankobonUserDao(
 
   override fun findAll(): Collection<TankobonUser> =
     dsl.selectFrom(TableUser)
+      .fetchInto(TableUser)
+      .map { it.toDomain() }
+
+  override fun findAllByIds(userIds: Collection<String>): Collection<TankobonUser> =
+    dsl.selectFrom(TableUser)
+      .where(TableUser.ID.`in`(userIds))
       .fetchInto(TableUser)
       .map { it.toDomain() }
 

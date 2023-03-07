@@ -12,6 +12,8 @@ interface ContributorRoleRepository {
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 
+  fun getLibraryIdOrNull(contributorRoleId: String): String?
+
   fun insert(contributorRole: ContributorRole)
   fun update(contributorRole: ContributorRole)
 

@@ -4,12 +4,16 @@ import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
 import io.github.alessandrojean.tankobon.domain.model.Store
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.StoreLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -38,6 +43,7 @@ class StoreController(
   private val libraryRepository: LibraryRepository,
   private val storeRepository: StoreRepository,
   private val storeLifecycle: StoreLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/stores")
@@ -45,18 +51,26 @@ class StoreController(
   fun getAll(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable libraryId: String,
-  ): List<StoreDto> {
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    return storeRepository
+    val stores = storeRepository
       .findByLibraryId(libraryId)
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
+
+    val expanded = referenceExpansion.expand(
+      entities = stores,
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessCollectionResponseDto(expanded)
   }
 
   @GetMapping("v1/stores/{storeId}")
@@ -66,84 +80,85 @@ class StoreController(
       responseCode = "200",
       description = "The store exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = StoreDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "403",
       description = "The store exists and the user doesn't have access to it",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The store does not exist",
-      content = [Content()]
     ),
   )
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable storeId: String,
-  ): StoreDto {
-    return storeRepository.findByIdOrNull(storeId)?.let {
-      val library = libraryRepository.findById(it.libraryId)
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val store = storeRepository.findByIdOrNull(storeId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      if (!principal.user.canAccessLibrary(library)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    val library = libraryRepository.findById(store.libraryId)
 
-      it.toDto()
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val expanded = referenceExpansion.expand(
+      entity = store.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(expanded)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/stores")
-  @Operation(summary = "Create a new store in a library")
+  @PostMapping("v1/stores")
+  @Operation(summary = "Create a new store")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
       description = "The store was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = StoreDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A store with this name already exists in the library specified",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to create a store for a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The library does not exist",
-      content = [Content()]
     ),
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
     @Valid @RequestBody
     store: StoreCreationDto,
-  ): StoreDto {
-    val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(store.library)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the requested library")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      storeLifecycle
-        .addStore(
-          Store(
-            name = store.name,
-            description = store.description,
-            libraryId = libraryId
-          )
+      val created = storeLifecycle.addStore(
+        Store(
+          name = store.name,
+          description = store.description,
+          libraryId = store.library
         )
-        .toDto()
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {
@@ -158,17 +173,14 @@ class StoreController(
     ApiResponse(
       responseCode = "204",
       description = "The store was deleted with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to delete a store from a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The store does not exist",
-      content = [Content()]
     ),
   )
   fun deleteOne(
@@ -198,22 +210,18 @@ class StoreController(
     ApiResponse(
       responseCode = "204",
       description = "The store was modified with success",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "400",
       description = "A store with this name already exists",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "403",
       description = "Attempted to modify a store from a library the user does not have access",
-      content = [Content()]
     ),
     ApiResponse(
       responseCode = "404",
       description = "The store does not exist",
-      content = [Content()]
     ),
   )
   fun updateOne(

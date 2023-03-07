@@ -81,8 +81,9 @@ class ContributorRoleControllerTest(
       mockMvc.get("/api/v1/libraries/${library.id}/contributor-roles")
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$.[0].id") { value(contributorRole.id) }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value(contributorRole.id) }
         }
     }
   }
@@ -94,10 +95,16 @@ class ContributorRoleControllerTest(
     fun `it should return bad request when creating a contributor role with a duplicate name in the library`() {
       contributorRoleLifecycle.addContributorRole(contributorRole)
 
-      val jsonString = """{"name": "${contributorRole.name.lowercase()}", "description": ""}"""
+      val jsonString = """
+        {
+          "name": "${contributorRole.name.lowercase()}",
+          "description": "",
+          "library": "${library.id}"
+        }
+      """.trimIndent()
 
       mockMvc
-        .post("/api/v1/libraries/${library.id}/contributor-roles") {
+        .post("/api/v1/contributor-roles") {
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }

@@ -1,22 +1,31 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.Collection
+import io.github.alessandrojean.tankobon.domain.model.CollectionSearch
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.service.CollectionLifecycle
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -27,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -38,25 +48,60 @@ class CollectionController(
   private val libraryRepository: LibraryRepository,
   private val collectionRepository: CollectionRepository,
   private val collectionLifecycle: CollectionLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
 ) {
+
+  @GetMapping("v1/collections")
+  @Operation(summary = "Get all collections")
+  fun getAllCollections(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
+    @RequestParam(name = "libraries", required = false) libraryIds: List<String>? = null,
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+    @Parameter(hidden = true) page: Pageable,
+  ): ResponseDto {
+    val collectionsPage = collectionRepository.findAll(
+      search = CollectionSearch(
+        libraryIds = libraryIds,
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    val collections = referenceExpansion.expand(
+      collectionsPage.content.map { it.toDto() },
+      includes.toRelationshipTypeSet()
+    )
+
+    return SuccessCollectionResponseDto(collections, collectionsPage.toPaginationDto())
+  }
 
   @GetMapping("v1/libraries/{libraryId}/collections")
   @Operation(summary = "Get all collections from a library by its id")
-  fun getAll(
+  fun getAllCollections(
     @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable libraryId: String,
-  ): List<CollectionDto> {
+    @Parameter(hidden = true) page: Pageable,
+  ): ResponseDto {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the library requested")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
-    return collectionRepository
-      .findByLibraryId(libraryId)
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
+    val collections = collectionRepository.findAll(
+      search = CollectionSearch(
+        libraryIds = listOf(library.id),
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    return collections.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/collections/{collectionId}")
@@ -66,7 +111,7 @@ class CollectionController(
       responseCode = "200",
       description = "The collection exists and the user has access to it",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = CollectionDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
@@ -83,26 +128,33 @@ class CollectionController(
   fun getOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable collectionId: String,
-  ): CollectionDto {
-    return collectionRepository.findByIdOrNull(collectionId)?.let {
-      val library = libraryRepository.findById(it.libraryId)
+    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
+  ): ResponseDto {
+    val collection = collectionRepository.findByIdOrNull(collectionId)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-      if (!principal.user.canAccessLibrary(library)) {
-        throw ResponseStatusException(HttpStatus.FORBIDDEN)
-      }
+    val library = libraryRepository.findById(collection.libraryId)
 
-      it.toDto()
-    } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    if (!principal.user.canAccessLibrary(library)) {
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+    }
+
+    val expanded = referenceExpansion.expand(
+      entity = collection.toDto(),
+      relationsToExpand = includes.toRelationshipTypeSet()
+    )
+
+    return SuccessEntityResponseDto(expanded)
   }
 
-  @PostMapping("v1/libraries/{libraryId}/collections")
-  @Operation(summary = "Create a new collection in a library")
+  @PostMapping("v1/collections")
+  @Operation(summary = "Create a new collection")
   @ApiResponses(
     ApiResponse(
       responseCode = "200",
       description = "The collection was created with success",
       content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = CollectionDto::class))
+        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
       ]
     ),
     ApiResponse(
@@ -123,27 +175,26 @@ class CollectionController(
   )
   fun addOne(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
     @Valid @RequestBody
     collection: CollectionCreationDto,
-  ): CollectionDto {
-    val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The library does not exist")
+  ): ResponseDto {
+    val library = libraryRepository.findByIdOrNull(collection.library)
+      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN, "The user does not have access to the requested library")
+      throw ResponseStatusException(HttpStatus.FORBIDDEN)
     }
 
     return try {
-      collectionLifecycle
-        .addCollection(
-          Collection(
-            name = collection.name,
-            description = collection.description,
-            libraryId = libraryId
-          )
+      val created = collectionLifecycle.addCollection(
+        Collection(
+          name = collection.name,
+          description = collection.description,
+          libraryId = collection.library
         )
-        .toDto()
+      )
+
+      SuccessEntityResponseDto(created.toDto())
     } catch (e: DuplicateNameException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     } catch (e: Exception) {

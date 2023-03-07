@@ -1,8 +1,19 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
+import io.github.alessandrojean.tankobon.domain.model.CollectionSearch
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.CollectionRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -14,7 +25,14 @@ import io.github.alessandrojean.tankobon.jooq.Tables.COLLECTION as TableCollecti
 @Component
 class CollectionDao(
   private val dsl: DSLContext,
+  private val libraryDao: LibraryDao,
+  private val userDao: TankobonUserDao,
+  private val luceneHelper: LuceneHelper,
 ) : CollectionRepository {
+
+  private val sorts = mapOf(
+    "name" to TableCollection.NAME.collate(SqliteUdfDataSource.collationUnicode3)
+  )
 
   override fun findById(collectionId: String): DomainCollection = findByIdOrNull(collectionId)!!
 
@@ -35,6 +53,43 @@ class CollectionDao(
       .fetchInto(TableCollection)
       .map { it.toDomain() }
 
+  override fun findAll(search: CollectionSearch, pageable: Pageable): Page<DomainCollection> {
+    val collectionIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Collection)
+    val searchCondition = TableCollection.ID.inOrNoCondition(collectionIds)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TableCollection.ID)
+        .from(TableCollection)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !collectionIds.isNullOrEmpty()) {
+        TableCollection.ID.sortByValues(collectionIds, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val collections = dsl.selectFrom(TableCollection)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TableCollection)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      collections,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
+
   override fun findAllByIds(collectionIds: Collection<String>): Collection<DomainCollection> =
     dsl.selectFrom(TableCollection)
       .where(TableCollection.ID.`in`(collectionIds))
@@ -47,6 +102,12 @@ class CollectionDao(
         .where(TableCollection.NAME.equalIgnoreCase(name))
         .and(TableCollection.LIBRARY_ID.eq(libraryId))
     )
+
+  override fun getLibraryIdOrNull(collectionId: String): String? =
+    dsl.select(TableCollection.LIBRARY_ID)
+      .from(TableCollection)
+      .where(TableCollection.ID.eq(collectionId))
+      .fetchOne(TableCollection.LIBRARY_ID)
 
   @Transactional
   override fun insert(collection: DomainCollection) {
@@ -83,6 +144,30 @@ class CollectionDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TableCollection).toLong()
+
+  private fun CollectionSearch.toCondition(): Condition {
+    val c = DSL.noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TableCollection.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> DSL.noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TableCollection.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> DSL.noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun CollectionRecord.toDomain(): DomainCollection = DomainCollection(
     name = name,

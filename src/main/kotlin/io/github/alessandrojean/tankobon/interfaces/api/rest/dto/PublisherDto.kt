@@ -1,27 +1,42 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import jakarta.validation.constraints.NotBlank
 
-data class PublisherDto(
-  val id: String,
+data class PublisherEntityDto(
+  override val id: String,
+  override val attributes: PublisherAttributesDto,
+  override var relationships: List<RelationDto>? = null,
+) : EntityDto {
+  override val type = EntityType.PUBLISHER
+}
+
+data class PublisherAttributesDto(
   val name: String,
   val description: String,
-  val libraryId: String,
+) : EntityAttributesDto()
+
+fun Publisher.toDto(libraryAttributes: LibraryAttributesDto? = null) = PublisherEntityDto(
+  id = id,
+  attributes = toAttributesDto(),
+  relationships = listOf(
+    RelationDto(
+      id = libraryId,
+      type = RelationshipType.LIBRARY,
+      attributes = libraryAttributes,
+    )
+  )
 )
 
-fun Publisher.toDto(): PublisherDto = PublisherDto(
-  id = id,
-  name = name,
-  description = description,
-  libraryId = libraryId,
-)
+fun Publisher.toAttributesDto() = PublisherAttributesDto(name, description)
 
 data class PublisherCreationDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
+  @get:NotBlank val library: String,
 )
 
 data class PublisherUpdateDto(
-  val name: String,
+  @get:NotBlank val name: String,
   val description: String,
 )

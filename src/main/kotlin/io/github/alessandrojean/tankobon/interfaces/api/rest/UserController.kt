@@ -2,18 +2,18 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.UserEmailAlreadyExistsException
-import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.TankobonUserLifecycle
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import mu.KotlinLogging
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -45,8 +45,8 @@ class UserController(
 
   @GetMapping("me")
   @Operation(summary = "Get the current authenticated user")
-  fun getMe(@AuthenticationPrincipal principal: TankobonPrincipal): UserDto =
-    principal.toDto()
+  fun getMe(@AuthenticationPrincipal principal: TankobonPrincipal): ResponseDto =
+    SuccessEntityResponseDto(principal.toDto())
 
   @PatchMapping("me/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -68,16 +68,18 @@ class UserController(
   @GetMapping
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "List all users")
-  fun getAll(): List<UserDto> =
-    userRepository.findAll().map { it.toDto() }
+  fun getAll(): ResponseDto =
+    SuccessCollectionResponseDto(userRepository.findAll().map { it.toDto() })
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "Create a new user")
-  fun addOne(@Valid @RequestBody newUser: UserCreationDto): UserDto {
+  fun addOne(@Valid @RequestBody newUser: UserCreationDto): ResponseDto {
     return try {
-      userLifecycle.createUser(newUser.toDomain()).toDto()
+      val user = userLifecycle.createUser(newUser.toDomain())
+
+      SuccessEntityResponseDto(user.toDto())
     } catch (e: UserEmailAlreadyExistsException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, "A user with this email already exists")
     }

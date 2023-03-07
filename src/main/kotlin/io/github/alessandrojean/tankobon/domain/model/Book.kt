@@ -7,19 +7,42 @@ import java.util.UUID
 data class Book(
   val code: String,
   val title: String,
-  val paidPriceCurrency: String,
-  val paidPriceValue: String,
+  val paidPrice: MonetaryValue,
+  val labelPrice: MonetaryValue,
+  val dimensions: Dimensions,
 
   val id: String = UUID.randomUUID().toString(),
   val collectionId: String = "",
-  val seriesId: String? = null,
   val storeId: String? = null,
+  val seriesId: String? = null,
 
   val barcode: String? = null,
   val isInLibrary: Boolean = true,
-  val boughtAt: LocalDateTime? = null,
+  val number: String = "0",
+  val pageCount: Int = 0,
+  val synopsis: String = "",
   val notes: String = "",
+
+  /**
+   * Assumed to be in the UTC timezone.
+   */
+  val boughtAt: LocalDateTime? = null,
+
+  /**
+   * Assumed to be in the UTC timezone.
+   */
+  val billedAt: LocalDateTime? = null,
+
+  /**
+   * Assumed to be in the UTC timezone.
+   */
+  val arrivedAt: LocalDateTime? = null,
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt,
 ) : Auditable, Serializable
+
+data class Dimensions(
+  val widthCm: Float,
+  val heightCm: Float,
+) : Serializable

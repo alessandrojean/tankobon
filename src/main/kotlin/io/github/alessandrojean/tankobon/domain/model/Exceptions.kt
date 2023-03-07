@@ -16,3 +16,8 @@ fun Exception.withCode(code: String) = CodedException(this, code)
 
 class UserEmailAlreadyExistsException(message: String, code: String = "") : CodedException(message, code)
 class DuplicateNameException(message: String, code: String = "") : CodedException(message, code)
+class DuplicateCodeException(message: String, code: String = "") : CodedException(message, code)
+class RelationIdDoesNotExistException(message: String, code: String = "") : CodedException(message, code)
+class UserDoesNotHaveAccessException(message: String, code: String = "") : CodedException(message, code)
+class RelationIsNotFromSameLibraryException(message: String, code: String = "") : CodedException(message, code)
+class BookLibraryChangedException(message: String, code: String = "") : CodedException(message, code)

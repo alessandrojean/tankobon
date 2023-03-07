@@ -81,8 +81,9 @@ class PublisherControllerTest(
       mockMvc.get("/api/v1/libraries/${library.id}/publishers")
         .andExpect {
           status { isOk() }
-          jsonPath("$.length()") { value(1) }
-          jsonPath("$.[0].id") { value(publisher.id) }
+          jsonPath("$.result") { value("OK") }
+          jsonPath("$.data.length()") { value(1) }
+          jsonPath("$.data[0].id") { value(publisher.id) }
         }
     }
   }
@@ -94,10 +95,16 @@ class PublisherControllerTest(
     fun `it should return bad request when creating a publisher with a duplicate name in the library`() {
       publisherLifecycle.addPublisher(publisher)
 
-      val jsonString = """{"name": "${publisher.name.lowercase()}", "description": ""}"""
+      val jsonString = """
+        {
+          "name": "${publisher.name.lowercase()}",
+          "description": "",
+          "library": "${library.id}"
+        }
+      """.trimIndent()
 
       mockMvc
-        .post("/api/v1/libraries/${library.id}/publishers") {
+        .post("/api/v1/publishers") {
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }
