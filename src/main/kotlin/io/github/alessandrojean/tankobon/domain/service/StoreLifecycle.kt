@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.domain.service
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Store
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import mu.KotlinLogging
@@ -36,7 +37,7 @@ class StoreLifecycle(
     logger.info { "Updating store: $toUpdate" }
 
     val existing = storeRepository.findByIdOrNull(toUpdate.id)
-      ?: throw IllegalArgumentException("Cannot update store that does not exist")
+      ?: throw IdDoesNotExistException("Cannot update store that does not exist")
 
     if (
       !existing.name.equals(toUpdate.name, true) &&

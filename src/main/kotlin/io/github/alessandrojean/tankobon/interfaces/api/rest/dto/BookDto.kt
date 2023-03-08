@@ -77,7 +77,7 @@ data class BookCreationDto(
   @get:Schema(format = "uuid")
   val collection: String,
   @get:NullOrUuid
-  @get:Schema(format = "uuid")
+  @get:Schema(format = "uuid", description = "Store where the book was bought")
   val store: String? = null,
   @get:NullOrUuid
   @get:Schema(format = "uuid")
@@ -89,20 +89,31 @@ data class BookCreationDto(
   val publishers: Set<@UUID(version = [4]) String>,
   @get:Schema(type = "array", format = "uuid")
   val tags: Set<@UUID(version = [4]) String>? = null,
-  @get:NotBlank val code: String,
-  @get:NullOrNotBlank val barcode: String? = null,
+  @get:NotBlank
+  @get:Schema(description = "An unique code identifier to the book, such as its ISBN-13")
+  val code: String,
+  @get:NullOrNotBlank
+  @get:Schema(description = "The barcode printed in the book cover")
+  val barcode: String? = null,
   @get:NotBlank val title: String,
   val paidPrice: MonetaryValueDto,
   val labelPrice: MonetaryValueDto,
   val dimensions: DimensionsDto,
+  @get:Schema(description = "If the book is a future and planned acquisition, set as `false`")
   val isInLibrary: Boolean,
+  @get:Schema(description = "If the book is part of a series, this will control the order")
   val number: String,
   val pageCount: Int,
   val synopsis: String,
+  @get:Schema(description = "Personal user notes about the book")
   val notes: String,
   @get:NullOrNotBlank val boughtAt: LocalDateTime?,
-  @get:NullOrNotBlank val billedAt: LocalDateTime?,
-  @get:NullOrNotBlank val arrivedAt: LocalDateTime?,
+  @get:NullOrNotBlank
+  @get:Schema(description = "Date of payment, useful for pre-orders like Amazon ones")
+  val billedAt: LocalDateTime?,
+  @get:NullOrNotBlank
+  @get:Schema(description = "Date of delivery and arrival of the book")
+  val arrivedAt: LocalDateTime?,
 )
 
 typealias BookUpdateDto = BookCreationDto

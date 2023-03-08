@@ -66,9 +66,7 @@ springdoc:
   api-docs:
     path: /api/api-docs
   swagger-ui:
-    groups-order: desc
     operations-sorter: alpha
-    tags-sorter: alpha
     disable-swagger-default-url: true
     path: /api/swagger-ui.html
     syntax-highlight:

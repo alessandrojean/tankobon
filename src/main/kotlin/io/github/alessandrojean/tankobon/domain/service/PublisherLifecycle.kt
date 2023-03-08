@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.domain.service
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import mu.KotlinLogging
@@ -36,7 +37,7 @@ class PublisherLifecycle(
     logger.info { "Updating publisher: $toUpdate" }
 
     val existing = publisherRepository.findByIdOrNull(toUpdate.id)
-      ?: throw IllegalArgumentException("Cannot update publisher that does not exist")
+      ?: throw IdDoesNotExistException("Cannot update publisher that does not exist")
 
     if (
       !existing.name.equals(toUpdate.name, true) &&

@@ -117,7 +117,7 @@ class ErrorHandlingControllerAdvice {
   private fun CodedException.toErrorDto(status: HttpStatus = HttpStatus.BAD_REQUEST) = ErrorDto(
     id = javaClass.simpleName,
     status = status.value(),
-    title = message.orEmpty(),
-    details = code,
+    title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
+    details = code.ifEmpty { message.orEmpty() },
   )
 }

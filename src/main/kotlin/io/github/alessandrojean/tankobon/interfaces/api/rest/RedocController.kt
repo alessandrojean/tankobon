@@ -44,7 +44,6 @@ class RedocController {
             const jetbrainsMonoFont = `'JetBrains Mono', monospace`;
             const redocOptions = {
               sortOperationsAlphabetically: true,
-              sortTagsAlphabetically: true,
               sidebarLinks: {
                 beforeInfo: [
                   { label: 'GitHub', link: 'https://github.com/alessandrojean/tankobon', target: '_blank' },

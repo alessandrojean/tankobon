@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.domain.service
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Tag
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import mu.KotlinLogging
@@ -36,7 +37,7 @@ class TagLifecycle(
     logger.info { "Updating tag: $toUpdate" }
 
     val existing = tagRepository.findByIdOrNull(toUpdate.id)
-      ?: throw IllegalArgumentException("Cannot update tag that does not exist")
+      ?: throw IdDoesNotExistException("Cannot update tag that does not exist")
 
     if (
       !existing.name.equals(toUpdate.name, true) &&

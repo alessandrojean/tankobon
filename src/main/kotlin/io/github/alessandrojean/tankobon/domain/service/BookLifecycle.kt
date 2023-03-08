@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.BookLibraryChangedException
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.DuplicateCodeException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIsNotFromSameLibraryException
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
@@ -78,7 +79,7 @@ class BookLifecycle(
     logger.info { "Updating book: $toUpdate" }
 
     if (bookRepository.findByIdOrNull(toUpdate.id) == null) {
-      throw IllegalArgumentException("Cannot update book that does not exist")
+      throw IdDoesNotExistException("Cannot update book that does not exist")
     }
 
     if (bookRepository.findByCodeOrNull(toUpdate.code)?.id != toUpdate.id) {
@@ -100,7 +101,7 @@ class BookLifecycle(
     logger.info { "Updating book: $toUpdate" }
 
     if (bookRepository.findByIdOrNull(bookId) == null) {
-      throw IllegalArgumentException("Cannot update book that does not exist")
+      throw IdDoesNotExistException("Cannot update book that does not exist")
     }
 
     if (bookRepository.findByCodeOrNull(toUpdate.code)?.id != bookId) {

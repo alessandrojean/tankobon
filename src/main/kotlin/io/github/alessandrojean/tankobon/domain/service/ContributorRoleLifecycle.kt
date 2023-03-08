@@ -4,6 +4,7 @@ import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.persistence.ContributorRoleRepository
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -36,7 +37,7 @@ class ContributorRoleLifecycle(
     logger.info { "Updating contributor role: $toUpdate" }
 
     val existing = contributorRoleRepository.findByIdOrNull(toUpdate.id)
-      ?: throw IllegalArgumentException("Cannot update contributor role that does not exist")
+      ?: throw IdDoesNotExistException("Cannot update contributor role that does not exist")
 
     if (
       !existing.name.equals(toUpdate.name, true) &&

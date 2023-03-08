@@ -11,6 +11,8 @@ interface LibraryRepository {
   fun findAll(): Collection<Library>
   fun findAllByIds(libraryIds: Collection<String>): Collection<Library>
 
+  fun existsByNameFromSameOwner(name: String, ownerId: String): Boolean
+
   fun getAllowedToViewLibrariesIds(userId: String): Collection<String>
 
   fun insert(library: Library)

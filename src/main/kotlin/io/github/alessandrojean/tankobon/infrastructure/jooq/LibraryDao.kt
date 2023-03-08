@@ -67,6 +67,13 @@ class LibraryDao(
       .on(TableLibrary.ID.eq(TableUserLibrarySharing.LIBRARY_ID))
       .fetch(TableLibrary.ID)
 
+  override fun existsByNameFromSameOwner(name: String, ownerId: String): Boolean =
+    dsl.fetchExists(
+      dsl.selectFrom(TableLibrary)
+        .where(TableLibrary.NAME.equalIgnoreCase(name))
+        .and(TableLibrary.OWNER_ID.equal(ownerId))
+    )
+
   @Transactional
   override fun insert(library: Library) {
     dsl.insertInto(TableLibrary)
