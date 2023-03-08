@@ -1,29 +1,30 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
-import io.github.alessandrojean.tankobon.domain.model.DuplicateNameException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
+import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.service.PersonLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonCreationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toRelationshipTypeSet
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.hibernate.validator.constraints.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,11 +35,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
+@Validated
 @RestController
 @RequestMapping("api", produces = [MediaType.APPLICATION_JSON_VALUE])
-@Tag(name = "people", description = "Operations regarding people")
+@Tag(name = "Person", description = "Operations regarding people")
 class PersonController(
   private val libraryRepository: LibraryRepository,
   private val personRepository: PersonRepository,
@@ -47,17 +48,17 @@ class PersonController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/people")
-  @Operation(summary = "Get all people from a library by its id")
-  fun getAll(
+  @Operation(summary = "Get all people from a library")
+  fun getAllPeopleByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
-  ): ResponseDto {
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessCollectionResponseDto<PersonEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+      ?: throw IdDoesNotExistException("Library not found")
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+      throw UserDoesNotHaveAccessException()
     }
 
     val people = personRepository
@@ -67,7 +68,7 @@ class PersonController(
 
     val expanded = referenceExpansion.expand(
       entities = people,
-      relationsToExpand = includes.toRelationshipTypeSet()
+      relationsToExpand = includes
     )
 
     return SuccessCollectionResponseDto(expanded)
@@ -75,40 +76,23 @@ class PersonController(
 
   @GetMapping("v1/people/{personId}")
   @Operation(summary = "Get a person by its id")
-  @ApiResponses(
-    ApiResponse(
-      responseCode = "200",
-      description = "The person exists and the user has access to it",
-      content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
-      ]
-    ),
-    ApiResponse(
-      responseCode = "403",
-      description = "The person exists and the user doesn't have access to it",
-    ),
-    ApiResponse(
-      responseCode = "404",
-      description = "The person does not exist",
-    ),
-  )
-  fun getOne(
+  fun getOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable personId: String,
-    @RequestParam(required = false, defaultValue = "") includes: List<String> = emptyList(),
-  ): ResponseDto {
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessEntityResponseDto<PersonEntityDto> {
     val person = personRepository.findByIdOrNull(personId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+      ?: throw IdDoesNotExistException("Person not found")
 
     val library = libraryRepository.findById(person.libraryId)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+      throw UserDoesNotHaveAccessException()
     }
 
     val expanded = referenceExpansion.expand(
       entity = person.toDto(),
-      relationsToExpand = includes.toRelationshipTypeSet()
+      relationsToExpand = includes,
     )
 
     return SuccessEntityResponseDto(expanded)
@@ -116,134 +100,64 @@ class PersonController(
 
   @PostMapping("v1/people")
   @Operation(summary = "Create a new person")
-  @ApiResponses(
-    ApiResponse(
-      responseCode = "200",
-      description = "The person was created with success",
-      content = [
-        Content(mediaType = "application/json", schema = Schema(implementation = ResponseDto::class))
-      ]
-    ),
-    ApiResponse(
-      responseCode = "400",
-      description = "A person with this name already exists in the library specified",
-    ),
-    ApiResponse(
-      responseCode = "403",
-      description = "Attempted to create a person for a library the user does not have access",
-    ),
-    ApiResponse(
-      responseCode = "404",
-      description = "The library does not exist",
-    ),
-  )
-  fun addOne(
+  fun addOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
     person: PersonCreationDto,
-  ): ResponseDto {
+  ): SuccessEntityResponseDto<PersonEntityDto> {
     val library = libraryRepository.findByIdOrNull(person.library)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+      ?: throw RelationIdDoesNotExistException("Library not found")
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+      throw UserDoesNotHaveAccessException()
     }
 
-    return try {
-      val created = personLifecycle.addPerson(
-        Person(
-          name = person.name,
-          description = person.description,
-          libraryId = person.library,
-        )
+    val created = personLifecycle.addPerson(
+      Person(
+        name = person.name,
+        description = person.description,
+        libraryId = person.library,
       )
+    )
 
-      SuccessEntityResponseDto(created.toDto())
-    } catch (e: DuplicateNameException) {
-      throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
-    } catch (e: Exception) {
-      throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
-    }
+    return SuccessEntityResponseDto(created.toDto())
   }
 
   @DeleteMapping("v1/people/{personId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete an existing person by its id")
-  @ApiResponses(
-    ApiResponse(
-      responseCode = "204",
-      description = "The person was deleted with success",
-      content = [Content()]
-    ),
-    ApiResponse(
-      responseCode = "403",
-      description = "Attempted to delete a person from a library the user does not have access",
-      content = [Content()]
-    ),
-    ApiResponse(
-      responseCode = "404",
-      description = "The person does not exist",
-      content = [Content()]
-    ),
-  )
-  fun deleteOne(
+  @Operation(summary = "Delete a person by its id")
+  fun deleteOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable personId: String
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String
   ) {
     val existing = personRepository.findByIdOrNull(personId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+      ?: throw IdDoesNotExistException("Person not found")
 
     val library = libraryRepository.findById(existing.libraryId)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+      throw UserDoesNotHaveAccessException()
     }
 
-    try {
-      personLifecycle.deletePerson(existing)
-    } catch (e: Exception) {
-      throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
-    }
+    personLifecycle.deletePerson(existing)
   }
 
   @PutMapping("v1/people/{personId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify an existing person by its id")
-  @ApiResponses(
-    ApiResponse(
-      responseCode = "204",
-      description = "The person was modified with success",
-      content = [Content()]
-    ),
-    ApiResponse(
-      responseCode = "400",
-      description = "A person with this name already exists",
-      content = [Content()]
-    ),
-    ApiResponse(
-      responseCode = "403",
-      description = "Attempted to modify a person from a library the user does not have access",
-      content = [Content()]
-    ),
-    ApiResponse(
-      responseCode = "404",
-      description = "The person does not exist",
-      content = [Content()]
-    ),
-  )
-  fun updateOne(
+  @Operation(summary = "Modify a person by its id")
+  fun updateOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable personId: String,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
     @Valid @RequestBody
     person: PersonUpdateDto
   ) {
     val existing = personRepository.findByIdOrNull(personId)
-      ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+      ?: throw IdDoesNotExistException("Person not found")
 
     val library = libraryRepository.findById(existing.libraryId)
 
     if (!principal.user.canAccessLibrary(library)) {
-      throw ResponseStatusException(HttpStatus.FORBIDDEN)
+      throw UserDoesNotHaveAccessException()
     }
 
     val toUpdate = existing.copy(
@@ -251,12 +165,6 @@ class PersonController(
       description = person.description,
     )
 
-    try {
-      personLifecycle.updatePerson(toUpdate)
-    } catch(e: DuplicateNameException) {
-      throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
-    } catch (e: Exception) {
-      throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.message, e)
-    }
+    personLifecycle.updatePerson(toUpdate)
   }
 }

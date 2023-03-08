@@ -3,7 +3,11 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
+import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
+import org.hibernate.validator.constraints.UUID
 import java.time.LocalDateTime
 
 data class BookEntityDto(
@@ -11,6 +15,7 @@ data class BookEntityDto(
   override val attributes: BookAttributesDto,
   override var relationships: List<RelationDto>? = null,
 ) : EntityDto {
+  @Schema(type = "string", allowableValues = ["BOOK"])
   override val type = EntityType.BOOK
 }
 
@@ -67,12 +72,23 @@ fun Book.toAttributesDto() = BookAttributesDto(
 )
 
 data class BookCreationDto(
+  @get:NotBlank
+  @get:UUID(version = [4])
+  @get:Schema(format = "uuid")
   val collection: String,
-  @get:NullOrNotBlank val store: String? = null,
-  @get:NullOrNotBlank val series: String? = null,
+  @get:NullOrUuid
+  @get:Schema(format = "uuid")
+  val store: String? = null,
+  @get:NullOrUuid
+  @get:Schema(format = "uuid")
+  val series: String? = null,
+  @get:NotEmpty
   val contributors: List<BookContributorCreationDto>,
-  val publishers: Set<@NotBlank String>,
-  val tags: Set<@NotBlank String>? = null,
+  @get:NotEmpty
+  @get:Schema(type = "array", format = "uuid")
+  val publishers: Set<@UUID(version = [4]) String>,
+  @get:Schema(type = "array", format = "uuid")
+  val tags: Set<@UUID(version = [4]) String>? = null,
   @get:NotBlank val code: String,
   @get:NullOrNotBlank val barcode: String? = null,
   @get:NotBlank val title: String,
@@ -92,8 +108,12 @@ data class BookCreationDto(
 typealias BookUpdateDto = BookCreationDto
 
 data class BookContributorCreationDto(
-  @get:NotBlank val person: String,
-  @get:NotBlank val role: String,
+  @get:UUID(version = [4])
+  @get:Schema(format = "uuid")
+  val person: String,
+  @get:UUID(version = [4])
+  @get:Schema(format = "uuid")
+  val role: String,
 )
 
 data class DimensionsDto(

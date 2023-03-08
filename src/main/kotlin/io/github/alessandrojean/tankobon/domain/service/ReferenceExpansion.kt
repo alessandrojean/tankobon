@@ -92,9 +92,9 @@ class ReferenceExpansion(
     return entity.apply { this.relationships = relationships }
   }
 
-  fun <T : EntityDto> expand(entities: List<T>, relationsToExpand: Set<RelationshipType>): List<T> {
+  fun <T : EntityDto> expand(entities: Collection<T>, relationsToExpand: Set<RelationshipType>): List<T> {
     if (relationsToExpand.isEmpty()) {
-      return entities
+      return entities.toList()
     }
 
     val relationsAttributes = entities

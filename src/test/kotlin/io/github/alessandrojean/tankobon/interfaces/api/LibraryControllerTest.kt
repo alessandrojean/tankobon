@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.interfaces.api
 
+import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -28,10 +29,17 @@ class LibraryControllerTest(
   @Autowired private val userRepository: TankobonUserRepository,
 ) {
 
+  companion object {
+    private const val ADMIN_ID = "a327ed61-f39f-44ce-bf01-1438e4a0f0f0"
+    private const val OWNER_ID = "f779266a-d8e8-4e02-9886-0a125dc5ac1d"
+    private const val LIBRARY_ID = "a9fe7a00-d573-4468-b117-c81cf02901cc"
+  }
+
   private val route = "/api/v1/libraries"
 
-  private val owner = TankobonUser("user@example.org", "", false, id = "1")
-  private val library = makeLibrary("Library", "", id = "1", ownerId = "1")
+  private val admin = TankobonUser("admin@example.org", "", true, id = ADMIN_ID)
+  private val owner = TankobonUser("user@example.org", "", false, id = OWNER_ID)
+  private val library = makeLibrary("Library", "", id = LIBRARY_ID, ownerId = OWNER_ID)
 
   @BeforeAll
   fun setup() {
@@ -71,7 +79,7 @@ class LibraryControllerTest(
   @Nested
   inner class UserRole {
     @Test
-    @WithMockCustomUser(id = "0")
+    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
     fun `it should return ok if the user has access to all libraries`() {
       mockMvc.get(route)
         .andExpect { status { isOk() } }
@@ -81,14 +89,14 @@ class LibraryControllerTest(
   @Nested
   inner class LimitedUser {
     @Test
-    @WithMockCustomUser(id = "1")
+    @WithMockCustomUser(id = OWNER_ID)
     fun `it should only return the libraries the user has access`() {
       mockMvc.get(route)
         .andExpect {
           status { isOk() }
           jsonPath("$.result") { value("OK") }
           jsonPath("$.data.length()") { value(1) }
-          jsonPath("$.data[0].id") { value("1") }
+          jsonPath("$.data[0].id") { value(LIBRARY_ID) }
         }
     }
 

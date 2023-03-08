@@ -2,19 +2,21 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.domain.Page
 
-open class ResponseDto(
-  val result: ResultDto,
-)
+interface ResponseDto {
+  val result: ResultDto
+}
 
 enum class ResultDto {
   OK, ERROR
 }
 
-data class ErrorResponseDto(
-  val errors: List<ErrorDto>,
-) : ResponseDto(ResultDto.ERROR)
+data class ErrorResponseDto(val errors: List<ErrorDto>) : ResponseDto {
+  @Schema(type = "string", allowableValues = ["ERROR"])
+  override val result = ResultDto.ERROR
+}
 
 data class ErrorDto(
   val id: String,
@@ -23,23 +25,34 @@ data class ErrorDto(
   val details: String,
 )
 
-open class SuccessResponseDto<T>(
-  val response: SuccessResponseTypeDto,
-  val data: T,
-) : ResponseDto(ResultDto.OK)
+
+abstract class SuccessResponseDto<T>(val data: T) : ResponseDto {
+  @Schema(type = "string", allowableValues = ["OK"])
+  override val result = ResultDto.OK
+
+  abstract val response: SuccessResponseTypeDto
+}
 
 enum class SuccessResponseTypeDto {
   ENTITY, COLLECTION
 }
 
-class SuccessEntityResponseDto<T : EntityDto>(data: T) :
-  SuccessResponseDto<T>(SuccessResponseTypeDto.ENTITY, data)
+class SuccessEntityResponseDto<T : EntityDto>(data: T) : SuccessResponseDto<T>(data) {
+  @Schema(type = "string", allowableValues = ["ENTITY"])
+  override val response = SuccessResponseTypeDto.ENTITY
+}
+
+open class SuccessCollectionResponseDto<T : EntityDto>(data: Collection<T>)
+  : SuccessResponseDto<Collection<T>>(data) {
+  @Schema(type = "string", allowableValues = ["COLLECTION"])
+  override val response = SuccessResponseTypeDto.COLLECTION
+}
 
 @JsonInclude(Include.NON_NULL)
-class SuccessCollectionResponseDto<T : EntityDto>(
+open class SuccessPaginatedCollectionResponseDto<T : EntityDto>(
   data: Collection<T>,
-  pagination: PaginationDto? = null,
-) : SuccessResponseDto<Collection<T>>(SuccessResponseTypeDto.COLLECTION, data)
+  val pagination: PaginationDto
+) : SuccessCollectionResponseDto<T>(data)
 
 data class PaginationDto(
   val currentPage: Int? = null,
@@ -51,6 +64,7 @@ open class EntityAttributesDto
 
 @JsonInclude(Include.NON_NULL)
 interface EntityDto {
+  @get:Schema(format = "uuid")
   val id: String
   val type: EntityType
   val attributes: EntityAttributesDto
@@ -59,6 +73,7 @@ interface EntityDto {
 
 @JsonInclude(Include.NON_NULL)
 data class RelationDto(
+  @get:Schema(format = "uuid")
   val id: String,
   val type: RelationshipType,
   val attributes: EntityAttributesDto? = null,
@@ -94,15 +109,8 @@ enum class RelationshipType {
   PERSON,
 }
 
-fun List<String>.toRelationshipTypeSet(): Set<RelationshipType> =
-  mapNotNullTo(HashSet()) { relation ->
-    RelationshipType.values().firstOrNull { it.name == relation.uppercase() }
-  }
-
-fun List<String>.isIncluded(relation: RelationshipType) = toRelationshipTypeSet().contains(relation)
-
 fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =
-  SuccessCollectionResponseDto(
+  SuccessPaginatedCollectionResponseDto(
     data = content.map(mapper),
     pagination = PaginationDto(
       currentPage = this.number,

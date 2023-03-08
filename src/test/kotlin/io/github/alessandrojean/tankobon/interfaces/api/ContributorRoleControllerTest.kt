@@ -35,13 +35,23 @@ class ContributorRoleControllerTest(
   @Autowired private val userRepository: TankobonUserRepository,
 ) {
 
-  private val owner = TankobonUser("user@example.org", "", true, id = "1")
-  private val user = TankobonUser("user2@example.org", "", false, id = "2")
-  private val library = makeLibrary("Library", "", id = "1", ownerId = "1")
-  private val contributorRole = ContributorRole("ContributorRole", id = "1", libraryId = "1")
+  companion object {
+    private const val ADMIN_ID = "b1f00dfa-e51f-41d0-a995-857e533ed286"
+    private const val OWNER_ID = "6c34b8ee-a370-49d5-866d-b65e4c3734ad"
+    private const val USER_ID = "b0c3e382-aa11-4c48-bf11-2b49832d4a7d"
+    private const val LIBRARY_ID = "4c6e068e-c01e-4356-8586-64ab072a7eb5"
+    private const val CONTRIBUTOR_ROLE_ID = "650e423b-1fab-4a9f-bf28-f0be39548a16"
+  }
+
+  private val admin = TankobonUser("admin@example.org", "", true, id = ADMIN_ID)
+  private val owner = TankobonUser("user@example.org", "", true, id = OWNER_ID)
+  private val user = TankobonUser("user2@example.org", "", false, id = USER_ID)
+  private val library = makeLibrary("Library", "", id = LIBRARY_ID, ownerId = OWNER_ID)
+  private val contributorRole = ContributorRole("ContributorRole", id = CONTRIBUTOR_ROLE_ID, libraryId = LIBRARY_ID)
 
   @BeforeAll
   fun setup() {
+    userRepository.insert(admin)
     userRepository.insert(owner)
     userRepository.insert(user)
     libraryRepository.insert(library)
@@ -67,14 +77,14 @@ class ContributorRoleControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(id = "2")
+    @WithMockCustomUser(id = USER_ID)
     fun `it should return forbidden when getting the contributor roles from a library the user does not have access`() {
       mockMvc.get("/api/v1/libraries/${library.id}/contributor-roles")
         .andExpect { status { isForbidden() } }
     }
 
     @Test
-    @WithMockCustomUser(roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = OWNER_ID, roles = [ROLE_ADMIN])
     fun `it should return ok when getting the contributor roles from a library if the user is an admin`() {
       contributorRoleLifecycle.addContributorRole(contributorRole)
 
@@ -91,7 +101,7 @@ class ContributorRoleControllerTest(
   @Nested
   inner class DuplicateNames {
     @Test
-    @WithMockCustomUser(id = "1")
+    @WithMockCustomUser(id = OWNER_ID)
     fun `it should return bad request when creating a contributor role with a duplicate name in the library`() {
       contributorRoleLifecycle.addContributorRole(contributorRole)
 
@@ -115,7 +125,7 @@ class ContributorRoleControllerTest(
   @Nested
   inner class Delete {
     @Test
-    @WithMockCustomUser(id = "2")
+    @WithMockCustomUser(id = USER_ID)
     fun `it should return forbidden if a non-admin user tries to delete a contributor role from a library it does not have access`() {
       contributorRoleLifecycle.addContributorRole(contributorRole)
 
@@ -124,7 +134,7 @@ class ContributorRoleControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
     fun `it should return no content if an admin deletes a contributor role from any user`() {
       contributorRoleLifecycle.addContributorRole(contributorRole)
 

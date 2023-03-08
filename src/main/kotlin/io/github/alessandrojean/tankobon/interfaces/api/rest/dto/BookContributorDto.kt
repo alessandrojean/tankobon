@@ -1,12 +1,14 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.BookContributor
+import io.swagger.v3.oas.annotations.media.Schema
 
 data class BookContributorEntityDto(
   override val id: String,
   override val attributes: BookContributorAttributesDto,
   override var relationships: List<RelationDto>? = null,
 ) : EntityDto {
+  @Schema(type = "string", allowableValues = ["CONTRIBUTOR"])
   override val type = EntityType.CONTRIBUTOR
 }
 

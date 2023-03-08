@@ -35,11 +35,19 @@ class SeriesControllerTest(
   @Autowired private val userRepository: TankobonUserRepository,
 ) {
 
-  private val admin = TankobonUser("admin@example.org", "", true, id = "0")
-  private val owner = TankobonUser("user@example.org", "", true, id = "1")
-  private val user = TankobonUser("user2@example.org", "", false, id = "2")
-  private val library = makeLibrary("Library", "", id = "1", ownerId = "1")
-  private val series = Series("Series", id = "1", libraryId = "1")
+  companion object {
+    private const val ADMIN_ID = "1f7c1ddf-844a-47cf-aa5c-c42c4ca86728"
+    private const val OWNER_ID = "4d3f1893-ce2b-42f2-aadd-f692356257dc"
+    private const val USER_ID = "a68132c1-25d3-4f36-a1cf-ae674741d605"
+    private const val LIBRARY_ID = "2a9ad6ce-72ba-457a-9c98-c116708efabf"
+    private const val SERIES_ID = "dedb1ebd-24ae-43e8-a24d-810b1f9e2c16"
+  }
+
+  private val admin = TankobonUser("admin@example.org", "", true, id = ADMIN_ID)
+  private val owner = TankobonUser("user@example.org", "", true, id = OWNER_ID)
+  private val user = TankobonUser("user2@example.org", "", false, id = USER_ID)
+  private val library = makeLibrary("Library", "", id = LIBRARY_ID, ownerId = OWNER_ID)
+  private val series = Series("Series", id = SERIES_ID, libraryId = LIBRARY_ID)
 
   @BeforeAll
   fun setup() {
@@ -69,14 +77,14 @@ class SeriesControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(id = "2")
+    @WithMockCustomUser(id = USER_ID)
     fun `it should return forbidden when getting the series from a library the user does not have access`() {
       mockMvc.get("/api/v1/libraries/${library.id}/series")
         .andExpect { status { isForbidden() } }
     }
 
     @Test
-    @WithMockCustomUser(roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
     fun `it should return ok when getting the series from a library if the user is an admin`() {
       seriesLifecycle.addSeries(series)
 
@@ -93,7 +101,7 @@ class SeriesControllerTest(
   @Nested
   inner class DuplicateNames {
     @Test
-    @WithMockCustomUser(id = "1")
+    @WithMockCustomUser(id = OWNER_ID)
     fun `it should return bad request when creating a series with a duplicate name in the library`() {
       seriesLifecycle.addSeries(series)
 
@@ -117,7 +125,7 @@ class SeriesControllerTest(
   @Nested
   inner class Delete {
     @Test
-    @WithMockCustomUser(id = "2")
+    @WithMockCustomUser(id = USER_ID)
     fun `it should return forbidden if a non-admin user tries to delete a series from a library it does not have access`() {
       seriesLifecycle.addSeries(series)
 

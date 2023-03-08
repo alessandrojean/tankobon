@@ -32,7 +32,7 @@ class RedocController {
           </style>
         </head>
         <body>
-          <redoc spec-url="/v3/api-docs/REST%20API"></redoc>
+          <redoc spec-url="/api/api-docs"></redoc>
           <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
         </body>
       </html>

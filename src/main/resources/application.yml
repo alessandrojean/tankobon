@@ -62,6 +62,14 @@ management:
       enabled: true
 
 springdoc:
-  group-configs:
-    - group: REST API
-      paths-to-match: /api/**
+  writer-with-order-by-keys: true
+  api-docs:
+    path: /api/api-docs
+  swagger-ui:
+    groups-order: desc
+    operations-sorter: alpha
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    path: /api/swagger-ui.html
+    syntax-highlight:
+      theme: nord

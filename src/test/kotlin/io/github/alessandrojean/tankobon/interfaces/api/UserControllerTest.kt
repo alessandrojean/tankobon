@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.SpykBean
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.ROLE_USER
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
+import io.github.alessandrojean.tankobon.domain.model.makeUuid
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.TankobonUserLifecycle
 import io.mockk.verify
@@ -23,7 +24,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
@@ -36,10 +36,14 @@ class UserControllerTest(
   @Autowired private val userRepository: TankobonUserRepository,
 ) {
 
+  companion object {
+    private const val ADMIN_ID = "1f7c1ddf-844a-47cf-aa5c-c42c4ca86728"
+  }
+
   @SpykBean
   private lateinit var userLifecycle: TankobonUserLifecycle
 
-  private val admin = TankobonUser("admin@example.org", "", true, id = "admin")
+  private val admin = TankobonUser("admin@example.org", "", true, id = ADMIN_ID)
 
   @BeforeAll
   fun setup() {
@@ -78,15 +82,15 @@ class UserControllerTest(
   @Nested
   inner class Update {
     @Test
-    @WithMockCustomUser(id = "admin", roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
     fun `it should update the roles of an existing user without roles`() {
-      val user = TankobonUser("user@example.org", "", false, id = "user")
+      val user = TankobonUser("user@example.org", "", false, id = makeUuid())
       userLifecycle.createUser(user)
 
       val jsonString = """
         {
           "email": "${user.email}",
-          "roles": ["$ROLE_ADMIN", "$ROLE_USER"]
+          "roles": ["ROLE_$ROLE_ADMIN", "ROLE_$ROLE_USER"]
         }
       """.trimIndent()
 
@@ -108,15 +112,15 @@ class UserControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(id = "admin", roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
     fun `it should update the roles of an existing user with roles`() {
-      val user = TankobonUser("user@example.org", "", true, id = "user")
+      val user = TankobonUser("user@example.org", "", true, id = makeUuid())
       userLifecycle.createUser(user)
 
       val jsonString = """
         {
           "email": "${user.email}",
-          "roles": ["$ROLE_USER"]
+          "roles": ["ROLE_$ROLE_USER"]
         }
       """.trimIndent()
 
