@@ -21,8 +21,13 @@ class RedocController {
         <head>
           <title>Tankobon API documentation</title>
           <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <meta href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="preconnect" href="https://rsms.me/">
+          <link rel="preconnect" href="https://cdn.redoc.ly/">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+          <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
           
           <style>
             body {
@@ -32,8 +37,38 @@ class RedocController {
           </style>
         </head>
         <body>
-          <redoc spec-url="/api/api-docs"></redoc>
+          <div id="redoc-container"></div>
           <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+          <script>
+            const interFont = `'Inter', 'Helvetica Neue', Helvetica, Arial, ui-sans-serif, sans-serif`;
+            const jetbrainsMonoFont = `'JetBrains Mono', monospace`;
+            const redocOptions = {
+              sortOperationsAlphabetically: true,
+              sortTagsAlphabetically: true,
+              sidebarLinks: {
+                beforeInfo: [
+                  { label: 'GitHub', link: 'https://github.com/alessandrojean/tankobon', target: '_blank' },
+                ],
+              },
+              theme: {
+                typography: {
+                  fontFamily: interFont,
+                  code: {
+                    fontFamily: jetbrainsMonoFont,
+                    fontWeight: 500,
+                  },
+                  headings: {
+                    fontFamily: interFont,
+                    fontWeight: 700,
+                  },
+                  rightPanelHeading: { fontFamily: interFont },
+                },
+                sidebar: { fontFamily: interFont },
+              },
+            };
+            const redocContainer = document.getElementById('redoc-container');
+            Redoc.init('/api/api-docs', redocOptions, redocContainer);
+          </script>
         </body>
       </html>
     """.trimIndent()
