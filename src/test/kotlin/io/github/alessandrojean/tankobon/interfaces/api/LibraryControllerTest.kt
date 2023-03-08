@@ -30,14 +30,12 @@ class LibraryControllerTest(
 ) {
 
   companion object {
-    private const val ADMIN_ID = "a327ed61-f39f-44ce-bf01-1438e4a0f0f0"
     private const val OWNER_ID = "f779266a-d8e8-4e02-9886-0a125dc5ac1d"
     private const val LIBRARY_ID = "a9fe7a00-d573-4468-b117-c81cf02901cc"
   }
 
   private val route = "/api/v1/libraries"
 
-  private val admin = TankobonUser("admin@example.org", "", true, id = ADMIN_ID)
   private val owner = TankobonUser("user@example.org", "", false, id = OWNER_ID)
   private val library = makeLibrary("Library", "", id = LIBRARY_ID, ownerId = OWNER_ID)
 
@@ -72,14 +70,16 @@ class LibraryControllerTest(
           contentType = MediaType.APPLICATION_JSON
           content = jsonString
         }
-        .andExpect { status { isUnauthorized() } }
+        .andExpect {
+          status { isUnauthorized() }
+        }
     }
   }
 
   @Nested
   inner class UserRole {
     @Test
-    @WithMockCustomUser(id = ADMIN_ID, roles = [ROLE_ADMIN])
+    @WithMockCustomUser(roles = [ROLE_ADMIN])
     fun `it should return ok if the user has access to all libraries`() {
       mockMvc.get(route)
         .andExpect { status { isOk() } }

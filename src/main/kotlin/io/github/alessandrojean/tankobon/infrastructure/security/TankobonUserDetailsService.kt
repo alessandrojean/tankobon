@@ -12,8 +12,9 @@ class TankobonUserDetailsService(
 ) : UserDetailsService {
 
   override fun loadUserByUsername(username: String): UserDetails {
-    return userRepository.findByEmailIgnoreCaseOrNull(username)?.let {
-      TankobonPrincipal(it)
-    } ?: throw UsernameNotFoundException(username)
+    val user = userRepository.findByEmailIgnoreCaseOrNull(username)
+      ?: throw UsernameNotFoundException(username)
+
+    return TankobonPrincipal(user)
   }
 }

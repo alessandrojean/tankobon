@@ -2,6 +2,8 @@ package io.github.alessandrojean.tankobon.infrastructure.security
 
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.ROLE_USER
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.context.annotation.Bean
@@ -11,7 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 
 @Configuration
@@ -21,6 +25,10 @@ class SecurityConfiguration(
   private val sessionCookieName: String,
   private val userAgentWebAuthenticationDetailsSource: WebAuthenticationDetailsSource,
   private val sessionRegistry: SessionRegistry,
+  @Autowired @Qualifier("delegatedAuthenticationEntryPoint")
+  private val authenticationEntryPoint: AuthenticationEntryPoint,
+  @Autowired @Qualifier("delegatedAccessDeniedHandler")
+  private val accessDeniedHandler: AccessDeniedHandler,
 ) {
 
   @Bean
@@ -60,6 +68,7 @@ class SecurityConfiguration(
       }
       .httpBasic {
         it.authenticationDetailsSource(userAgentWebAuthenticationDetailsSource)
+        it.authenticationEntryPoint(authenticationEntryPoint)
       }
       .logout {
         it.logoutUrl("/api/logout")
@@ -72,6 +81,10 @@ class SecurityConfiguration(
           it.sessionRegistry(sessionRegistry)
           it.maximumSessions(-1)
         }
+      }
+      .exceptionHandling {
+        it.authenticationEntryPoint(authenticationEntryPoint)
+        it.accessDeniedHandler(accessDeniedHandler)
       }
 
     return http.build()

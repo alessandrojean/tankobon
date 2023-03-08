@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorResponseDto
 import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -55,6 +56,12 @@ class ErrorHandlingControllerAdvice {
       }
     )
   }
+
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  fun onHttpMessageNotReadableException(e: HttpMessageNotReadableException) =
+    e.toErrorResponseDto(HttpStatus.BAD_REQUEST)
 
   @ExceptionHandler(DuplicateNameException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -110,6 +117,11 @@ class ErrorHandlingControllerAdvice {
   fun onLibraryOwnerChangedException(e: LibraryOwnerChangedException) =
     e.toErrorResponseDto(HttpStatus.FORBIDDEN)
 
+  @ExceptionHandler(Exception::class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  fun onException(e: Exception) = e.toErrorResponseDto()
+
   private fun CodedException.toErrorResponseDto(status: HttpStatus = HttpStatus.BAD_REQUEST) = ErrorResponseDto(
     errors = listOf(toErrorDto(status))
   )
@@ -119,5 +131,16 @@ class ErrorHandlingControllerAdvice {
     status = status.value(),
     title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
     details = code.ifEmpty { message.orEmpty() },
+  )
+
+  private fun Exception.toErrorResponseDto(status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) = ErrorResponseDto(
+    errors = listOf(
+      ErrorDto(
+        id = javaClass.simpleName,
+        status = status.value(),
+        title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
+        details = message.orEmpty(),
+      ),
+    )
   )
 }

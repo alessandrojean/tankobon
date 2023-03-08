@@ -33,7 +33,7 @@ class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
   @PostMapping
   @Operation(summary = "Claim the server by creating a new admin user")
   fun claimAdmin(
-    @Email(regexp = ".+@.+z\\..+")
+    @Email(regexp = ".+@.+\\..+")
     @RequestHeader("X-Tankobon-Email")
     @Parameter(description = "Email of the new admin user to be created")
     @Schema(format = "email")
