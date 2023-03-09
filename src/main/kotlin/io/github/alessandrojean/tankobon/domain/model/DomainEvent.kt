@@ -41,4 +41,8 @@ sealed class DomainEvent : Serializable {
   data class BookAdded(val book: Book) : DomainEvent()
   data class BookUpdated(val book: Book) : DomainEvent()
   data class BookDeleted(val book: Book) : DomainEvent()
+
+  data class ReadProgressAdded(val readProgress: ReadProgress) : DomainEvent()
+  data class ReadProgressUpdated(val readProgress: ReadProgress) : DomainEvent()
+  data class ReadProgressDeleted(val readProgress: ReadProgress) : DomainEvent()
 }

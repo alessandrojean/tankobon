@@ -15,12 +15,6 @@ class WebMvcConfiguration : WebMvcConfigurer {
         .addResourceHandler("/webjars/**")
         .addResourceLocations("classpath:/META-INF/resources/webjars/")
     }
-
-    if (!registry.hasMappingForPattern("/swagger-ui.html**")) {
-      registry
-        .addResourceHandler("/swagger-ui.html**")
-        .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html")
-    }
   }
 
   override fun addInterceptors(registry: InterceptorRegistry) {

@@ -1,6 +1,5 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
@@ -33,15 +32,10 @@ data class BookAttributesDto(
   val pageCount: Int,
   val synopsis: String,
   val notes: String,
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   val boughtAt: LocalDateTime?,
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   val billedAt: LocalDateTime?,
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   val arrivedAt: LocalDateTime?,
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   val createdAt: LocalDateTime?,
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
   val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
 

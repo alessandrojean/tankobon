@@ -25,3 +25,4 @@ class IdDoesNotExistException(message: String, code: String = "") : CodedExcepti
 class CantChangePasswordInDemoModeException(message: String = "Changing the password is not allowed in demo mode", code: String = "") : CodedException(message, code)
 class LibraryOwnerChangedException(message: String = "Only administrators can change a library owner", code: String = "") : CodedException(message, code)
 class ServerAlreadyClaimedException(message: String = "This server has already been claimed", code: String = "") : CodedException(message, code)
+class FinishedDateIsBeforeStartedDateException(message: String = "The finished date is before the started date", code: String = "") : CodedException(message, code)

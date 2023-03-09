@@ -66,7 +66,7 @@ dependencies {
 
 	run {
 		val springdocVersion = "2.0.2"
-		implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
+		implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:$springdocVersion")
 		implementation("org.springdoc:springdoc-openapi-starter-common:$springdocVersion")
 	}
 

@@ -92,6 +92,7 @@ enum class EntityType {
   TAG,
   BOOK,
   CONTRIBUTOR,
+  READ_PROGRESS,
 }
 
 enum class RelationshipType {

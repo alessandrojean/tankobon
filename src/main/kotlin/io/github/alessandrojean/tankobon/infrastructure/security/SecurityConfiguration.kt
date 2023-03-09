@@ -45,8 +45,6 @@ class SecurityConfiguration(
             "/api/v1/system-status",
             "/api/v1/claim",
             "/api",
-            "/api/swagger-ui.html",
-            "/api/swagger-ui/**",
             "/api/api-docs/**",
             "/set-cookie",
             "/error**",
