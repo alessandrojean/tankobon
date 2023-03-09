@@ -1,6 +1,8 @@
 package io.github.alessandrojean.tankobon.domain.model
 
+import org.javamoney.moneta.FastMoney
 import java.util.UUID
+import javax.money.MonetaryAmount
 
 fun makeUuid(): String = UUID.randomUUID().toString()
 
@@ -19,8 +21,8 @@ fun makeLibrary(
 fun makeBook(
   code: String = makeUuid(),
   title: String = "default",
-  paidPrice: MonetaryValue = MonetaryValue(currency = "USD", value = 10.99f),
-  labelPrice: MonetaryValue = MonetaryValue(currency = "USD", value = 9.99f),
+  paidPrice: MonetaryAmount = FastMoney.of(10.99f, "USD"),
+  labelPrice: MonetaryAmount = FastMoney.of(9.99f, "USD"),
   dimensions: Dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
   id: String = makeUuid(),
   collectionId: String = "0",

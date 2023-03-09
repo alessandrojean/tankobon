@@ -10,9 +10,11 @@ import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistExce
 import io.github.alessandrojean.tankobon.domain.model.RelationIsNotFromSameLibraryException
 import io.github.alessandrojean.tankobon.domain.model.ServerAlreadyClaimedException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
+import io.github.alessandrojean.tankobon.domain.model.UserEmailAlreadyExistsException
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorResponseDto
 import jakarta.validation.ConstraintViolationException
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -23,7 +25,14 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @ControllerAdvice(annotations = [RestController::class])
-class ErrorHandlingControllerAdvice {
+class ErrorHandlingControllerAdvice(
+  private val environment: Environment,
+) {
+
+  private val showStackTrace by lazy {
+    environment.activeProfiles.contains("dev") ||
+      environment.activeProfiles.contains("test")
+  }
 
   @ExceptionHandler(ConstraintViolationException::class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -67,6 +76,12 @@ class ErrorHandlingControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
   fun onDuplicateNameException(e: DuplicateNameException) =
+    e.toErrorResponseDto()
+
+  @ExceptionHandler(UserEmailAlreadyExistsException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  fun onUserEmailAlreadyExistsException(e: UserEmailAlreadyExistsException) =
     e.toErrorResponseDto()
 
   @ExceptionHandler(DuplicateCodeException::class)
@@ -131,6 +146,7 @@ class ErrorHandlingControllerAdvice {
     status = status.value(),
     title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
     details = code.ifEmpty { message.orEmpty() },
+    stackTrace = stackTraceToString().takeIf { showStackTrace }
   )
 
   private fun Exception.toErrorResponseDto(status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) = ErrorResponseDto(
@@ -140,6 +156,7 @@ class ErrorHandlingControllerAdvice {
         status = status.value(),
         title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
         details = message.orEmpty(),
+        stackTrace = stackTraceToString().takeIf { showStackTrace },
       ),
     )
   )

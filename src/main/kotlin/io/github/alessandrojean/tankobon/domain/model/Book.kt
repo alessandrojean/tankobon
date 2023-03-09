@@ -3,12 +3,13 @@ package io.github.alessandrojean.tankobon.domain.model
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.money.MonetaryAmount
 
 data class Book(
   val code: String,
   val title: String,
-  val paidPrice: MonetaryValue,
-  val labelPrice: MonetaryValue,
+  val paidPrice: MonetaryAmount,
+  val labelPrice: MonetaryAmount,
   val dimensions: Dimensions,
 
   val id: String = UUID.randomUUID().toString(),

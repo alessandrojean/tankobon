@@ -48,9 +48,9 @@ data class LibraryCreationDto(
 data class LibraryUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
-  @get:UUID(version = [4])
+  @get:NullOrUuid
   @get:Schema(format = "uuid")
-  val owner: String,
+  val owner: String? = null,
   @get:Schema(type = "array", format = "uuid")
   val sharedUsers: Set<@UUID(version = [4]) String> = emptySet()
 )

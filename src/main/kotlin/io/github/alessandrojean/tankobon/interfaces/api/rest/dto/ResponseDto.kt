@@ -18,13 +18,14 @@ data class ErrorResponseDto(val errors: List<ErrorDto>) : ResponseDto {
   override val result = ResultDto.ERROR
 }
 
+@JsonInclude(Include.NON_NULL)
 data class ErrorDto(
   val id: String,
   val status: Int,
   val title: String,
   val details: String,
+  val stackTrace: String? = null
 )
-
 
 abstract class SuccessResponseDto<T>(val data: T) : ResponseDto {
   @Schema(type = "string", allowableValues = ["OK"])

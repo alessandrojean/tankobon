@@ -1,5 +1,8 @@
 package io.github.alessandrojean.tankobon.infrastructure.swagger
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.swagger.v3.core.jackson.ModelResolver
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.OpenAPI
@@ -8,6 +11,7 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
 import org.springdoc.core.customizers.OpenApiCustomizer
+import org.springdoc.core.utils.SpringDocUtils
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -89,6 +93,27 @@ class SwaggerConfiguration {
       .sortedBy { it.name }
       .map { it.apply { name = name.replace(NUMERIC_HEADER_REGEX, "") } }
   }
+
+  @Bean
+  fun modelResolver(objectMapper: ObjectMapper) = ModelResolver(objectMapper)
+
+  init {
+    // https://github.com/springdoc/springdoc-openapi/issues/66
+    SpringDocUtils.getConfig()
+      .replaceWithClass(javax.money.MonetaryAmount::class.java, MonetaryAmountDto::class.java)
+  }
+
+  data class MonetaryAmountDto(
+    @get:Schema(example = "10.99")
+    val amount: Float,
+    @get:Schema(
+      format = "iso-4217",
+      pattern = "^[A-Z]{3}$",
+      example = "USD",
+      description = "[ISO 4217](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes) currency code"
+    )
+    val currency: String
+  )
 
   companion object {
     private val NUMERIC_HEADER_REGEX = "^\\d+\\. ".toRegex()

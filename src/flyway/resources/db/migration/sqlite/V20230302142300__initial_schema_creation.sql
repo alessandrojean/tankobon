@@ -120,7 +120,7 @@ create table if not exists Book(
   page_count int not null default 0,
   notes varchar not null default '',
 
-  foreign key (collection_id) references Collection (id) on delete set null,
+  foreign key (collection_id) references Collection (id) on delete cascade,
   foreign key (store_id) references Store (id) on delete set null,
   foreign key (series_id) references Series (id) on delete set null
 );

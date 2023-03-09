@@ -7,7 +7,6 @@ import io.github.alessandrojean.tankobon.domain.model.BookSearch
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
 import io.github.alessandrojean.tankobon.domain.model.LibraryItem
-import io.github.alessandrojean.tankobon.domain.model.MonetaryValue
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
@@ -19,17 +18,15 @@ import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfData
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.DimensionsDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.MonetaryValueDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import io.github.alessandrojean.tankobon.jooq.Tables
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
+import org.javamoney.moneta.FastMoney
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -313,8 +310,8 @@ class BookDtoDao(
   private fun BookCreationDto.toDomain() = Book(
     code = code,
     title = title,
-    paidPrice = MonetaryValue(paidPrice.currency, paidPrice.value),
-    labelPrice = MonetaryValue(labelPrice.currency, labelPrice.value),
+    paidPrice = paidPrice,
+    labelPrice = labelPrice,
     dimensions = Dimensions(dimensions.widthCm, dimensions.heightCm),
     collectionId = collection,
     storeId = store,
@@ -460,14 +457,8 @@ class BookDtoDao(
   private fun BookRecord.toDomain() = Book(
     code = code,
     title = title,
-    paidPrice = MonetaryValue(
-      currency = paidPriceCurrency,
-      value = paidPriceValue,
-    ),
-    labelPrice = MonetaryValue(
-      currency = labelPriceCurrency,
-      value = labelPriceValue
-    ),
+    paidPrice = FastMoney.of(paidPriceValue, paidPriceCurrency),
+    labelPrice = FastMoney.of(labelPriceValue, labelPriceCurrency),
     dimensions = Dimensions(
       widthCm = dimensionWidthCm,
       heightCm = dimensionHeightCm,

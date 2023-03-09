@@ -2,10 +2,10 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
-import io.github.alessandrojean.tankobon.domain.model.MonetaryValue
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
+import org.javamoney.moneta.FastMoney
 import org.jooq.DSLContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -119,10 +119,10 @@ class BookDao(
       .set(TableBook.SERIES_ID, book.seriesId)
       .set(TableBook.TITLE, book.title)
       .set(TableBook.IS_IN_LIBRARY, book.isInLibrary)
-      .set(TableBook.PAID_PRICE_CURRENCY, book.paidPrice.currency)
-      .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.value)
-      .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency)
-      .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.value)
+      .set(TableBook.PAID_PRICE_CURRENCY, book.paidPrice.currency.currencyCode)
+      .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.number.toFloat())
+      .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency.currencyCode)
+      .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.number.toFloat())
       .set(TableBook.DIMENSION_WIDTH_CM, book.dimensions.widthCm)
       .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
       .set(TableBook.NUMBER, book.number)
@@ -145,10 +145,10 @@ class BookDao(
       .set(TableBook.SERIES_ID, book.seriesId)
       .set(TableBook.TITLE, book.title)
       .set(TableBook.IS_IN_LIBRARY, book.isInLibrary)
-      .set(TableBook.PAID_PRICE_CURRENCY, book.paidPrice.currency)
-      .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.value)
-      .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency)
-      .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.value)
+      .set(TableBook.PAID_PRICE_CURRENCY, book.paidPrice.currency.currencyCode)
+      .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.number.toFloat())
+      .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency.currencyCode)
+      .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.number.toFloat())
       .set(TableBook.DIMENSION_WIDTH_CM, book.dimensions.widthCm)
       .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
       .set(TableBook.NUMBER, book.number)
@@ -176,14 +176,8 @@ class BookDao(
   private fun BookRecord.toDomain() = Book(
     code = code,
     title = title,
-    paidPrice = MonetaryValue(
-      currency = paidPriceCurrency,
-      value = paidPriceValue,
-    ),
-    labelPrice = MonetaryValue(
-      currency = labelPriceCurrency,
-      value = labelPriceValue
-    ),
+    paidPrice = FastMoney.of(paidPriceValue, paidPriceCurrency),
+    labelPrice = FastMoney.of(labelPriceValue, labelPriceCurrency),
     dimensions = Dimensions(
       widthCm = dimensionWidthCm,
       heightCm = dimensionHeightCm,

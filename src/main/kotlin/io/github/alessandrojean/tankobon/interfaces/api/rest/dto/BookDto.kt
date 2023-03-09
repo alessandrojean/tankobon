@@ -7,8 +7,10 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.UUID
 import java.time.LocalDateTime
+import javax.money.MonetaryAmount
 
 data class BookEntityDto(
   override val id: String,
@@ -23,8 +25,8 @@ data class BookAttributesDto(
   val code: String,
   val barcode: String?,
   val title: String,
-  val paidPrice: MonetaryValueDto,
-  val labelPrice: MonetaryValueDto,
+  val paidPrice: MonetaryAmount,
+  val labelPrice: MonetaryAmount,
   val dimensions: DimensionsDto,
   val isInLibrary: Boolean,
   val number: String,
@@ -47,14 +49,8 @@ fun Book.toAttributesDto() = BookAttributesDto(
   code = code,
   barcode = barcode,
   title = title,
-  paidPrice = MonetaryValueDto(
-    currency = paidPrice.currency,
-    value = paidPrice.value,
-  ),
-  labelPrice = MonetaryValueDto(
-    currency = labelPrice.currency,
-    value = labelPrice.value,
-  ),
+  paidPrice = paidPrice,
+  labelPrice = labelPrice,
   dimensions = DimensionsDto(
     widthCm = dimensions.widthCm,
     heightCm = dimensions.heightCm,
@@ -96,22 +92,29 @@ data class BookCreationDto(
   @get:Schema(description = "The barcode printed in the book cover")
   val barcode: String? = null,
   @get:NotBlank val title: String,
-  val paidPrice: MonetaryValueDto,
-  val labelPrice: MonetaryValueDto,
+  @get:NotNull
+  val paidPrice: MonetaryAmount,
+  @get:NotNull
+  val labelPrice: MonetaryAmount,
+  @get:NotNull
   val dimensions: DimensionsDto,
   @get:Schema(description = "If the book is a future and planned acquisition, set as `false`")
   val isInLibrary: Boolean,
+  @get:NotBlank
   @get:Schema(description = "If the book is part of a series, this will control the order")
   val number: String,
+  @get:NotNull
   val pageCount: Int,
+  @get:NotNull
   val synopsis: String,
+  @get:NotNull
   @get:Schema(description = "Personal user notes about the book")
   val notes: String,
-  @get:NullOrNotBlank val boughtAt: LocalDateTime?,
-  @get:NullOrNotBlank
+  @get:NotNull val boughtAt: LocalDateTime?,
+  @get:NotNull
   @get:Schema(description = "Date of payment, useful for pre-orders like Amazon ones")
   val billedAt: LocalDateTime?,
-  @get:NullOrNotBlank
+  @get:NotNull
   @get:Schema(description = "Date of delivery and arrival of the book")
   val arrivedAt: LocalDateTime?,
 )
@@ -119,15 +122,21 @@ data class BookCreationDto(
 typealias BookUpdateDto = BookCreationDto
 
 data class BookContributorCreationDto(
+  @get:NotBlank
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val person: String,
+  @get:NotBlank
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val role: String,
 )
 
 data class DimensionsDto(
+  @get:NotNull
+  @get:Schema(example = "13.2")
   val widthCm: Float,
+  @get:NotNull
+  @get:Schema(example = "20.0")
   val heightCm: Float,
 )

@@ -61,6 +61,9 @@ dependencies {
 	implementation("com.ibm.icu:icu4j:72.1")
 	implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
 
+	implementation("org.javamoney:moneta:1.4.2")
+	implementation("org.zalando:jackson-datatype-money:1.3.0")
+
 	run {
 		val springdocVersion = "2.0.2"
 		implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")

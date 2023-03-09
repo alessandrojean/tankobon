@@ -130,7 +130,7 @@ class LibraryController(
     val owner = userRepository.findByIdOrNull(ownerId)
       ?: throw RelationIdDoesNotExistException("User not found")
 
-    if (owner.id == library.owner && !principal.user.isAdmin) {
+    if (owner.id != principal.user.id && !principal.user.isAdmin) {
       throw UserDoesNotHaveAccessException()
     }
 
@@ -174,18 +174,18 @@ class LibraryController(
     val existing = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
-    if (existing.ownerId != library.owner && !principal.user.isAdmin) {
+    if (library.owner != null && existing.ownerId != library.owner && !principal.user.isAdmin) {
       throw LibraryOwnerChangedException()
     }
 
-    if (userRepository.findByIdOrNull(library.owner) == null) {
+    if (library.owner != null && userRepository.findByIdOrNull(library.owner) == null) {
       throw RelationIdDoesNotExistException("User not found")
     }
 
     val toUpdate = existing.copy(
       name = library.name,
       description = library.description,
-      ownerId = library.owner,
+      ownerId = library.owner ?: existing.ownerId,
       sharedUsersIds = library.sharedUsers,
     )
 

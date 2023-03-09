@@ -3,7 +3,6 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
-import io.github.alessandrojean.tankobon.domain.model.MonetaryValue
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeBook
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
@@ -11,6 +10,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.javamoney.moneta.FastMoney
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -60,8 +60,8 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
-      paidPrice = MonetaryValue(currency = "USD", value = 10.99f),
-      labelPrice = MonetaryValue(currency = "USD", value = 9.99f),
+      paidPrice = FastMoney.of(10.99f, "USD"),
+      labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
       collectionId = collection.id,
       barcode = "12345",
@@ -76,10 +76,8 @@ class BookDaoTest(
     with(created) {
       assertThat(id).isEqualTo(book.id)
       assertThat(code).isEqualTo(book.code)
-      assertThat(paidPrice.currency).isEqualTo(book.paidPrice.currency)
-      assertThat(paidPrice.value).isEqualTo(book.paidPrice.value)
-      assertThat(labelPrice.currency).isEqualTo(book.labelPrice.currency)
-      assertThat(labelPrice.value).isEqualTo(book.labelPrice.value)
+      assertThat(paidPrice).isEqualTo(book.paidPrice)
+      assertThat(labelPrice).isEqualTo(book.labelPrice)
       assertThat(dimensions.widthCm).isEqualTo(book.dimensions.widthCm)
       assertThat(dimensions.heightCm).isEqualTo(book.dimensions.heightCm)
       assertThat(collectionId).isEqualTo(book.collectionId)
@@ -99,8 +97,8 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
-      paidPrice = MonetaryValue(currency = "USD", value = 10.99f),
-      labelPrice = MonetaryValue(currency = "USD", value = 9.99f),
+      paidPrice = FastMoney.of(10.99f, "USD"),
+      labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
       collectionId = collection.id,
       barcode = "12345",
@@ -118,7 +116,7 @@ class BookDaoTest(
         boughtAt = modificationDate.toUtcTimeZone(),
         billedAt = modificationDate.toUtcTimeZone(),
         arrivedAt = modificationDate.toUtcTimeZone(),
-        paidPrice = paidPrice.copy(value = 5.99f)
+        paidPrice = FastMoney.of(5.99f, "USD")
       )
     }
 
@@ -128,8 +126,7 @@ class BookDaoTest(
     with(modified) {
       assertThat(id).isEqualTo(updated.id)
       assertThat(code).isEqualTo(updated.code)
-      assertThat(paidPrice.currency).isEqualTo(updated.paidPrice.currency)
-      assertThat(paidPrice.value).isEqualTo(updated.paidPrice.value)
+      assertThat(paidPrice).isEqualTo(updated.paidPrice)
       assertThat(collectionId).isEqualTo(updated.collectionId)
       assertThat(barcode).isEqualTo(updated.barcode)
       assertThat(boughtAt).isEqualToIgnoringNanos(modificationDate)
@@ -148,8 +145,8 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
-      paidPrice = MonetaryValue(currency = "USD", value = 10.99f),
-      labelPrice = MonetaryValue(currency = "USD", value = 9.99f),
+      paidPrice = FastMoney.of(10.99f, "USD"),
+      labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
       collectionId = collection.id,
       barcode = "12345",
