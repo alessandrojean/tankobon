@@ -42,7 +42,17 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-@Tag(name = "Library", description = "Operations regarding libraries")
+@Tag(
+  name = "Library",
+  description = """
+Libraries can store a collection of items related to the books, such as
+publishers, people, collections, series, and tags. Each library belongs
+to a single user, but can be shared with others if the user wants to.
+
+The items created inside a library can't be accessed and used by books
+in other libraries as each library is meant by design to be independent.
+  """
+)
 class LibraryController(
   private val libraryRepository: LibraryRepository,
   private val libraryLifecycle: LibraryLifecycle,

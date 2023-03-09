@@ -20,6 +20,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -100,6 +101,11 @@ class BookControllerTest(
     userRepository.deleteAll()
   }
 
+  @AfterEach
+  fun deleteBooks() {
+    bookRepository.deleteAll()
+  }
+
   @Nested
   inner class Creation {
     @Test
@@ -153,6 +159,65 @@ class BookControllerTest(
           jsonPath("$.response") { value("ENTITY") }
           jsonPath("$.data.type") { value("BOOK") }
           jsonPath("$.data.attributes.title") { value("Akira #01: Part 1 - Tetsuo") }
+        }
+    }
+
+    @Test
+    @WithMockCustomUser(id = OWNER_ID)
+    fun `it should return bad request if the user tries to create a book with items from different libraries`() {
+      val library2 = makeLibrary("Library2", "", ownerId = OWNER_ID)
+      libraryRepository.insert(library2)
+
+      val otherSeries = Series("Other series", libraryId = library2.id)
+      seriesRepository.insert(otherSeries)
+
+      mockMvc
+        .post(route) {
+          contentType = MediaType.APPLICATION_JSON
+          content = """
+            {
+              "arrivedAt": "2023-03-08T17:52:59.414Z",
+              "barcode": "9788545702870",
+              "billedAt": "2023-03-08T17:52:59.414Z",
+              "boughtAt": "2023-03-08T17:52:59.414Z",
+              "code": "9788545702870",
+              "collection": "$COLLECTION_ID",
+              "contributors": [
+                {
+                  "person": "$PERSON_ID",
+                  "role": "$CONTRIBUTOR_ROLE_ID"
+                }
+              ],
+              "dimensions": {
+                "heightCm": 25.6,
+                "widthCm": 17.8
+              },
+              "isInLibrary": true,
+              "labelPrice": {
+                "currency": "BRL",
+                "amount": 69.9
+              },
+              "notes": "",
+              "number": "1",
+              "pageCount": 300,
+              "paidPrice": {
+                "currency": "BRL",
+                "amount": 69.9
+              },
+              "publishers": ["$PUBLISHER_ID"],
+              "series": "${otherSeries.id}",
+              "store": "$STORE_ID",
+              "synopsis": "Synopsis",
+              "tags": ["$TAG_ID"],
+              "title": "Akira #01: Part 1 - Tetsuo"
+            }
+          """.trimIndent()
+        }
+        .andExpect {
+          status { isBadRequest() }
+          jsonPath("$.result") { value("ERROR") }
+          jsonPath("$.errors.length()") { value(1) }
+          jsonPath("$.errors[0].id") { value("RelationIsNotFromSameLibraryException") }
         }
     }
   }
