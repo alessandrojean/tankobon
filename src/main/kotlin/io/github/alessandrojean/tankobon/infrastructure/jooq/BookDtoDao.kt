@@ -24,7 +24,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
-import io.github.alessandrojean.tankobon.jooq.Tables
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
 import org.javamoney.moneta.FastMoney
 import org.jooq.Condition
@@ -43,6 +42,7 @@ import io.github.alessandrojean.tankobon.jooq.Tables.BOOK as TableBook
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_CONTRIBUTOR as TableBookContributor
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_PUBLISHER as TableBookPublisher
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_TAG as TableBookTag
+import io.github.alessandrojean.tankobon.jooq.Tables.COLLECTION as TableCollection
 
 @Component
 class BookDtoDao(
@@ -112,8 +112,8 @@ class BookDtoDao(
       val count = dsl.fetchCount(
         dsl.select(TableBook.ID)
           .from(TableBook)
-          .leftJoin(Tables.COLLECTION)
-          .on(Tables.COLLECTION.ID.eq(TableBook.COLLECTION_ID))
+          .leftJoin(TableCollection)
+          .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
           .where(conditions)
           .groupBy(TableBook.ID)
       )
@@ -125,11 +125,11 @@ class BookDtoDao(
       val books = dsl
         .select(
           *TableBook.fields(),
-          *Tables.COLLECTION.fields(),
+          *TableCollection.fields(),
         )
         .from(TableBook)
-        .leftJoin(Tables.COLLECTION)
-        .on(Tables.COLLECTION.ID.eq(TableBook.COLLECTION_ID))
+        .leftJoin(TableCollection)
+        .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
         .where(conditions)
         .orderBy(orderBy)
         .apply {
@@ -365,14 +365,14 @@ class BookDtoDao(
     transactionTemplate.executeWithoutResult {
       dsl.insertTempStrings(batchSize, bookIds)
 
-      publishers = dsl.select(TableBookPublisher.PUBLISHER_ID)
+      publishers = dsl.select(*TableBookPublisher.fields())
         .from(TableBookPublisher)
         .where(TableBookPublisher.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookPublisher.BOOK_ID) }) { record ->
           RelationDto(record.get(TableBookPublisher.PUBLISHER_ID), RelationshipType.PUBLISHER)
         }
 
-      tags = dsl.select(TableBookTag.TAG_ID)
+      tags = dsl.select(*TableBookTag.fields())
         .from(TableBookTag)
         .where(TableBookTag.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookTag.BOOK_ID) }) { record ->
@@ -380,7 +380,7 @@ class BookDtoDao(
         }
 
       contributors = dsl
-        .select(TableBookContributor.PERSON_ID)
+        .select(*TableBookContributor.fields())
         .from(TableBookContributor)
         .where(TableBookContributor.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookContributor.BOOK_ID) }) { record ->
@@ -388,13 +388,13 @@ class BookDtoDao(
         }
 
       libraries = dsl
-        .select(Tables.COLLECTION.LIBRARY_ID, TableBook.ID)
+        .select(TableCollection.LIBRARY_ID, TableBook.ID)
         .from(TableBook)
-        .leftJoin(Tables.COLLECTION)
-        .on(Tables.COLLECTION.ID.eq(TableBook.COLLECTION_ID))
+        .leftJoin(TableCollection)
+        .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
         .where(TableBook.ID.`in`(dsl.selectTempStrings()))
         .fetch()
-        .associate { it[TableBook.ID] to RelationDto(it[Tables.COLLECTION.LIBRARY_ID], RelationshipType.LIBRARY) }
+        .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], RelationshipType.LIBRARY) }
     }
 
     return map { book ->
@@ -420,11 +420,11 @@ class BookDtoDao(
 
       val libraryCondition = when {
         user.isAdmin && !libraryIds.isNullOrEmpty() ->
-          Tables.COLLECTION.LIBRARY_ID.`in`(libraryIds)
+          TableCollection.LIBRARY_ID.`in`(libraryIds)
 
         user.isAdmin -> DSL.noCondition()
         !libraryIds.isNullOrEmpty() ->
-          Tables.COLLECTION.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+          TableCollection.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
 
         else -> DSL.noCondition()
       }

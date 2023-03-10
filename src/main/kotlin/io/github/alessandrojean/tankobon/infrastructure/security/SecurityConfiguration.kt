@@ -46,6 +46,7 @@ class SecurityConfiguration(
             "/api/v1/claim",
             "/api",
             "/api/api-docs/**",
+            "/images/**",
             "/set-cookie",
             "/error**",
             "/css/**",

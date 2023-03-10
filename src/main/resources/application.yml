@@ -18,6 +18,7 @@ tankobon:
   lucene:
     data-directory: \${tankobon.config-dir}/lucene
   config-dir: \${user.home}/.tankobon
+  images-dir: \${tankobon.config-dir}/images
   session-timeout: 7d
 
 spring:

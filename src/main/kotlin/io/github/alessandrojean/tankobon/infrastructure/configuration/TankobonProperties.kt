@@ -1,6 +1,8 @@
 package io.github.alessandrojean.tankobon.infrastructure.configuration
 
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.convert.DurationUnit
@@ -20,7 +22,13 @@ class TankobonProperties {
 
   var lucene = Lucene()
 
-  var configDir: String? = null
+  @NotNull
+  @NotEmpty
+  var configDir: String = ""
+
+  @NotNull
+  @NotEmpty
+  var imagesDir: String = ""
 
   @DurationUnit(ChronoUnit.SECONDS)
   var sessionTimeout: Duration = Duration.ofMinutes(30)

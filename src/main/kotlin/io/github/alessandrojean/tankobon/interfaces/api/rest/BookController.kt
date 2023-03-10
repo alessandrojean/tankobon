@@ -9,6 +9,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.service.BookLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
+import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @Validated
 @RestController
@@ -56,6 +58,7 @@ class BookController(
   private val bookDtoRepository: BookDtoRepository,
   private val libraryRepository: LibraryRepository,
   private val collectionRepository: CollectionRepository,
+  private val bookCoverLifecycle: BookCoverLifecycle,
   private val referenceExpansion: ReferenceExpansion,
 ) {
 
@@ -192,6 +195,25 @@ class BookController(
     return SuccessEntityResponseDto(created)
   }
 
+  @PostMapping("v1/books/{bookId}/cover", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Upload a cover to a book by its id")
+  fun uploadBookCover(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @RequestParam("cover") coverFile: MultipartFile,
+  ) {
+    val libraryId = bookRepository.getLibraryIdOrNull(bookId)
+      ?: throw IdDoesNotExistException("Book not found")
+    val library = libraryRepository.findById(libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    bookCoverLifecycle.createCover(bookId, coverFile.bytes)
+  }
+
   @PutMapping("v1/books/{bookId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Modify a book by its id")
@@ -229,5 +251,24 @@ class BookController(
     }
 
     bookLifecycle.deleteBook(existing)
+  }
+
+  @DeleteMapping("v1/books/{bookId}/cover")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Delete a book cover by its id")
+  fun deleteBookCover(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String
+  ) {
+    val existing = bookRepository.findByIdOrNull(bookId)
+      ?: throw IdDoesNotExistException("Book not found")
+
+    val library = libraryRepository.findById(bookRepository.getLibraryIdOrNull(existing.id)!!)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    bookCoverLifecycle.deleteCover(bookId)
   }
 }

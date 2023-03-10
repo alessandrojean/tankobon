@@ -4,6 +4,7 @@ import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.annotation.Nullable
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -73,7 +74,7 @@ data class BookCreationDto(
   @get:Schema(format = "uuid")
   val series: String? = null,
   @get:NotEmpty
-  val contributors: List<BookContributorCreationDto>,
+  val contributors: List<@NotNull BookContributorCreationDto>,
   @get:NotEmpty
   @get:Schema(type = "array", format = "uuid")
   val publishers: Set<@UUID(version = [4]) String>,
@@ -104,11 +105,11 @@ data class BookCreationDto(
   @get:NotNull
   @get:Schema(description = "Personal user notes about the book")
   val notes: String,
-  @get:NotNull val boughtAt: LocalDateTime?,
-  @get:NotNull
+  @get:Nullable val boughtAt: LocalDateTime?,
+  @get:Nullable
   @get:Schema(description = "Date of payment, useful for pre-orders like Amazon ones")
   val billedAt: LocalDateTime?,
-  @get:NotNull
+  @get:Nullable
   @get:Schema(description = "Date of delivery and arrival of the book")
   val arrivedAt: LocalDateTime?,
 )
