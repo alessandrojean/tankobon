@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.data:spring-data-commons")
 	implementation("org.springframework.session:spring-session-core")
 	implementation("com.github.gotson:spring-session-caffeine:1.0.3")
@@ -44,6 +45,7 @@ dependencies {
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.apache.activemq:artemis-jms-server:2.28.0")
 	implementation("com.github.ben-manes.caffeine:caffeine:3.1.4")
+	implementation("net.coobird:thumbnailator:0.4.19")
 
 	implementation("org.xerial:sqlite-jdbc:3.41.0.0")
   jooqGenerator("org.xerial:sqlite-jdbc:3.41.0.0")

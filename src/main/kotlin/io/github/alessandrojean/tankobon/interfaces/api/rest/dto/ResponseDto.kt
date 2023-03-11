@@ -93,6 +93,7 @@ enum class EntityType {
   BOOK,
   CONTRIBUTOR,
   READ_PROGRESS,
+  EXTERNAL_BOOK,
 }
 
 enum class RelationshipType {
@@ -109,6 +110,7 @@ enum class RelationshipType {
   BOOK,
   CONTRIBUTOR_ROLE,
   PERSON,
+  IMPORTER_SOURCE,
 }
 
 fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =
