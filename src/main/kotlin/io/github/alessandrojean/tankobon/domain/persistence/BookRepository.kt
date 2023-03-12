@@ -18,6 +18,8 @@ interface BookRepository {
   fun findAllIdsBySeriesId(seriesId: String): Collection<String>
   fun findAllIdsByLibraryId(libraryId: String): Collection<String>
 
+  fun existsByCode(code: String): Boolean
+
   fun getLibraryIdOrNull(bookId: String): String?
 
   fun insert(book: Book)

@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.domain.model
 
+import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
@@ -23,6 +24,9 @@ data class Book(
   val pageCount: Int = 0,
   val synopsis: String = "",
   val notes: String = "",
+
+  val source: ImporterSource? = null,
+  val sourceBookId: String? = null,
 
   /**
    * Assumed to be in the UTC timezone.

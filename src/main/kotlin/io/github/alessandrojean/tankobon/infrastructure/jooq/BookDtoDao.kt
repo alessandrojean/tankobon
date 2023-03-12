@@ -15,6 +15,7 @@ import io.github.alessandrojean.tankobon.domain.model.Tag
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
@@ -58,6 +59,7 @@ class BookDtoDao(
   private val personDao: PersonDao,
   private val publisherDao: PublisherDao,
   private val bookContributorDao: BookContributorDao,
+  private val bookCoverLifecycle: BookCoverLifecycle,
   private val luceneHelper: LuceneHelper,
   private val transactionTemplate: TransactionTemplate,
   @Value("#{@tankobonProperties.database.batchChunkSize}") private val batchSize: Int,
@@ -339,15 +341,19 @@ class BookDtoDao(
       .fetch { RelationDto(it.get(TableBookTag.TAG_ID), RelationshipType.TAG) }
 
     val contributors = dsl
-      .select(TableBookContributor.PERSON_ID)
+      .select(TableBookContributor.ID)
       .from(TableBookContributor)
       .where(TableBookContributor.BOOK_ID.eq(id))
-      .fetch { RelationDto(it.get(TableBookContributor.PERSON_ID), RelationshipType.CONTRIBUTOR) }
+      .fetch { RelationDto(it.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR) }
 
     val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, RelationshipType.LIBRARY)
 
+    val cover = RelationDto(id, RelationshipType.COVER_ART)
+      .takeIf { bookCoverLifecycle.hasCover(id) }
+
     return toDto(
       library = library,
+      cover = cover,
       publishers = publishers.toTypedArray(),
       tags = tags.toTypedArray(),
       contributors = contributors.toTypedArray(),
@@ -361,6 +367,7 @@ class BookDtoDao(
     lateinit var tags: Map<String, List<RelationDto>>
     lateinit var contributors: Map<String, List<RelationDto>>
     lateinit var libraries: Map<String, RelationDto>
+    lateinit var covers: Map<String, RelationDto>
 
     transactionTemplate.executeWithoutResult {
       dsl.insertTempStrings(batchSize, bookIds)
@@ -395,11 +402,17 @@ class BookDtoDao(
         .where(TableBook.ID.`in`(dsl.selectTempStrings()))
         .fetch()
         .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], RelationshipType.LIBRARY) }
+
+      covers = bookIds
+        .associateWith { bookCoverLifecycle.hasCover(it) }
+        .filterValues { it }
+        .mapValues { RelationDto(it.key, RelationshipType.COVER_ART) }
     }
 
     return map { book ->
       book.toDto(
         library = libraries[book.id]!!,
+        cover = covers[book.id],
         publishers = publishers[book.id].orEmpty().toTypedArray(),
         tags = tags[book.id].orEmpty().toTypedArray(),
         contributors = contributors[book.id].orEmpty().toTypedArray(),
@@ -437,6 +450,7 @@ class BookDtoDao(
 
   private fun Book.toDto(
     library: RelationDto,
+    cover: RelationDto?,
     publishers: Array<RelationDto>,
     tags: Array<RelationDto>,
     contributors: Array<RelationDto>,
@@ -448,6 +462,7 @@ class BookDtoDao(
       seriesId?.let { RelationDto(it, RelationshipType.SERIES) },
       storeId?.let { RelationDto(it, RelationshipType.STORE) },
       library,
+      cover,
       *publishers,
       *contributors,
       *tags,

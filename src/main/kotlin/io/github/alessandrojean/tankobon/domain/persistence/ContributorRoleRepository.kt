@@ -5,6 +5,8 @@ import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 interface ContributorRoleRepository {
   fun findById(contributorRoleId: String): ContributorRole
   fun findByIdOrNull(contributorRoleId: String): ContributorRole?
+  fun findByNameInLibraryOrNull(name: String, libraryId: String): ContributorRole?
+  fun findByNamesInLibraryOrNull(names: Collection<String>, libraryId: String): Collection<ContributorRole>
   fun findByLibraryId(libraryId: String): Collection<ContributorRole>
 
   fun findAll(): Collection<ContributorRole>

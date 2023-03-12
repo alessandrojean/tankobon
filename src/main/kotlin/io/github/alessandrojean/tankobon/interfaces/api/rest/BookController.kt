@@ -16,7 +16,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
@@ -160,7 +159,7 @@ class BookController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): ResponseDto {
+  ): SuccessEntityResponseDto<BookEntityDto> {
     val book = bookDtoRepository.findByIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")
 

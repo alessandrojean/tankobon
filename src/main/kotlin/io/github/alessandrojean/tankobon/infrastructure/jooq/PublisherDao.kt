@@ -23,6 +23,13 @@ class PublisherDao(
       .fetchOne()
       ?.toDomain()
 
+  override fun findByNameInLibraryOrNull(name: String, libraryId: String): Publisher? =
+    dsl.selectFrom(TablePublisher)
+      .where(TablePublisher.LIBRARY_ID.eq(libraryId))
+      .and(TablePublisher.NAME.equalIgnoreCase(name))
+      .fetchOne()
+      ?.toDomain()
+
   override fun findByLibraryId(libraryId: String): Collection<Publisher> =
     dsl.selectFrom(TablePublisher)
       .where(TablePublisher.LIBRARY_ID.eq(libraryId))

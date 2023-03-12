@@ -2,7 +2,11 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
+import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.NotBlank
+import org.hibernate.validator.constraints.ISBN
+import org.hibernate.validator.constraints.UUID
 import javax.money.MonetaryAmount
 
 data class ImporterEntityDto(
@@ -16,6 +20,7 @@ data class ImporterEntityDto(
 }
 
 data class ImporterAttributesDto(
+  @get:Schema(format = "isbn", example = "9788545702870")
   val isbn: String,
   val title: String,
   val contributors: List<ImporterContributorDto>,
@@ -89,4 +94,16 @@ fun ImporterBookResult.toAttributesDto() = ImporterAttributesDto(
   coverUrl = coverUrl,
   pageCount = pageCount,
   url = url,
+)
+
+data class ImportDto(
+  val source: ImporterSource,
+  @get:ISBN
+  @get:Schema(format = "isbn", example = "9788545702870")
+  val isbn: String,
+  @get:NotBlank val id: String,
+  @get:NotBlank
+  @get:UUID(version = [4])
+  @get:Schema(format = "uuid")
+  val collection: String,
 )

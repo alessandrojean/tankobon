@@ -3,7 +3,9 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.jooq.tables.records.PersonRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.noCondition
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -22,6 +24,23 @@ class PersonDao(
       .where(TablePerson.ID.eq(personId))
       .fetchOne()
       ?.toDomain()
+
+  override fun findByNameInLibraryOrNull(name: String, libraryId: String): Person? =
+    dsl.selectFrom(TablePerson)
+      .where(TablePerson.LIBRARY_ID.eq(libraryId))
+      .and(TablePerson.NAME.equalIgnoreCase(name))
+      .fetchOne()
+      ?.toDomain()
+
+  override fun findByNamesInLibraryOrNull(names: Collection<String>, libraryId: String): Collection<Person> =
+    dsl.selectFrom(TablePerson)
+      .where(TablePerson.LIBRARY_ID.eq(libraryId))
+      .and(
+        names.map { TablePerson.NAME.equalIgnoreCase(it) }
+          .fold(noCondition(), Condition::or)
+      )
+      .fetchInto(TablePerson)
+      .map { it.toDomain() }
 
   override fun findByLibraryId(libraryId: String): Collection<Person> =
     dsl.selectFrom(TablePerson)

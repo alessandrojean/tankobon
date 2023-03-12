@@ -3,14 +3,12 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
-import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
+import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
 import org.javamoney.moneta.FastMoney
 import org.jooq.DSLContext
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK as TableBook
@@ -19,11 +17,6 @@ import io.github.alessandrojean.tankobon.jooq.Tables.COLLECTION as TableCollecti
 @Component
 class BookDao(
   private val dsl: DSLContext,
-  private val userDao: TankobonUserDao,
-  private val libraryDao: LibraryDao,
-  private val luceneHelper: LuceneHelper,
-  private val transactionTemplate: TransactionTemplate,
-  @Value("#{@tankobonProperties.database.batchChunkSize}") private val batchSize: Int,
 ) : BookRepository {
 
   override fun findByIdOrNull(bookId: String): Book? =
@@ -100,6 +93,13 @@ class BookDao(
       .where(TableCollection.LIBRARY_ID.eq(libraryId))
       .fetch(TableBook.ID)
 
+  override fun existsByCode(code: String): Boolean =
+    dsl.fetchExists(
+      dsl.select(TableBook.ID)
+        .from(TableBook)
+        .where(TableBook.CODE.equalIgnoreCase(code))
+    )
+
   override fun getLibraryIdOrNull(bookId: String): String? =
     dsl.select(TableCollection.LIBRARY_ID)
       .from(TableCollection)
@@ -127,6 +127,8 @@ class BookDao(
       .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
       .set(TableBook.NUMBER, book.number)
       .set(TableBook.PAGE_COUNT, book.pageCount)
+      .set(TableBook.SOURCE_KEY, book.source?.ordinal)
+      .set(TableBook.SOURCE_BOOK_ID, book.sourceBookId)
       .set(TableBook.BOUGHT_AT, book.boughtAt)
       .set(TableBook.BILLED_AT, book.billedAt)
       .set(TableBook.ARRIVED_AT, book.arrivedAt)
@@ -153,6 +155,8 @@ class BookDao(
       .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
       .set(TableBook.NUMBER, book.number)
       .set(TableBook.PAGE_COUNT, book.pageCount)
+      .set(TableBook.SOURCE_KEY, book.source?.ordinal)
+      .set(TableBook.SOURCE_BOOK_ID, book.sourceBookId)
       .set(TableBook.BOUGHT_AT, book.boughtAt)
       .set(TableBook.BILLED_AT, book.billedAt)
       .set(TableBook.ARRIVED_AT, book.arrivedAt)
@@ -192,6 +196,8 @@ class BookDao(
     pageCount = pageCount,
     synopsis = synopsis,
     notes = notes,
+    source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
+    sourceBookId = sourceBookId,
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

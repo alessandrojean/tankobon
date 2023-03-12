@@ -105,13 +105,13 @@ data class BookCreationDto(
   @get:NotNull
   @get:Schema(description = "Personal user notes about the book")
   val notes: String,
-  @get:Nullable val boughtAt: LocalDateTime?,
+  @get:Nullable val boughtAt: LocalDateTime? = null,
   @get:Nullable
   @get:Schema(description = "Date of payment, useful for pre-orders like Amazon ones")
-  val billedAt: LocalDateTime?,
+  val billedAt: LocalDateTime? = null,
   @get:Nullable
   @get:Schema(description = "Date of delivery and arrival of the book")
-  val arrivedAt: LocalDateTime?,
+  val arrivedAt: LocalDateTime? = null,
 )
 
 typealias BookUpdateDto = BookCreationDto

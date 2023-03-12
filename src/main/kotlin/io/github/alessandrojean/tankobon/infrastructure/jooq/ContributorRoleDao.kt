@@ -3,7 +3,9 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.persistence.ContributorRoleRepository
 import io.github.alessandrojean.tankobon.jooq.tables.records.ContributorRoleRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.noCondition
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -22,6 +24,23 @@ class ContributorRoleDao(
       .where(TableContributorRole.ID.eq(contributorRoleId))
       .fetchOne()
       ?.toDomain()
+
+  override fun findByNameInLibraryOrNull(name: String, libraryId: String): ContributorRole? =
+    dsl.selectFrom(TableContributorRole)
+      .where(TableContributorRole.NAME.equalIgnoreCase(name))
+      .and(TableContributorRole.LIBRARY_ID.eq(libraryId))
+      .fetchOne()
+      ?.toDomain()
+
+  override fun findByNamesInLibraryOrNull(names: Collection<String>, libraryId: String): Collection<ContributorRole> =
+    dsl.selectFrom(TableContributorRole)
+      .where(TableContributorRole.LIBRARY_ID.eq(libraryId))
+      .and(
+        names.map { TableContributorRole.NAME.equalIgnoreCase(it) }
+          .fold(noCondition(), Condition::or)
+      )
+      .fetchInto(TableContributorRole)
+      .map { it.toDomain() }
 
   override fun findByLibraryId(libraryId: String): Collection<ContributorRole> =
     dsl.selectFrom(TableContributorRole)

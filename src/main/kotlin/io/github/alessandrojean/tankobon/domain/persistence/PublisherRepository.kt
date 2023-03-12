@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.domain.model.Publisher
 interface PublisherRepository {
   fun findById(publisherId: String): Publisher
   fun findByIdOrNull(publisherId: String): Publisher?
+  fun findByNameInLibraryOrNull(name: String, libraryId: String): Publisher?
   fun findByLibraryId(libraryId: String): Collection<Publisher>
 
   fun findAll(): Collection<Publisher>
