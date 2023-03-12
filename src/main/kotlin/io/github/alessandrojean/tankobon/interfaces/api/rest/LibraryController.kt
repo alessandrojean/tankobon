@@ -20,6 +20,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -61,7 +62,7 @@ class LibraryController(
 ) {
 
   @GetMapping("api/v1/libraries")
-  @Operation(summary = "Get all libraries the user has access")
+  @Operation(summary = "Get all libraries the user has access", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllLibraries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(required = false) @UUID(version = [4]) @Schema(format = "uuid") ownerId: String?,
@@ -87,7 +88,10 @@ class LibraryController(
 
   @GetMapping("api/v1/users/{userId}/libraries")
   @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
-  @Operation(summary = "Get all libraries owned by a user by its id")
+  @Operation(
+    summary = "Get all libraries owned by a user by its id",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun getAllLibrariesByOwner(
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
@@ -108,7 +112,7 @@ class LibraryController(
   }
 
   @GetMapping("api/v1/libraries/{libraryId}")
-  @Operation(summary = "Get a library by its id")
+  @Operation(summary = "Get a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -130,7 +134,7 @@ class LibraryController(
   }
 
   @PostMapping("api/v1/libraries")
-  @Operation(summary = "Create a new library")
+  @Operation(summary = "Create a new library", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -157,7 +161,7 @@ class LibraryController(
 
   @DeleteMapping("api/v1/libraries/{libraryId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a library by its id")
+  @Operation(summary = "Delete a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String
@@ -174,7 +178,7 @@ class LibraryController(
 
   @PutMapping("api/v1/libraries/{libraryId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a library by its id")
+  @Operation(summary = "Modify a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,

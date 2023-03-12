@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -54,7 +55,7 @@ class CollectionController(
 ) {
 
   @GetMapping("v1/collections")
-  @Operation(summary = "Get all collections")
+  @Operation(summary = "Get all collections", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllCollections(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
@@ -82,7 +83,7 @@ class CollectionController(
   }
 
   @GetMapping("v1/libraries/{libraryId}/collections")
-  @Operation(summary = "Get all collections from a library")
+  @Operation(summary = "Get all collections from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllCollectionsByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
@@ -109,7 +110,7 @@ class CollectionController(
   }
 
   @GetMapping("v1/collections/{collectionId}")
-  @Operation(summary = "Get a collection by its id")
+  @Operation(summary = "Get a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String,
@@ -133,7 +134,7 @@ class CollectionController(
   }
 
   @PostMapping("v1/collections")
-  @Operation(summary = "Create a new collection")
+  @Operation(summary = "Create a new collection", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -159,7 +160,7 @@ class CollectionController(
 
   @DeleteMapping("v1/collections/{collectionId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a collection by its id")
+  @Operation(summary = "Delete a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String
@@ -178,7 +179,7 @@ class CollectionController(
 
   @PutMapping("v1/collections/{collectionId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a collection by its id")
+  @Operation(summary = "Modify a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String,

@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -48,7 +49,10 @@ class ContributorRoleController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/contributor-roles")
-  @Operation(summary = "Get all contributor roles from a library")
+  @Operation(
+    summary = "Get all contributor roles from a library",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun getAllContributorRolesByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -75,7 +79,7 @@ class ContributorRoleController(
   }
 
   @GetMapping("v1/contributor-roles/{contributorRoleId}")
-  @Operation(summary = "Get a contributor role by its id")
+  @Operation(summary = "Get a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String,
@@ -99,7 +103,7 @@ class ContributorRoleController(
   }
 
   @PostMapping("v1/contributor-roles")
-  @Operation(summary = "Create a new contributor role")
+  @Operation(summary = "Create a new contributor role", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -125,7 +129,7 @@ class ContributorRoleController(
 
   @DeleteMapping("v1/contributor-roles/{contributorRoleId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a contributor role by its id")
+  @Operation(summary = "Delete a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String
@@ -144,7 +148,7 @@ class ContributorRoleController(
 
   @PutMapping("v1/contributor-roles/{contributorRoleId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a contributor role by its id")
+  @Operation(summary = "Modify a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String,

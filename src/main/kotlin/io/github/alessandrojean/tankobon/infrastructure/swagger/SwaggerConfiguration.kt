@@ -2,18 +2,27 @@ package io.github.alessandrojean.tankobon.infrastructure.swagger
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.core.jackson.ModelResolver
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
+import io.swagger.v3.oas.models.media.StringSchema
+import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
+import mu.KotlinLogging
 import org.springdoc.core.customizers.OpenApiCustomizer
+import org.springdoc.core.customizers.OperationCustomizer
 import org.springdoc.core.utils.SpringDocUtils
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+
+private val logger = KotlinLogging.logger {}
 
 @Configuration
 class SwaggerConfiguration {
@@ -46,7 +55,7 @@ class SwaggerConfiguration {
       .components(
         Components()
           .addSecuritySchemes(
-            "basicAuth",
+            "Basic Auth",
             SecurityScheme()
               .type(SecurityScheme.Type.HTTP)
               .scheme("basic"),
@@ -86,12 +95,54 @@ class SwaggerConfiguration {
             """.trimIndent()
           )
       )
+      .addTagsItem(
+        Tag()
+          .name("3. Reference Expansion")
+          .description(
+            """
+              Some endpoints supports the reference expansion feature, which allows relationships
+              of a resource to be expanded with their attributes, reducing the amount of requests
+              that need to be sent to the API to retrieve a complete set of data.
+              
+              Endpoints that supports this feature are indicated by the presence of an optional
+              `includes` query parameter, which can be set to a list of includes with the type
+              names from the relationships, in lowercase, separated by a comma (`,`).
+            """.trimIndent()
+          )
+      )
 
   @Bean
   fun customizeOpenApi(): OpenApiCustomizer = OpenApiCustomizer { openApi ->
     openApi.tags = openApi.tags
       .sortedBy { it.name }
       .map { it.apply { name = name.replace(NUMERIC_HEADER_REGEX, "") } }
+  }
+
+  @Bean
+  fun customizeOperations(): OperationCustomizer = OperationCustomizer { operation, handlerMethod ->
+    logger.info { operation.operationId }
+
+    when {
+      operation.operationId.contains("^(create|update|import|add)".toRegex()) -> {
+        val contentType = Parameter()
+          .`in`(ParameterIn.HEADER.toString())
+          .schema(StringSchema().apply { setDefault(MediaType.APPLICATION_JSON_VALUE) })
+          .name(HttpHeaders.CONTENT_TYPE)
+          .required(true)
+
+        operation.apply { addParametersItem(contentType) }
+      }
+      operation.operationId.startsWith("upload") -> {
+        val contentType = Parameter()
+          .`in`(ParameterIn.HEADER.toString())
+          .schema(StringSchema().apply { setDefault(MediaType.MULTIPART_FORM_DATA_VALUE) })
+          .name(HttpHeaders.CONTENT_TYPE)
+          .required(true)
+
+        operation.apply { addParametersItem(contentType) }
+      }
+      else -> operation
+    }
   }
 
   @Bean

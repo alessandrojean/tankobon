@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
 import org.springframework.http.HttpStatus
@@ -48,7 +49,7 @@ class TagController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/tags")
-  @Operation(summary = "Get all tags from a library ")
+  @Operation(summary = "Get all tags from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllTagsByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -75,7 +76,7 @@ class TagController(
   }
 
   @GetMapping("v1/tags/{tagId}")
-  @Operation(summary = "Get a tag by its id")
+  @Operation(summary = "Get a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String,
@@ -99,7 +100,7 @@ class TagController(
   }
 
   @PostMapping("v1/tags")
-  @Operation(summary = "Create a new tag")
+  @Operation(summary = "Create a new tag", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -125,7 +126,7 @@ class TagController(
 
   @DeleteMapping("v1/tags/{tagId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a tag by its id")
+  @Operation(summary = "Delete a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String
@@ -144,7 +145,7 @@ class TagController(
 
   @PutMapping("v1/tags/{tagId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a tag by its id")
+  @Operation(summary = "Modify a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String,

@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -63,7 +64,7 @@ class BookController(
 
   @PageableAsQueryParam
   @GetMapping("v1/books")
-  @Operation(summary = "Get all books")
+  @Operation(summary = "Get all books", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllBooks(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
@@ -100,7 +101,7 @@ class BookController(
 
   @GetMapping("v1/libraries/{libraryId}/books")
   @PageableAsQueryParam
-  @Operation(summary = "Get all books from a library")
+  @Operation(summary = "Get all books from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllBooksFromLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -129,7 +130,10 @@ class BookController(
   }
 
   @GetMapping("v1/libraries/{libraryId}/books/latest")
-  @Operation(summary = "Get newly added or updated books from a library")
+  @Operation(
+    summary = "Get newly added or updated books from a library",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun getLatestBooksInLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -154,7 +158,7 @@ class BookController(
   }
 
   @GetMapping("v1/books/{bookId}")
-  @Operation(summary = "Get a book by its id")
+  @Operation(summary = "Get a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
@@ -175,7 +179,7 @@ class BookController(
   }
 
   @PostMapping("v1/books")
-  @Operation(summary = "Create a new book")
+  @Operation(summary = "Create a new book", security = [SecurityRequirement(name = "Basic Auth")])
   fun createOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -196,7 +200,7 @@ class BookController(
 
   @PostMapping("v1/books/{bookId}/cover", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Upload a cover to a book by its id")
+  @Operation(summary = "Upload a cover to a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadBookCover(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
@@ -215,7 +219,7 @@ class BookController(
 
   @PutMapping("v1/books/{bookId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a book by its id")
+  @Operation(summary = "Modify a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
@@ -235,7 +239,7 @@ class BookController(
 
   @DeleteMapping("v1/books/{bookId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a book by its id")
+  @Operation(summary = "Delete a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String
@@ -254,7 +258,7 @@ class BookController(
 
   @DeleteMapping("v1/books/{bookId}/cover")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a book cover by its id")
+  @Operation(summary = "Delete a book cover by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteBookCover(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String

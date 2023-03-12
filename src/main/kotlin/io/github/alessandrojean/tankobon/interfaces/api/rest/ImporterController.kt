@@ -21,6 +21,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -82,7 +83,7 @@ class ImporterController(
 ) {
 
   @GetMapping("v1/importer/sources")
-  @Operation(summary = "Get all external sources")
+  @Operation(summary = "Get all external sources", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllSources(): SuccessCollectionResponseDto<ImporterSourceEntityDto> {
     val sources = importerProviders.map { it.toDto() }
       .sortedBy { it.attributes.name }
@@ -91,7 +92,7 @@ class ImporterController(
   }
 
   @GetMapping("v1/importer/sources/{sourceId}")
-  @Operation(summary = "Get a source by its id")
+  @Operation(summary = "Get a source by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneSource(@PathVariable sourceId: String): SuccessEntityResponseDto<ImporterSourceEntityDto> {
     val source = importerProviders.firstOrNull { it.key.name == sourceId }
       ?: throw IdDoesNotExistException("Source not found")
@@ -100,7 +101,10 @@ class ImporterController(
   }
 
   @GetMapping("v1/importer/search/{isbn}")
-  @Operation(summary = "Search a book by its ISBN in the external sources")
+  @Operation(
+    summary = "Search a book by its ISBN in the external sources",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   suspend fun searchByIsbn(
     @PathVariable
     @ISBN(type = ISBN.Type.ANY)
@@ -135,7 +139,10 @@ class ImporterController(
   }
 
   @PostMapping("v1/importer/import")
-  @Operation(summary = "Import an external book into a collection")
+  @Operation(
+    summary = "Import an external book into a collection",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   suspend fun importOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestBody import: ImportDto,

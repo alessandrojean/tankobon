@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -48,7 +49,7 @@ class StoreController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/stores")
-  @Operation(summary = "Get all stores from a library")
+  @Operation(summary = "Get all stores from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllStoresByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -75,7 +76,7 @@ class StoreController(
   }
 
   @GetMapping("v1/stores/{storeId}")
-  @Operation(summary = "Get a store by its id")
+  @Operation(summary = "Get a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneStory(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String,
@@ -99,7 +100,7 @@ class StoreController(
   }
 
   @PostMapping("v1/stores")
-  @Operation(summary = "Create a new store")
+  @Operation(summary = "Create a new store", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -125,7 +126,7 @@ class StoreController(
 
   @DeleteMapping("v1/stores/{storeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a store by its id")
+  @Operation(summary = "Delete a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String
@@ -144,7 +145,7 @@ class StoreController(
 
   @PutMapping("v1/stores/{storeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a store by its id")
+  @Operation(summary = "Modify a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String,

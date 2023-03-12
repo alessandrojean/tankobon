@@ -23,6 +23,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollec
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
 import org.springdoc.core.converters.models.PageableAsQueryParam
@@ -61,7 +62,7 @@ class ReadProgressController(
 
   @PageableAsQueryParam
   @GetMapping("v1/users/{userId}/read-progresses")
-  @Operation(summary = "Get all read progresses from a user")
+  @Operation(summary = "Get all read progresses from a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun getReadProgressesByUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
@@ -89,7 +90,10 @@ class ReadProgressController(
   }
 
   @GetMapping("v1/books/{bookId}/read-progresses")
-  @Operation(summary = "Get all read progresses from a book by the user")
+  @Operation(
+    summary = "Get all read progresses from a book by the user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun getReadProgressesByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
@@ -119,7 +123,7 @@ class ReadProgressController(
   }
 
   @GetMapping("v1/read-progresses/{readProgressId}")
-  @Operation(summary = "Get a read progress by its id")
+  @Operation(summary = "Get a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String,
@@ -141,7 +145,7 @@ class ReadProgressController(
   }
 
   @PostMapping("v1/read-progresses")
-  @Operation(summary = "Create a new read progress")
+  @Operation(summary = "Create a new read progress", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -181,7 +185,7 @@ class ReadProgressController(
 
   @DeleteMapping("v1/read-progresses/{readProgressId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a read progress by its id")
+  @Operation(summary = "Delete a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String
@@ -198,7 +202,7 @@ class ReadProgressController(
 
   @PutMapping("v1/read-progress/{readProgressId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a read progress by its id")
+  @Operation(summary = "Modify a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String,

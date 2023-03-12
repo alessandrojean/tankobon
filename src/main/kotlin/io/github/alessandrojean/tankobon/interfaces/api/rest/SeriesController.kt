@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -53,7 +54,7 @@ class SeriesController(
 ) {
 
   @GetMapping("v1/series")
-  @Operation(summary = "Get all series")
+  @Operation(summary = "Get all series", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
@@ -81,7 +82,7 @@ class SeriesController(
   }
 
   @GetMapping("v1/libraries/{libraryId}/series")
-  @Operation(summary = "Get all series from a library")
+  @Operation(summary = "Get all series from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllSeriesByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
@@ -108,7 +109,7 @@ class SeriesController(
   }
 
   @GetMapping("v1/series/{seriesId}")
-  @Operation(summary = "Get a series by its id")
+  @Operation(summary = "Get a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
@@ -132,7 +133,7 @@ class SeriesController(
   }
 
   @PostMapping("v1/series")
-  @Operation(summary = "Create a new series")
+  @Operation(summary = "Create a new series", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -158,7 +159,7 @@ class SeriesController(
 
   @DeleteMapping("v1/series/{seriesId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a series by its id")
+  @Operation(summary = "Delete a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String
@@ -177,7 +178,7 @@ class SeriesController(
 
   @PutMapping("v1/series/{seriesId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a series by its id")
+  @Operation(summary = "Modify a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,

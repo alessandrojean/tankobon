@@ -64,5 +64,6 @@ management:
 
 springdoc:
   writer-with-order-by-keys: true
+  default-produces-media-type: application/json
   api-docs:
     path: /api/api-docs

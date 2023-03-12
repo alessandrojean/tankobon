@@ -23,7 +23,15 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 @RestController
 @RequestMapping("api/v1/claim", produces = [MediaType.APPLICATION_JSON_VALUE])
-@Tag(name = "Claim", description = "Operations to claim the server")
+@Tag(
+  name = "Claim",
+  description = """
+The claim feature can be used in a new Tankobon instance that needs to set its first
+administrator account. By claiming a server, the user will be given an administrator role
+and will be able to create new users and entities. After a server has been claimed,
+it can not be claimed by other user any more.
+  """
+)
 class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
 
   @GetMapping
@@ -31,7 +39,7 @@ class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
   fun getClaimStatus() = ClaimStatus(userLifecycle.countUsers() > 0)
 
   @PostMapping
-  @Operation(summary = "Claim the server by creating a new admin user")
+  @Operation(summary = "Claim the server")
   fun claimAdmin(
     @Email(regexp = ".+@.+\\..+")
     @RequestHeader("X-Tankobon-Email")

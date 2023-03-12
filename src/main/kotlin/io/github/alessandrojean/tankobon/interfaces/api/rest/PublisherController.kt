@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -48,7 +49,7 @@ class PublisherController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/publishers")
-  @Operation(summary = "Get all publishers from a library")
+  @Operation(summary = "Get all publishers from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllPublishersByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -75,7 +76,7 @@ class PublisherController(
   }
 
   @GetMapping("v1/publishers/{publisherId}")
-  @Operation(summary = "Get a publisher by its id")
+  @Operation(summary = "Get a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
@@ -99,7 +100,7 @@ class PublisherController(
   }
 
   @PostMapping("v1/publishers")
-  @Operation(summary = "Create a new publisher")
+  @Operation(summary = "Create a new publisher", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -125,7 +126,7 @@ class PublisherController(
 
   @DeleteMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a publisher by its id")
+  @Operation(summary = "Delete a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String
@@ -144,7 +145,7 @@ class PublisherController(
 
   @PutMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a publisher by its id")
+  @Operation(summary = "Modify a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,

@@ -13,6 +13,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollecti
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.hibernate.validator.constraints.UUID
 import org.springframework.http.MediaType
@@ -36,7 +37,7 @@ class BookContributorController(
 ) {
 
   @GetMapping("v1/books/{bookId}/contributors")
-  @Operation(summary = "Get all contributors from a book")
+  @Operation(summary = "Get all contributors from a book", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllContributorsByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
@@ -61,7 +62,7 @@ class BookContributorController(
   }
 
   @GetMapping("v1/contributors/{contributorId}")
-  @Operation(summary = "Get a book contributor by its id")
+  @Operation(summary = "Get a book contributor by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneBookContributor(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorId: String,

@@ -16,6 +16,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.hibernate.validator.constraints.UUID
 import org.springframework.core.env.Environment
@@ -49,13 +50,16 @@ class UserController(
   private val isDemo = env.activeProfiles.contains("demo")
 
   @GetMapping("me")
-  @Operation(summary = "Get the current authenticated user")
+  @Operation(summary = "Get the current authenticated user", security = [SecurityRequirement(name = "Basic Auth")])
   fun getMe(@AuthenticationPrincipal principal: TankobonPrincipal): SuccessEntityResponseDto<UserEntityDto> =
     SuccessEntityResponseDto(principal.toDto())
 
   @PatchMapping("me/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Change the password of the current authenticated user")
+  @Operation(
+    summary = "Change the password of the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun updateMyPassword(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -73,14 +77,14 @@ class UserController(
 
   @GetMapping
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
-  @Operation(summary = "List all users")
+  @Operation(summary = "List all users", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllUsers(): SuccessCollectionResponseDto<UserEntityDto> =
     SuccessCollectionResponseDto(userRepository.findAll().map { it.toDto() })
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
-  @Operation(summary = "Create a new user")
+  @Operation(summary = "Create a new user", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOneUser(@Valid @RequestBody newUser: UserCreationDto): SuccessEntityResponseDto<UserEntityDto> {
     val user = userLifecycle.createUser(newUser.toDomain())
 
@@ -90,7 +94,7 @@ class UserController(
   @DeleteMapping("{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
-  @Operation(summary = "Delete a user by its id")
+  @Operation(summary = "Delete a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneUser(
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -104,7 +108,7 @@ class UserController(
   @PutMapping("{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
-  @Operation(summary = "Modify a user by its id")
+  @Operation(summary = "Modify a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateUser(
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @Valid @RequestBody
@@ -125,7 +129,10 @@ class UserController(
   @PatchMapping("{userId}/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #id")
-  @Operation(summary = "Change the password of a user by its id")
+  @Operation(
+    summary = "Change the password of a user by its id",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
   fun updatePassword(
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @AuthenticationPrincipal principal: TankobonPrincipal,

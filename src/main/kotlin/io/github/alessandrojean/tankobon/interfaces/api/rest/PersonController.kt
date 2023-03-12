@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
@@ -48,7 +49,7 @@ class PersonController(
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/people")
-  @Operation(summary = "Get all people from a library")
+  @Operation(summary = "Get all people from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllPeopleByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
@@ -75,7 +76,7 @@ class PersonController(
   }
 
   @GetMapping("v1/people/{personId}")
-  @Operation(summary = "Get a person by its id")
+  @Operation(summary = "Get a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
@@ -99,7 +100,7 @@ class PersonController(
   }
 
   @PostMapping("v1/people")
-  @Operation(summary = "Create a new person")
+  @Operation(summary = "Create a new person", security = [SecurityRequirement(name = "Basic Auth")])
   fun addOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
@@ -125,7 +126,7 @@ class PersonController(
 
   @DeleteMapping("v1/people/{personId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete a person by its id")
+  @Operation(summary = "Delete a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String
@@ -144,7 +145,7 @@ class PersonController(
 
   @PutMapping("v1/people/{personId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Modify a person by its id")
+  @Operation(summary = "Modify a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
