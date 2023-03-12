@@ -22,8 +22,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 
-private val logger = KotlinLogging.logger {}
-
 @Configuration
 class SwaggerConfiguration {
 
@@ -120,10 +118,8 @@ class SwaggerConfiguration {
 
   @Bean
   fun customizeOperations(): OperationCustomizer = OperationCustomizer { operation, handlerMethod ->
-    logger.info { operation.operationId }
-
     when {
-      operation.operationId.contains("^(create|update|import|add)".toRegex()) -> {
+      operation.operationId.contains("^(create|update|import|add|claim)".toRegex()) -> {
         val contentType = Parameter()
           .`in`(ParameterIn.HEADER.toString())
           .schema(StringSchema().apply { setDefault(MediaType.APPLICATION_JSON_VALUE) })
