@@ -2,10 +2,18 @@ package io.github.alessandrojean.tankobon.infrastructure.importer
 
 abstract class ImporterProvider {
 
-  protected abstract val baseUrl: String
+  abstract val key: ImporterSource
 
-  protected abstract val key: ImporterSource
+  abstract val name: String
 
-  abstract fun searchByIsbn(isbn: String): Collection<ImporterBookResult>
+  abstract val url: String
+
+  abstract val baseUrl: String
+
+  abstract val description: Map<String, String>
+
+  abstract val language: String
+
+  abstract suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult>
 
 }

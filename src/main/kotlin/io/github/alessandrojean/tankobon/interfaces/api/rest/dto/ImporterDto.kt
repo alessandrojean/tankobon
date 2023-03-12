@@ -1,10 +1,12 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
+import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.swagger.v3.oas.annotations.media.Schema
 import javax.money.MonetaryAmount
 
 data class ImporterEntityDto(
+  @get:Schema(format = "")
   override val id: String,
   override val attributes: ImporterAttributesDto,
   override var relationships: List<RelationDto>? = null,
@@ -21,8 +23,9 @@ data class ImporterAttributesDto(
   val synopsis: String = "",
   val dimensions: DimensionsDto? = null,
   val labelPrice: MonetaryAmount? = null,
-  val coverUrl: String = "",
+  val coverUrl: String? = null,
   val pageCount: Int = 0,
+  val url: String? = null,
 ) : EntityAttributesDto()
 
 data class ImporterContributorDto(
@@ -30,13 +33,47 @@ data class ImporterContributorDto(
   val role: String,
 )
 
-fun ImporterBookResult.toDto() = ImporterEntityDto(
+data class ImporterSourceEntityDto(
+  override val id: String,
+  override val attributes: ImporterSourceAttributesDto,
+  override var relationships: List<RelationDto>? = null,
+) : EntityDto {
+  @Schema(type = "string", allowableValues = ["IMPORTER_SOURCE"])
+  override val type = EntityType.IMPORTER_SOURCE
+}
+
+data class ImporterSourceAttributesDto(
+  val name: String,
+  val url: String,
+  @get:Schema(
+    description = "A simple multi language description in Markdown format",
+    example = """{"en-US": "English description", "pt-BR": "Portuguese description"}"""
+  )
+  val description: Map<String, String>,
+  @get:Schema(format = "bcp-47")
+  val language: String,
+) : EntityAttributesDto()
+
+fun ImporterProvider.toDto() = ImporterSourceEntityDto(
+  id = key.name,
+  attributes = toAttributesDto(),
+)
+
+fun ImporterProvider.toAttributesDto() = ImporterSourceAttributesDto(
+  name = name,
+  url = url,
+  description = description,
+  language = language,
+)
+
+fun ImporterBookResult.toDto(importerSourceAttributes: ImporterSourceAttributesDto? = null) = ImporterEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = provider.name,
       type = RelationshipType.IMPORTER_SOURCE,
+      attributes = importerSourceAttributes
     )
   )
 )
@@ -51,4 +88,5 @@ fun ImporterBookResult.toAttributesDto() = ImporterAttributesDto(
   labelPrice = labelPrice,
   coverUrl = coverUrl,
   pageCount = pageCount,
+  url = url,
 )

@@ -23,6 +23,7 @@ data class SkoobBookDto(
   @field:JsonProperty("sinopse") val synopsis: String? = "",
   @field:JsonProperty("paginas") val pageCount: Int? = 0,
   @field:JsonProperty("capa_grande") val coverUrl: String? = "",
+  val url: String,
 )
 
 class SkoobIsbnDeserializer : JsonDeserializer<String>() {

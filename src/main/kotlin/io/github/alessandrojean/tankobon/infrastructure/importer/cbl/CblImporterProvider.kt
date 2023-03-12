@@ -9,20 +9,38 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import reactor.core.publisher.Mono
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 @Component("cblImporterProvider")
 class CblImporterProvider(
   private val webClient: WebClient,
 ) : ImporterProvider() {
 
-  override val baseUrl: String = "https://isbn-search-br.search.windows.net/indexes/isbn-index/docs"
-
   override val key: ImporterSource = ImporterSource.CBL
 
-  override fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
+  override val name: String = "CBL"
+
+  override val url: String = "https://cblservicos.org.br"
+
+  override val baseUrl: String = "https://isbn-search-br.search.windows.net/indexes/isbn-index/docs"
+
+  override val description: Map<String, String> = mapOf(
+    "en-US" to """
+      Câmara Brasileira do Livro (CBL) is a non-profit organization that aims to promote
+      the Brazilian publishing market and promote the reading habit. It's the Brazilian
+      unique official ISBN agency since 2020.
+    """.trimIndent(),
+    "pt-BR" to """
+      A Câmara Brasileira do Livro (CBL) é uma organização sem fins lucrativos que tem
+      como objetivo promover o mercado editorial brasileiro e o hábito de leitura. É
+      a única agência oficial do ISBN desde 2020.
+    """.trimIndent()
+  )
+
+  override val language: String = "pt-BR"
+
+  override suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
     val bodyPayload = CblSearchRequestDto(
       count = true,
       facets = listOf("Imprint,count:50", "Authors,count:50"),
@@ -49,8 +67,7 @@ class CblImporterProvider(
       }
       .body(Mono.just(bodyPayload), CblSearchRequestDto::class.java)
       .retrieve()
-      .bodyToMono(CblSearchResultDto::class.java)
-      .block(API_TIMEOUT)
+      .awaitBodyOrNull<CblSearchResultDto>()
       ?.toDomain()
       .orEmpty()
   }
@@ -88,7 +105,6 @@ class CblImporterProvider(
     private const val API_ORIGIN = "https://www.cblservicos.org.br"
     private const val API_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
-    private val API_TIMEOUT = 3.seconds.toJavaDuration()
 
     private val FIELDS_TO_SELECT = listOf(
       "Authors",

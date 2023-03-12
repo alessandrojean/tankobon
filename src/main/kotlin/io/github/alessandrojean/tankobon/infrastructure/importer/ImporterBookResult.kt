@@ -13,8 +13,9 @@ data class ImporterBookResult(
   val synopsis: String = "",
   val dimensions: Dimensions? = null,
   val labelPrice: MonetaryAmount? = null,
-  val coverUrl: String = "",
-  val pageCount: Int = 0
+  val coverUrl: String? = null,
+  val pageCount: Int = 0,
+  val url: String? = null,
 )
 
 data class ImporterBookContributor(

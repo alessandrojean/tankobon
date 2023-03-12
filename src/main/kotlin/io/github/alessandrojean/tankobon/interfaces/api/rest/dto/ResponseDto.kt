@@ -94,6 +94,7 @@ enum class EntityType {
   CONTRIBUTOR,
   READ_PROGRESS,
   EXTERNAL_BOOK,
+  IMPORTER_SOURCE,
 }
 
 enum class RelationshipType {

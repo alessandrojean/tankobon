@@ -24,7 +24,7 @@ class DataSourcesConfiguration(
 
     val sqliteUdfDataSource = DataSourceBuilder.create()
       .driverClassName("org.sqlite.JDBC")
-      .url("jdbc:sqlite:${tankobonProperties.database.file}")
+      .url("jdbc:sqlite:${tankobonProperties.database.file}$extraPragmas")
       .type(SqliteUdfDataSource::class.java)
       .build()
 

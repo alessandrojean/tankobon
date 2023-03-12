@@ -4,24 +4,39 @@ import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookCon
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
+import org.springframework.web.reactive.function.client.awaitBodyOrNull
 
 @Component("skoobImporterProvider")
 class SkoobImporterProvider(
   private val webClient: WebClient,
 ) : ImporterProvider() {
 
-  override val baseUrl: String = "https://api.skoob.com.br/api2"
-
   override val key: ImporterSource = ImporterSource.SKOOB
 
-  override fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
+  override val name: String = "Skoob"
+
+  override val url: String = "https://skoob.com.br"
+
+  override val baseUrl: String = "https://api.skoob.com.br/api2"
+
+  override val description: Map<String, String> = mapOf(
+    "en-US" to """
+      Skoob is a collaborative social network for Brazilian readers, launched in 2009.
+      It's currently owned by Lojas Americanas, a private retail chain, since 2021.
+    """.trimIndent(),
+    "pt-BR" to """
+      O Skoob é uma rede social colaborativa para leitores, lançada em 2009. Atualmente
+      pertence as Lojas Americanas, uma rede privada de varejo, desde 2021.
+    """.trimIndent()
+  )
+
+  override val language: String = "pt-BR"
+
+  override suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
     return webClient.get()
       .uri(baseUrl) {
         it
@@ -41,8 +56,7 @@ class SkoobImporterProvider(
         it[HttpHeaders.USER_AGENT] = API_USER_AGENT
       }
       .retrieve()
-      .bodyToMono(object : ParameterizedTypeReference<SkoobResponseDto<List<SkoobBookDto>>>() {})
-      .block(API_TIMEOUT)
+      .awaitBodyOrNull<SkoobResponseDto<List<SkoobBookDto>>>()
       ?.toDomain()
       .orEmpty()
   }
@@ -67,13 +81,13 @@ class SkoobImporterProvider(
     publisher = publisher.orEmpty(),
     synopsis = synopsis.orEmpty().trim(),
     pageCount = pageCount ?: 0,
-    coverUrl = coverUrl?.substringAfter("format(jpeg)/").orEmpty(),
+    coverUrl = coverUrl?.substringAfter("format(jpeg)/"),
+    url = this@SkoobImporterProvider.url + url,
     provider = ImporterSource.SKOOB,
   )
 
   companion object {
     private const val API_USER_AGENT = "okhttp/3.12.12"
-    private val API_TIMEOUT = 3.seconds.toJavaDuration()
   }
 
 }

@@ -44,6 +44,7 @@ class LuceneHelper(
     }
   }
 
+  @Suppress("DEPRECATION")
   fun getIndexVersion(): Int = getIndexReader().use { index ->
     val searcher = IndexSearcher(index)
     val topDocs = searcher.search(TermQuery(Term("type", "index_version")), 1)
@@ -54,6 +55,7 @@ class LuceneHelper(
       ?.toIntOrNull() ?: 1
   }
 
+  @Suppress("DEPRECATION")
   fun searchEntitiesIds(searchTerm: String?, entity: LuceneEntity): List<String>? {
     if (searchTerm.isNullOrEmpty()) {
       return null

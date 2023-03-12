@@ -6,13 +6,11 @@ import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookRes
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import org.springframework.boot.info.BuildProperties
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
+import org.springframework.web.reactive.function.client.awaitBodyOrNull
 
 @Component("openLibraryImporterProvider")
 class OpenLibraryImporterProvider(
@@ -20,11 +18,29 @@ class OpenLibraryImporterProvider(
   private val buildProperties: BuildProperties,
 ) : ImporterProvider() {
 
-  override val baseUrl: String = "https://openlibrary.org"
-
   override val key: ImporterSource = ImporterSource.OPEN_LIBRARY
 
-  override fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
+  override val name: String = "Open Library"
+
+  final override val url: String = "https://openlibrary.org"
+
+  override val baseUrl: String = url
+
+  override val description: Map<String, String> = mapOf(
+    "en-US" to """
+      Open Library is an online project intended to create "one web page for every
+      book ever published". It's a project of the Internet Archive, a non-profit organization.
+    """.trimIndent(),
+    "pt-BR" to """
+      O Open Library é um projeto online com o objetivo de criar "uma página na internet
+      para cada livro já publicado". É um projeto do Internet Archive, uma organização
+      sem fins lucrativos.
+    """.trimIndent()
+  )
+
+  override val language: String = "all"
+
+  override suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
     val bibKey = "ISBN:$isbn"
 
     val results = webClient.get()
@@ -39,8 +55,7 @@ class OpenLibraryImporterProvider(
         it[HttpHeaders.USER_AGENT] = "Tankobon/${buildProperties.version}"
       }
       .retrieve()
-      .bodyToMono(object : ParameterizedTypeReference<OpenLibraryResultDto>() {})
-      .block(API_TIMEOUT)
+      .awaitBodyOrNull<OpenLibraryResultDto>()
 
     if (results.orEmpty().isEmpty() || !results!!.containsKey(bibKey)) {
       return emptyList()
@@ -54,8 +69,7 @@ class OpenLibraryImporterProvider(
           it[HttpHeaders.USER_AGENT] = "Tankobon/${buildProperties.version}"
         }
         .retrieve()
-        .bodyToMono(OpenLibraryBookDetailsDto::class.java)
-        .block(API_TIMEOUT)
+        .awaitBodyOrNull<OpenLibraryBookDetailsDto>()
     }
 
     return listOf(results[bibKey]!!.toDomain(details.getOrNull()))
@@ -85,13 +99,10 @@ class OpenLibraryImporterProvider(
       },
       synopsis = details?.description?.value.orEmpty(),
       pageCount = pageCount ?: 0,
-      coverUrl = cover?.large.orEmpty(),
+      coverUrl = cover?.large,
+      url = this@OpenLibraryImporterProvider.url + key,
       provider = ImporterSource.OPEN_LIBRARY,
     )
-  }
-
-  companion object {
-    private val API_TIMEOUT = 3.seconds.toJavaDuration()
   }
 
 }
