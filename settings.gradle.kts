@@ -1,1 +1,1 @@
-rootProject.name = "tankobon"
+include("server")
