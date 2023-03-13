@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 @ControllerAdvice(annotations = [RestController::class])
 class ErrorHandlingControllerAdvice(
@@ -107,6 +108,12 @@ class ErrorHandlingControllerAdvice(
   @ResponseBody
   fun onServerAlreadyClaimedException(e: ServerAlreadyClaimedException) =
     e.toErrorResponseDto()
+
+  @ExceptionHandler(MaxUploadSizeExceededException::class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  fun onMaxUploadSizeExceededException(e: MaxUploadSizeExceededException) =
+    e.toErrorResponseDto(HttpStatus.BAD_REQUEST)
 
   @ExceptionHandler(UserDoesNotHaveAccessException::class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
