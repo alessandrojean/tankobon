@@ -2,7 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.ImageDetails
 
-data class CoverArtAttributesDto(
+data class ImageDetailsAttributesDto(
   val fileName: String,
   val versions: Map<String, String> = emptyMap(),
   val width: Int,
@@ -12,7 +12,7 @@ data class CoverArtAttributesDto(
   val mimeType: String,
 ) : EntityAttributesDto()
 
-fun ImageDetails.toAttributesDto() = CoverArtAttributesDto(
+fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
   fileName = fileName,
   versions = versions,
   width = width,

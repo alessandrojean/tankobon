@@ -1,12 +1,18 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
+import io.github.alessandrojean.tankobon.domain.model.CantChangeDemoUserAttributesException
 import io.github.alessandrojean.tankobon.domain.model.CantChangePasswordInDemoModeException
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
+import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.TankobonUserLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RoleDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -33,8 +39,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 
 @Validated
@@ -44,6 +52,8 @@ import javax.validation.Valid
 class UserController(
   private val userLifecycle: TankobonUserLifecycle,
   private val userRepository: TankobonUserRepository,
+  private val userAvatarLifecycle: UserAvatarLifecycle,
+  private val referenceExpansion: ReferenceExpansion,
   env: Environment
 ) {
 
@@ -51,8 +61,79 @@ class UserController(
 
   @GetMapping("me")
   @Operation(summary = "Get the current authenticated user", security = [SecurityRequirement(name = "Basic Auth")])
-  fun getMe(@AuthenticationPrincipal principal: TankobonPrincipal): SuccessEntityResponseDto<UserEntityDto> =
-    SuccessEntityResponseDto(principal.toDto())
+  fun getMe(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessEntityResponseDto<UserEntityDto> {
+    val current = principal.toDto().withAvatarIfExists()
+    val expanded = referenceExpansion.expand(current, includes)
+
+    return SuccessEntityResponseDto(expanded)
+  }
+
+  @PutMapping("me")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(
+    summary = "Modify the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun updateMe(
+    @Valid @RequestBody
+    user: UserUpdateDto,
+    @AuthenticationPrincipal principal: TankobonPrincipal
+  ) {
+    if (isDemo) {
+      throw CantChangeDemoUserAttributesException()
+    }
+
+    val existing = userRepository.findByIdOrNull(principal.user.id)
+      ?: throw IdDoesNotExistException("User not found")
+
+    val toUpdate = existing.copy(
+      name = user.name,
+      biography = user.biography,
+      email = user.email,
+      isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN)
+    )
+
+    userLifecycle.updateUser(toUpdate)
+  }
+
+  @PostMapping("me/avatar", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(
+    summary = "Upload an avatar to the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun uploadMeAvatar(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam("avatar") @SupportedImageFormat avatarFile: MultipartFile,
+  ) {
+    if (isDemo) {
+      throw CantChangeDemoUserAttributesException()
+    }
+
+    userAvatarLifecycle.createAvatar(principal.user.id, avatarFile.bytes)
+  }
+
+  @DeleteMapping("me/avatar")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(
+    summary = "Delete the avatar of the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun deleteMeAvatar(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+  ) {
+    if (isDemo) {
+      throw CantChangeDemoUserAttributesException()
+    }
+
+    val existing = userRepository.findByIdOrNull(principal.user.id)
+      ?: throw IdDoesNotExistException("User not found")
+
+    userAvatarLifecycle.deleteAvatar(existing.id)
+  }
 
   @PatchMapping("me/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -78,8 +159,31 @@ class UserController(
   @GetMapping
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "List all users", security = [SecurityRequirement(name = "Basic Auth")])
-  fun getAllUsers(): SuccessCollectionResponseDto<UserEntityDto> =
-    SuccessCollectionResponseDto(userRepository.findAll().map { it.toDto() })
+  fun getAllUsers(
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessCollectionResponseDto<UserEntityDto> {
+    val users = userRepository.findAll().map { it.toDto().withAvatarIfExists() }
+    val expanded = referenceExpansion.expand(users, includes)
+
+    return SuccessCollectionResponseDto(expanded)
+  }
+
+  @GetMapping("{userId}")
+  @PreAuthorize("hasRole('$ROLE_ADMIN')")
+  @Operation(summary = "Get a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getOneUser(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) userId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessEntityResponseDto<UserEntityDto> {
+    val user = userRepository.findByIdOrNull(userId)
+      ?: throw IdDoesNotExistException("User not found")
+
+    val current = user.toDto().withAvatarIfExists()
+    val expanded = referenceExpansion.expand(current, includes)
+
+    return SuccessEntityResponseDto(expanded)
+  }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -115,6 +219,10 @@ class UserController(
     user: UserUpdateDto,
     @AuthenticationPrincipal principal: TankobonPrincipal
   ) {
+    if (isDemo && userId == principal.user.id) {
+      throw CantChangeDemoUserAttributesException()
+    }
+
     val existing = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
 
@@ -124,6 +232,39 @@ class UserController(
     )
 
     userLifecycle.updateUser(toUpdate)
+  }
+
+  @PostMapping("{userId}/avatar", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
+  @Operation(summary = "Upload an avatar to a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun uploadUserAvatar(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @RequestParam("avatar") @SupportedImageFormat avatarFile: MultipartFile,
+  ) {
+    if (isDemo && userId == principal.user.id) {
+      throw CantChangeDemoUserAttributesException()
+    }
+
+    val existing = userRepository.findByIdOrNull(userId)
+      ?: throw IdDoesNotExistException("User not found")
+
+    userAvatarLifecycle.createAvatar(existing.id, avatarFile.bytes)
+  }
+
+  @DeleteMapping("{userId}/avatar")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
+  @Operation(summary = "Delete an user avatar by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun deleteUserAvatar(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String
+  ) {
+    val existing = userRepository.findByIdOrNull(userId)
+      ?: throw IdDoesNotExistException("User not found")
+
+    userAvatarLifecycle.deleteAvatar(existing.id)
   }
 
   @PatchMapping("{userId}/password")
@@ -147,5 +288,15 @@ class UserController(
       ?: throw IdDoesNotExistException("User not found")
 
     userLifecycle.updatePassword(user, newPasswordDto.password, user.id != principal.user.id)
+  }
+
+  private fun UserEntityDto.withAvatarIfExists(): UserEntityDto {
+    if (!userAvatarLifecycle.hasAvatar(id)) {
+      return this
+    }
+
+    return copy(
+      relationships = listOf(RelationDto(id = id, type = RelationshipType.AVATAR))
+    )
   }
 }

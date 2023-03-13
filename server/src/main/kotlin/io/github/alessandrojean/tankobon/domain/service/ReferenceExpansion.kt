@@ -11,6 +11,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
@@ -33,6 +34,7 @@ class ReferenceExpansion(
   private val contributorRepository: BookContributorRepository,
   private val personRepository: PersonRepository,
   private val bookCoverLifecycle: BookCoverLifecycle,
+  private val userAvatarLifecycle: UserAvatarLifecycle,
 ) {
 
   private val expansionMap: Map<RelationshipType, IdsToAttributesFn> = mapOf(
@@ -77,6 +79,9 @@ class ReferenceExpansion(
     },
     RelationshipType.COVER_ART to { ids ->
       ids.associateWith { bookCoverLifecycle.getCoverDetails(it)!!.toAttributesDto() }
+    },
+    RelationshipType.AVATAR to { ids ->
+      ids.associateWith { userAvatarLifecycle.getAvatarDetails(it)!!.toAttributesDto() }
     }
   )
 

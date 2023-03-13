@@ -11,6 +11,7 @@ import io.github.alessandrojean.tankobon.domain.service.BookLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
@@ -204,7 +205,7 @@ class BookController(
   fun uploadBookCover(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
-    @RequestParam("cover") coverFile: MultipartFile,
+    @RequestParam("cover") @SupportedImageFormat coverFile: MultipartFile,
   ) {
     val libraryId = bookRepository.getLibraryIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")

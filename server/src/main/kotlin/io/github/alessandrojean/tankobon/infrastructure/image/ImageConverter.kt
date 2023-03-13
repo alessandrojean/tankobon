@@ -37,12 +37,12 @@ class ImageConverter {
     baos.toByteArray()
   }
 
-  fun resizeImage(imageBytes: ByteArray, format: String, size: Int): ByteArray = ByteArrayOutputStream().use { baos ->
+  fun resizeImage(imageBytes: ByteArray, format: String, size: Int, quality: Float = 0.95f): ByteArray = ByteArrayOutputStream().use { baos ->
     Thumbnails.of(imageBytes.inputStream())
       .width(size)
       .imageType(BufferedImage.TYPE_INT_ARGB)
       .outputFormat(format)
-      .outputQuality(0.95f)
+      .outputQuality(quality)
       .toOutputStream(baos)
 
     baos.toByteArray()

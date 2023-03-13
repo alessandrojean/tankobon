@@ -113,6 +113,7 @@ enum class RelationshipType {
   PERSON,
   IMPORTER_SOURCE,
   COVER_ART,
+  AVATAR,
 }
 
 fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =

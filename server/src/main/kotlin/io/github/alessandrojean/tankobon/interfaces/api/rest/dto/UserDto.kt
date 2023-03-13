@@ -27,10 +27,10 @@ enum class RoleDto {
   ROLE_USER, ROLE_ADMIN
 }
 
-fun TankobonUser.toDto() = UserEntityDto(
+fun TankobonUser.toDto(avatarRelationship: RelationDto? = null) = UserEntityDto(
   id = id,
   attributes = toAttributesDto(),
-  relationships = null,
+  relationships = avatarRelationship?.let { listOf(it) },
 )
 
 fun TankobonUser.toAttributesDto() = UserAttributesDto(
