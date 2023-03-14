@@ -18,7 +18,7 @@ class RestExceptionHandler(
 
   private val showStackTrace by lazy {
     environment.activeProfiles.contains("dev") ||
-            environment.activeProfiles.contains("test")
+      environment.activeProfiles.contains("test")
   }
 
   @ExceptionHandler(AuthenticationException::class)
@@ -27,7 +27,7 @@ class RestExceptionHandler(
   fun onAuthenticationException(e: AuthenticationException) = ErrorResponseDto(
     errors = listOf(
       ErrorDto(
-        id = e.javaClass.simpleName,
+        id = e.javaClass.simpleName.toErrorId(),
         status = HttpStatus.UNAUTHORIZED.value(),
         title = e.localizedMessage.orEmpty()
           .ifEmpty { e.message.orEmpty() },
@@ -43,7 +43,7 @@ class RestExceptionHandler(
   fun onAccessDeniedException(e: AccessDeniedException) = ErrorResponseDto(
     errors = listOf(
       ErrorDto(
-        id = e.javaClass.simpleName,
+        id = e.javaClass.simpleName.toErrorId(),
         status = HttpStatus.FORBIDDEN.value(),
         title = e.localizedMessage.orEmpty()
           .ifEmpty { e.message.orEmpty() },
@@ -52,4 +52,14 @@ class RestExceptionHandler(
       )
     )
   )
+
+  private fun String.toErrorId(): String =
+    replace(EXCEPTION_REGEX, "")
+      .replace(CAMEL_CASE_REGEX, "$1_$2")
+      .uppercase()
+
+  companion object {
+    private val CAMEL_CASE_REGEX = "([a-z])([A-Z]+)".toRegex()
+    private val EXCEPTION_REGEX = "(Exception|Impl)$".toRegex()
+  }
 }

@@ -217,7 +217,7 @@ class BookControllerTest(
           status { isBadRequest() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("RelationIsNotFromSameLibraryException") }
+          jsonPath("$.errors[0].id") { value("RELATION_IS_NOT_FROM_SAME_LIBRARY") }
         }
     }
   }

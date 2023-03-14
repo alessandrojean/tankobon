@@ -128,7 +128,7 @@ class ReadProgressControllerTest(
           status { isBadRequest() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("ViolationFieldError") }
+          jsonPath("$.errors[0].id") { value("VIOLATION_FIELD_ERROR") }
           jsonPath("$.errors[0].title") { value("startedAt") }
         }
     }

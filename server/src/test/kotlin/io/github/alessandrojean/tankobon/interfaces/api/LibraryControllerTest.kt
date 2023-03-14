@@ -76,7 +76,7 @@ class LibraryControllerTest(
         .andExpect {
           status { isUnauthorized() }
           jsonPath("$.result") { value("ERROR") }
-          jsonPath("$.errors[0].id") { value("InsufficientAuthenticationException") }
+          jsonPath("$.errors[0].id") { value("INSUFFICIENT_AUTHENTICATION") }
         }
     }
   }
@@ -118,7 +118,7 @@ class LibraryControllerTest(
         .andExpect {
           status { isForbidden() }
           jsonPath("$.result") { value("ERROR") }
-          jsonPath("$.errors[0].id") { value("UserDoesNotHaveAccessException") }
+          jsonPath("$.errors[0].id") { value("USER_DOES_NOT_HAVE_ACCESS") }
         }
     }
   }
@@ -167,7 +167,7 @@ class LibraryControllerTest(
           status { isBadRequest() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("RelationIdDoesNotExistException") }
+          jsonPath("$.errors[0].id") { value("RELATION_ID_DOES_NOT_EXIST") }
         }
     }
 
@@ -192,7 +192,7 @@ class LibraryControllerTest(
           status { isForbidden() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("UserDoesNotHaveAccessException") }
+          jsonPath("$.errors[0].id") { value("USER_DOES_NOT_HAVE_ACCESS") }
         }
     }
 
@@ -213,7 +213,7 @@ class LibraryControllerTest(
           status { isBadRequest() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("DuplicateNameException") }
+          jsonPath("$.errors[0].id") { value("DUPLICATE_NAME") }
         }
     }
   }
@@ -238,7 +238,7 @@ class LibraryControllerTest(
           status { isForbidden() }
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(1) }
-          jsonPath("$.errors[0].id") { value("LibraryOwnerChangedException") }
+          jsonPath("$.errors[0].id") { value("LIBRARY_OWNER_CHANGED") }
         }
     }
   }
