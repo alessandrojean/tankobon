@@ -4,28 +4,39 @@ import io.github.alessandrojean.tankobon.domain.model.CantChangeDemoUserAttribut
 import io.github.alessandrojean.tankobon.domain.model.CantChangePasswordInDemoModeException
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
+import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
+import io.github.alessandrojean.tankobon.domain.persistence.AuthenticationActivityRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.TankobonUserLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.AuthenticationActivityEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RoleDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.hibernate.validator.constraints.UUID
+import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.core.env.Environment
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -52,6 +63,7 @@ import javax.validation.Valid
 class UserController(
   private val userLifecycle: TankobonUserLifecycle,
   private val userRepository: TankobonUserRepository,
+  private val authenticationActivityRepository: AuthenticationActivityRepository,
   private val userAvatarLifecycle: UserAvatarLifecycle,
   private val referenceExpansion: ReferenceExpansion,
   env: Environment
@@ -154,6 +166,74 @@ class UserController(
       ?: throw IdDoesNotExistException("User not found")
 
     userLifecycle.updatePassword(user, newPasswordDto.password, false)
+  }
+
+  @GetMapping("me/authentication-activity")
+  @PageableAsQueryParam
+  @Operation(
+    summary = "Get the authentication activity of the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun getMyAuthenticationActivity(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
+    if (isDemo && !principal.user.isAdmin) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    val sort = if (page.sort.isSorted) {
+      page.sort
+    } else {
+      Sort.by(Sort.Order.desc("timestamp"))
+    }
+
+    val pageRequest = PageRequest.of(
+      page.pageNumber,
+      page.pageSize,
+      sort,
+    )
+
+    val activity = authenticationActivityRepository
+      .findAllByUser(principal.user, pageRequest)
+      .map { it.toDto() }
+    val expanded = referenceExpansion.expand(activity.content, includes)
+
+    return PageImpl(expanded, activity.pageable, activity.totalElements)
+      .toSuccessCollectionResponseDto { it }
+  }
+
+  @GetMapping("authentication-activity")
+  @PageableAsQueryParam
+  @PreAuthorize("hasRole('$ROLE_ADMIN')")
+  @Operation(
+    summary = "Get the authentication activities",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun getAuthenticationActivity(
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
+    val sort = if (page.sort.isSorted) {
+      page.sort
+    } else {
+      Sort.by(Sort.Order.desc("timestamp"))
+    }
+
+    val pageRequest = PageRequest.of(
+      page.pageNumber,
+      page.pageSize,
+      sort,
+    )
+
+    val activity = authenticationActivityRepository
+      .findAll(pageRequest)
+      .map { it.toDto() }
+    val expanded = referenceExpansion.expand(activity.content, includes)
+
+    return PageImpl(expanded, activity.pageable, activity.totalElements)
+      .toSuccessCollectionResponseDto { it }
   }
 
   @GetMapping
@@ -269,7 +349,7 @@ class UserController(
 
   @PatchMapping("{userId}/password")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #id")
+  @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
   @Operation(
     summary = "Change the password of a user by its id",
     security = [SecurityRequirement(name = "Basic Auth")]
@@ -298,5 +378,26 @@ class UserController(
     return copy(
       relationships = listOf(RelationDto(id = id, type = RelationshipType.AVATAR))
     )
+  }
+
+  @GetMapping("{userId}/authentication-activity/latest")
+  @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
+  @Operation(
+    summary = "Get the latest authentication activity of a user by its id",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun getLatestAuthenticationActivityForUser(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) userId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessEntityResponseDto<AuthenticationActivityEntityDto> {
+    val user = userRepository.findByIdOrNull(userId)
+      ?: throw IdDoesNotExistException("User not found")
+
+    val activity = authenticationActivityRepository.findMostRecentByUser(user)?.toDto()
+      ?: throw IdDoesNotExistException("Activity not found")
+    val expanded = referenceExpansion.expand(activity, includes)
+
+    return SuccessEntityResponseDto(expanded)
   }
 }

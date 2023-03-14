@@ -22,6 +22,9 @@ fun LocalDateTime.toUtcTimeZone(): LocalDateTime =
     .withZoneSameInstant(ZoneId.of("Z"))
     .toLocalDateTime()
 
+fun Sort.toOrderBy(sorts: Map<String, Field<out Any>>): List<SortField<out Any>> =
+  mapNotNull { it.toSortField(sorts) }
+
 fun Sort.Order.toSortField(sorts: Map<String, Field<out Any>>): SortField<out Any>? {
   val f = sorts[property] ?: return null
   return if (isAscending) f.asc() else f.desc()

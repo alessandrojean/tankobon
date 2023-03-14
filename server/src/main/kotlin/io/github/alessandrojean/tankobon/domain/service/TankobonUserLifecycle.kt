@@ -4,6 +4,7 @@ import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserEmailAlreadyExistsException
+import io.github.alessandrojean.tankobon.domain.persistence.AuthenticationActivityRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import mu.KotlinLogging
@@ -17,6 +18,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class TankobonUserLifecycle(
   private val userRepository: TankobonUserRepository,
+  private val authenticationActivityRepository: AuthenticationActivityRepository,
   private val passwordEncoder: PasswordEncoder,
   private val sessionRegistry: SessionRegistry,
   private val transactionTemplate: TransactionTemplate,
@@ -72,6 +74,7 @@ class TankobonUserLifecycle(
     logger.info { "Deleting user: $user" }
 
     transactionTemplate.executeWithoutResult {
+      authenticationActivityRepository.deleteByUser(user)
       userRepository.delete(user.id)
     }
 

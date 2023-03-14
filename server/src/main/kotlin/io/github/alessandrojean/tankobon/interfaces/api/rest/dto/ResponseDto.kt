@@ -95,6 +95,7 @@ enum class EntityType {
   READ_PROGRESS,
   EXTERNAL_BOOK,
   IMPORTER_SOURCE,
+  AUTHENTICATION_ACTIVITY,
 }
 
 enum class RelationshipType {
