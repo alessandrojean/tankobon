@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.domain.model.UserEmailAlreadyExistsExce
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ErrorResponseDto
 import jakarta.validation.ConstraintViolationException
+import org.jooq.exception.DataAccessException
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -138,6 +139,27 @@ class ErrorHandlingControllerAdvice(
   @ResponseBody
   fun onLibraryOwnerChangedException(e: LibraryOwnerChangedException) =
     e.toErrorResponseDto(HttpStatus.FORBIDDEN)
+
+  @ExceptionHandler(DataAccessException::class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ResponseBody
+  fun onDataAccessException(e: DataAccessException): ErrorResponseDto {
+    if (showStackTrace) {
+      return e.toErrorResponseDto()
+    }
+
+    // Hide the SQL details from the response in production.
+    return ErrorResponseDto(
+      errors = listOf(
+        ErrorDto(
+          id = e.javaClass.simpleName.toErrorId(),
+          status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+          title = "There was an error while accessing the database",
+          details = "Check with an administrator if the error persists",
+        )
+      )
+    )
+  }
 
   @ExceptionHandler(Exception::class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
