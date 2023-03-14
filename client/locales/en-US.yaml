@@ -1,0 +1,53 @@
+common-fields:
+  name: Name
+  email: E-mail
+  password: Password
+  remember-me: Remember me
+  description: Description
+
+common-actions:
+  sign-in: Sign in
+  sign-up: Sign up
+  create-library: Create library
+
+common-placeholders:
+  name: John Doe
+  email: johndoe [at] example.org
+  password: super-secret-password
+  library-name: My library
+  library-description: My library is located in…
+
+validation:
+  required: It can not be blank.
+  email: It should be a valid e-mail.
+
+entities:
+  users: Users
+  publishers: Publishers
+  people: People
+  collections: Collections
+  stores: Stores
+  contributor-roles: Contributor Roles
+  series: Series
+  tags: Tags
+  books: Books
+
+sign-in:
+  header: Sign in to your account
+  new-accounts-info: Accounts can be created only by administrators.
+  general-error: An error occurred while trying to sign in.
+  invalid-credentials: Invalid or wrong credentials.
+
+claim-server:
+  header: Claim the server
+  summary: Create a new administrator account to start using it.
+
+welcome:
+  header: Welcome to Tankobon!
+  summary: Let's create your first library.
+
+libraries:
+  fetch-error: An error occurred while trying to get the libraries.
+
+dashboard:
+  title: Dashboard

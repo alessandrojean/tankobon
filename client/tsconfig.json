@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+        "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -11,8 +11,29 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "types": [
+      "vitest",
+      "vite/client",
+      "vue/ref-macros",
+      "vite-plugin-pwa/client",
+      "vite-plugin-pages/client",
+      "vite-plugin-vue-layouts/client",
+      "@types/gapi.client",
+      "@types/gapi.client.drive",
+      "@types/gapi.client.sheets",
+      "@types/google.accounts",
+      "@types/google.visualization",
+      "@intlify/vite-plugin-vue-i18n/client",
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~~/*": ["./*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["dist", "node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
