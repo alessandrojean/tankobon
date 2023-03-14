@@ -21,6 +21,15 @@ export const useUserStore = defineStore('user', {
       const me = await getMe()
 
       this.$patch({ me })
+    },
+
+    async sessionExists() {
+      try {
+        await getMe()
+        return true
+      } catch (_) {
+        return false
+      }
     }
   },
 })

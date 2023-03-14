@@ -23,10 +23,12 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to) => {
-  const authStore = useUserStore()
+router.beforeEach(async (to) => {
+  const userStore = useUserStore()
 
-  if (to.name === 'sign-in' && authStore.isAuthenticated) {
+  if (to.name === 'sign-in' && userStore.isAuthenticated) {
+    return { name: 'index' }
+  } else if (to.name === 'sign-in' && (await userStore.sessionExists())) {
     return { name: 'index' }
   }
 
@@ -34,7 +36,7 @@ router.beforeEach((to) => {
     to.name !== 'sign-in' &&
     to.name !== 'claim-server' &&
     to.name !== 'startup' &&
-    !authStore.isAuthenticated
+    !userStore.isAuthenticated
   ) {
     const query = Object.assign({}, to.query, { redirect: to.fullPath })
     return { name: 'startup', query }

@@ -29,7 +29,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 w-full h-full flex items-center justify-center">
-    <LoadingSpinIcon class="animate-spin w-10 h-10" />
+  <div class="bg-gray-100 dark:bg-gray-900 w-full h-full min-h-screen flex items-center justify-center">
+    <LoadingSpinIcon class="animate-spin w-10 h-10 text-primary-600" />
   </div>
 </template>
