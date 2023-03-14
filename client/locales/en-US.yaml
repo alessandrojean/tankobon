@@ -16,7 +16,7 @@ common-actions:
 
 common-placeholders:
   name: John Doe
-  email: johndoe [at] example.org
+  email: johndoe[at]example.org
   password: super-secret-password
   library-name: My library
   library-description: My library is located in…

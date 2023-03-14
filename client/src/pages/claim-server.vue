@@ -109,7 +109,7 @@ const passwordFocused = ref(false)
             type="email"
             :label-text="$t('common-fields.email')"
             auto-complete="email"
-            :placeholder="$t('common-placeholders.email')"
+            :placeholder="$t('common-placeholders.email').replace('[at]', '@')"
             :invalid="v$.email.$error"
             :errors="v$.email.$errors"
             required
