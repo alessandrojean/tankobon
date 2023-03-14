@@ -7,8 +7,12 @@ import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import type { ClaimAdmin } from '@/types/tankobon-claim'
 
 const router = useRouter()
+const userStore = useUserStore()
 const { data: claimStatus, isFetched } = useServerClaimStatusQuery()
-const { mutate: claimServer, isLoading, error } = useClaimServerMutation()
+const { mutateAsync: claimServer } = useClaimServerMutation()
+
+const error = ref<Error | null>(null)
+const isLoading = ref(false)
 
 const formState = reactive<ClaimAdmin>({
   name: '',
@@ -29,7 +33,7 @@ const rules = {
 const v$ = useVuelidate(rules, formState)
 
 watch([claimStatus, isFetched], () => {
-  if (claimStatus.value?.isClaimed) {
+  if (claimStatus.value?.isClaimed && !userStore.isAuthenticated && !isLoading.value) {
     router.replace({ name: 'sign-in' })
   }
 })
@@ -41,13 +45,19 @@ async function handleSignIn() {
     return
   }
 
+  isLoading.value = true
+  error.value = null
   const admin: ClaimAdmin = toRaw(formState)
 
-  claimServer(admin, {
-    onSuccess: () => {
-      router.replace({ name: 'sign-in' })
-    }
-  })
+  try {
+    await claimServer(admin)
+    await userStore.signIn({ email: admin.email, password: admin.password })
+    await router.replace({ name: 'welcome' })
+  } catch (e) {
+    error.value = (e instanceof Error) ? e : error.value
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const passwordFocused = ref(false)
@@ -141,6 +151,7 @@ const passwordFocused = ref(false)
           kind="primary"
           class="w-full"
           :loading="isLoading"
+          :disabled="claimStatus?.isClaimed"
         >
           {{ $t('common-actions.sign-up') }}
         </Button>

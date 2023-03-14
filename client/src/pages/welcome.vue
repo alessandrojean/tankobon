@@ -6,11 +6,24 @@ import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import { AddOneLibrary } from '@/types/tankobon-library'
 
 const router = useRouter()
-const { data: libraries } = useUserLibrariesQuery()
+const { data: libraries, refetch: refetchLibraries } = useUserLibrariesQuery()
 const { mutate: createLibrary, isLoading, error } = useCreateLibraryMutation()
 
-watch(() => libraries.value?.length, (count) => {
-  if (count !== undefined && count > 0) {
+const hasNoLibraries = computed(() => {
+  return libraries.value?.length !== undefined 
+    && libraries.value?.length === 0
+})
+
+watch(hasNoLibraries, (hasNoLibraries) => {
+  if (!hasNoLibraries) {
+    router.replace({ name: 'index' })
+  }
+})
+
+onBeforeMount(async () => {
+  await refetchLibraries()
+
+  if (!hasNoLibraries.value) {
     router.replace({ name: 'index' })
   }
 })
@@ -93,6 +106,7 @@ async function handleCreateLibrary() {
           kind="primary"
           class="w-full"
           :loading="isLoading"
+          :disabled="!hasNoLibraries"
         >
           {{ $t('common-actions.create-library') }}
         </Button>
