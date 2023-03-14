@@ -25,7 +25,8 @@ export const useUserStore = defineStore('user', {
 
     async sessionExists() {
       try {
-        await getMe()
+        const me = await getMe()
+        this.$patch({ me })
         return true
       } catch (_) {
         return false
