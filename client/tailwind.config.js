@@ -9,7 +9,6 @@ const aspectRatioPlugin = require('@tailwindcss/aspect-ratio')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./index.html', './src/**/*.vue', './src/**/*.js', './src/**/*.ts'],
-  darkMode: 'class',
   theme: {
     fontFamily: {
       ...defaultTheme.fontFamily,

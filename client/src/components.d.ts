@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Alert: typeof import('./components/Alert.vue')['default']
     AsideButton: typeof import('./components/AsideButton.vue')['default']
     AsideMenu: typeof import('./components/AsideMenu.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
@@ -18,6 +19,8 @@ declare module '@vue/runtime-core' {
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     LoadingSpinIcon: typeof import('./components/icons/LoadingSpinIcon.vue')['default']
     Logo: typeof import('./components/Logo.vue')['default']
+    PasswordRequirements: typeof import('./components/PasswordRequirements.vue')['default']
+    PasswordStrength: typeof import('./components/PasswordStrength.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TextareaInput: typeof import('./components/form/TextareaInput.vue')['default']

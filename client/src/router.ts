@@ -26,8 +26,18 @@ const router = createRouter({
 router.beforeEach((to) => {
   const authStore = useUserStore()
 
-  if (to.name !== 'sign-in' && to.name !== 'claim-server' && !authStore.isAuthenticated) {
-    return { name: 'sign-in', query: { redirect: to.fullPath } }
+  if (to.name === 'sign-in' && authStore.isAuthenticated) {
+    return { name: 'index' }
+  }
+
+  if (
+    to.name !== 'sign-in' &&
+    to.name !== 'claim-server' &&
+    to.name !== 'startup' &&
+    !authStore.isAuthenticated
+  ) {
+    const query = Object.assign({}, to.query, { redirect: to.fullPath })
+    return { name: 'startup', query }
   }
 })
 

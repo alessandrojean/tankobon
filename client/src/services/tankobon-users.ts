@@ -25,3 +25,19 @@ export async function getMeWithAuth(email: string, password: string): Promise<Ta
     throw e
   }
 }
+
+export async function getMe(): Promise<TankobonUserEntity> {
+  try {
+    const { data: me } = await api.get<TankobonUserSuccessResponse>('users/me', {
+      params: { includes: 'avatar' },
+    })
+
+    return me.data
+  } catch (e) {
+    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}

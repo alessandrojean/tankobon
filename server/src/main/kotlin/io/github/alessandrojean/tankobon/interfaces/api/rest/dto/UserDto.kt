@@ -49,7 +49,7 @@ data class UserCreationDto(
   @get:Schema(format = "email")
   val email: String,
   @get:NotBlank
-  @Schema(format = "password")
+  @get:Schema(format = "password")
   val password: String,
   val roles: Set<RoleDto>,
 ) {

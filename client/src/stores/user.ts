@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { getMeWithAuth } from '@/services/tankobon-users'
+import { getMe, getMeWithAuth } from '@/services/tankobon-users'
 import type { TankobonUserEntity } from '@/types/tankobon-user'
 
 export const useUserStore = defineStore('user', {
@@ -14,6 +14,12 @@ export const useUserStore = defineStore('user', {
     async signIn({ email, password }: { email: string, password: string }) {
       const me = await getMeWithAuth(email, password)
       
+      this.$patch({ me })
+    },
+
+    async checkSession() {
+      const me = await getMe()
+
       this.$patch({ me })
     }
   },

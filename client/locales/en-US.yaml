@@ -20,6 +20,7 @@ common-placeholders:
 validation:
   required: It can not be blank.
   email: It should be a valid e-mail.
+  min: It should have at least {n} characters.
 
 entities:
   users: Users
@@ -32,19 +33,28 @@ entities:
   tags: Tags
   books: Books
 
+errors:
+  general-error-title: An error occurred
+
+password-strength:
+  very-weak: Very weak
+  weak: Weak
+  medium: Medium
+  good: Good
+  strong: Strong
+  very-strong: Very strong
+
 sign-in:
   header: Sign in to your account
   new-accounts-info: Accounts can be created only by administrators.
-  general-error: An error occurred while trying to sign in.
-  invalid-credentials: Invalid or wrong credentials.
 
 claim-server:
   header: Claim the server
   summary: Create a new administrator account to start using it.
 
 welcome:
-  header: Welcome to Tankobon!
-  summary: Let's create your first library.
+  header: First library creation
+  summary: Let's create a library to your books.
 
 libraries:
   fetch-error: An error occurred while trying to get the libraries.

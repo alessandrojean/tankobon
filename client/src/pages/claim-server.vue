@@ -8,7 +8,7 @@ import type { ClaimAdmin } from '@/types/tankobon-claim'
 
 const router = useRouter()
 const { data: claimStatus, isFetched } = useServerClaimStatusQuery()
-const { mutate: claimServer, isLoading } = useClaimServerMutation()
+const { mutate: claimServer, isLoading, error } = useClaimServerMutation()
 
 const formState = reactive<ClaimAdmin>({
   name: '',
@@ -49,23 +49,34 @@ async function handleSignIn() {
     }
   })
 }
+
+const passwordFocused = ref(false)
 </script>
 
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>
 
-    <h1 class="mt-6 font-display font-semibold text-3xl">
+    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-3xl">
       {{ $t('claim-server.header') }}
     </h1>
 
-    <p class="mt-1 text-sm text-gray-700">
+    <p class="mt-1 dark:text-gray-400 text-sm text-gray-700">
       {{ $t('claim-server.summary') }}
     </p>
 
-    <section class="mt-10 bg-white shadow rounded-xl w-full max-w-sm p-6">
+    <section class="mt-10 bg-white dark:bg-block-dark shadow rounded-xl w-full max-w-sm p-6">
+      <Alert
+        class="mb-2 rounded-lg dark:!rounded-lg"
+        type="error"
+        :show="error?.message !== undefined && !isLoading"
+        :border="false"
+      >
+        <p>{{ error?.message }}</p>
+      </Alert>
+      
       <form class="space-y-6" @submit.prevent="handleSignIn" novalidate>
         <div class="space-y-2">
           <TextInput
@@ -106,10 +117,22 @@ async function handleSignIn() {
             :placeholder="$t('common-placeholders.password')"
             :invalid="v$.password.$error"
             :errors="v$.password.$errors"
+            @focus="passwordFocused = true"
+            @blur="passwordFocused = false"
             required
           >
             <template #left-icon>
               <KeyIcon class="w-7 h-7 text-current" />
+            </template>
+            <template #footer>
+              <FadeTransition>
+                <PasswordStrength
+                  v-if="formState.password.length > 0 || passwordFocused"
+                  class="mt-2"
+                  :minimum-length="8"
+                  :password="formState.password"
+                />
+              </FadeTransition>
             </template>
           </TextInput>
         </div>

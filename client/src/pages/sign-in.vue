@@ -23,9 +23,13 @@ const rules = {
 
 const v$ = useVuelidate(rules, formState)
 
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 const { data: claimStatus, isFetched } = useServerClaimStatusQuery()
+const { data: userLibraries, refetch: refetchUserLibraries } = useUserLibrariesQuery({
+  enabled: computed(() => userStore.isAuthenticated)
+})
 
 watch([claimStatus, isFetched], () => {
   if (claimStatus.value?.isClaimed === false) {
@@ -33,7 +37,6 @@ watch([claimStatus, isFetched], () => {
   }
 })
 
-const userStore = useUserStore()
 const isLoading = ref(false)
 const error = ref<string>()
 
@@ -52,9 +55,13 @@ async function handleSignIn() {
       password: formState.password
     })
 
+    await refetchUserLibraries()
+
     if (userStore.isAuthenticated) {
       if (route.query.redirect) {
         await router.push({ path: route.query.redirect.toString() })
+      } else if (userLibraries.value?.length === 0) {
+        await router.push({ name: 'welcome' })
       } else {
         await router.push({ name: 'index' })
       }
@@ -68,20 +75,28 @@ async function handleSignIn() {
 </script>
 
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>
 
-    <h1 class="mt-6 font-display font-semibold text-3xl">
+    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-3xl">
       {{ $t('sign-in.header') }}
     </h1>
 
-    <p class="mt-1 text-sm text-gray-700">
+    <p class="mt-1 dark:text-gray-400 text-sm text-gray-700">
       {{ $t('sign-in.new-accounts-info') }}
     </p>
 
-    <section class="mt-10 bg-white shadow rounded-xl w-full max-w-sm p-6">
+    <section class="mt-10 bg-white dark:bg-block-dark shadow rounded-xl w-full max-w-sm p-6">
+      <Alert
+        class="mb-2 rounded-lg dark:!rounded-lg"
+        type="error"
+        :show="error !== undefined && !isLoading"
+        :border="false"
+      >
+        <p>{{ error }}</p>
+      </Alert>
       <form class="space-y-4" @submit.prevent="handleSignIn" novalidate>
         <div class="space-y-2">
           <TextInput

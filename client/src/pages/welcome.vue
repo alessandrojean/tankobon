@@ -45,20 +45,29 @@ async function handleCreateLibrary() {
 </script>
 
 <template>
-  <div class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>
 
-    <h1 class="mt-6 font-display font-semibold text-3xl">
+    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-3xl">
       {{ $t('welcome.header') }}
     </h1>
 
-    <p class="mt-1 text-sm text-gray-700">
+    <p class="mt-1 dark:text-gray-400 text-sm text-gray-700">
       {{ $t('welcome.summary') }}
     </p>
 
-    <section class="mt-10 bg-white shadow rounded-xl w-full max-w-md p-6">
+    <section class="mt-10 bg-white dark:bg-block-dark shadow rounded-xl w-full max-w-md p-6">
+      <Alert
+        class="mb-2 rounded-lg dark:!rounded-lg"
+        type="error"
+        :show="error?.message !== undefined && !isLoading"
+        :border="false"
+      >
+        <p>{{ error?.message }}</p>
+      </Alert>
+
       <form class="space-y-4" @submit.prevent="handleCreateLibrary" novalidate>
         <div class="space-y-2">
           <TextInput
@@ -73,6 +82,7 @@ async function handleCreateLibrary() {
           <TextAreaInput
             v-model="formState.description"
             id="description"
+            class="resize-none"
             rows="5"
             :label-text="$t('common-fields.description')"
             :placeholder="$t('common-placeholders.library-description')"
