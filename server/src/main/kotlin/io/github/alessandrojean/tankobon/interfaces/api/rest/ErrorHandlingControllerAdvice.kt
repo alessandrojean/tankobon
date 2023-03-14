@@ -42,7 +42,7 @@ class ErrorHandlingControllerAdvice(
     return ErrorResponseDto(
       e.constraintViolations.map {
         ErrorDto(
-          id = it.javaClass.simpleName,
+          id = it.javaClass.simpleName.toErrorId(),
           status = HttpStatus.BAD_REQUEST.value(),
           title = it.propertyPath.toString(),
           details = it.message,
@@ -58,7 +58,7 @@ class ErrorHandlingControllerAdvice(
     return ErrorResponseDto(
       e.bindingResult.fieldErrors.map {
         ErrorDto(
-          id = it.javaClass.simpleName,
+          id = it.javaClass.simpleName.toErrorId(),
           status = HttpStatus.BAD_REQUEST.value(),
           title = it.field,
           details = it.defaultMessage.orEmpty(),
@@ -149,7 +149,7 @@ class ErrorHandlingControllerAdvice(
   )
 
   private fun CodedException.toErrorDto(status: HttpStatus = HttpStatus.BAD_REQUEST) = ErrorDto(
-    id = javaClass.simpleName,
+    id = javaClass.simpleName.toErrorId(),
     status = status.value(),
     title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
     details = code.ifEmpty { message.orEmpty() },
@@ -159,7 +159,7 @@ class ErrorHandlingControllerAdvice(
   private fun Exception.toErrorResponseDto(status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) = ErrorResponseDto(
     errors = listOf(
       ErrorDto(
-        id = javaClass.simpleName,
+        id = javaClass.simpleName.toErrorId(),
         status = status.value(),
         title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
         details = message.orEmpty(),
@@ -167,4 +167,14 @@ class ErrorHandlingControllerAdvice(
       ),
     )
   )
+
+  private fun String.toErrorId(): String =
+    replace(EXCEPTION_REGEX, "")
+      .replace(CAMEL_CASE_REGEX, "$1_$2")
+      .uppercase()
+
+  companion object {
+    private val CAMEL_CASE_REGEX = "([a-z])([A-Z]+)".toRegex()
+    private val EXCEPTION_REGEX = "(Exception|Impl)$".toRegex()
+  }
 }
