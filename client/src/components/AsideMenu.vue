@@ -148,8 +148,8 @@ const collapsed = useLocalStorage('aside-collapsed', false)
             :aria-expanded="!collapsed"
             :title="
               collapsed
-                ? t('dashboard.aside.expand')
-                : t('dashboard.aside.collapse')
+                ? t('common-actions.expand')
+                : t('common-actions.collapse')
             "
             @click="collapsed = !collapsed"
           >

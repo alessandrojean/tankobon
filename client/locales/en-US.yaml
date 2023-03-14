@@ -8,7 +8,11 @@ common-fields:
 common-actions:
   sign-in: Sign in
   sign-up: Sign up
+  sign-out: Sign out
   create-library: Create library
+  expand: Expand
+  collapse: Collapse
+  open: Open
 
 common-placeholders:
   name: John Doe
@@ -61,3 +65,6 @@ libraries:
 
 dashboard:
   title: Dashboard
+
+settings:
+  title: Settings

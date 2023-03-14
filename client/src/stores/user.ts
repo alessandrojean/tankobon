@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { getMe, getMeWithAuth } from '@/services/tankobon-users'
+import { getMe, getMeWithAuth, signOut } from '@/services/tankobon-users'
 import type { TankobonUserEntity } from '@/types/tankobon-user'
 
 export const useUserStore = defineStore('user', {
@@ -9,12 +9,25 @@ export const useUserStore = defineStore('user', {
   getters: {
     isAdmin: (state) => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,
     isAuthenticated: (state) => typeof state.me?.id === 'string',
+    avatarUrls: (state) => {
+      return state.me?.relationships
+        ?.find((r) => r.type === 'AVATAR')
+        ?.attributes?.versions as Record<string, string> | undefined
+    }
   },
   actions: {
     async signIn({ email, password }: { email: string, password: string }) {
       const me = await getMeWithAuth(email, password)
       
       this.$patch({ me })
+    },
+
+    async signOut() {
+      try {
+        await signOut()
+      } catch (_) {}
+
+      this.$patch({ me: null })
     },
 
     async checkSession() {

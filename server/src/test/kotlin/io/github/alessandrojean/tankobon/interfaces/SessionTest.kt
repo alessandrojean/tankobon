@@ -115,7 +115,7 @@ class SessionTest(
     assertThat(sessionId).isNotNull
 
     mockMvc
-      .get("/api/logout") {
+      .get("/api/v1/sign-out") {
         header(sessionHeaderName, sessionId!!)
       }
       .andExpect {

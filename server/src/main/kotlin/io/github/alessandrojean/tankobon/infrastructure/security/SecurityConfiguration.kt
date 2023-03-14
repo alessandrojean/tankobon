@@ -70,7 +70,7 @@ class SecurityConfiguration(
         it.authenticationEntryPoint(authenticationEntryPoint)
       }
       .logout {
-        it.logoutUrl("/api/logout")
+        it.logoutUrl("/api/v1/sign-out")
         it.deleteCookies(sessionCookieName)
         it.invalidateHttpSession(true)
       }

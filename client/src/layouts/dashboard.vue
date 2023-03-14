@@ -1,3 +1,11 @@
+<script lang="ts" setup>
+import { breakpointsTailwind } from '@vueuse/core'
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const smAndLarger = breakpoints.greaterOrEqual('sm')
+const lgAndLarger = breakpoints.greaterOrEqual('lg')
+</script>
+
 <template>
   <div class="bg-white min-h-screen dark:bg-gray-900">
     <div class="md:flex w-full">
@@ -9,10 +17,10 @@
         />
       </div>
       <div class="flex-1 flex flex-col relative" id="main-content">
-        <!-- <DashboardNavbar
+        <Navbar
           class="sticky inset-x-0 top-0 shrink-0"
-          :transparent="route.meta?.transparentNavbar && smAndLarger"
-        /> -->
+          :transparent="false"
+        />
         <main role="main" class="flex-1">
           <RouterView v-slot="{ Component }">
             <FadeTransition>

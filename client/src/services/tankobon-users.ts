@@ -41,3 +41,15 @@ export async function getMe(): Promise<TankobonUserEntity> {
     throw e
   }
 }
+
+export async function signOut() {
+  try {
+    await api.post('sign-out')
+  } catch (e) {
+    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
