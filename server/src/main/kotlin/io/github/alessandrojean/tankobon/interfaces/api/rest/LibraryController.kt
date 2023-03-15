@@ -87,13 +87,13 @@ class LibraryController(
   }
 
   @GetMapping("api/v1/users/{userId}/libraries")
-  @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
+  @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
   @Operation(
     summary = "Get all libraries owned by a user by its id",
     security = [SecurityRequirement(name = "Basic Auth")]
   )
   fun getAllLibrariesByOwner(
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
