@@ -127,4 +127,6 @@ fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) 
     ),
   )
 
+fun <T : EntityDto> Page<T>.toSuccessCollectionResponseDto() = toSuccessCollectionResponseDto { it }
+
 fun <T> Page<T>.toPaginationDto() = PaginationDto(number, totalPages, totalElements)

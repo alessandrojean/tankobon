@@ -2,8 +2,14 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.jooq.tables.records.UserRecord
 import org.jooq.DSLContext
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -14,6 +20,12 @@ import io.github.alessandrojean.tankobon.jooq.Tables.USER as TableUser
 class TankobonUserDao(
   private val dsl: DSLContext,
 ) : TankobonUserRepository {
+
+  private val sorts = mapOf(
+    "name" to TableUser.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableUser.CREATED_AT,
+    "modifiedAt" to TableUser.MODIFIED_AT,
+  )
   
   override fun findByIdOrNull(userId: String): TankobonUser? =
     dsl.selectFrom(TableUser)
@@ -31,6 +43,26 @@ class TankobonUserDao(
     dsl.selectFrom(TableUser)
       .fetchInto(TableUser)
       .map { it.toDomain() }
+
+  override fun findAll(pageable: Pageable): Page<TankobonUser> {
+    val count = dsl.fetchCount(TableUser)
+    val orderBy = pageable.sort.toOrderBy(sorts)
+
+    val users = dsl.selectFrom(TableUser)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TableUser)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      users,
+      if (pageable.isPaged) PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      else PageRequest.of(0, maxOf(count, 20), pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(userIds: Collection<String>): Collection<TankobonUser> =
     dsl.selectFrom(TableUser)

@@ -17,7 +17,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateD
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RoleDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserCreationDto
@@ -237,15 +236,29 @@ class UserController(
   }
 
   @GetMapping
+  @PageableAsQueryParam
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "List all users", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllUsers(
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): SuccessCollectionResponseDto<UserEntityDto> {
-    val users = userRepository.findAll().map { it.toDto().withAvatarIfExists() }
-    val expanded = referenceExpansion.expand(users, includes)
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<UserEntityDto> {
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      else -> Sort.by(Sort.Order.desc("createdAt"))
+    }
 
-    return SuccessCollectionResponseDto(expanded)
+    val pageRequest = PageRequest.of(
+      page.pageNumber,
+      page.pageSize,
+      sort,
+    )
+
+    val users = userRepository.findAll(pageRequest).map { it.toDto().withAvatarIfExists() }
+    val expanded = referenceExpansion.expand(users.content, includes)
+
+    return PageImpl(expanded, users.pageable, users.totalElements)
+      .toSuccessCollectionResponseDto()
   }
 
   @GetMapping("{userId}")
