@@ -26,6 +26,13 @@ class PreferenceDao(
       .fetchOne()
       ?.toDomain()
 
+  override fun findByKeysFromUser(keys: Set<String>, userId: String): Collection<Preference> =
+    dsl.selectFrom(TableUserPreference)
+      .where(TableUserPreference.USER_ID.eq(userId))
+      .and(TableUserPreference.KEY.`in`(keys))
+      .fetchInto(TableUserPreference)
+      .map { it.toDomain() }
+
   override fun existsByKeyFromUser(key: String, userId: String): Boolean =
     dsl.fetchExists(
       dsl.select(TableUserPreference.KEY)
@@ -49,6 +56,36 @@ class PreferenceDao(
       .set(TableUserPreference.VALUE, preference.value)
       .where(TableUserPreference.USER_ID.eq(preference.userId))
       .and(TableUserPreference.KEY.eq(preference.key))
+      .execute()
+  }
+
+  @Transactional
+  override fun insertOrUpdate(preference: Preference) {
+    if (existsByKeyFromUser(preference.key, preference.userId)) {
+      update(preference)
+    } else {
+      insert(preference)
+    }
+  }
+
+  @Transactional
+  override fun insertOrUpdate(preferences: Collection<Preference>, userId: String) {
+    val preferencesMap = preferences.associate { it.key to it.value }
+    val existing = findByKeysFromUser(preferences.map(Preference::key).toSet(), userId).map(Preference::key)
+    val nonExisting = preferencesMap.keys.filter { it !in existing }
+
+    dsl.batched { context ->
+      existing.forEach { key ->
+        context.dsl().update(TableUserPreference)
+          .set(TableUserPreference.VALUE, preferencesMap[key])
+          .where(TableUserPreference.USER_ID.eq(userId))
+          .and(TableUserPreference.KEY.eq(key))
+          .execute()
+      }
+    }
+
+    dsl.insertInto(TableUserPreference, *TableUserPreference.fields())
+      .apply { nonExisting.forEach { key -> values(userId, key, preferencesMap[key]) } }
       .execute()
   }
 

@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
 import org.hibernate.validator.constraints.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -108,20 +110,60 @@ class PreferenceController(
     val user = userRepository.findByIdOrNull(userId)
       ?: throw RelationIdDoesNotExistException("User not found")
 
-    val exists = preferenceRepository.existsByKeyFromUser(preference.key, user.id)
     val preferenceDomain = Preference(
       userId = user.id,
       key = preference.key,
       value = preference.value,
     )
 
-    if (exists) {
-      preferenceRepository.update(preferenceDomain)
-    } else {
-      preferenceRepository.insert(preferenceDomain)
-    }
+    preferenceRepository.insertOrUpdate(preferenceDomain)
 
     return SuccessEntityResponseDto(preferenceDomain.toDto())
+  }
+
+  @PostMapping("v1/users/me/preferences/batch")
+  @Operation(
+    summary = "Set multiple preference values by keys to the current authenticated user",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun setMePreferencesValuesByKeys(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @NotEmpty @RequestBody preferences: Map<@NotBlank String, @NotBlank String>,
+  ): SuccessCollectionResponseDto<PreferenceEntityDto> {
+    preferenceRepository.insertOrUpdate(
+      preferences = preferences.map { Preference(principal.user.id, it.key, it.value) },
+      userId = principal.user.id,
+    )
+
+    val createdOrUpdated = preferenceRepository.findByKeysFromUser(
+      keys = preferences.keys,
+      userId = principal.user.id,
+    )
+
+    return SuccessCollectionResponseDto(createdOrUpdated.map { it.toDto() })
+  }
+
+  @PostMapping("v1/users/{userId}/preferences/batch")
+  @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
+  @Operation(summary = "Set multiple preference values by keys to a user", security = [SecurityRequirement(name = "Basic Auth")])
+  fun setPreferencesValuesByKeys(
+    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @NotEmpty @RequestBody preferences: Map<@NotBlank String, @NotBlank String>,
+  ): SuccessCollectionResponseDto<PreferenceEntityDto> {
+    val user = userRepository.findByIdOrNull(userId)
+      ?: throw RelationIdDoesNotExistException("User not found")
+
+    preferenceRepository.insertOrUpdate(
+      preferences = preferences.map { Preference(user.id, it.key, it.value) },
+      userId = user.id,
+    )
+
+    val createdOrUpdated = preferenceRepository.findByKeysFromUser(
+      keys = preferences.keys,
+      userId = user.id,
+    )
+
+    return SuccessCollectionResponseDto(createdOrUpdated.map { it.toDto() })
   }
 
   @DeleteMapping("v1/users/me/preferences/{preferenceKey:.+}")
