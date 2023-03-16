@@ -149,7 +149,7 @@ const passwordFocused = ref(false)
         <Button
           type="submit"
           kind="primary"
-          class="w-full"
+          class="w-full md:text-lg"
           :loading="isLoading"
           :disabled="claimStatus?.isClaimed"
         >

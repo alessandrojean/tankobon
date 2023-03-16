@@ -62,47 +62,55 @@ async function signOut() {
     <ScaleTransition>
       <MenuItems
         as="ul"
-        class="absolute right-6 md:right-0 z-40 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="absolute right-6 md:right-0 z-40 min-w-[9rem] mt-2 p-1.5 space-y-1 origin-top-right bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <div class="pb-1">
-          <MenuItem v-slot="{ active }">
-            <RouterLink
-              :to="{ name: 'welcome' }"
-              :class="[
-                active
-                  ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
-                  : '',
-                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
-              ]"
-            >
-              <span aria-hidden="true">
-                <Cog8ToothIcon
-                  class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400"
-                />
-              </span>
-              {{ t('settings.title') }}
-            </RouterLink>
-          </MenuItem>
-        </div>
-        <div class="pt-1">
-          <MenuItem v-slot="{ active }">
-            <button
-              type="button"
-              :class="[
-                active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
-              ]"
-              @click.stop="signOut"
-            >
-              <span aria-hidden="true">
-                <ArrowLeftOnRectangleIcon
-                  class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
-                />
-              </span>
-              {{ t('common-actions.sign-out') }}
-            </button>
-          </MenuItem>
-        </div>
+        <MenuItem v-slot="{ active }">
+          <RouterLink
+            :to="{ name: 'welcome' }"
+            :class="[
+              active
+                ? 'bg-primary-100 text-primary-700 dark:bg-primary-600 dark:text-primary-100'
+                : '',
+              'group rounded flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+            ]"
+          >
+            <span aria-hidden="true">
+              <Cog8ToothIcon
+                :class="[
+                  'w-5 h-5 mr-3',
+                  active
+                    ? 'text-primary-600 dark:text-primary-100' 
+                    : 'text-gray-500 dark:text-gray-400',
+                ]"
+              />
+            </span>
+            {{ t('settings.title') }}
+          </RouterLink>
+        </MenuItem>
+        <MenuItem v-slot="{ active }">
+          <button
+            type="button"
+            :class="[
+              active
+                ? 'bg-primary-100 text-primary-700 dark:bg-primary-600 dark:text-primary-100'
+                : '',
+              'group rounded flex items-center w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+            ]"
+            @click.stop="signOut"
+          >
+            <span aria-hidden="true">
+              <ArrowLeftOnRectangleIcon
+                :class="[
+                  'w-5 h-5 mr-3',
+                  active
+                    ? 'text-primary-600 dark:text-primary-100' 
+                    : 'text-gray-500 dark:text-gray-400',
+                ]"
+              />
+            </span>
+            {{ t('common-actions.sign-out') }}
+          </button>
+        </MenuItem>
       </MenuItems>
     </ScaleTransition>
   </Menu>

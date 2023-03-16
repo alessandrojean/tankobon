@@ -138,7 +138,7 @@ async function handleSignIn() {
         <Button
           type="submit"
           kind="primary"
-          class="w-full"
+          class="w-full md:text-lg"
           :loading="isLoading"
         >
           {{ $t('common-actions.sign-in') }}

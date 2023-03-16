@@ -92,14 +92,7 @@ async function setTheme(theme: Theme) {
         {{ t('theme-toggle.label') }}
       </span>
     </ListboxButton>
-    <transition
-      enter-active-class="motion-safe:transition duration-100 ease-out"
-      enter-from-class="scale-95 opacity-0"
-      enter-to-class="scale-100 opacity-100"
-      leave-active-class="motion-safe:transition duration-75 ease-in"
-      leave-from-class="scale-100 opacity-100"
-      leave-to-class="scale-95 opacity-0"
-    >
+    <ScaleTransition>
       <ListboxOptions :class="bottom ? 'is-bottom' : ''" class="theme-options">
         <ListboxOption
           v-for="option in options"
@@ -134,13 +127,14 @@ async function setTheme(theme: Theme) {
           </li>
         </ListboxOption>
       </ListboxOptions>
-    </transition>
+    </ScaleTransition>
   </Listbox>
 </template>
 
 <style lang="postcss" scoped>
 .theme-chooser {
-  @apply w-8 h-8 flex items-center justify-center rounded-full text-gray-400
+  @apply w-8 h-8 flex items-center justify-center rounded-full
+    text-gray-400 dark:text-gray-300
     motion-safe:transition;
 }
 
@@ -189,10 +183,10 @@ async function setTheme(theme: Theme) {
 }
 
 .theme-options {
-  @apply absolute top-full right-0
-    bg-white dark:bg-gray-700
+  @apply absolute top-full right-0 space-y-1
+    bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700
     rounded-md shadow-lg overflow-hidden
-    w-36 py-1 mt-2 origin-top-right
+    min-w-[8rem] p-1.5 mt-2 origin-top-right
     ring-1 ring-black ring-opacity-5;
 }
 
@@ -205,16 +199,16 @@ async function setTheme(theme: Theme) {
 }
 
 .theme {
-  @apply flex items-center select-none
-    w-full px-4 py-2.5 text-sm cursor-pointer
+  @apply flex items-center select-none rounded
+    w-full px-3 py-2 text-sm cursor-pointer
     text-gray-700 dark:text-gray-300;
 }
 
 .theme:hover,
 .theme:focus-visible,
 .theme.active {
-  @apply bg-gray-100 dark:bg-gray-600/50
-    dark:text-gray-200;
+  @apply bg-primary-100 text-primary-700
+    dark:bg-primary-600 dark:text-primary-100;
 }
 
 .theme:focus {
@@ -225,15 +219,17 @@ async function setTheme(theme: Theme) {
   @apply text-gray-500 dark:text-gray-400;
 }
 
-.theme:hover svg {
-  @apply text-gray-600 dark:text-gray-300;
+.theme:hover svg,
+.theme:focus-visible svg,
+.theme.active svg {
+  @apply text-primary-600 dark:text-primary-200;
 }
-
+/* 
 .theme[aria-selected='true'] {
   @apply text-primary-500 dark:text-primary-300 font-semibold;
 }
 
 .theme[aria-selected='true'] svg {
   @apply text-primary-500 dark:text-primary-300;
-}
+} */
 </style>

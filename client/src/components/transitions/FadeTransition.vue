@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 export interface FadeTransitionProps {
-  mode?: 'in-out' | 'out-in' | null
+  mode?: 'in-out' | 'out-in' | undefined
   simultaneous?: boolean
 }
 withDefaults(defineProps<FadeTransitionProps>(), {
@@ -11,7 +11,7 @@ withDefaults(defineProps<FadeTransitionProps>(), {
 
 <template>
   <Transition
-    :mode="!simultaneous ? mode : null"
+    :mode="!simultaneous ? mode : undefined"
     leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
