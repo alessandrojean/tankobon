@@ -10,7 +10,7 @@ export interface CollectionResponse<Entity> {
   data: Entity[],
 }
 
-export interface PaginatedCollectionResponse<Entity> {
+export interface PaginatedResponse<Entity> {
   result: 'OK',
   response: 'COLLECTION',
   data: Entity[],
@@ -38,7 +38,7 @@ export interface Pagination {
 
 export type TankobonResponse<T> = EntityResponse<T>
   | CollectionResponse<T>
-  | PaginatedCollectionResponse<T>
+  | PaginatedResponse<T>
   | ErrorResponse
 
 export class TankobonApiError extends Error {

@@ -4,6 +4,8 @@ common-fields:
   password: Password
   remember-me: Remember me
   description: Description
+  role: Role
+  created-at: Created at
 
 common-actions:
   sign-in: Sign in
@@ -75,3 +77,14 @@ theme-toggle:
   light: Light
   dark: Dark
   system: System
+
+user:
+  role-user: User
+  role-admin: Administrator
+
+users:
+  header: Users
+
+pagination:
+  items-per-page: Items per page
+  show-n-items: '{n} items per page'

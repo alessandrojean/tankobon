@@ -1,17 +1,20 @@
 import { Entity } from './tankobon-entity'
 import { EntityResponse } from './tankobon-response'
 
-export type TankobonUserEntity = Entity<TankobonUserAttributes> & {
+export type UserEntity = Entity<UserAttributes> & {
   type: 'USER'
 }
 
-export interface TankobonUserAttributes {
+export interface UserAttributes {
   name: string,
   email: string,
   biography: string,
-  roles: TankobonUserRole[]
+  roles: UserRole[],
+  createdAt: string,
 }
 
-export type TankobonUserRole = 'ROLE_ADMIN' | 'ROLE_USER'
+export type UserRole = 'ROLE_ADMIN' | 'ROLE_USER'
+export type UserIncludes = 'avatar'
+export type UserSort = 'name' | 'createdAt' | 'modifiedAt'
 
-export type TankobonUserSuccessResponse = EntityResponse<TankobonUserEntity>
+export type UserSuccessResponse = EntityResponse<UserEntity>

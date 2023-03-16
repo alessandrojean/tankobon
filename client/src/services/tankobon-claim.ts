@@ -6,9 +6,9 @@ import {
   type EntityResponse
 } from '@/types/tankobon-response'
 import type { ClaimStatus, ClaimAdmin } from '@/types/tankobon-claim'
-import type { TankobonUserEntity } from '@/types/tankobon-user'
+import type { UserEntity } from '@/types/tankobon-user'
 
-export type ClaimResponse = EntityResponse<TankobonUserEntity>
+export type ClaimResponse = EntityResponse<UserEntity>
 
 export async function getClaimStatus(): Promise<ClaimStatus> {
   try {
@@ -24,7 +24,7 @@ export async function getClaimStatus(): Promise<ClaimStatus> {
   }
 }
 
-export async function claimAdmin(admin: ClaimAdmin): Promise<TankobonUserEntity> {
+export async function claimAdmin(admin: ClaimAdmin): Promise<UserEntity> {
   try {
     const { data } = await api.post<ClaimResponse>('claim', admin)
 

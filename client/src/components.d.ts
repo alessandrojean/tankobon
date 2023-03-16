@@ -14,6 +14,9 @@ declare module '@vue/runtime-core' {
     AsideDialog: typeof import('./components/AsideDialog.vue')['default']
     AsideMenu: typeof import('./components/AsideMenu.vue')['default']
     Avatar: typeof import('./components/Avatar.vue')['default']
+    Badge: typeof import('./components/Badge.vue')['default']
+    BasicCheckbox: typeof import('./components/form/BasicCheckbox.vue')['default']
+    BasicSelect: typeof import('./components/form/BasicSelect.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
     CheckboxInput: typeof import('./components/form/CheckboxInput.vue')['default']
     copy: typeof import('./components/form/TextInput copy.vue')['default']
@@ -21,6 +24,7 @@ declare module '@vue/runtime-core' {
     DialogPanel: typeof import('@headlessui/vue')['DialogPanel']
     DialogTitle: typeof import('@headlessui/vue')['DialogTitle']
     FadeTransition: typeof import('./components/transitions/FadeTransition.vue')['default']
+    Header: typeof import('./components/Header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Listbox: typeof import('@headlessui/vue')['Listbox']
     ListboxButton: typeof import('@headlessui/vue')['ListboxButton']
@@ -45,5 +49,6 @@ declare module '@vue/runtime-core' {
     ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
     TransitionChild: typeof import('@headlessui/vue')['TransitionChild']
     TransitionRoot: typeof import('@headlessui/vue')['TransitionRoot']
+    UsersTable: typeof import('./components/users/UsersTable.vue')['default']
   }
 }

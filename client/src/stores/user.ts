@@ -1,10 +1,10 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { getMe, getMeWithAuth, signOut } from '@/services/tankobon-users'
-import type { TankobonUserEntity } from '@/types/tankobon-user'
+import type { UserEntity } from '@/types/tankobon-user'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    me: null as TankobonUserEntity | null,
+    me: null as UserEntity | null,
   }),
   getters: {
     isAdmin: (state) => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,

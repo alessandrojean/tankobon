@@ -254,6 +254,7 @@ declare global {
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
   const useUserPreferencesQuery: typeof import('./queries/useUserPreferencesQuery')['default']
   const useUserStore: typeof import('./stores/user')['useUserStore']
+  const useUsersQuery: typeof import('./queries/useUsersQuery')['default']
   const useVModel: typeof import('@vueuse/core')['useVModel']
   const useVModels: typeof import('@vueuse/core')['useVModels']
   const useVibrate: typeof import('@vueuse/core')['useVibrate']
@@ -540,6 +541,7 @@ declare module 'vue' {
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
     readonly useUserPreferencesQuery: UnwrapRef<typeof import('./queries/useUserPreferencesQuery')['default']>
     readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>
+    readonly useUsersQuery: UnwrapRef<typeof import('./queries/useUsersQuery')['default']>
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>
     readonly useVModels: UnwrapRef<typeof import('@vueuse/core')['useVModels']>
     readonly useVibrate: UnwrapRef<typeof import('@vueuse/core')['useVibrate']>

@@ -257,6 +257,7 @@
     "useUserMedia": true,
     "useUserPreferencesQuery": true,
     "useUserStore": true,
+    "useUsersQuery": true,
     "useVModel": true,
     "useVModels": true,
     "useVibrate": true,
