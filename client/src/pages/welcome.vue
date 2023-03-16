@@ -63,7 +63,7 @@ async function handleCreateLibrary() {
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>
 
-    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-3xl">
+    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-2xl sm:text-3xl">
       {{ $t('welcome.header') }}
     </h1>
 
@@ -71,7 +71,7 @@ async function handleCreateLibrary() {
       {{ $t('welcome.summary') }}
     </p>
 
-    <section class="mt-10 bg-white dark:bg-block-dark shadow rounded-xl w-full max-w-md p-6">
+    <section class="mt-10 bg-white dark:bg-block-dark shadow sm:rounded-xl w-full max-w-md p-6">
       <Alert
         class="mb-2 rounded-lg dark:!rounded-lg"
         type="error"
