@@ -5,6 +5,7 @@ export interface ButtonProps {
   disabled?: boolean,
   loading?: boolean,
   kind?: 'primary' | 'normal' | 'ghost',
+  size?: 'normal' | 'large',
   type?: ButtonHTMLAttributes['type'],
 }
 
@@ -12,6 +13,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   disabled: false,
   loading: false,
   kind: 'normal',
+  size: 'normal',
   type: 'button',
 })
 
@@ -28,6 +30,7 @@ const kindMap: Record<string, string> = {
       'rounded-md px-3 py-2 font-medium motion-safe:transition-all',
       'border flex items-center justify-center',
       loading ? 'disabled:opacity-80' : 'disabled:opacity-50',
+      { 'text-lg': size === 'large' },
       kindMap[kind],
     ]"
     :type="type"
@@ -38,7 +41,10 @@ const kindMap: Record<string, string> = {
     </div>
     <LoadingSpinIcon
       v-if="loading"
-      class="w-6 h-6 animate-spin"
+      :class="[
+        'animate-spin',
+        size === 'large' ? 'w-7 h-7' : 'w-6 h-6',
+      ]"
     />
   </button>
 </template>

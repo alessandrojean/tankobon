@@ -104,7 +104,8 @@ async function handleCreateLibrary() {
         <Button
           type="submit"
           kind="primary"
-          class="w-full md:text-lg"
+          class="w-full"
+          size="large"
           :loading="isLoading"
           :disabled="!hasNoLibraries"
         >
