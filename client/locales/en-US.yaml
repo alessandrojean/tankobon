@@ -50,7 +50,7 @@ password-strength:
 
 sign-in:
   header: Sign in to your account
-  new-accounts-info: Accounts can be created only by administrators.
+  new-accounts-info: Accounts can only be created by administrators.
 
 claim-server:
   header: Claim the server
