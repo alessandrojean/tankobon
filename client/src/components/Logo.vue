@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { BookOpenIcon } from '@heroicons/vue/20/solid'
 
-export interface ToshokanLogoProps {
+export interface LogoProps {
   dark?: boolean
   label: string
   iconOnly?: boolean
 }
 
-const props = withDefaults(defineProps<ToshokanLogoProps>(), { dark: false })
+const props = withDefaults(defineProps<LogoProps>(), { dark: false })
 const { dark, label, iconOnly } = toRefs(props)
 </script>
 

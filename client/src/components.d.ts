@@ -11,11 +11,15 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Alert: typeof import('./components/Alert.vue')['default']
     AsideButton: typeof import('./components/AsideButton.vue')['default']
+    AsideDialog: typeof import('./components/AsideDialog.vue')['default']
     AsideMenu: typeof import('./components/AsideMenu.vue')['default']
     Avatar: typeof import('./components/Avatar.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
     CheckboxInput: typeof import('./components/form/CheckboxInput.vue')['default']
     copy: typeof import('./components/form/TextInput copy.vue')['default']
+    Dialog: typeof import('@headlessui/vue')['Dialog']
+    DialogPanel: typeof import('@headlessui/vue')['DialogPanel']
+    DialogTitle: typeof import('@headlessui/vue')['DialogTitle']
     FadeTransition: typeof import('./components/transitions/FadeTransition.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Listbox: typeof import('@headlessui/vue')['Listbox']
@@ -39,5 +43,7 @@ declare module '@vue/runtime-core' {
     TextAreaInput: typeof import('./components/form/TextAreaInput.vue')['default']
     TextInput: typeof import('./components/form/TextInput.vue')['default']
     ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
+    TransitionChild: typeof import('@headlessui/vue')['TransitionChild']
+    TransitionRoot: typeof import('@headlessui/vue')['TransitionRoot']
   }
 }

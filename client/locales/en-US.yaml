@@ -13,6 +13,7 @@ common-actions:
   expand: Expand
   collapse: Collapse
   open: Open
+  open-menu: Open menu
 
 common-placeholders:
   name: John Doe

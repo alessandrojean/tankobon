@@ -16,23 +16,28 @@ import {
 } from '@heroicons/vue/24/outline'
 
 export interface Item {
-  key: string
-  label: string
-  icon?: FunctionalComponent
-  to: RouteLocationRaw
-  exact?: boolean
-  external?: boolean
-  active?: (() => boolean) | ComputedRef<boolean>
+  key: string,
+  label: string,
+  icon?: FunctionalComponent,
+  to: RouteLocationRaw,
+  exact?: boolean,
+  external?: boolean,
+  active?: (() => boolean) | ComputedRef<boolean>,
+  adminOnly?: boolean,
 }
 
 export interface AsideMenuProps {
-  collapsible?: boolean
-  dark?: boolean
+  collapsible?: boolean,
+  dark?: boolean,
+  isAdmin?: boolean,
 }
 
 const props = withDefaults(defineProps<AsideMenuProps>(), {
-  collapsible: false
+  collapsible: false,
+  isAdmin: false,
 })
+
+const { isAdmin } = toRefs(props)
 
 const emit = defineEmits<{ (e: 'navigate', location: RouteLocation): void }>()
 
@@ -93,7 +98,8 @@ const items = computed<Item[]>(() => [
     key: 'users',
     label: t('entities.users'),
     icon: UserIcon,
-    to: { name: 'welcome' },
+    to: { name: 'users' },
+    adminOnly: true,
   },
 ])
 
@@ -116,6 +122,10 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
 }
 
 const collapsed = useLocalStorage('aside-collapsed', false)
+
+const accessibleItems = computed(() => {
+  return items.value.filter((item) => item.adminOnly ? isAdmin.value : true)
+})
 </script>
 
 <template>

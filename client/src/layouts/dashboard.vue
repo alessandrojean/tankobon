@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ShowAsideDialogKey } from '@/symbols';
 import { breakpointsTailwind } from '@vueuse/core'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
@@ -9,8 +10,22 @@ const router = useRouter()
 const { data: hasNoLibraries } = useUserLibrariesQuery({
   select: (libraries) => libraries.length === 0,
 })
+const userStore = useUserStore()
+const isAdmin = computed(() => userStore.isAdmin)
 
 whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
+
+const asideDialogOpen = ref(false)
+
+function openAsideDialog() {
+  asideDialogOpen.value = true
+}
+
+function closeAsideDialog() {
+  asideDialogOpen.value = false
+}
+
+provide(ShowAsideDialogKey, openAsideDialog)
 </script>
 
 <template>
@@ -21,6 +36,7 @@ whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
           class="sticky inset-x-0 top-0 h-screen"
           id="aside-menu"
           collapsible
+          :is-admin="isAdmin"
         />
       </div>
       <div class="flex-1 flex flex-col relative" id="main-content">
@@ -38,12 +54,9 @@ whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
         <!-- <DashboardFooter class="shrink-0" /> -->
       </div>
     </div>
-    <!-- <DashboardAsideDialog :is-open="asideDialogOpen" @close="closeAsideDialog">
-      <template #footer v-if="enabled && shared">
-        <div class="border-t border-gray-200 dark:border-gray-700 py-2">
-          <BookOwnerBadge />
-        </div>
-      </template>
-    </DashboardAsideDialog> -->
+    <AsideDialog
+      :is-open="asideDialogOpen"
+      @close="closeAsideDialog"
+    />
   </div>
 </template>
