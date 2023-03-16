@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     Alert: typeof import('./components/Alert.vue')['default']
     AsideButton: typeof import('./components/AsideButton.vue')['default']
     AsideMenu: typeof import('./components/AsideMenu.vue')['default']
+    Avatar: typeof import('./components/Avatar.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
     CheckboxInput: typeof import('./components/form/CheckboxInput.vue')['default']
     copy: typeof import('./components/form/TextInput copy.vue')['default']

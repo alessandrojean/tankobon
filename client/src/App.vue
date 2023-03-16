@@ -10,8 +10,9 @@ const router = useRouter()
 
 const isAuthenticated = computed(() => userStore.isAuthenticated)
 const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
+const localTheme = useLocalStorage('theme', THEME_SYSTEM)
 const { data: theme } = useUserPreferencesQuery({
-  select: (preferences) => preferences.theme as Theme ?? THEME_SYSTEM
+  select: (preferences) => preferences.theme as Theme ?? localTheme.value
 })
 
 watch([theme, isPreferredDark], ([theme, isPreferredDark]) => {

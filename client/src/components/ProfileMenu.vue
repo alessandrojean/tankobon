@@ -39,15 +39,7 @@ async function signOut() {
         class="max-w-xs flex items-center text-sm focus:outline-none group"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
-        <div
-          :class="[
-            'w-8 h-8 rounded-full bg-cover shadow-avatar transition-shadow motion-reduce:transition-none group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500',
-            light
-              ? 'group-focus-visible:ring-offset-white dark:group-focus-visible:ring-offset-gray-900'
-              : 'group-focus-visible:ring-offset-gray-700'
-          ]"
-          :style="{ backgroundImage: avatarUrl ? `url('${avatarUrl}')` : undefined }"
-        />
+        <Avatar :picture-url="avatarUrl" small />
         <span aria-hidden="true">
           <ChevronDownIcon
             :class="[

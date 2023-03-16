@@ -172,6 +172,8 @@
     "useI18n": true,
     "useIdle": true,
     "useImage": true,
+    "useImageLazyLoader": true,
+    "useImageLoader": true,
     "useInfiniteScroll": true,
     "useIntersectionObserver": true,
     "useInterval": true,

@@ -25,9 +25,10 @@ const props = withDefaults(defineProps<ThemeToggleProps>(), {
 const { light, bottom, transparent } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
+const localTheme = useLocalStorage<Theme>('theme', 'system')
 const { data: theme } = useUserPreferencesQuery({
   select: (preferences) => {
-    return preferences.theme ? preferences.theme as Theme : 'system'
+    return preferences.theme ? preferences.theme as Theme : localTheme.value
   },
   initialData: { theme: 'system' },
 })
@@ -51,6 +52,7 @@ const { mutateAsync: setPreferences } = useSetPreferencesMutation()
 
 async function setTheme(theme: Theme) {
   await setPreferences({ theme })
+  localTheme.value = theme
 }
 </script>
 
