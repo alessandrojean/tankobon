@@ -23,7 +23,7 @@ export interface Item {
   exact?: boolean,
   external?: boolean,
   active?: (() => boolean) | ComputedRef<boolean>,
-  adminOnly?: boolean,
+  isAdminOnly?: boolean,
 }
 
 export interface AsideMenuProps {
@@ -99,7 +99,7 @@ const items = computed<Item[]>(() => [
     label: t('entities.users'),
     icon: UserIcon,
     to: { name: 'users' },
-    adminOnly: true,
+    isAdminOnly: true,
   },
 ])
 
@@ -123,8 +123,8 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
 
 const collapsed = useLocalStorage('aside-collapsed', false)
 
-const accessibleItems = computed(() => {
-  return items.value.filter((item) => item.adminOnly ? isAdmin.value : true)
+const allowedItems = computed(() => {
+  return items.value.filter((item) => item.isAdminOnly ? isAdmin.value : true)
 })
 </script>
 
@@ -175,7 +175,7 @@ const accessibleItems = computed(() => {
               collapsed ? 'flex flex-col items-center' : ''
             ]"
           >
-            <li v-for="item in items" :key="item.key" class="w-full">
+            <li v-for="item in allowedItems" :key="item.key" class="w-full">
               <RouterLink
                 custom
                 :to="item.to"

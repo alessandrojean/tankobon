@@ -5,6 +5,7 @@ import generatedRoutes from 'virtual:generated-pages'
 declare module 'vue-router' {
   interface RouteMeta {
     title: string
+    isAdminOnly?: boolean
   }
 }
 
@@ -40,6 +41,14 @@ router.beforeEach(async (to) => {
   ) {
     const query = Object.assign({}, to.query, { redirect: to.fullPath })
     return { name: 'startup', query }
+  }
+})
+
+router.beforeEach((to) => {
+  const userStore = useUserStore()
+
+  if (to.meta.isAdminOnly && !userStore.isAdmin) {
+    return { name: 'index' }
   }
 })
 

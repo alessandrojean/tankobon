@@ -56,6 +56,7 @@ provide(ShowAsideDialogKey, openAsideDialog)
     </div>
     <AsideDialog
       :is-open="asideDialogOpen"
+      :is-admin="isAdmin"
       @close="closeAsideDialog"
     />
   </div>
