@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 const kindMap: Record<string, string> = {
   primary: 'shadow-sm border-primary-500 bg-primary-500 text-primary-50 enabled:hover:bg-primary-600 enabled:hover:border-primary-600',
   normal: 'shadow-sm border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50',
-  ghost: 'border-transparent bg-transparent text-primary-600 enabled:hover:bg-gray-700/10 dark:enabled:hover:bg-gray-300/10 enabled:hover:text-primary-800 dark:enabled:hover:text-primary-500',
+  ghost: 'border-transparent bg-transparent text-primary-600 dark:text-primary-500 enabled:hover:bg-gray-700/10 dark:enabled:hover:bg-gray-300/10 enabled:hover:text-primary-800 dark:enabled:hover:text-primary-400',
 }
 </script>
 

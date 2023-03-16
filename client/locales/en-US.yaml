@@ -68,3 +68,9 @@ dashboard:
 
 settings:
   title: Settings
+
+theme-toggle:
+  label: Theme
+  light: Light
+  dark: Dark
+  system: System

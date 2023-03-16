@@ -25,7 +25,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
       'z-20 bg-gray-800 supports-backdrop-blur:bg-gray-800/95',
       'backdrop-blur sm:backdrop-filter-none md:backdrop-blur',
       'transition duration-300 ease-in-out sm:left-16 md:left-0',
-      'dark:border-b dark:bordery-gray-700',
+      'dark:border-b dark:border-gray-700',
       'motion-safe:transition-colors motion-safe:duration-300',
       transparent && !isScrolling 
         ? '!bg-transparent !backdrop-blur-none !border-transparent'
@@ -42,6 +42,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
         />
 
         <div class="ml-auto inline-flex">
+          <ThemeToggle :transparent="transparent && !isScrolling" />
           <ProfileMenu :transparent="transparent && !isScrolling" />
         </div>
       </div>

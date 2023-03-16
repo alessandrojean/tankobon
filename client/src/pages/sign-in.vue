@@ -58,10 +58,10 @@ async function handleSignIn() {
     await refetchUserLibraries()
 
     if (userStore.isAuthenticated) {
-      if (route.query.redirect) {
-        await router.push({ path: route.query.redirect.toString() })
-      } else if (userLibraries.value?.length === 0) {
+      if (userLibraries.value?.length === 0) {
         await router.push({ name: 'welcome' })
+      } else if (route.query.redirect) {
+        await router.push({ path: route.query.redirect.toString() })
       } else {
         await router.push({ name: 'index' })
       }

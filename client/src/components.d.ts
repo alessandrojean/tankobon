@@ -17,6 +17,10 @@ declare module '@vue/runtime-core' {
     copy: typeof import('./components/form/TextInput copy.vue')['default']
     FadeTransition: typeof import('./components/transitions/FadeTransition.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    Listbox: typeof import('@headlessui/vue')['Listbox']
+    ListboxButton: typeof import('@headlessui/vue')['ListboxButton']
+    ListboxOption: typeof import('@headlessui/vue')['ListboxOption']
+    ListboxOptions: typeof import('@headlessui/vue')['ListboxOptions']
     LoadingSpinIcon: typeof import('./components/icons/LoadingSpinIcon.vue')['default']
     Logo: typeof import('./components/Logo.vue')['default']
     Menu: typeof import('@headlessui/vue')['Menu']
@@ -33,5 +37,6 @@ declare module '@vue/runtime-core' {
     TextareaInput: typeof import('./components/form/TextareaInput.vue')['default']
     TextAreaInput: typeof import('./components/form/TextAreaInput.vue')['default']
     TextInput: typeof import('./components/form/TextInput.vue')['default']
+    ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
   }
 }

@@ -50,7 +50,6 @@ class PreferenceController(
   )
   fun getAllMePreferences(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
   ): SuccessCollectionResponseDto<PreferenceEntityDto> {
     val preferences = preferenceRepository
       .findAllByUser(principal.user.id)

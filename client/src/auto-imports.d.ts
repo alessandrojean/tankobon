@@ -218,6 +218,7 @@ declare global {
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useServerClaimStatusQuery: typeof import('./queries/useServerClaimStatusQuery')['default']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
+  const useSetPreferencesMutation: typeof import('./mutations/useSetPreferencesMutation')['default']
   const useShare: typeof import('@vueuse/core')['useShare']
   const useSlots: typeof import('vue')['useSlots']
   const useSorted: typeof import('@vueuse/core')['useSorted']
@@ -249,6 +250,7 @@ declare global {
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserLibrariesQuery: typeof import('./queries/useUserLibrariesQuery')['default']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
+  const useUserPreferencesQuery: typeof import('./queries/useUserPreferencesQuery')['default']
   const useUserStore: typeof import('./stores/user')['useUserStore']
   const useVModel: typeof import('@vueuse/core')['useVModel']
   const useVModels: typeof import('@vueuse/core')['useVModels']
@@ -500,6 +502,7 @@ declare module 'vue' {
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useServerClaimStatusQuery: UnwrapRef<typeof import('./queries/useServerClaimStatusQuery')['default']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
+    readonly useSetPreferencesMutation: UnwrapRef<typeof import('./mutations/useSetPreferencesMutation')['default']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSorted: UnwrapRef<typeof import('@vueuse/core')['useSorted']>
@@ -531,6 +534,7 @@ declare module 'vue' {
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
     readonly useUserLibrariesQuery: UnwrapRef<typeof import('./queries/useUserLibrariesQuery')['default']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
+    readonly useUserPreferencesQuery: UnwrapRef<typeof import('./queries/useUserPreferencesQuery')['default']>
     readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>
     readonly useVModels: UnwrapRef<typeof import('@vueuse/core')['useVModels']>

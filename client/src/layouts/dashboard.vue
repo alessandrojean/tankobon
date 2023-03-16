@@ -4,6 +4,13 @@ import { breakpointsTailwind } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
 const lgAndLarger = breakpoints.greaterOrEqual('lg')
+
+const router = useRouter()
+const { data: hasNoLibraries } = useUserLibrariesQuery({
+  select: (libraries) => libraries.length === 0,
+})
+
+whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
 </script>
 
 <template>

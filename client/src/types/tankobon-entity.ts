@@ -5,7 +5,7 @@ export interface TankobonEntity<Attributes> {
   relationships: TankobonRelationship<any>[] | undefined,
 }
 
-export type TankobonEntityType = 'USER' | 'LIBRARY'
+export type TankobonEntityType = 'USER' | 'LIBRARY' | 'PREFERENCE'
 
 export interface TankobonRelationship<Attributes> {
   id: string,
@@ -13,7 +13,7 @@ export interface TankobonRelationship<Attributes> {
   attributes: Attributes | undefined,
 }
 
-export type TankobonRelationshipType = 'AVATAR' | 'OWNER'
+export type TankobonRelationshipType = 'AVATAR' | 'OWNER' | 'USER'
 
 export type Includes = TankobonRelationshipType[]
 
