@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import { TankobonApiError, type TankobonErrorResponse } from '@/types/tankobon-response'
+import { TankobonApiError, type ErrorResponse } from '@/types/tankobon-response'
 import type {
   TankobonUserEntity,
   TankobonUserSuccessResponse
@@ -18,7 +18,7 @@ export async function getMeWithAuth(email: string, password: string): Promise<Ta
 
     return me.data
   } catch (e) {
-    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
     }
 
@@ -34,7 +34,7 @@ export async function getMe(): Promise<TankobonUserEntity> {
 
     return me.data
   } catch (e) {
-    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
     }
 
@@ -46,7 +46,7 @@ export async function signOut() {
   try {
     await api.post('sign-out')
   } catch (e) {
-    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
     }
 

@@ -1,19 +1,19 @@
-export interface TankobonEntity<Attributes> {
+export interface Entity<Attributes> {
   id: string,
-  type: TankobonEntityType,
+  type: EntityType,
   attributes: Attributes,
-  relationships: TankobonRelationship<any>[] | undefined,
+  relationships: Relationship<any>[] | undefined,
 }
 
-export type TankobonEntityType = 'USER' | 'LIBRARY' | 'PREFERENCE'
+export type EntityType = 'USER' | 'LIBRARY' | 'PREFERENCE'
 
-export interface TankobonRelationship<Attributes> {
+export interface Relationship<Attributes> {
   id: string,
-  type: TankobonRelationshipType,
+  type: RelationshipType,
   attributes: Attributes | undefined,
 }
 
-export type TankobonRelationshipType = 'AVATAR' | 'OWNER' | 'USER'
+export type RelationshipType = 'AVATAR' | 'OWNER' | 'USER'
 
-export type Includes = TankobonRelationshipType[]
+export type Includes = RelationshipType[]
 

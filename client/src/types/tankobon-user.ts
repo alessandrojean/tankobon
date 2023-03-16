@@ -1,7 +1,7 @@
-import { TankobonEntity } from './tankobon-entity'
-import { TankobonSuccessEntityResponse } from './tankobon-response'
+import { Entity } from './tankobon-entity'
+import { EntityResponse } from './tankobon-response'
 
-export type TankobonUserEntity = TankobonEntity<TankobonUserAttributes> & {
+export type TankobonUserEntity = Entity<TankobonUserAttributes> & {
   type: 'USER'
 }
 
@@ -14,4 +14,4 @@ export interface TankobonUserAttributes {
 
 export type TankobonUserRole = 'ROLE_ADMIN' | 'ROLE_USER'
 
-export type TankobonUserSuccessResponse = TankobonSuccessEntityResponse<TankobonUserEntity>
+export type TankobonUserSuccessResponse = EntityResponse<TankobonUserEntity>

@@ -1,15 +1,15 @@
-import type { TankobonEntity } from './tankobon-entity'
-import type { TankobonSuccessCollectionResponse } from './tankobon-response'
+import type { Entity } from './tankobon-entity'
+import type { CollectionResponse } from './tankobon-response'
 
-export type TankobonPreferenceEntity = TankobonEntity<TankobonPreferenceAttributes> & {
+export type PreferenceEntity = Entity<PreferenceAttributes> & {
   type: 'PREFERENCE'
 }
 
-export interface TankobonPreferenceAttributes {
+export interface PreferenceAttributes {
   key: string,
   value: string,
 }
 
 export type Preferences = Record<string, string>
 
-export type TankobonPreferenceCollectionResponse = TankobonSuccessCollectionResponse<TankobonPreferenceEntity>
+export type PreferenceCollectionResponse = CollectionResponse<PreferenceEntity>

@@ -1,10 +1,10 @@
-import { TankobonEntity } from './tankobon-entity'
+import { Entity } from './tankobon-entity'
 
-export type TankobonLibraryEntity = TankobonEntity<TankobonLibraryAttributes> & {
+export type LibraryEntity = Entity<LibraryAttributes> & {
   type: 'LIBRARY'
 }
 
-export interface TankobonLibraryAttributes {
+export interface LibraryAttributes {
   name: string,
   description: string,
 }

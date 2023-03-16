@@ -1,23 +1,23 @@
-export interface TankobonSuccessEntityResponse<Entity> {
+export interface EntityResponse<Entity> {
   result: 'OK',
   response: 'ENTITY',
   data: Entity,
 }
 
-export interface TankobonSuccessCollectionResponse<Entity> {
+export interface CollectionResponse<Entity> {
   result: 'OK',
   response: 'COLLECTION',
   data: Entity[],
 }
 
-export interface TankobonSuccessPaginatedCollectionResponse<Entity> {
+export interface PaginatedCollectionResponse<Entity> {
   result: 'OK',
   response: 'COLLECTION',
   data: Entity[],
-  pagination: TankobonPagination,
+  pagination: Pagination,
 }
 
-export interface TankobonErrorResponse {
+export interface ErrorResponse {
   result: 'ERROR',
   errors: TankobonError[]
 }
@@ -30,21 +30,21 @@ export interface TankobonError {
   stackTrace: string | undefined,
 }
 
-export interface TankobonPagination {
+export interface Pagination {
   currentPage: number,
   totalElements: number,
   totalPages: number,
 }
 
-export type TankobonResponse<T> = TankobonSuccessEntityResponse<T>
-  | TankobonSuccessCollectionResponse<T>
-  | TankobonSuccessPaginatedCollectionResponse<T>
-  | TankobonErrorResponse
+export type TankobonResponse<T> = EntityResponse<T>
+  | CollectionResponse<T>
+  | PaginatedCollectionResponse<T>
+  | ErrorResponse
 
 export class TankobonApiError extends Error {
   errors: TankobonError[]
 
-  constructor (response: TankobonErrorResponse) {
+  constructor (response: ErrorResponse) {
     super(response.errors[0].title)
     this.errors = response.errors
     Object.setPrototypeOf(this, TankobonApiError.prototype)

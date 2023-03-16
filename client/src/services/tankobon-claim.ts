@@ -2,13 +2,13 @@ import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
 import {
   TankobonApiError,
-  type TankobonErrorResponse,
-  type TankobonSuccessEntityResponse
+  type ErrorResponse,
+  type EntityResponse
 } from '@/types/tankobon-response'
 import type { ClaimStatus, ClaimAdmin } from '@/types/tankobon-claim'
 import type { TankobonUserEntity } from '@/types/tankobon-user'
 
-export type ClaimResponse = TankobonSuccessEntityResponse<TankobonUserEntity>
+export type ClaimResponse = EntityResponse<TankobonUserEntity>
 
 export async function getClaimStatus(): Promise<ClaimStatus> {
   try {
@@ -16,7 +16,7 @@ export async function getClaimStatus(): Promise<ClaimStatus> {
 
     return data
   } catch (e) {
-    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
     }
 
@@ -30,7 +30,7 @@ export async function claimAdmin(admin: ClaimAdmin): Promise<TankobonUserEntity>
 
     return data
   } catch (e) {
-    if (isAxiosError<TankobonErrorResponse>(e) && e.response?.data) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
     }
 
