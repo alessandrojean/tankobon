@@ -61,8 +61,8 @@ const columns = [
       onChange: row.getToggleSelectedHandler(),
     }),
     meta: {
-      headerClass: 'pr-0',
-      cellClass: 'pr-0',
+      headerClass: 'w-12',
+      // cellClass: 'pr-0',
     }
   }),
   columnHelper.accessor(

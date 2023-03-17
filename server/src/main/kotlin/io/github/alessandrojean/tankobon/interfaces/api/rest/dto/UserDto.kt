@@ -1,11 +1,13 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import java.time.LocalDateTime
 
 data class UserEntityDto(
   override val id: String,
@@ -21,6 +23,7 @@ data class UserAttributesDto(
   val biography: String = "",
   val email: String,
   val roles: Set<RoleDto> = emptySet(),
+  val createdAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 enum class RoleDto {
@@ -37,7 +40,8 @@ fun TankobonUser.toAttributesDto() = UserAttributesDto(
   name = name,
   biography = biography,
   email = email,
-  roles = roles.map { RoleDto.valueOf("ROLE_$it") }.toSet()
+  roles = roles.map { RoleDto.valueOf("ROLE_$it") }.toSet(),
+  createdAt = createdAt.toUtcTimeZone(),
 )
 
 fun TankobonPrincipal.toDto() = user.toDto()

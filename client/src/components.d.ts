@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScaleTransition: typeof import('./components/transitions/ScaleTransition.vue')['default']
+    Table: typeof import('./components/Table.vue')['default']
     TextareaInput: typeof import('./components/form/TextareaInput.vue')['default']
     TextAreaInput: typeof import('./components/form/TextAreaInput.vue')['default']
     TextInput: typeof import('./components/form/TextInput.vue')['default']
