@@ -52,14 +52,17 @@ const columns = [
       indeterminate: table.getIsSomeRowsSelected(),
       onChange: table.getToggleAllRowsSelectedHandler(),
     }),
-    cell: ({ row }) => h(BasicCheckbox, {
-      checked: row.getIsSelected(),
-      disabled: !row.getCanSelect(),
-      indeterminate: row.getIsSomeSelected(),
-      onChange: row.getToggleSelectedHandler(),
-    }),
+    cell: ({ row }) => h('div', { class: 'flex items-center w-full h-full' }, [
+      h(BasicCheckbox, {
+        checked: row.getIsSelected(),
+        disabled: !row.getCanSelect(),
+        indeterminate: row.getIsSomeSelected(),
+        onChange: row.getToggleSelectedHandler(),
+      })
+    ]),
     meta: {
       headerClass: 'w-12',
+      cellClass: 'align-middle',
     }
   }),
   columnHelper.accessor(
@@ -96,6 +99,10 @@ const columns = [
     enableSorting: false,
     header: () => t('common-fields.email'),
     cell: (info) => h('a', {
+      class: [
+        'text-primary-600 dark:text-gray-100',
+        'underline hover:no-underline',
+      ],
       href: `mailto:${info.getValue()}`,
       innerText: info.getValue()
     })
@@ -126,9 +133,9 @@ const columns = [
     cell: ({ row }) => h(
       Button,
       {
-        kind: 'ghost',
+        kind: 'ghost-alt',
         isRouterLink: true,
-        class: 'w-10',
+        class: 'w-10 h-10',
         to: { name: 'users-id', params: { id: row.original.id } },
       },
       {

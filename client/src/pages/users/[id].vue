@@ -76,7 +76,7 @@ function handleAvatar(avatar: AvatarResult) {
         <Badge v-if="isMe" class="ml-2">{{ $t('user.you') }}</Badge>
       </template>
       <template #subtitle>
-        <ul class="flex space-x-2 mt-0.5">
+        <ul class="flex items-center space-x-2 mt-0.5">
           <li v-if="isAdmin">
             <Badge color="blue">
               {{ $t('user.role-admin') }}

@@ -160,8 +160,6 @@ const showFooter = computed(() => {
               :class="[
                 'px-4 py-2 text-sm',
                 cell.column.columnDef.meta?.tabular ? 'tabular-nums' : '',
-                '[&>a]:text-primary-600 dark:[&>a]:text-gray-100',
-                '[&>a]:underline [&>a:hover]:no-underline',
                 cell.column.columnDef.meta?.cellClass,
                 row.getIsSelected()
                   ? 'bg-primary-50 dark:bg-gray-700/80 text-primary-800 dark:text-gray-100 group-hover:bg-primary-100/70 dark:group-hover:bg-gray-700'
