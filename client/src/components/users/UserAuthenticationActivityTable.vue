@@ -21,6 +21,8 @@ export interface UserAuthenticationActivityTableProps {
 const props = defineProps<UserAuthenticationActivityTableProps>()
 const { userId } = toRefs(props)
 
+const notificator = useNotificator()
+
 const defaultSorting: ColumnSort = { id: 'timestamp', desc: true }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 10 })
 const sorting = ref<SortingState>([defaultSorting])
@@ -35,7 +37,13 @@ const { data: authenticationActivity } = useUserAuthenticationActivityQuery({
       property: sort.id as AuthenticationActivitySort,
       direction: sort.desc ? 'desc' : 'asc',
     }))
-  })
+  }),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('authentication-activity.fetch-failure'),
+      body: error.message,
+    })
+  }
 })
 const { t, locale } = useI18n()
 const columnHelper = createColumnHelper<AuthenticationActivityEntity>()

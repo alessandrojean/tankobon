@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.infrastructure.image
 
+import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.ImageDetails
@@ -25,6 +26,7 @@ import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.BasicFileAttributes
 import javax.imageio.ImageIO
 import kotlin.io.path.extension
+import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
 private val logger = KotlinLogging.logger {}
@@ -35,10 +37,12 @@ class BookCoverLifecycle(
   private val bookRepository: BookRepository,
   private val imageConverter: ImageConverter,
   private val webClient: WebClient,
+  private val eventPublisher: EventPublisher,
 ) {
 
   companion object {
     private const val COVERS_DIR = "covers"
+    private val THUMBNAIL_REGEX = ".*(\\.\\d+)\\.jpg\$".toRegex()
   }
 
   val coversDirectoryPath: Path = Paths.get(properties.imagesDir, COVERS_DIR)
@@ -57,11 +61,17 @@ class BookCoverLifecycle(
 
     logger.info { "Copying the cover file for the book $bookId" }
 
+    val updating = hasCover(bookId)
+
     imageConverter.convertImage(file, "jpeg").let {
       Files.copy(it.inputStream(), bookId.toCoverFilePath(), StandardCopyOption.REPLACE_EXISTING)
     }
 
     createThumbnails(bookId)
+
+    getCoverDetails(bookId)?.let {
+      eventPublisher.publishEvent(if (updating) DomainEvent.BookCoverUpdated(it) else DomainEvent.BookCoverAdded(it))
+    }
   }
 
   @Throws(IdDoesNotExistException::class, IOException::class)
@@ -77,6 +87,8 @@ class BookCoverLifecycle(
 
     logger.info { "Downloading the cover for the book $bookId" }
 
+    val updating = hasCover(bookId)
+
     val coverBytes = webClient.get()
       .uri(coverUrl)
       .retrieve()
@@ -88,15 +100,22 @@ class BookCoverLifecycle(
     }
 
     createThumbnails(bookId)
+
+    getCoverDetails(bookId)?.let {
+      eventPublisher.publishEvent(if (updating) DomainEvent.BookCoverUpdated(it) else DomainEvent.BookCoverAdded(it))
+    }
   }
 
   @Throws(IOException::class)
   fun deleteCover(bookId: String) {
     logger.info { "Deleting the book covers and thumbnails for $bookId" }
 
+    val details = getCoverDetails(bookId)
     Files.deleteIfExists(bookId.toCoverFilePath())
 
     thumbnailSizes.forEach { size -> Files.deleteIfExists(bookId.toThumbnailFilePath(size)) }
+
+    details?.let { eventPublisher.publishEvent(DomainEvent.BookCoverDeleted(it)) }
   }
 
   @Throws(IOException::class)
@@ -127,6 +146,16 @@ class BookCoverLifecycle(
       mimeType = URLConnection.guessContentTypeFromName(bookCoverFilePath.fileNameString()),
       timeHex = attributes.lastModifiedTime().toMillis().toString(16),
     )
+  }
+
+  fun count(): Long {
+    if (coversDirectoryPath.notExists()) {
+      return 0L
+    }
+
+    return Files.list(coversDirectoryPath)
+      .filter { it.toFile().isFile && !it.fileNameString().matches(THUMBNAIL_REGEX) }
+      .count()
   }
 
   @JmsListener(destination = TOPIC_EVENTS, containerFactory = TOPIC_FACTORY)

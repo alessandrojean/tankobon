@@ -3,14 +3,23 @@ import useCreateUserMutation from '@/mutations/useCreateUserMutation';
 import type { UserCreation } from '@/types/tankobon-user'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 
+const { t } = useI18n()
 const router = useRouter()
 const showCreateDialog = ref(false)
 const { mutate } = useCreateUserMutation()
+const notificator = useNotificator()
 
 function handleCreateUser(user: UserCreation) {
   mutate(user, {
     onSuccess: async ({ id }) => {
+      notificator.success({ title: t('users.created-with-success') })
       await router.push({ name: 'users-id', params: { id } })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('users.created-with-failure'),
+        body: error.message,
+      })
     }
   })
 }

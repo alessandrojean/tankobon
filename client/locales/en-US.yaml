@@ -9,6 +9,7 @@ common-fields:
   timestamp: Timestamp
   biography: Biography
   avatar: Avatar
+  ownership: Ownership
 
 common-actions:
   sign-in: Sign in
@@ -49,6 +50,7 @@ validation:
 
 entities:
   users: Users
+  libraries: Libraries
   publishers: Publishers
   people: People
   collections: Collections
@@ -76,13 +78,31 @@ sign-in:
 claim-server:
   header: Claim the server
   summary: Create a new administrator account to start using it.
+  fetch-failure: There was an error while fetching the claim status
+  claim-failure: There was an error while claiming the server
 
 welcome:
   header: First library creation
   summary: Let's create a library to your books.
 
 libraries:
-  fetch-error: An error occurred while trying to get the libraries.
+  fetch-failure: There was an error while fetching the libraries
+  fetch-one-failure: There was an error while fetching the library details
+  owner-self: Self
+  owner-shared: Shared
+  create-header: Create a new library
+  create-description: Libraries allows you to manage a book collection
+  update-header: Modify a library
+  update-description: Modifying {0}
+  new: New library
+  created-with-success: Library created with success
+  created-with-failure: There was an error while creating the library
+  edited-with-success: Library edited with success
+  edited-with-failure: There was an error while editing the library
+  deleted-with-success: Library deleted with success
+  deleted-with-failure: There was an error while deleting the library
+  empty-header: No libraries found
+  empty-description: The user haven't created any library yet
 
 dashboard:
   title: Dashboard
@@ -115,6 +135,18 @@ users:
   edit-avatar: Edit avatar
   edit-avatar-header: Avatar management
   edit-avatar-description: Upload or remove the current avatar
+  created-with-success: User created with success
+  created-with-failure: There was an error while creating the user
+  edited-with-success: User edited with success
+  edited-with-failure: There was an error while editing the user
+  deleted-with-success: User deleted with success
+  deleted-with-failure: There was an error while deleting the user
+  avatar-uploaded-with-success: Avatar uploaded with success
+  avatar-uploaded-with-failure: There was an error while uploading the avatar
+  avatar-removed-with-success: Avatar removed with success
+  avatar-removed-with-failure: There was an error while removing the avatar
+  fetch-failure: There was an error while fetching the users
+  fetch-one-failure: There was an error while fetching the user details
 
 pagination:
   items-per-page: Items per page
@@ -133,8 +165,13 @@ authentication-activity:
   source: Source
   empty-header: No authentication activity found
   empty-description: The user has never attempted to sign in
+  fetch-failure: There was an error while fetching the authentication activity
   
 upload:
   prompt: Upload a file
   drag-and-drop: or drag and drop
   formats: '{0} up to {1}'
+
+preferences:
+  theme-failure: There was an error while getting the theme
+  

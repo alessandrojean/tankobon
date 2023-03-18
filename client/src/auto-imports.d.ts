@@ -139,6 +139,7 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDeleteLibraryMutation: typeof import('./mutations/useDeleteLibraryMutation')['default']
   const useDeleteUserAvatarMutation: typeof import('./mutations/useDeleteUserAvatarMutation')['default']
   const useDeleteUserMutation: typeof import('./mutations/useDeleteUserMutation')['default']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
@@ -180,6 +181,7 @@ declare global {
   const useIntervalFn: typeof import('@vueuse/core')['useIntervalFn']
   const useKeyModifier: typeof import('@vueuse/core')['useKeyModifier']
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
+  const useLibraryQuery: typeof import('./queries/useLibraryQuery')['default']
   const useLink: typeof import('vue-router')['useLink']
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
@@ -195,6 +197,7 @@ declare global {
   const useMutationObserver: typeof import('@vueuse/core')['useMutationObserver']
   const useNavigatorLanguage: typeof import('@vueuse/core')['useNavigatorLanguage']
   const useNetwork: typeof import('@vueuse/core')['useNetwork']
+  const useNotificator: typeof import('./composables/useNotificator')['useNotificator']
   const useNow: typeof import('@vueuse/core')['useNow']
   const useObjectUrl: typeof import('@vueuse/core')['useObjectUrl']
   const useOffsetPagination: typeof import('@vueuse/core')['useOffsetPagination']
@@ -252,10 +255,12 @@ declare global {
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
+  const useUpdateLibraryMutation: typeof import('./mutations/useUpdateLibraryMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/useUpdateUserMutation')['default']
   const useUploadUserAvatarMutation: typeof import('./mutations/useUploadUserAvatarMutation')['default']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserAuthenticationActivityQuery: typeof import('./queries/useUserAuthenticationActivityQuery')['default']
+  const useUserLibrariesByUserQuery: typeof import('./queries/useUserLibrariesByUserQuery')['default']
   const useUserLibrariesQuery: typeof import('./queries/useUserLibrariesQuery')['default']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
   const useUserPreferencesQuery: typeof import('./queries/useUserPreferencesQuery')['default']
@@ -433,6 +438,7 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/useDeleteLibraryMutation')['default']>
     readonly useDeleteUserAvatarMutation: UnwrapRef<typeof import('./mutations/useDeleteUserAvatarMutation')['default']>
     readonly useDeleteUserMutation: UnwrapRef<typeof import('./mutations/useDeleteUserMutation')['default']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
@@ -474,6 +480,7 @@ declare module 'vue' {
     readonly useIntervalFn: UnwrapRef<typeof import('@vueuse/core')['useIntervalFn']>
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
+    readonly useLibraryQuery: UnwrapRef<typeof import('./queries/useLibraryQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
@@ -489,6 +496,7 @@ declare module 'vue' {
     readonly useMutationObserver: UnwrapRef<typeof import('@vueuse/core')['useMutationObserver']>
     readonly useNavigatorLanguage: UnwrapRef<typeof import('@vueuse/core')['useNavigatorLanguage']>
     readonly useNetwork: UnwrapRef<typeof import('@vueuse/core')['useNetwork']>
+    readonly useNotificator: UnwrapRef<typeof import('./composables/useNotificator')['useNotificator']>
     readonly useNow: UnwrapRef<typeof import('@vueuse/core')['useNow']>
     readonly useObjectUrl: UnwrapRef<typeof import('@vueuse/core')['useObjectUrl']>
     readonly useOffsetPagination: UnwrapRef<typeof import('@vueuse/core')['useOffsetPagination']>
@@ -546,10 +554,12 @@ declare module 'vue' {
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
+    readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/useUpdateLibraryMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/useUpdateUserMutation')['default']>
     readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/useUploadUserAvatarMutation')['default']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
     readonly useUserAuthenticationActivityQuery: UnwrapRef<typeof import('./queries/useUserAuthenticationActivityQuery')['default']>
+    readonly useUserLibrariesByUserQuery: UnwrapRef<typeof import('./queries/useUserLibrariesByUserQuery')['default']>
     readonly useUserLibrariesQuery: UnwrapRef<typeof import('./queries/useUserLibrariesQuery')['default']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
     readonly useUserPreferencesQuery: UnwrapRef<typeof import('./queries/useUserPreferencesQuery')['default']>

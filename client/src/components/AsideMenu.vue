@@ -6,6 +6,7 @@ import {
   AcademicCapIcon,
   ArchiveBoxIcon,
   BookOpenIcon,
+  BuildingLibraryIcon,
   BuildingOffice2Icon,
   ChevronDoubleLeftIcon,
   HomeIcon,
@@ -51,6 +52,15 @@ const items = computed<Item[]>(() => [
     icon: HomeIcon,
     to: { name: 'index' },
     exact: true
+  },
+  {
+    key: 'libraries',
+    label: t('entities.libraries'),
+    icon: BuildingLibraryIcon,
+    to: { name: 'libraries' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('libraries')
+    })
   },
   {
     key: 'books',

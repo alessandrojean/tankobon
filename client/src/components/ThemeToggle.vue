@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<ThemeToggleProps>(), {
 })
 
 const { light, bottom, transparent } = toRefs(props)
+const notificator = useNotificator()
 
 const { t } = useI18n({ useScope: 'global' })
 const localTheme = useLocalStorage<Theme>('theme', 'system')
@@ -31,6 +32,12 @@ const { data: theme } = useUserPreferencesQuery({
     return preferences.theme ? preferences.theme as Theme : localTheme.value
   },
   initialData: { theme: 'system' },
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('preferences.theme-failure'),
+      body: error.message,
+    })
+  }
 })
 
 

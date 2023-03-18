@@ -45,4 +45,12 @@ sealed class DomainEvent : Serializable {
   data class ReadProgressAdded(val readProgress: ReadProgress) : DomainEvent()
   data class ReadProgressUpdated(val readProgress: ReadProgress) : DomainEvent()
   data class ReadProgressDeleted(val readProgress: ReadProgress) : DomainEvent()
+
+  data class BookCoverAdded(val imageDetails: ImageDetails) : DomainEvent()
+  data class BookCoverUpdated(val imageDetails: ImageDetails) : DomainEvent()
+  data class BookCoverDeleted(val imageDetails: ImageDetails) : DomainEvent()
+
+  data class UserAvatarAdded(val imageDetails: ImageDetails) : DomainEvent()
+  data class UserAvatarUpdated(val imageDetails: ImageDetails) : DomainEvent()
+  data class UserAvatarDeleted(val imageDetails: ImageDetails) : DomainEvent()
 }

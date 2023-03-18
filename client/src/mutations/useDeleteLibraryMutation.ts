@@ -1,18 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { addOneLibrary } from '@/services/tankobon-libraries'
-import type { LibraryCreation, LibraryEntity } from '@/types/tankobon-library'
 import type { TankobonApiError } from '@/types/tankobon-response'
+import { deleteOneLibrary } from '@/services/tankobon-libraries'
 
 type ErrorResponse = TankobonApiError | Error
 
-export default function useCreateLibraryMutation() {
+export default function useDeleteLibraryMutation() {
   const queryClient = useQueryClient()
 
-  return useMutation<LibraryEntity, ErrorResponse, LibraryCreation>({
-    mutationFn: addOneLibrary,
-    onSuccess() {
+  return useMutation<void, ErrorResponse, string>({
+    mutationFn: deleteOneLibrary,
+    onSuccess(_, libraryId) {
       queryClient.invalidateQueries(['libraries'])
       queryClient.invalidateQueries(['libraries-owned'])
+      queryClient.invalidateQueries(['library', { id: libraryId }])
     }
   })
 }

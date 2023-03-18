@@ -9,8 +9,16 @@ export interface LibraryAttributes {
   description: string,
 }
 
-export interface AddOneLibrary {
+export interface LibraryCreation {
   name: string,
   description: string,
   owner?: string,
+}
+
+export interface LibraryUpdate {
+  id: string,
+  name: string,
+  description: string,
+  owner?: string,
+  sharedUsers: string[],
 }

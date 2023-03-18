@@ -6,9 +6,17 @@ import { EnvelopeIcon, IdentificationIcon, KeyIcon } from '@heroicons/vue/24/out
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import type { ClaimAdmin } from '@/types/tankobon-claim'
 
+const notificator = useNotificator()
 const router = useRouter()
 const userStore = useUserStore()
-const { data: claimStatus, isFetched } = useServerClaimStatusQuery()
+const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('claim-server.fetch-failure'),
+      body: error.message,
+    })
+  }
+})
 const { mutateAsync: claimServer } = useClaimServerMutation()
 
 const error = ref<Error | null>(null)

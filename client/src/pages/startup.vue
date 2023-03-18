@@ -2,8 +2,17 @@
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
+const notificator = useNotificator()
+const { t } = useI18n()
 
-const { data: claimStatus, refetch: checkClaim } = useServerClaimStatusQuery()
+const { data: claimStatus, refetch: checkClaim } = useServerClaimStatusQuery({
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('claim-server.fetch-failure'),
+      body: error.message,
+    })
+  }
+})
 
 onBeforeMount(async () => {
   try {

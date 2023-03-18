@@ -94,17 +94,24 @@ class LibraryController(
   )
   fun getAllLibrariesByOwner(
     @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @RequestParam(required = false, defaultValue = "false") includeShared: Boolean = false,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
 
-    val libraries = libraryRepository.findByOwnerId(user.id)
+    val libraries = if (includeShared) {
+      libraryRepository.findByOwnerIdIncludingShared(user.id)
+    } else {
+      libraryRepository.findByOwnerId(user.id)
+    }
+
+    val librariesDto = libraries
       .sortedBy { it.name.lowercase() }
       .map { it.toDto() }
 
     val expanded = referenceExpansion.expand(
-      entities = libraries,
+      entities = librariesDto,
       relationsToExpand = includes,
     )
 

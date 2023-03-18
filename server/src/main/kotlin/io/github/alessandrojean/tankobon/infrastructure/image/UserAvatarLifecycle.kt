@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.infrastructure.image
 
+import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.ImageDetails
@@ -22,6 +23,7 @@ import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.BasicFileAttributes
 import javax.imageio.ImageIO
 import kotlin.io.path.extension
+import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
 
 private val logger = KotlinLogging.logger {}
@@ -31,10 +33,12 @@ class UserAvatarLifecycle(
   properties: TankobonProperties,
   private val userRepository: TankobonUserRepository,
   private val imageConverter: ImageConverter,
+  private val eventPublisher: EventPublisher,
 ) {
 
   companion object {
     private const val AVATARS_DIR = "avatars"
+    private val THUMBNAIL_REGEX = ".*(\\.\\d+)\\.jpg\$".toRegex()
   }
 
   val avatarsDirectoryPath: Path = Paths.get(properties.imagesDir, AVATARS_DIR)
@@ -53,6 +57,8 @@ class UserAvatarLifecycle(
     }
 
     logger.info { "Copying the avatar file for the user $userId" }
+
+    val updating = hasAvatar(userId)
 
     val resizedFile = file.let {
       val (width, height) = it.getWidthAndHeight()
@@ -76,15 +82,22 @@ class UserAvatarLifecycle(
     Files.copy(resizedFile.inputStream(), userId.toAvatarFilePath(), StandardCopyOption.REPLACE_EXISTING)
 
     createThumbnails(userId)
+
+    getAvatarDetails(userId)?.let {
+      eventPublisher.publishEvent(if (updating) DomainEvent.UserAvatarUpdated(it) else DomainEvent.UserAvatarAdded(it))
+    }
   }
 
   @Throws(IOException::class)
   fun deleteAvatar(userId: String) {
     logger.info { "Deleting the user avatar and thumbnails for $userId" }
 
+    val details = getAvatarDetails(userId)
     Files.deleteIfExists(userId.toAvatarFilePath())
 
     thumbnailSizes.forEach { size -> Files.deleteIfExists(userId.toThumbnailFilePath(size)) }
+
+    details?.let { eventPublisher.publishEvent(DomainEvent.UserAvatarDeleted(it)) }
   }
 
   @Throws(IOException::class)
@@ -115,6 +128,16 @@ class UserAvatarLifecycle(
       mimeType = URLConnection.guessContentTypeFromName(userAvatarFilePath.fileNameString()),
       timeHex = attributes.lastModifiedTime().toMillis().toString(16),
     )
+  }
+
+  fun count(): Long {
+    if (avatarsDirectoryPath.notExists()) {
+      return 0L
+    }
+
+    return Files.list(avatarsDirectoryPath)
+      .filter { it.toFile().isFile && !it.fileNameString().matches(THUMBNAIL_REGEX) }
+      .count()
   }
 
   @JmsListener(destination = TOPIC_EVENTS, containerFactory = TOPIC_FACTORY)

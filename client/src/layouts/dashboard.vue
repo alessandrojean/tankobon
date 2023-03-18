@@ -7,11 +7,13 @@ const smAndLarger = breakpoints.greaterOrEqual('sm')
 const lgAndLarger = breakpoints.greaterOrEqual('lg')
 
 const router = useRouter()
-const { data: hasNoLibraries } = useUserLibrariesQuery({
-  select: (libraries) => libraries.length === 0,
-})
 const userStore = useUserStore()
 const isAdmin = computed(() => userStore.isAdmin)
+const userId = computed(() => userStore.me!.id)
+const { data: hasNoLibraries } = useUserLibrariesByUserQuery({
+  userId,
+  select: (libraries) => libraries.length === 0,
+})
 
 whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
 

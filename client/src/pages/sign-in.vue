@@ -13,6 +13,7 @@ const formState = reactive({
 })
 
 const { t } = useI18n()
+const notificator = useNotificator()
 const messageRequired = helpers.withMessage(t('validation.required'), required)
 const messageEmail = helpers.withMessage(t('validation.email'), email)
 
@@ -26,9 +27,26 @@ const v$ = useVuelidate(rules, formState)
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
-const { data: claimStatus, isFetched } = useServerClaimStatusQuery()
-const { data: userLibraries, refetch: refetchUserLibraries } = useUserLibrariesQuery({
-  enabled: computed(() => userStore.isAuthenticated)
+const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('claim-server.fetch-failure'),
+      body: error.message,
+    })
+  }
+})
+const {
+  data: userLibraries,
+  refetch: refetchUserLibraries
+} = useUserLibrariesByUserQuery({
+  userId: computed(() => userStore.me?.id ?? ''),
+  enabled: computed(() => userStore.isAuthenticated),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('libraries.fetch-failure'),
+      body: error.message,
+    })
+  }
 })
 
 watch([claimStatus, isFetched], () => {

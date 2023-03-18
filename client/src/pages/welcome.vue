@@ -3,10 +3,20 @@ import useVuelidate from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
-import { AddOneLibrary } from '@/types/tankobon-library'
+import { LibraryCreation } from '@/types/tankobon-library'
 
+const userStore = useUserStore()
 const router = useRouter()
-const { data: libraries, refetch: refetchLibraries } = useUserLibrariesQuery()
+const notificator = useNotificator()
+const { data: libraries, refetch: refetchLibraries } = useUserLibrariesByUserQuery({
+  userId: computed(() => userStore.me!.id),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('libraries.fetch-failure'),
+      body: error.message,
+    })
+  }
+})
 const { mutate: createLibrary, isLoading, error } = useCreateLibraryMutation()
 
 const hasNoLibraries = computed(() => {
@@ -28,7 +38,7 @@ onBeforeMount(async () => {
   }
 })
 
-const formState = reactive<AddOneLibrary>({
+const formState = reactive<LibraryCreation>({
   name: '',
   description: '',
 })
@@ -49,7 +59,7 @@ async function handleCreateLibrary() {
     return
   }
 
-  const library = toRaw<AddOneLibrary>(formState)
+  const library = toRaw<LibraryCreation>(formState)
 
   createLibrary(library, {
     onSuccess: async () => await router.replace({ name: 'index' })

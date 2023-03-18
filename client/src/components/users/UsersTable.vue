@@ -7,12 +7,14 @@ import {
   type PaginationState,
 } from '@tanstack/vue-table'
 import type { Sort } from '@/types/tankobon-api'
-import { API_BASE_URL, getFullImageUrl } from '@/modules/api'
+import { getFullImageUrl } from '@/modules/api'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import Avatar from '@/components/Avatar.vue'
 import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
+
+const notificator = useNotificator()
 
 const defaultSorting: ColumnSort = { id: 'createdAt', desc: true }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
@@ -28,7 +30,13 @@ const { data: users } = useUsersQuery({
       property: sort.id as UserSort,
       direction: sort.desc ? 'desc' : 'asc',
     }))
-  })
+  }),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('users.fetch-failure'),
+      body: error.message,
+    })
+  }
 })
 const { t, locale } = useI18n()
 const columnHelper = createColumnHelper<UserEntity>()

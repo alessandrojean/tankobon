@@ -28,6 +28,23 @@ module.exports = {
       fontSize: {
         xxs: '.7rem',
       },
+      animation: {
+        'fade-in': 'fade-in .3s ease',
+        'fade-out': 'fade-out 3s ease 3s',
+        'slide-in': 'slide-in .3s ease',
+        'notification': 'fade-in .3s ease, fade-out 3s ease 3s, slide-in .3s ease',
+      },
+      keyframes: {
+        'fade-in': {
+          from: { opacity: 0 }
+        },
+        'fade-out': {
+          to: { opacity: 0 }
+        },
+        'slide-in': {
+          from: { transform: 'translateX(100%)' },
+        }
+      },
     },
   },
   plugins: [

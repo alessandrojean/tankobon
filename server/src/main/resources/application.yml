@@ -56,6 +56,7 @@ server:
 
 management:
   endpoints.web.exposure.include: "*"
+  endpoints.web.base-path: /api/v1/actuator
   endpoint:
     health:
       roles: ADMIN

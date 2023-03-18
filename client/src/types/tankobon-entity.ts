@@ -14,7 +14,7 @@ export interface Relationship<Attributes> {
   attributes: Attributes | undefined,
 }
 
-export type RelationshipType = 'AVATAR' | 'OWNER' | 'USER'
+export type RelationshipType = 'AVATAR' | 'OWNER' | 'USER' | 'LIBRARY_SHARING'
 
-export type Includes = RelationshipType[]
+export type Includes = Lowercase<RelationshipType>[]
 

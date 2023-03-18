@@ -8,7 +8,7 @@
       'shadow-sm text-primary-500 focus:border-primary-500 focus:ring',
       'dark:focus:border-primary-400 dark:focus:ring-primary-200/30',
       'focus:ring-offset-0 focus:ring-primary-200 focus:ring-opacity-50',
-      'motion-safe:transition-shadow'
+      'motion-safe:transition-shadow disabled:opacity-50'
     ]"
     type="checkbox"
   >

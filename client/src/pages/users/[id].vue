@@ -4,15 +4,24 @@ import { UserUpdate } from '@/types/tankobon-user';
 import { EnvelopeIcon } from '@heroicons/vue/20/solid'
 import { PencilIcon, PhotoIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import type { AvatarResult } from '@/components/users/UserAvatarDialog.vue'
+import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const userId = computed(() => route.params.id?.toString())
 const userStore = useUserStore()
+const notificator = useNotificator()
 
 const { data: user, isLoading } = useUserQuery({
   userId,
-  enabled: computed(() => route.params.id !== undefined)
+  enabled: computed(() => route.params.id !== undefined),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('users.fetch-one-failure'),
+      body: error.message,
+    })
+  }
 })
 const { mutate: deleteUser, isLoading: isDeleting } = useDeleteUserMutation()
 const { mutate: editUser, isLoading: isEditing } = useUpdateUserMutation()
@@ -26,7 +35,14 @@ const isMe = computed(() => user.value?.id === userStore.me!.id)
 function handleDelete() {
   deleteUser(userId.value, {
     onSuccess: async () => {
+      notificator.success({ title: t('users.deleted-with-success') })
       await router.replace({ name: 'users' })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('users.deleted-with-failure'),
+        body: error.message,
+      })
     }
   })
 }
@@ -35,7 +51,15 @@ const showEditDialog = ref(false)
 
 function handleEditUser(user: UserUpdate) {
   editUser(user, {
-    onError: () => {}
+    onSuccess: async () => {
+      await notificator.success({ title: t('users.edited-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('users.edited-with-failure'),
+        body: error.message,
+      })
+    }
   })
 }
 
@@ -44,11 +68,27 @@ const showAvatarDialog = ref(false)
 function handleAvatar(avatar: AvatarResult) {
   if (avatar.file) {
     uploadAvatar({ userId: userId.value, avatar: avatar.file }, {
-      onError: () => {}
+      onSuccess: async () => {
+        await notificator.success({ title: t('users.avatar-uploaded-with-success') })
+      },
+      onError: async (error) => {
+        await notificator.failure({
+          title: t('users.avatar-uploaded-with-failure'),
+          body: error.message,
+        })
+      }
     })
   } else if (avatar.removeExisting) {
     deleteAvatar(userId.value, {
-      onError: () => {}
+      onSuccess: async () => {
+        await notificator.success({ title: t('users.avatar-removed-with-success') })
+      },
+      onError: async (error) => {
+        await notificator.failure({
+          title: t('users.avatar-removed-with-failure'),
+          body: error.message,
+        })
+      }
     })
   }
 }
@@ -131,11 +171,31 @@ function handleAvatar(avatar: AvatarResult) {
         </div>
       </template>
     </Header>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6">
-      <h2 class="font-display font-medium text-xl">
-        {{ $t('authentication-activity.header') }}
-      </h2>
-      <UserAuthenticationActivityTable class="mt-4" :user-id="userId" />
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
+      <div>
+        <h2 class="font-display font-medium text-xl">
+          {{ $t('entities.libraries') }}
+        </h2>
+        <LibrariesTable
+          class="mt-4"
+          :user-id="userId"
+        >
+          <template #empty>
+            <EmptyState
+              :icon="BuildingLibraryIcon"
+              :title="$t('libraries.empty-header')"
+              :description="$t('libraries.empty-description')"
+            />
+          </template>
+        </LibrariesTable>
+      </div>
+
+      <div>
+        <h2 class="font-display font-medium text-xl">
+          {{ $t('authentication-activity.header') }}
+        </h2>
+        <UserAuthenticationActivityTable class="mt-4" :user-id="userId" />
+      </div>
     </div>
 
     <UserEditDialog
