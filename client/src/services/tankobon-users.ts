@@ -1,8 +1,9 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import { PaginatedResponse, TankobonApiError, type ErrorResponse } from '@/types/tankobon-response'
-import type { UserEntity, UserIncludes, UserSort, UserSuccessResponse } from '@/types/tankobon-user'
+import { EntityResponse, PaginatedResponse, TankobonApiError, type ErrorResponse } from '@/types/tankobon-response'
+import type { EmailAvailability, UserCreation, UserEntity, UserIncludes, UserSort, UserSuccessResponse, UserUpdate } from '@/types/tankobon-user'
 import type { Paginated } from '@/types/tankobon-api'
+import { AuthenticationActivityEntity, AuthenticationActivitySort } from '@/types/tankobon-authentication-activity'
 
 export async function getMeWithAuth(email: string, password: string): Promise<UserEntity> {
   try {
@@ -71,6 +72,138 @@ export async function getAllUsers(options?: GetAllUsersOptions): Promise<Paginat
     })
 
     return data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function getOneUser(userId: string): Promise<UserEntity> {
+  try {
+    const { data: user } = await api.get<EntityResponse<UserEntity>>(`users/${userId}`, {
+      params: { includes: 'avatar' },
+    })
+
+    return user.data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export interface GetAuthenticationActivityFromUserOptions extends Paginated<AuthenticationActivitySort> {
+  userId: string,
+  includes?: UserIncludes[],
+}
+
+export async function getAuthenticationActivityFromUser(options: GetAuthenticationActivityFromUserOptions): Promise<PaginatedResponse<AuthenticationActivityEntity>> {
+  try {
+    const { data } = await api.get<PaginatedResponse<AuthenticationActivityEntity>>(
+      `users/${options.userId}/authentication-activity`,
+      {
+        params: {
+          ...options,
+          userId: undefined,
+          sort: options?.sort?.map(({ property, direction }) => {
+            return `${property},${direction}`
+          })
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      }
+    )
+
+    return data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function checkEmailAvailability(email: string): Promise<boolean> {
+  try {
+    const { data } = await api.get<EmailAvailability>(`users/availability/${email}`)
+
+    return data.isAvailable
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function addOneUser(user: UserCreation): Promise<UserEntity> {
+  try {
+    const { data: createdUser } = await api.post<EntityResponse<UserEntity>>('users', user)
+
+    return createdUser.data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteUserAvatar(userId: string): Promise<void> {
+  try {
+    await api.delete(`users/${userId}/avatar`)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export interface UploadUserAvatarOptions {
+  userId: string,
+  avatar: File,
+}
+
+export async function uploadUserAvatar(options: UploadUserAvatarOptions): Promise<void> {
+  try {
+    await api.postForm(`users/${options.userId}/avatar`, {
+      avatar: options.avatar
+    })
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function updateUser(user: UserUpdate): Promise<void> {
+  try {
+    await api.put(`users/${user.id}`, user)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteOneUser(userId: string): Promise<void> {
+  try {
+    await api.delete(`users/${userId}`)
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)

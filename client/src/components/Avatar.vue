@@ -16,9 +16,10 @@ const props = withDefaults(defineProps<AvatarProps>(), {
 
 const { alt, pictureUrl } = toRefs(props)
 
-const { imageLoading, imageHasError, loadImage } = useImageLoader(pictureUrl)
+const { imageLoading, imageHasError, loadImage, unloadImage } = useImageLoader(pictureUrl)
 
 onMounted(() => loadImage())
+onUnmounted(() => unloadImage())
 
 const isEmpty = computed(() => {
   return !pictureUrl.value || imageHasError.value || imageLoading.value
@@ -38,9 +39,16 @@ const isEmpty = computed(() => {
   >
     <div
       v-if="isEmpty"
-      :class="['empty-avatar', imageLoading ? 'motion-safe:animate-pulse' : '']"
+      :class="[
+        'w-full h-full overflow-hidden rounded-full',
+        'bg-primary-500 dark:bg-primary-700',
+        'motion-safe:transition-colors',
+        { 'motion-safe:animate-pulse': imageLoading },  
+      ]"
     >
-      <UserIcon class="user-icon" />
+      <svg class="h-full w-full text-primary-200 dark:text-primary-300 motion-safe:transition-colors" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
     </div>
     <img v-else class="avatar-img" :alt="alt" :src="pictureUrl ?? undefined" />
   </div>
@@ -54,7 +62,7 @@ const isEmpty = computed(() => {
 }
 
 .avatar.is-empty {
-  @apply border-primary-600 bg-primary-600;
+  @apply border-primary-500 bg-primary-500;
 }
 
 .avatar:not(.is-dark) {
@@ -62,7 +70,7 @@ const isEmpty = computed(() => {
 }
 
 .avatar.is-empty:not(.is-dark) {
-  @apply border-primary-600 bg-primary-600
+  @apply border-primary-500 bg-primary-500
     dark:border-primary-700 dark:bg-primary-700;
 }
 

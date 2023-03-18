@@ -9,10 +9,9 @@ export const useUserStore = defineStore('user', {
   getters: {
     isAdmin: (state) => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,
     isAuthenticated: (state) => typeof state.me?.id === 'string',
-    avatarUrls: (state) => {
+    avatar: (state) => {
       return state.me?.relationships
         ?.find((r) => r.type === 'AVATAR')
-        ?.attributes?.versions as Record<string, string> | undefined
     }
   },
   actions: {
@@ -33,13 +32,25 @@ export const useUserStore = defineStore('user', {
     async checkSession() {
       const me = await getMe()
 
-      this.$patch({ me })
+      this.$patch({
+        me: {
+          ...this.me,
+          ...me,
+          relationships: [...(me.relationships ?? [])],
+        }
+      })
     },
 
     async sessionExists() {
       try {
         const me = await getMe()
-        this.$patch({ me })
+        this.$patch({
+          me: {
+            ...this.me,
+            ...me,
+            relationships: [...(me.relationships ?? [])],
+          }
+        })
         return true
       } catch (_) {
         return false

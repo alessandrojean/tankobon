@@ -128,6 +128,7 @@ declare global {
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateLibraryMutation: typeof import('./mutations/useCreateLibraryMutation')['default']
+  const useCreateUserMutation: typeof import('./mutations/useCreateUserMutation')['default']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
   const useCssVars: typeof import('vue')['useCssVars']
@@ -138,6 +139,8 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDeleteUserAvatarMutation: typeof import('./mutations/useDeleteUserAvatarMutation')['default']
+  const useDeleteUserMutation: typeof import('./mutations/useDeleteUserMutation')['default']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
   const useDeviceOrientation: typeof import('@vueuse/core')['useDeviceOrientation']
   const useDevicePixelRatio: typeof import('@vueuse/core')['useDevicePixelRatio']
@@ -249,10 +252,14 @@ declare global {
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
+  const useUpdateUserMutation: typeof import('./mutations/useUpdateUserMutation')['default']
+  const useUploadUserAvatarMutation: typeof import('./mutations/useUploadUserAvatarMutation')['default']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
+  const useUserAuthenticationActivityQuery: typeof import('./queries/useUserAuthenticationActivityQuery')['default']
   const useUserLibrariesQuery: typeof import('./queries/useUserLibrariesQuery')['default']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
   const useUserPreferencesQuery: typeof import('./queries/useUserPreferencesQuery')['default']
+  const useUserQuery: typeof import('./queries/useUserQuery')['default']
   const useUserStore: typeof import('./stores/user')['useUserStore']
   const useUsersQuery: typeof import('./queries/useUsersQuery')['default']
   const useVModel: typeof import('@vueuse/core')['useVModel']
@@ -415,6 +422,7 @@ declare module 'vue' {
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/useCreateLibraryMutation')['default']>
+    readonly useCreateUserMutation: UnwrapRef<typeof import('./mutations/useCreateUserMutation')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
@@ -425,6 +433,8 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDeleteUserAvatarMutation: UnwrapRef<typeof import('./mutations/useDeleteUserAvatarMutation')['default']>
+    readonly useDeleteUserMutation: UnwrapRef<typeof import('./mutations/useDeleteUserMutation')['default']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>
@@ -536,10 +546,14 @@ declare module 'vue' {
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
+    readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/useUpdateUserMutation')['default']>
+    readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/useUploadUserAvatarMutation')['default']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
+    readonly useUserAuthenticationActivityQuery: UnwrapRef<typeof import('./queries/useUserAuthenticationActivityQuery')['default']>
     readonly useUserLibrariesQuery: UnwrapRef<typeof import('./queries/useUserLibrariesQuery')['default']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
     readonly useUserPreferencesQuery: UnwrapRef<typeof import('./queries/useUserPreferencesQuery')['default']>
+    readonly useUserQuery: UnwrapRef<typeof import('./queries/useUserQuery')['default']>
     readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>
     readonly useUsersQuery: UnwrapRef<typeof import('./queries/useUsersQuery')['default']>
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>

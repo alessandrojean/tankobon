@@ -19,7 +19,7 @@ const colorClassMap: Record<string, string> = {
   <span
     :class="[
       'px-2.5 inline-flex text-xs leading-5',
-      'font-semibold rounded-full dark:border',
+      'font-medium rounded dark:border',
       colorClassMap[color],
     ]"
   >

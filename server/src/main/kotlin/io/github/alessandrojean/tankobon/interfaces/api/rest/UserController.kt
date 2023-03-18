@@ -13,6 +13,7 @@ import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycl
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.AuthenticationActivityEntityDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EmailAvailabilityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
@@ -29,6 +30,8 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.annotation.security.RolesAllowed
+import jakarta.validation.constraints.Email
 import org.hibernate.validator.constraints.UUID
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.core.env.Environment
@@ -203,6 +206,47 @@ class UserController(
       .toSuccessCollectionResponseDto { it }
   }
 
+  @GetMapping("{userId}/authentication-activity")
+  @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
+  @PageableAsQueryParam
+  @Operation(
+    summary = "Get the authentication activity of a user by its id",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun getAuthenticationActivityFromUser(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
+    if (isDemo && !principal.user.isAdmin) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    val user = userRepository.findByIdOrNull(userId)
+      ?: throw IdDoesNotExistException("User not found")
+
+    val sort = if (page.sort.isSorted) {
+      page.sort
+    } else {
+      Sort.by(Sort.Order.desc("timestamp"))
+    }
+
+    val pageRequest = PageRequest.of(
+      page.pageNumber,
+      page.pageSize,
+      sort,
+    )
+
+    val activity = authenticationActivityRepository
+      .findAllByUser(user, pageRequest)
+      .map { it.toDto() }
+    val expanded = referenceExpansion.expand(activity.content, includes)
+
+    return PageImpl(expanded, activity.pageable, activity.totalElements)
+      .toSuccessCollectionResponseDto { it }
+  }
+
   @GetMapping("authentication-activity")
   @PageableAsQueryParam
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
@@ -320,7 +364,9 @@ class UserController(
       ?: throw IdDoesNotExistException("User not found")
 
     val toUpdate = existing.copy(
+      name = user.name,
       email = user.email,
+      biography = user.biography,
       isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN)
     )
 
@@ -412,5 +458,20 @@ class UserController(
     val expanded = referenceExpansion.expand(activity, includes)
 
     return SuccessEntityResponseDto(expanded)
+  }
+
+  @GetMapping("availability/{email:.+}")
+  @RolesAllowed(ROLE_ADMIN)
+  @Operation(
+    summary = "Check if an user with the email exists",
+    security = [SecurityRequirement(name = "Basic Auth")]
+  )
+  fun checkEmailAvailability(
+    @PathVariable
+    @Email(regexp = ".+@.+\\..+")
+    @Schema(format = "email")
+    email: String,
+  ): EmailAvailabilityDto {
+    return EmailAvailabilityDto(!userRepository.existsByEmailIgnoreCase(email))
   }
 }

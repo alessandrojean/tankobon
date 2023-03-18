@@ -100,6 +100,9 @@ const items = computed<Item[]>(() => [
     icon: UserIcon,
     to: { name: 'users' },
     isAdminOnly: true,
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('users')
+    })
   },
 ])
 
@@ -163,6 +166,7 @@ const allowedItems = computed(() => {
             "
             @click="collapsed = !collapsed"
           >
+            <span></span>
             <ChevronDoubleLeftIcon
               :class="['w-5 h-5 collapse-icon', { collapsed: collapsed }]"
             />

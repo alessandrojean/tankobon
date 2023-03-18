@@ -29,6 +29,7 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
                   class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
                 >
                   {{ title }}
+                  <slot name="title-badge" />
                 </h1>
               </slot>
 

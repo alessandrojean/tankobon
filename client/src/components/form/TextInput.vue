@@ -43,7 +43,7 @@ export default { inheritAttrs: false }
           'dark:text-gray-200',
           'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
           'placeholder:text-gray-500',
-          $slots['left-icon'] ? 'pl-16' : '',
+          { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid 
             ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30' 
             : 'border-gray-300 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30'
@@ -60,7 +60,7 @@ export default { inheritAttrs: false }
         :class="[
           'font-medium text-xs px-3 absolute top-3 inset-x-0',
           'select-none cursor-text',
-          $slots['left-icon'] ? 'pl-16' : '',
+          { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
         :for="($attrs.id as string | undefined)"
@@ -78,6 +78,18 @@ export default { inheritAttrs: false }
         ]"
       >
         <slot name="left-icon"></slot>
+      </div>
+      <div
+        v-if="$slots['right-icon']"
+        :class="[
+          'absolute right-[1.125rem] inset-y-0 flex items-center justify-center',
+          'motion-safe:transition-colors',
+          invalid 
+            ? 'text-red-600 peer-focus:text-red-600'
+            : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
+        ]"
+      >
+        <slot name="right-icon"></slot>
       </div>
     </div>
 

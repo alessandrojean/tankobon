@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { API_BASE_URL } from '@/modules/api';
+import { API_BASE_URL, getFullImageUrl } from '@/modules/api';
 import {
   Cog8ToothIcon,
   ChevronDownIcon,
@@ -20,11 +20,14 @@ const { light, transparent } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
 const userStore = useUserStore()
+const avatar = computed(() => userStore.avatar)
 
 const avatarUrl = computed(() => {
-  return userStore.avatarUrls ? 
-    `${API_BASE_URL}/images/avatars/${userStore.avatarUrls['64']}`
-    : null
+  return getFullImageUrl({
+    collection: 'avatars',
+    fileName: avatar.value?.attributes?.versions?.['64'],
+    timeHex: avatar.value?.attributes?.timeHex,
+  })
 })
 
 async function signOut() {

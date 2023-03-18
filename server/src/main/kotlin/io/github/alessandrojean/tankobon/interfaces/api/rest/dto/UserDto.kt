@@ -77,3 +77,5 @@ data class UserUpdateDto(
   val email: String,
   val roles: Set<RoleDto>,
 )
+
+data class EmailAvailabilityDto(val isAvailable: Boolean)

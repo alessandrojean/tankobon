@@ -9,5 +9,6 @@ data class ImageDetails(
   val aspectRatio: String,
   val format: String,
   val mimeType: String,
+  val timeHex: String,
 )
 

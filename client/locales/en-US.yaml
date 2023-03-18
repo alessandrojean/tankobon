@@ -6,6 +6,9 @@ common-fields:
   description: Description
   role: Role
   created-at: Created at
+  timestamp: Timestamp
+  biography: Biography
+  avatar: Avatar
 
 common-actions:
   sign-in: Sign in
@@ -16,6 +19,18 @@ common-actions:
   collapse: Collapse
   open: Open
   open-menu: Open menu
+  view-details: View details
+  close: Close
+  create: Create
+  regenerate-password: Regenerate password
+  delete: Delete
+  edit: Edit
+  save: Save
+  remove: Remove
+
+common-values:
+  true-value: 'True'
+  false-value: 'False'
 
 common-placeholders:
   name: John Doe
@@ -23,11 +38,14 @@ common-placeholders:
   password: super-secret-password
   library-name: My library
   library-description: My library is located in…
+  user-biography: I love to read books…
 
 validation:
   required: It can not be blank.
   email: It should be a valid e-mail.
   min: It should have at least {n} characters.
+  available: It should be an available e-mail.
+  maxSize: It should have a size lower than {0}.
 
 entities:
   users: Users
@@ -81,10 +99,42 @@ theme-toggle:
 user:
   role-user: User
   role-admin: Administrator
+  you: You
+  your-user: Your user
+  delete: Delete user
 
 users:
   header: Users
+  new: New user
+  create-header: Create a new user
+  create-description: Invite a new person to join to the server
+  update-header: Modify an user
+  update-me-header: Modifying your user
+  update-description: Modifying {0}
+  update-me-description: Some fields are hidden on purpose
+  edit-avatar: Edit avatar
+  edit-avatar-header: Avatar management
+  edit-avatar-description: Upload or remove the current avatar
 
 pagination:
   items-per-page: Items per page
   show-n-items: '{n} items per page'
+  page: Page {0} of {1} with {2} results
+  first-page: Go to first page
+  previous-page: Go to previous page
+  next-page: Go to next page
+  last-page: Go to last page
+
+authentication-activity:
+  header: Authentication activity
+  success: Success
+  error: Error
+  ip: IP
+  source: Source
+  empty-header: No authentication activity found
+  empty-description: The user has never attempted to sign in
+  
+upload:
+  prompt: Upload a file
+  drag-and-drop: or drag and drop
+  formats: '{0} up to {1}'

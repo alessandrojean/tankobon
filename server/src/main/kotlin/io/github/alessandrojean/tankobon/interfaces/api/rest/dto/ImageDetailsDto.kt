@@ -10,6 +10,7 @@ data class ImageDetailsAttributesDto(
   val aspectRatio: String,
   val format: String,
   val mimeType: String,
+  val timeHex: String,
 ) : EntityAttributesDto()
 
 fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
@@ -20,4 +21,5 @@ fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
   aspectRatio = aspectRatio,
   format = format,
   mimeType = mimeType,
+  timeHex = timeHex,
 )

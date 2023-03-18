@@ -41,12 +41,18 @@ spring:
       - optional:file:\${tankobon.config-dir}/application.yml
       - optional:file:\${tankobon.config-dir}/application.yaml
       - optional:file:\${tankobon.config-dir}/application.properties
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 server:
   forward-headers-strategy: framework
   shutdown: graceful
   error:
     include-message: always
+  tomcat:
+    max-swallow-size: -1
 
 management:
   endpoints.web.exposure.include: "*"

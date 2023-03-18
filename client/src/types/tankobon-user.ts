@@ -18,3 +18,22 @@ export type UserIncludes = 'avatar'
 export type UserSort = 'name' | 'createdAt' | 'modifiedAt'
 
 export type UserSuccessResponse = EntityResponse<UserEntity>
+
+export interface EmailAvailability {
+  isAvailable: boolean,
+}
+
+export interface UserCreation {
+  email: string,
+  name: string,
+  password: string,
+  roles: UserRole[],
+}
+
+export interface UserUpdate {
+  id: string,
+  email: string,
+  name: string,
+  biography: string,
+  roles: UserRole[],
+}

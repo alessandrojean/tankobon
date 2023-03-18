@@ -57,7 +57,7 @@ class LoginListener(
       userAgent = event.getUserAgent(),
       success = false,
       source = source,
-      error = event.exception.message,
+      error = event.exception.javaClass.simpleName.toErrorId(),
     )
 
     logger.info { activity }
@@ -82,5 +82,15 @@ class LoginListener(
     }
   } catch (e: Exception) {
     null
+  }
+
+  private fun String.toErrorId(): String =
+    replace(EXCEPTION_REGEX, "")
+      .replace(CAMEL_CASE_REGEX, "$1_$2")
+      .uppercase()
+
+  companion object {
+    private val CAMEL_CASE_REGEX = "([a-z])([A-Z]+)".toRegex()
+    private val EXCEPTION_REGEX = "(Exception|Impl)$".toRegex()
   }
 }

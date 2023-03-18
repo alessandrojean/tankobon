@@ -48,6 +48,7 @@ async function handleSignIn() {
   }
 
   isLoading.value = true
+  error.value = undefined
 
   try {
     await userStore.signIn({
@@ -92,7 +93,7 @@ async function handleSignIn() {
       <Alert
         class="mb-2 rounded-lg dark:!rounded-lg"
         type="error"
-        :show="error !== undefined && !isLoading"
+        :show="typeof error === 'string' && !isLoading"
         :border="false"
       >
         <p>{{ error }}</p>
@@ -100,7 +101,7 @@ async function handleSignIn() {
       <form class="space-y-4" @submit.prevent="handleSignIn" novalidate>
         <div class="space-y-2">
           <TextInput
-            v-model="v$.email.$model"
+            v-model="formState.email"
             id="email"
             type="email"
             :label-text="$t('common-fields.email')"
@@ -108,6 +109,7 @@ async function handleSignIn() {
             :placeholder="$t('common-placeholders.email').replace('[at]', '@')"
             :invalid="v$.email.$error"
             :errors="v$.email.$errors"
+            @blur="v$.email.$touch()"
             required
           >
             <template #left-icon>
@@ -115,7 +117,7 @@ async function handleSignIn() {
             </template>
           </TextInput>
           <TextInput
-            v-model="v$.password.$model"
+            v-model="formState.password"
             id="password"
             type="password"
             :label-text="$t('common-fields.password')"
@@ -123,6 +125,7 @@ async function handleSignIn() {
             :placeholder="$t('common-placeholders.password')"
             :invalid="v$.password.$error"
             :errors="v$.password.$errors"
+            @blur="v$.password.$touch()"
             required
           >
             <template #left-icon>

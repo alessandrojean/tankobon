@@ -22,6 +22,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.BasicFileAttributes
 import javax.imageio.ImageIO
 import kotlin.io.path.extension
 import kotlin.io.path.readBytes
@@ -110,6 +111,7 @@ class BookCoverLifecycle(
     }
 
     val image = ImageIO.read(bookCoverFilePath.toFile())
+    val attributes = Files.readAttributes(bookCoverFilePath, BasicFileAttributes::class.java)
 
     return ImageDetails(
       id = bookId,
@@ -122,7 +124,8 @@ class BookCoverLifecycle(
       height = image.height,
       aspectRatio = image.aspectRatio(),
       format = bookCoverFilePath.extension,
-      mimeType = URLConnection.guessContentTypeFromName(bookCoverFilePath.fileNameString())
+      mimeType = URLConnection.guessContentTypeFromName(bookCoverFilePath.fileNameString()),
+      timeHex = attributes.lastModifiedTime().toMillis().toString(16),
     )
   }
 

@@ -5,7 +5,8 @@ export interface Entity<Attributes> {
   relationships: Relationship<any>[] | undefined,
 }
 
-export type EntityType = 'USER' | 'LIBRARY' | 'PREFERENCE'
+export type EntityType = 'USER' | 'LIBRARY' | 'PREFERENCE' 
+  | 'AUTHENTICATION_ACTIVITY'
 
 export interface Relationship<Attributes> {
   id: string,

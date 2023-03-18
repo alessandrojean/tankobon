@@ -45,9 +45,19 @@ export default function useImageLoader(
     }
   }
 
+  const unloadImage = (imageToUnload: string | null | undefined) => {
+    if (imageToUnload?.indexOf('blob:') === 0) {
+      URL.revokeObjectURL(imageToUnload)
+    }
+  }
+
   watch(
     () => imageUrl?.value,
-    () => {
+    (current, old) => {
+      if (current !== old) {
+        unloadImage(old)
+      }
+      
       imageHasError.value = false
       imageLoading.value = true
       loadImage()
@@ -60,6 +70,7 @@ export default function useImageLoader(
     imageWidth: readonly(imageWidth),
     imageHeight: readonly(imageHeight),
     imageAspectRatio,
-    loadImage
+    loadImage,
+    unloadImage: () => unloadImage(imageUrl?.value),
   }
 }

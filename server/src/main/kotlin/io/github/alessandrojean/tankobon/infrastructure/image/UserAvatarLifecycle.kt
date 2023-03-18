@@ -19,6 +19,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.BasicFileAttributes
 import javax.imageio.ImageIO
 import kotlin.io.path.extension
 import kotlin.io.path.readBytes
@@ -98,6 +99,7 @@ class UserAvatarLifecycle(
     }
 
     val image = ImageIO.read(userAvatarFilePath.toFile())
+    val attributes = Files.readAttributes(userAvatarFilePath, BasicFileAttributes::class.java)
 
     return ImageDetails(
       id = userId,
@@ -110,7 +112,8 @@ class UserAvatarLifecycle(
       height = image.height,
       aspectRatio = image.aspectRatio(),
       format = userAvatarFilePath.extension,
-      mimeType = URLConnection.guessContentTypeFromName(userAvatarFilePath.fileNameString())
+      mimeType = URLConnection.guessContentTypeFromName(userAvatarFilePath.fileNameString()),
+      timeHex = attributes.lastModifiedTime().toMillis().toString(16),
     )
   }
 
