@@ -73,7 +73,10 @@ const items = computed<Item[]>(() => [
     key: 'collections',
     label: t('entities.collections'),
     icon: ArchiveBoxIcon,
-    to: { name: 'welcome' },
+    to: { name: 'collections' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('collections')
+    })
   },
   {
     key: 'series',

@@ -13,6 +13,7 @@ import Avatar from '@/components/Avatar.vue'
 import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
+import { getRelationship } from '@/utils/api'
 
 const notificator = useNotificator()
 
@@ -21,7 +22,7 @@ const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
 const sorting = ref<SortingState>([defaultSorting])
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: users } = useUsersQuery({
+const { data: users, isLoading } = useUsersQuery({
   includes: ['avatar'],
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
@@ -76,7 +77,7 @@ const columns = [
   columnHelper.accessor(
     (user) => ({
       name: user.attributes.name,
-      avatar: user.relationships?.find((r) => r.type === 'AVATAR'),
+      avatar: getRelationship(user, 'AVATAR'),
     }),
     {
       id: 'name',
@@ -166,6 +167,7 @@ const columns = [
     :columns="columns"
     :page-count="users?.pagination?.totalPages"
     :items-count="users?.pagination?.totalElements"
+    :loading="isLoading"
     v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
     v-model:sorting="sorting"

@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { getMe, getMeWithAuth, signOut } from '@/services/tankobon-users'
 import type { UserEntity } from '@/types/tankobon-user'
+import { getRelationship } from '@/utils/api'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -9,10 +10,7 @@ export const useUserStore = defineStore('user', {
   getters: {
     isAdmin: (state) => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,
     isAuthenticated: (state) => typeof state.me?.id === 'string',
-    avatar: (state) => {
-      return state.me?.relationships
-        ?.find((r) => r.type === 'AVATAR')
-    }
+    avatar: (state) => getRelationship(state.me, 'AVATAR')
   },
   actions: {
     async signIn({ email, password }: { email: string, password: string }) {

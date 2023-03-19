@@ -5,6 +5,7 @@ import { EnvelopeIcon } from '@heroicons/vue/20/solid'
 import { PencilIcon, PhotoIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import type { AvatarResult } from '@/components/users/UserAvatarDialog.vue'
 import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
+import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
 const route = useRoute()
@@ -28,7 +29,7 @@ const { mutate: editUser, isLoading: isEditing } = useUpdateUserMutation()
 const { mutate: uploadAvatar, isLoading: isUploading } = useUploadUserAvatarMutation()
 const { mutate: deleteAvatar, isLoading: isDeletingAvatar } = useDeleteUserAvatarMutation()
 
-const avatar = computed(() => user.value?.relationships?.find(r => r.type === 'AVATAR'))
+const avatar = computed(() => getRelationship(user.value, 'AVATAR'))
 const isAdmin = computed(() => user.value?.attributes.roles.includes('ROLE_ADMIN'))
 const isMe = computed(() => user.value?.id === userStore.me!.id)
 
@@ -106,8 +107,8 @@ function handleAvatar(avatar: AvatarResult) {
           :picture-url="
             getFullImageUrl({
               collection: 'avatars',
-              fileName: avatar?.attributes.versions['128'],
-              timeHex: avatar?.attributes.timeHex,
+              fileName: avatar?.attributes?.versions['128'],
+              timeHex: avatar?.attributes?.timeHex,
             })
           "
         />

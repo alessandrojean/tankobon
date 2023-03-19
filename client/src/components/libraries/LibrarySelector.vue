@@ -1,17 +1,21 @@
 <script lang="ts" setup>
 import type { LibraryEntity } from '@/types/tankobon-library'
+import { getRelationship } from '@/utils/api';
 
 export interface LibrarySelectorProps {
   modelValue: LibraryEntity,
   options: LibraryEntity[],
+  size?: 'normal' | 'small',
 }
 
 export type LibrarySelectorEmits = {
   (e: 'update:model-value', library: LibraryEntity): void
 }
 
-const props = defineProps<LibrarySelectorProps>()
-defineEmits<LibrarySelectorEmits>()
+const props = withDefaults(defineProps<LibrarySelectorProps>(), {
+  size: 'normal',
+})
+const emit = defineEmits<LibrarySelectorEmits>()
 
 const { modelValue: library, options: libraries } = toRefs(props)
 
@@ -20,7 +24,7 @@ const userStore = useUserStore()
 
 const hasShared = computed(() => {
   return libraries.value?.some((l) => {
-    return l.relationships?.find((r) => r.type === 'OWNER')?.id !== userStore.me!.id
+    return getRelationship(l, 'OWNER')?.id !== userStore.me!.id
   })
 })
 
@@ -29,22 +33,31 @@ function sharedText(library: LibraryEntity) {
     return null
   }
 
-  const owner = library.relationships!.find((r) => r.type === 'OWNER')!
+  const owner = getRelationship(library, 'OWNER')!
 
   return owner.id === userStore.me!.id
     ? t('libraries.yours')
-    : `${t('libraries.shared')} · ${owner.attributes.name}`
+    : `${t('libraries.shared')} · ${owner.attributes!.name}`
+}
+
+function handleUpdate(libraryId: string) {
+  const library = libraries.value.find((l) => l.id === libraryId)
+
+  if (library) {
+    emit('update:model-value', library)
+  }
 }
 </script>
 
 <template>
   <BasicListbox
     v-if="libraries && libraries.length > 1"
+    :size="size"
     :model-value="library"
     :options="libraries ?? []"
     :option-value="(library: LibraryEntity) => library.id"
     :option-text="(library: LibraryEntity) => library.attributes?.name ?? ''"
-    @update:model-value="userStore.changeSelectedLibrary($event)"
+    @update:model-value="handleUpdate"
   >
     <template #button>
       <div>

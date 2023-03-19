@@ -73,18 +73,18 @@ const formattedValue = computed(() => {
 <template>
   <div
     :class="[
-      'bg-gray-100 rounded-lg p-4'
+      'bg-gray-100 dark:bg-gray-800 rounded-lg p-4'
     ]"
   >
-    <p class="font-display text-sm font-medium text-gray-800">
+    <p class="font-display text-sm font-medium text-gray-800 dark:text-gray-200">
       {{ title }}
     </p>
     <p  
       v-if="formattedValue"
-      class="text-3xl font-medium mt-2 text-primary-600"
+      class="text-3xl font-medium mt-2 text-primary-600 dark:text-primary-500"
     >
       {{ formattedValue.formatted }}
-      <span class="text-sm text-gray-600">
+      <span class="text-sm text-gray-600 dark:text-gray-400">
         {{ formattedValue.unit }}
       </span>
     </p>

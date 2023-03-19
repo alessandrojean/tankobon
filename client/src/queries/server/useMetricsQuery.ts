@@ -4,10 +4,10 @@ import { MaybeRef } from '@vueuse/core'
 import { Metric } from '@/types/tankobon-metrics'
 import { getMetric, type MetricKey } from '@/services/tankobon-metrics'
 
-export type MetricMap = Record<string, Metric>
+export type MetricMap<K extends MetricKey> = Record<K, Metric>
 
-interface UseMetricsQueryOptions<S = MetricMap> extends UseQueryOptions<MetricMap, ErrorResponse, S> {
-  metrics: MaybeRef<MetricKey[]>,
+interface UseMetricsQueryOptions<K extends MetricKey, S = MetricMap<K>> extends UseQueryOptions<MetricMap<K>, ErrorResponse, S> {
+  metrics: MaybeRef<K[]>,
 }
 
 type ErrorResponse = TankobonApiError | Error
@@ -16,10 +16,10 @@ function isFullfilled<T>(result: PromiseSettledResult<T>): result is PromiseFulf
   return result.status === 'fulfilled'
 }
 
-export default function useMetricsQuery<S = MetricMap>(
-  options: UseMetricsQueryOptions<S>
+export default function useMetricsQuery<K extends MetricKey, S = MetricMap<K>>(
+  options: UseMetricsQueryOptions<K, S>
 ) {
-  return useQuery<MetricMap, ErrorResponse, S>({
+  return useQuery<MetricMap<K>, ErrorResponse, S>({
     queryKey: ['metrics', { metrics: options.metrics }],
     queryFn: async () => {
       const keys = unref(options.metrics)
@@ -31,7 +31,7 @@ export default function useMetricsQuery<S = MetricMap>(
         metrics
           .filter(isFullfilled)
           .map((metric) => [metric.value.name, metric.value])
-      )
+      ) as MetricMap<K>
     },
     ...options,
   })

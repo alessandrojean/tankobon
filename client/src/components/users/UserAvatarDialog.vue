@@ -5,6 +5,7 @@ import { getFullImageUrl } from '@/modules/api';
 import { maxFileSize } from '@/utils/validation';
 import useVuelidate from '@vuelidate/core';
 import { helpers } from '@vuelidate/validators';
+import { getRelationship } from '@/utils/api';
 
 export interface UserCreateDialogProps {
   isOpen: boolean,
@@ -58,7 +59,7 @@ const currentAvatarUrl = computed(() => {
     return null
   }
 
-  const avatar = userEntity.value.relationships?.find((r) => r.type === 'AVATAR')
+  const avatar = getRelationship(userEntity.value, 'AVATAR')
 
   return getFullImageUrl({
     collection: 'avatars',

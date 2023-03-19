@@ -26,7 +26,10 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
               <div v-if="loading" class="skeleton h-7 w-56"></div>
               <slot name="title" v-else :title="title">
                 <h1
-                  class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
+                  :class="[
+                    'text-xl lg:text-2xl font-display font-semibold',
+                    'text-gray-900 dark:text-gray-100',
+                  ]"
                 >
                   {{ title }}
                   <slot name="title-badge" />

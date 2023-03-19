@@ -6,7 +6,7 @@ export interface Entity<Attributes> {
 }
 
 export type EntityType = 'USER' | 'LIBRARY' | 'PREFERENCE' 
-  | 'AUTHENTICATION_ACTIVITY'
+  | 'AUTHENTICATION_ACTIVITY' | 'COLLECTION'
 
 export interface Relationship<Attributes> {
   id: string,
@@ -15,6 +15,7 @@ export interface Relationship<Attributes> {
 }
 
 export type RelationshipType = 'AVATAR' | 'OWNER' | 'USER' | 'LIBRARY_SHARING'
+  | 'LIBRARY'
 
 export type Includes = Lowercase<RelationshipType>[]
 

@@ -1,46 +1,39 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { LibraryUpdate } from '@/types/tankobon-library'
+import { CollectionUpdate } from '@/types/tankobon-collection'
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const libraryId = computed(() => route.params.id?.toString())
+const collectionId = computed(() => route.params.id?.toString())
 const notificator = useNotificator()
-const userStore = useUserStore()
 
-const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
-  userId: computed(() => userStore.me!.id),
-  includeShared: false,
-  select: (libraries) => libraries.length > 1,
-  initialData: [],
-})
-const { data: library, isLoading } = useLibraryQuery({
-  libraryId,
-  includes: ['owner'],
+const { data: collection, isLoading } = useCollectionQuery({
+  collectionId,
+  includes: ['library'],
   enabled: computed(() => route.params.id !== undefined),
   onError: async (error) => {
     await notificator.failure({
-      title: t('libraries.fetch-one-failure'),
+      title: t('collections.fetch-one-failure'),
       body: error.message,
     })
   }
 })
-const { mutate: deleteLibrary, isLoading: isDeleting } = useDeleteLibraryMutation()
-const { mutate: editLibrary, isLoading: isEditing } = useUpdateLibraryMutation()
+const { mutate: deleteCollection, isLoading: isDeleting } = useDeleteCollectionMutation()
+const { mutate: editCollection, isLoading: isEditing } = useUpdateCollectionMutation()
 
-const owner = computed(() => getRelationship(library.value, 'OWNER'))
+const library = computed(() => getRelationship(collection.value, 'LIBRARY'))
 
 function handleDelete() {
-  deleteLibrary(libraryId.value, {
+  deleteCollection(collectionId.value, {
     onSuccess: async () => {
-      notificator.success({ title: t('libraries.deleted-with-success') })
-      await router.replace({ name: 'libraries' })
+      notificator.success({ title: t('collections.deleted-with-success') })
+      await router.replace({ name: 'collections' })
     },
     onError: async (error) => {
       await notificator.failure({
-        title: t('libraries.deleted-with-failure'),
+        title: t('collections.deleted-with-failure'),
         body: error.message,
       })
     }
@@ -49,14 +42,14 @@ function handleDelete() {
 
 const showEditDialog = ref(false)
 
-function handleEditLibrary(library: LibraryUpdate) {
-  editLibrary(library, {
+function handleEditCollection(collection: CollectionUpdate) {
+  editCollection(collection, {
     onSuccess: async () => {
-      await notificator.success({ title: t('libraries.edited-with-success') })
+      await notificator.success({ title: t('collections.edited-with-success') })
     },
     onError: async (error) => {
       await notificator.failure({
-        title: t('libraries.edited-with-failure'),
+        title: t('collections.edited-with-failure'),
         body: error.message,
       })
     }
@@ -67,11 +60,14 @@ function handleEditLibrary(library: LibraryUpdate) {
 <template>
   <div>
     <Header
-      :title="library?.attributes.name ?? ''"
-      :subtitle="library?.attributes.description"
+      :title="collection?.attributes.name ?? ''"
+      :subtitle="collection?.attributes.description"
       :loading="isLoading"
       class="mb-3 md:mb-0"
     >
+      <template #title-badge v-if="library && library.attributes">
+        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
+      </template>
       <template #actions>
         <div class="flex space-x-2">
           <Button
@@ -88,7 +84,7 @@ function handleEditLibrary(library: LibraryUpdate) {
           <Button
             class="w-11 h-11"
             kind="danger"
-            :disabled="isEditing || !canDelete"
+            :disabled="isEditing"
             :loading="isDeleting"
             :title="$t('common-actions.delete')"
             @click="handleDelete"
@@ -103,11 +99,11 @@ function handleEditLibrary(library: LibraryUpdate) {
       
     </div>
 
-    <LibraryEditDialog
-      v-if="library"
+    <CollectionEditDialog
+      v-if="collection"
       :is-open="showEditDialog"
-      :library-entity="library"
-      @submit="handleEditLibrary"
+      :collection-entity="collection"
+      @submit="handleEditCollection"
       @close="showEditDialog = false"
     />
   </div>

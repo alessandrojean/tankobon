@@ -40,6 +40,9 @@ common-placeholders:
   library-name: My library
   library-description: My library is located in…
   user-biography: I love to read books…
+  collection-name: Manga
+  collection-description: Collection of japanese comics…
+  search: Search…
 
 validation:
   required: It can not be blank.
@@ -91,7 +94,7 @@ libraries:
   owner-self: Self
   owner-shared: Shared
   create-header: Create a new library
-  create-description: Libraries allows you to manage a book collection
+  create-description: Collections allow you to organize your library by groups
   update-header: Modify a library
   update-description: Modifying {0}
   new: New library
@@ -184,3 +187,22 @@ metrics:
   total-disk-space: Total disk space
   cpu-usage: CPU usage
   uptime: Uptime
+
+collections:
+  fetch-failure: There was an error while fetching the collections
+  fetch-one-failure: There was an error while fetching the collection details
+  create-header: Create a new collection
+  create-description: Libraries allows you to manage a book collection
+  update-header: Modify a collection
+  update-description: Modifying {0}
+  new: New collection
+  created-with-success: Collection created with success
+  created-with-failure: There was an error while creating the collection
+  edited-with-success: Collection edited with success
+  edited-with-failure: There was an error while editing the collection
+  deleted-with-success: Collection deleted with success
+  deleted-with-failure: There was an error while deleting the collection
+  empty-header: No collections found
+  empty-description: You haven't created any collection yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into collections

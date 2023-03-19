@@ -27,7 +27,7 @@ const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 10 })
 const sorting = ref<SortingState>([defaultSorting])
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: authenticationActivity } = useUserAuthenticationActivityQuery({
+const { data: authenticationActivity, isLoading } = useUserAuthenticationActivityQuery({
   userId,
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
@@ -104,6 +104,7 @@ const columns = [
     :columns="columns"
     :page-count="authenticationActivity?.pagination?.totalPages"
     :items-count="authenticationActivity?.pagination?.totalElements"
+    :loading="isLoading"
     v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
     v-model:sorting="sorting"

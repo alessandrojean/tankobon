@@ -11,7 +11,7 @@ defineProps<EmptyStateProps>()
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center p-4 md:p-6 space-y-2">
+  <div class="flex flex-col items-center justify-center p-4 md:p-6 gap-2">
     <slot name="icon">
       <component
         v-if="icon"
@@ -40,6 +40,8 @@ defineProps<EmptyStateProps>()
       </slot>
     </div>
 
-    <slot name="actions" />
+    <div v-if="$slots.actions" class="mt-4">
+      <slot name="actions" />
+    </div>
   </div>
 </template>

@@ -1,35 +1,49 @@
 <script lang="ts" setup>
-import { createColumnHelper } from '@tanstack/vue-table'
+import { ColumnSort, createColumnHelper, PaginationState, SortingState } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
-import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
-import { LibraryEntity } from '@/types/tankobon-library'
-import { getRelationship } from '@/utils/api'
+import { CollectionEntity, CollectionSort } from '@/types/tankobon-collection'
+import { Sort } from '@/types/tankobon-api'
 
-export interface LibrariesTableProps {
-  userId: string,
+export interface CollectionsTableProps {
+  libraryId: string,
+  search?: string,
 }
 
-const props = defineProps<LibrariesTableProps>()
-const { userId } = toRefs(props)
+const props = withDefaults(defineProps<CollectionsTableProps>(), {
+  search: undefined
+})
+const { libraryId, search } = toRefs(props)
 const notificator = useNotificator()
 
+const defaultSorting: ColumnSort = { id: 'name', desc: false }
+const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
+const sorting = ref<SortingState>([defaultSorting])
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: libraries, isLoading } = useUserLibrariesByUserQuery({
-  userId,
-  includeShared: true,
-  includes: ['owner'],
+const { data: collections, isLoading } = useLibraryCollectionsQuery({
+  libraryId,
+  search,
+  page: computed(() => pagination.value.pageIndex),
+  size: computed(() => pagination.value.pageSize),
+  sort: computed<Sort<CollectionSort>[]>(() => {
+    return sorting.value.map((sort) => ({
+      property: sort.id as CollectionSort,
+      direction: sort.desc ? 'desc' : 'asc',
+    }))
+  }),
+  enabled: computed(() => libraryId.value !== undefined),
+  keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('libraries.fetch-failure'),
+      title: t('collections.fetch-failure'),
       body: error.message,
     })
   }
 })
 const { t, locale } = useI18n()
-const columnHelper = createColumnHelper<LibraryEntity>()
+const columnHelper = createColumnHelper<CollectionEntity>()
 
 const columns = [
   columnHelper.display({
@@ -55,7 +69,6 @@ const columns = [
   }),
   columnHelper.accessor('attributes.name', {
     id: 'name',
-    enableSorting: false,
     header: () => t('common-fields.name'),
     cell: (info) => info.getValue(),
   }),
@@ -65,23 +78,6 @@ const columns = [
     header: () => t('common-fields.description'),
     cell: (info) => info.getValue()
   }),
-  columnHelper.accessor(
-    (library) => getRelationship(library, 'OWNER')?.id !== userId.value,
-    {
-      id: 'isShared',
-      enableSorting: false,
-      header: () => t('common-fields.ownership'),
-      cell: (info) => h(
-        Badge,
-        { color: info.getValue() ? 'blue' : 'gray' },
-        { default: () => info.getValue() ? t('libraries.owner-shared') : t('libraries.owner-self') }
-      ),
-      meta: {
-        cellClass: 'text-right',
-        headerContainerClass: 'justify-end',
-      },
-    }
-  ),
   columnHelper.display({
     id: 'actions',
     header: () => null,
@@ -91,7 +87,7 @@ const columns = [
         kind: 'ghost-alt',
         isRouterLink: true,
         class: 'w-10 h-10',
-        to: { name: 'libraries-id', params: { id: row.original.id } },
+        to: { name: 'collections-id', params: { id: row.original.id } },
       },
       {
         default: () => [
@@ -109,10 +105,14 @@ const columns = [
 
 <template>
   <Table
-    :data="libraries"
+    :data="collections?.data"
     :columns="columns"
+    :page-count="collections?.pagination?.totalPages"
+    :items-count="collections?.pagination?.totalElements"
     :loading="isLoading"
+    v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
+    v-model:sorting="sorting"
   >
     <template #empty>
       <slot name="empty" />

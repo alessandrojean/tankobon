@@ -17,6 +17,7 @@ export interface TableProps {
   pagination?: PaginationState,
   rowSelection?: Record<string, boolean>,
   sorting?: SortingState,
+  loading?: boolean,
 }
 
 export type TableEmits = {
@@ -32,6 +33,7 @@ const props = withDefaults(defineProps<TableProps>(), {
   pagination: undefined,
   rowSelection: undefined,
   sorting: undefined,
+  loading: false,
 })
 
 const emit = defineEmits<TableEmits>()
@@ -103,10 +105,12 @@ const hasPagination = computed(() => {
 const showFooter = computed(() => {
   return itemsCount.value >= 10 && pagination.value
 })
+
+watch(data, () => emit('update:row-selection', {}))
 </script>
 
 <template>
-  <section class="overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
+  <section class="overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700 relative">
     <table class="w-full">
       <thead>
         <tr
@@ -225,5 +229,7 @@ const showFooter = computed(() => {
         @click:last-page="table.setPageIndex(table.getPageCount())"
       />
     </div>
+
+    <LoadingIndicator :loading="loading" />
   </section>
 </template>
