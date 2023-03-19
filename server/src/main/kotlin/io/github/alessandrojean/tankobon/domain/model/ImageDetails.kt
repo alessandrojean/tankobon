@@ -1,5 +1,7 @@
 package io.github.alessandrojean.tankobon.domain.model
 
+import java.io.Serializable
+
 data class ImageDetails(
   val id: String,
   val fileName: String,
@@ -10,5 +12,5 @@ data class ImageDetails(
   val format: String,
   val mimeType: String,
   val timeHex: String,
-)
+) : Serializable
 
