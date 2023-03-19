@@ -37,19 +37,20 @@ export const useUserStore = defineStore('user', {
           ...this.me,
           ...me,
           relationships: [...(me.relationships ?? [])],
-        }
+        },
       })
     },
 
     async sessionExists() {
       try {
         const me = await getMe()
+
         this.$patch({
           me: {
             ...this.me,
             ...me,
             relationships: [...(me.relationships ?? [])],
-          }
+          },
         })
         return true
       } catch (_) {

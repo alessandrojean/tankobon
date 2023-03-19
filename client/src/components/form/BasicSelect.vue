@@ -2,25 +2,21 @@
 import type { HTMLAttributes } from 'vue'
 import type { ErrorObject } from '@vuelidate/core'
 
-export interface TextInputProps {
+export interface BasicSelectProps {
   errors?: ErrorObject[],
   invalid?: boolean,
   modelValue: any,
   options: any[],
   optionText?: (value: any) => string,
   optionValue?: (value: any) => string,
-  autoComplete?: HTMLInputElement['autocomplete'],
-  type?: HTMLInputElement['type'],
-  inputMode?: HTMLAttributes['inputmode'],
   placeholder?: string,
   required?: boolean,
   size?: 'normal' | 'small',
 }
 
-const props = withDefaults(defineProps<TextInputProps>(), {
+const props = withDefaults(defineProps<BasicSelectProps>(), {
   errors: undefined,
   invalid: false,
-  type: 'text',
   required: false,
   size: 'normal',
   optionText: (value: any) => String(value),

@@ -103,6 +103,8 @@ libraries:
   deleted-with-failure: There was an error while deleting the library
   empty-header: No libraries found
   empty-description: The user haven't created any library yet
+  shared: Shared
+  yours: Yours
 
 dashboard:
   title: Dashboard

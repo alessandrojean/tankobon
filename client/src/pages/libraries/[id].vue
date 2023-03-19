@@ -8,7 +8,14 @@ const route = useRoute()
 const router = useRouter()
 const libraryId = computed(() => route.params.id?.toString())
 const notificator = useNotificator()
+const userStore = useUserStore()
 
+const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
+  userId: computed(() => userStore.me!.id),
+  includeShared: false,
+  select: (libraries) => libraries.length > 1,
+  initialData: [],
+})
 const { data: library, isLoading } = useLibraryQuery({
   libraryId,
   includes: ['owner'],
@@ -81,7 +88,7 @@ function handleEditLibrary(library: LibraryUpdate) {
           <Button
             class="w-11 h-11"
             kind="danger"
-            :disabled="isEditing"
+            :disabled="isEditing || !canDelete"
             :loading="isDeleting"
             :title="$t('common-actions.delete')"
             @click="handleDelete"

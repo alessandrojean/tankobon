@@ -5,6 +5,7 @@ const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenCo
 const typographyPlugin = require('@tailwindcss/typography')
 const formsPlugin = require('@tailwindcss/forms')
 const aspectRatioPlugin = require('@tailwindcss/aspect-ratio')
+const headlessUiPlugin = require('@headlessui/tailwindcss')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -51,6 +52,7 @@ module.exports = {
     typographyPlugin,
     formsPlugin,
     aspectRatioPlugin,
+    headlessUiPlugin,
     function ({ addVariant }) {
       addVariant(
         'supports-backdrop-blur',
