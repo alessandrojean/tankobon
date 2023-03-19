@@ -130,6 +130,7 @@ declare global {
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateCollectionMutation: typeof import('./mutations/collection/useCreateCollectionMutation')['default']
   const useCreateLibraryMutation: typeof import('./mutations/library/useCreateLibraryMutation')['default']
+  const useCreateSeriesMutation: typeof import('./mutations/series/useCreateSeriesMutation')['default']
   const useCreateUserMutation: typeof import('./mutations/user/useCreateUserMutation')['default']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
@@ -143,6 +144,7 @@ declare global {
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
   const useDeleteCollectionMutation: typeof import('./mutations/collection/useDeleteCollectionMutation')['default']
   const useDeleteLibraryMutation: typeof import('./mutations/library/useDeleteLibraryMutation')['default']
+  const useDeleteSeriesMutation: typeof import('./mutations/series/useDeleteSeriesMutation')['default']
   const useDeleteUserAvatarMutation: typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']
   const useDeleteUserMutation: typeof import('./mutations/user/useDeleteUserMutation')['default']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
@@ -186,6 +188,7 @@ declare global {
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
   const useLibraryCollectionsQuery: typeof import('./queries/collection/useLibraryCollectionsQuery')['default']
   const useLibraryQuery: typeof import('./queries/library/useLibraryQuery')['default']
+  const useLibrarySeriesQuery: typeof import('./queries/series/useLibrarySeriesQuery')['default']
   const useLink: typeof import('vue-router')['useLink']
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
@@ -229,6 +232,7 @@ declare global {
   const useScriptTag: typeof import('@vueuse/core')['useScriptTag']
   const useScroll: typeof import('@vueuse/core')['useScroll']
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
+  const useSeriesQuery: typeof import('./queries/series/useSeriesQuery')['default']
   const useServerClaimStatusQuery: typeof import('./queries/server/useServerClaimStatusQuery')['default']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
   const useSetPreferencesMutation: typeof import('./mutations/user/useSetPreferencesMutation')['default']
@@ -262,6 +266,7 @@ declare global {
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUpdateCollectionMutation: typeof import('./mutations/collection/useUpdateCollectionMutation')['default']
   const useUpdateLibraryMutation: typeof import('./mutations/library/useUpdateLibraryMutation')['default']
+  const useUpdateSeriesMutation: typeof import('./mutations/series/useUpdateSeriesMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/user/useUpdateUserMutation')['default']
   const useUploadUserAvatarMutation: typeof import('./mutations/user/useUploadUserAvatarMutation')['default']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
@@ -435,6 +440,7 @@ declare module 'vue' {
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCreateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useCreateCollectionMutation')['default']>
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useCreateLibraryMutation')['default']>
+    readonly useCreateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useCreateSeriesMutation')['default']>
     readonly useCreateUserMutation: UnwrapRef<typeof import('./mutations/user/useCreateUserMutation')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
@@ -448,6 +454,7 @@ declare module 'vue' {
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
     readonly useDeleteCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useDeleteCollectionMutation')['default']>
     readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/library/useDeleteLibraryMutation')['default']>
+    readonly useDeleteSeriesMutation: UnwrapRef<typeof import('./mutations/series/useDeleteSeriesMutation')['default']>
     readonly useDeleteUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']>
     readonly useDeleteUserMutation: UnwrapRef<typeof import('./mutations/user/useDeleteUserMutation')['default']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
@@ -491,6 +498,7 @@ declare module 'vue' {
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLibraryCollectionsQuery: UnwrapRef<typeof import('./queries/collection/useLibraryCollectionsQuery')['default']>
     readonly useLibraryQuery: UnwrapRef<typeof import('./queries/library/useLibraryQuery')['default']>
+    readonly useLibrarySeriesQuery: UnwrapRef<typeof import('./queries/series/useLibrarySeriesQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
@@ -534,6 +542,7 @@ declare module 'vue' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
+    readonly useSeriesQuery: UnwrapRef<typeof import('./queries/series/useSeriesQuery')['default']>
     readonly useServerClaimStatusQuery: UnwrapRef<typeof import('./queries/server/useServerClaimStatusQuery')['default']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useSetPreferencesMutation: UnwrapRef<typeof import('./mutations/user/useSetPreferencesMutation')['default']>
@@ -567,6 +576,7 @@ declare module 'vue' {
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUpdateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useUpdateCollectionMutation')['default']>
     readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useUpdateLibraryMutation')['default']>
+    readonly useUpdateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useUpdateSeriesMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/user/useUpdateUserMutation')['default']>
     readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useUploadUserAvatarMutation')['default']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>

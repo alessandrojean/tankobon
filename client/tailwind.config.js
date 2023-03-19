@@ -5,6 +5,7 @@ const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenCo
 const typographyPlugin = require('@tailwindcss/typography')
 const formsPlugin = require('@tailwindcss/forms')
 const aspectRatioPlugin = require('@tailwindcss/aspect-ratio')
+const lineClampPlugin = require('@tailwindcss/line-clamp')
 const headlessUiPlugin = require('@headlessui/tailwindcss')
 
 /** @type {import('tailwindcss').Config} */
@@ -52,6 +53,7 @@ module.exports = {
     typographyPlugin,
     formsPlugin,
     aspectRatioPlugin,
+    lineClampPlugin,
     headlessUiPlugin,
     function ({ addVariant }) {
       addVariant(

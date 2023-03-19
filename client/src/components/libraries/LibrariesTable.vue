@@ -63,7 +63,7 @@ const columns = [
     id: 'description',
     enableSorting: false,
     header: () => t('common-fields.description'),
-    cell: (info) => info.getValue()
+    cell: (info) => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
   }),
   columnHelper.accessor(
     (library) => getRelationship(library, 'OWNER')?.id !== userId.value,

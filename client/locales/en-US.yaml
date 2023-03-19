@@ -43,6 +43,8 @@ common-placeholders:
   collection-name: Manga
   collection-description: Collection of japanese comics…
   search: Search…
+  series-name: AKIRA
+  series-description: AKIRA is a japanese manga created by Katsuhiro Otomo…
 
 validation:
   required: It can not be blank.
@@ -94,7 +96,7 @@ libraries:
   owner-self: Self
   owner-shared: Shared
   create-header: Create a new library
-  create-description: Collections allow you to organize your library by groups
+  create-description: Libraries allows you to manage a book collection
   update-header: Modify a library
   update-description: Modifying {0}
   new: New library
@@ -192,7 +194,7 @@ collections:
   fetch-failure: There was an error while fetching the collections
   fetch-one-failure: There was an error while fetching the collection details
   create-header: Create a new collection
-  create-description: Libraries allows you to manage a book collection
+  create-description: Collections allow you to organize your library by groups
   update-header: Modify a collection
   update-description: Modifying {0}
   new: New collection
@@ -206,3 +208,22 @@ collections:
   empty-description: You haven't created any collection yet
   empty-search-description: Matches not found for “{0}”
   search: Search into collections
+
+series:
+  fetch-failure: There was an error while fetching the series
+  fetch-one-failure: There was an error while fetching the series details
+  create-header: Create a new series
+  create-description: Series allow you to group your books with multiple volumes
+  update-header: Modify a series
+  update-description: Modifying {0}
+  new: New series
+  created-with-success: Series created with success
+  created-with-failure: There was an error while creating the series
+  edited-with-success: Series edited with success
+  edited-with-failure: There was an error while editing the series
+  deleted-with-success: Series deleted with success
+  deleted-with-failure: There was an error while deleting the series
+  empty-header: No series found
+  empty-description: You haven't created any series yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into series

@@ -3,15 +3,15 @@ import { ColumnSort, createColumnHelper, PaginationState, SortingState } from '@
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
-import { CollectionEntity, CollectionSort } from '@/types/tankobon-collection'
+import { SeriesEntity, SeriesSort } from '@/types/tankobon-series'
 import { Sort } from '@/types/tankobon-api'
 
-export interface CollectionsTableProps {
+export interface SeriesTableProps {
   libraryId: string,
   search?: string,
 }
 
-const props = withDefaults(defineProps<CollectionsTableProps>(), {
+const props = withDefaults(defineProps<SeriesTableProps>(), {
   search: undefined
 })
 const { libraryId, search } = toRefs(props)
@@ -22,14 +22,14 @@ const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
 const sorting = ref<SortingState>([defaultSorting])
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: collections, isLoading } = useLibraryCollectionsQuery({
+const { data: series, isLoading } = useLibrarySeriesQuery({
   libraryId,
   search,
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
-  sort: computed<Sort<CollectionSort>[]>(() => {
+  sort: computed<Sort<SeriesSort>[]>(() => {
     return sorting.value.map((sort) => ({
-      property: sort.id as CollectionSort,
+      property: sort.id as SeriesSort,
       direction: sort.desc ? 'desc' : 'asc',
     }))
   }),
@@ -37,13 +37,13 @@ const { data: collections, isLoading } = useLibraryCollectionsQuery({
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('collections.fetch-failure'),
+      title: t('series.fetch-failure'),
       body: error.message,
     })
   }
 })
 const { t, locale } = useI18n()
-const columnHelper = createColumnHelper<CollectionEntity>()
+const columnHelper = createColumnHelper<SeriesEntity>()
 
 const columns = [
   columnHelper.display({
@@ -87,7 +87,7 @@ const columns = [
         kind: 'ghost-alt',
         isRouterLink: true,
         class: 'w-10 h-10',
-        to: { name: 'collections-id', params: { id: row.original.id } },
+        to: { name: 'series-id', params: { id: row.original.id } },
       },
       {
         default: () => [
@@ -105,10 +105,10 @@ const columns = [
 
 <template>
   <Table
-    :data="collections?.data"
+    :data="series?.data"
     :columns="columns"
-    :page-count="collections?.pagination?.totalPages"
-    :items-count="collections?.pagination?.totalElements"
+    :page-count="series?.pagination?.totalPages"
+    :items-count="series?.pagination?.totalElements"
     :loading="isLoading"
     v-model:pagination="pagination"
     v-model:row-selection="rowSelection"

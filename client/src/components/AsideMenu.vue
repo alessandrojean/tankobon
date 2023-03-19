@@ -82,7 +82,10 @@ const items = computed<Item[]>(() => [
     key: 'series',
     label: t('entities.series'),
     icon: Square2StackIcon,
-    to: { name: 'welcome' },
+    to: { name: 'series' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('series')
+    })
   },
   {
     key: 'publishers',

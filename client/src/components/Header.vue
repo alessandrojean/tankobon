@@ -37,7 +37,7 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
               </slot>
 
               <p
-                class="text-gray-500 dark:text-gray-400"
+                class="text-gray-500 dark:text-gray-400 line-clamp-1"
                 v-if="subtitle && !$slots.subtitle"
               >
                 {{ subtitle }}
