@@ -3,8 +3,13 @@ import type { Metric, Tag } from '@/types/tankobon-metrics'
 import { type ErrorResponse, TankobonApiError } from '@/types/tankobon-response'
 import { isAxiosError } from 'axios'
 
+export type MetricKey = 'disk.free' | 'disk.total' | 'system.cpu.count' |
+  'system.cpu.usage' | 'tankobon.books' | 'tankobon.books.covers' | 
+  'tankobon.libraries' | 'tankobon.users.avatars' | 'jvm.info' |
+  'application.ready.time' | 'application.started.time' | 'tankobon.users'
+
 export interface GetMetricParams {
-  metric: string,
+  metric: MetricKey,
   tags?: Tag[],
 }
 

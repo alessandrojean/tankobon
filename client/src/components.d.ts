@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     MenuButton: typeof import('@headlessui/vue')['MenuButton']
     MenuItem: typeof import('@headlessui/vue')['MenuItem']
     MenuItems: typeof import('@headlessui/vue')['MenuItems']
+    MetricCard: typeof import('./components/metrics/MetricCard.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     Notification: typeof import('./components/Notification.vue')['default']
     Paginator: typeof import('./components/Paginator.vue')['default']

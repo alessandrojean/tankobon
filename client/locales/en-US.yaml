@@ -175,3 +175,9 @@ upload:
 preferences:
   theme-failure: There was an error while getting the theme
   
+metrics:
+  header: Metrics
+  fetch-failure: There was an error while fetching the metrics
+  free-disk-space: Free disk space
+  total-disk-space: Total disk space
+  cpu-usage: CPU usage

@@ -62,10 +62,13 @@ class TankobonUserLifecycle(
       throw UserEmailAlreadyExistsException("A user with the same email already exists: ${tankobonUser.email}")
     }
 
-    userRepository.insert(tankobonUser.copy(password = passwordEncoder.encode(tankobonUser.password)))
+    val toCreate = tankobonUser.copy(password = passwordEncoder.encode(tankobonUser.password))
+    userRepository.insert(toCreate)
 
     val createdUser = userRepository.findByIdOrNull(tankobonUser.id)!!
     logger.info { "User created: $createdUser" }
+
+    eventPublisher.publishEvent(DomainEvent.UserAdded(toCreate))
 
     return createdUser
   }

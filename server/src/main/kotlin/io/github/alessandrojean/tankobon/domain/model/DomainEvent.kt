@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.domain.model
 import java.io.Serializable
 
 sealed class DomainEvent : Serializable {
+  data class UserAdded(val user: TankobonUser) : DomainEvent()
   data class UserUpdated(val user: TankobonUser) : DomainEvent()
   data class UserDeleted(val user: TankobonUser) : DomainEvent()
 

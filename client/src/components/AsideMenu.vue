@@ -11,6 +11,7 @@ import {
   ChevronDoubleLeftIcon,
   HomeIcon,
   QueueListIcon,
+  ServerStackIcon,
   Square2StackIcon,
   TagIcon,
   UserIcon,
@@ -113,6 +114,13 @@ const items = computed<Item[]>(() => [
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('users')
     })
+  },
+  {
+    key: 'metrics',
+    label: t('metrics.header'),
+    icon: ServerStackIcon,
+    to: { name: 'metrics' },
+    isAdminOnly: true,
   },
 ])
 

@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.scheduler
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
+import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_EVENTS
@@ -24,6 +25,7 @@ private val logger = KotlinLogging.logger {}
 class MetricsPublisherController(
   private val libraryRepository: LibraryRepository,
   private val bookRepository: BookRepository,
+  private val userRepository: TankobonUserRepository,
   private val bookCoverLifecycle: BookCoverLifecycle,
   private val userAvatarLifecycle: UserAvatarLifecycle,
   private val meterRegistry: MeterRegistry,
@@ -33,10 +35,11 @@ class MetricsPublisherController(
     private const val LIBRARIES = "libraries"
     private const val BOOKS = "books"
     private const val BOOK_COVERS = "books.covers"
+    private const val USERS = "users"
     private const val USER_AVATARS = "users.avatars"
   }
 
-  private final val entitiesNoTags = listOf(LIBRARIES, BOOKS, BOOK_COVERS, USER_AVATARS)
+  private final val entitiesNoTags = listOf(LIBRARIES, BOOKS, BOOK_COVERS, USERS, USER_AVATARS)
   private final val allEntities = entitiesNoTags
 
   val noTagGauges = entitiesNoTags.associateWith { entity ->
@@ -60,6 +63,9 @@ class MetricsPublisherController(
       is DomainEvent.BookCoverAdded -> noTagGauges[BOOK_COVERS]?.incrementAndGet()
       is DomainEvent.BookCoverDeleted -> noTagGauges[BOOK_COVERS]?.decrementAndGet()
 
+      is DomainEvent.UserAdded -> noTagGauges[USERS]?.incrementAndGet()
+      is DomainEvent.UserDeleted -> noTagGauges[USERS]?.decrementAndGet()
+
       is DomainEvent.UserAvatarAdded -> noTagGauges[USER_AVATARS]?.incrementAndGet()
       is DomainEvent.UserAvatarDeleted -> noTagGauges[USER_AVATARS]?.decrementAndGet()
 
@@ -77,6 +83,7 @@ class MetricsPublisherController(
       LIBRARIES -> noTagGauges[LIBRARIES]?.set(libraryRepository.count())
       BOOKS -> noTagGauges[BOOKS]?.set(bookRepository.count())
       BOOK_COVERS -> noTagGauges[BOOK_COVERS]?.set(bookCoverLifecycle.count())
+      USERS -> noTagGauges[USERS]?.set(userRepository.count())
       USER_AVATARS -> noTagGauges[USER_AVATARS]?.set(userAvatarLifecycle.count())
     }
   }
