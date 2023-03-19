@@ -7,7 +7,6 @@ import {
 } from '@tanstack/vue-table'
 import type { Sort } from '@/types/tankobon-api'
 import Badge from '@/components/Badge.vue'
-import useUserAuthenticationActivityQuery from '@/queries/useUserAuthenticationActivityQuery'
 import type {
   AuthenticationActivityEntity,
   AuthenticationActivitySort

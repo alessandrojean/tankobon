@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import useLibraryQuery from '@/queries/useLibraryQuery';
-import { LibraryUpdate } from '@/types/tankobon-library';
+import { LibraryUpdate } from '@/types/tankobon-library'
 
 const { t } = useI18n()
 const route = useRoute()

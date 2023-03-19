@@ -41,10 +41,10 @@ export default defineConfig({
       ],
       dts: 'src/auto-imports.d.ts',
       dirs: [
-        'src/composables',
+        'src/composables/**',
         'src/stores',
-        'src/queries',
-        'src/mutations',
+        'src/queries/**',
+        'src/mutations/**',
       ],
       vueTemplate: true,
       eslintrc: { enabled: true },

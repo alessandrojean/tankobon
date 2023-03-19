@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import useCreateUserMutation from '@/mutations/useCreateUserMutation';
 import type { UserCreation } from '@/types/tankobon-user'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 
