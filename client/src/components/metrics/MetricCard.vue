@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { filesize } from 'filesize'
+import humanizeDuration from 'humanize-duration'
 import type { Metric } from '@/types/tankobon-metrics'
 
 export interface MetricCardProps {
@@ -17,25 +18,54 @@ const { locale } = useI18n()
 
 const value = computed(() => metric.value.measurements[0].value)
 const baseUnit = computed(() => unit.value ?? metric.value.baseUnit)
-const percentFormatter = computed(() => {
-  return new Intl.NumberFormat(locale.value, {
+const intlFormatters = computed(() => ({
+  percent: new Intl.NumberFormat(locale.value, {
     style: 'percent',
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })
+}))
+
+const shortEnglishHumanizer = humanizeDuration.humanizer({
+  language: 'shortEn',
+  languages: {
+    shortEn: {
+      y: () => 'y',
+      mo: () => 'mo',
+      w: () => 'w',
+      d: () => 'd',
+      h: () => 'h',
+      m: () => 'm',
+      s: () => 's',
+      ms: () => 'ms',
+    },
+  },
 })
 
-const formattedValue = computed<string[]>(() => {
+const formattedValue = computed(() => {
   switch (baseUnit.value) {
-    case 'bytes':
-      return filesize(value.value, {
+    case 'bytes': {
+      const [formatted, unit] = filesize(value.value, {
         locale: locale.value,
         output: 'array',
       }) as string[]
-    case 'percent':
-      const formatted = percentFormatter.value.format(value.value)
-      return [formatted.replace('%', '').trim(), '%']
-    default: return []
+
+      return { formatted, unit }
+    }
+    case 'percent': {
+      const formatted = intlFormatters.value.percent.format(value.value)
+      return { formatted: formatted.replace('%', '').trim(), unit: '%' }
+    }
+    case 'seconds': {
+      const formattedString = shortEnglishHumanizer(value.value * 1_000, {
+        largest: 1,
+        round: true,
+      })
+      const [formatted, unit] = formattedString.split(' ')
+      
+      return { formatted, unit }
+    }
+    default: return null
   }
 })
 </script>
@@ -49,10 +79,13 @@ const formattedValue = computed<string[]>(() => {
     <p class="font-display text-sm font-medium text-gray-800">
       {{ title }}
     </p>
-    <p class="text-3xl font-medium mt-2 text-primary-600">
-      {{ formattedValue[0] }}
+    <p  
+      v-if="formattedValue"
+      class="text-3xl font-medium mt-2 text-primary-600"
+    >
+      {{ formattedValue.formatted }}
       <span class="text-sm text-gray-600">
-        {{ formattedValue[1] }}
+        {{ formattedValue.unit }}
       </span>
     </p>
   </div>

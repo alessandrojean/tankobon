@@ -78,16 +78,18 @@ async function flipNotification(notification: Notification) {
 
   const invert = last - first
 
-  const animation = notificator.value!.animate(
-    [
-      { transform: `translateY(${invert}px)` },
-      { transform: 'translateY(0)' }
-    ],
-    {
-      duration: 150,
-      easing: 'ease-out',
-    }
-  )
+  if (notifications.value.length > 1) {
+    notificator.value!.animate(
+      [
+        { transform: `translateY(${invert}px)` },
+        { transform: 'translateY(0)' }
+      ],
+      {
+        duration: 150,
+        easing: 'ease-out',
+      }
+    )
+  }
 
   return notificator.value!.querySelector<HTMLOutputElement>(`[data-id='${id}']`)
 }

@@ -6,7 +6,8 @@ import { isAxiosError } from 'axios'
 export type MetricKey = 'disk.free' | 'disk.total' | 'system.cpu.count' |
   'system.cpu.usage' | 'tankobon.books' | 'tankobon.books.covers' | 
   'tankobon.libraries' | 'tankobon.users.avatars' | 'jvm.info' |
-  'application.ready.time' | 'application.started.time' | 'tankobon.users'
+  'application.ready.time' | 'application.started.time' | 'tankobon.users' |
+  'process.uptime'
 
 export interface GetMetricParams {
   metric: MetricKey,

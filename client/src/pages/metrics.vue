@@ -5,6 +5,7 @@ const { data: metrics } = useMetricsQuery({
   metrics: [
     'disk.free',
     'disk.total',
+    'process.uptime',
     'tankobon.books',
     'tankobon.libraries',
     'tankobon.users',
@@ -17,8 +18,9 @@ const { data: metrics } = useMetricsQuery({
   }
 })
 
-const { data: cpuMetrics } = useMetricsQuery({
+const { data: cpuMetric } = useMetricsQuery({
   metrics: ['system.cpu.usage'],
+  select: (metrics) => metrics['system.cpu.usage'],
   refetchInterval: 5 * 1_000,
   onError: async (error) => {
     await notificator.failure({
@@ -43,13 +45,18 @@ const { data: cpuMetrics } = useMetricsQuery({
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6">
       <div
-        v-if="metrics && cpuMetrics"
-        class="grid grid-cols-4 gap-6"
+        v-if="metrics && cpuMetric"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
       >
-      <MetricCard 
+        <MetricCard 
           :title="$t('metrics.cpu-usage')"
-          :metric="cpuMetrics['system.cpu.usage']"
+          :metric="cpuMetric"
           unit="percent"
+        />
+
+        <MetricCard 
+          :title="$t('metrics.uptime')"
+          :metric="metrics['process.uptime']"
         />
 
         <MetricCard 

@@ -181,3 +181,4 @@ metrics:
   free-disk-space: Free disk space
   total-disk-space: Total disk space
   cpu-usage: CPU usage
+  uptime: Uptime
