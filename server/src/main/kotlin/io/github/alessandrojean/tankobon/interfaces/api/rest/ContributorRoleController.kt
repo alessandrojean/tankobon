@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
+import io.github.alessandrojean.tankobon.domain.model.ContributorRoleSearch
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
@@ -13,15 +14,20 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRole
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -48,6 +54,34 @@ class ContributorRoleController(
   private val referenceExpansion: ReferenceExpansion,
 ) {
 
+  @GetMapping("v1/contributor-roles")
+  @Operation(summary = "Get all contributor roles", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllContributorRoles(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
+    @RequestParam(name = "libraries", required = false)
+    @ArraySchema(schema = Schema(format = "uuid"))
+    libraryIds: Set<@UUID(version = [4]) String>? = null,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<ContributorRoleEntityDto> {
+    val contributorRolesPage = contributorRoleRepository.findAll(
+      search = ContributorRoleSearch(
+        libraryIds = libraryIds,
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    val contributorRoles = referenceExpansion.expand(
+      entities = contributorRolesPage.content.map { it.toDto() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(contributorRoles, contributorRolesPage.toPaginationDto())
+  }
+
   @GetMapping("v1/libraries/{libraryId}/contributor-roles")
   @Operation(
     summary = "Get all contributor roles from a library",
@@ -55,9 +89,10 @@ class ContributorRoleController(
   )
   fun getAllContributorRolesByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): SuccessCollectionResponseDto<ContributorRoleEntityDto> {
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<ContributorRoleEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
@@ -65,17 +100,16 @@ class ContributorRoleController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val roles = contributorRoleRepository
-      .findByLibraryId(libraryId)
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
-
-    val expanded = referenceExpansion.expand(
-      entities = roles,
-      relationsToExpand = includes,
+    val contributorRoles = contributorRoleRepository.findAll(
+      search = ContributorRoleSearch(
+        libraryIds = listOf(library.id),
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
     )
 
-    return SuccessCollectionResponseDto(expanded)
+    return contributorRoles.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/contributor-roles/{contributorRoleId}")

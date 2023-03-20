@@ -56,7 +56,7 @@ class PublisherController(
 
   @GetMapping("v1/publishers")
   @Operation(summary = "Get all publishers", security = [SecurityRequirement(name = "Basic Auth")])
-  fun getAllSeries(
+  fun getAllPublishers(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(name = "libraries", required = false)

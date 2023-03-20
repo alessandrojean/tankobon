@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Tag
+import io.github.alessandrojean.tankobon.domain.model.TagSearch
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
@@ -10,17 +11,22 @@ import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.TagLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -48,13 +54,42 @@ class TagController(
   private val referenceExpansion: ReferenceExpansion,
 ) {
 
+  @GetMapping("v1/tags")
+  @Operation(summary = "Get all tags", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllTags(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
+    @RequestParam(name = "libraries", required = false)
+    @ArraySchema(schema = Schema(format = "uuid"))
+    libraryIds: Set<@UUID(version = [4]) String>? = null,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<TagEntityDto> {
+    val tagsPage = tagRepository.findAll(
+      search = TagSearch(
+        libraryIds = libraryIds,
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    val tags = referenceExpansion.expand(
+      entities = tagsPage.content.map { it.toDto() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(tags, tagsPage.toPaginationDto())
+  }
+
   @GetMapping("v1/libraries/{libraryId}/tags")
   @Operation(summary = "Get all tags from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllTagsByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): SuccessCollectionResponseDto<TagEntityDto> {
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<TagEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
@@ -62,17 +97,16 @@ class TagController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val tags = tagRepository
-      .findByLibraryId(libraryId)
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
-
-    val expanded = referenceExpansion.expand(
-      entities = tags,
-      relationsToExpand = includes,
+    val tags = tagRepository.findAll(
+      search = TagSearch(
+        libraryIds = listOf(library.id),
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
     )
 
-    return SuccessCollectionResponseDto(expanded)
+    return tags.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/tags/{tagId}")

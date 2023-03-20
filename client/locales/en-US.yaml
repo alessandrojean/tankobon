@@ -49,6 +49,12 @@ common-placeholders:
   publisher-description: VIZ Media is an American entertainment company…
   person-name: Katsuhiro Otomo
   person-description: Katsuhiro Otomo is a japanese manga artist…
+  tag-name: Hardcover
+  tag-description: Books with hardcover binding…
+  contributor-role-name: Script
+  contributor-role-description: Person that wrote the story…
+  store-name: Amazon
+  store-description: Amazon is an American multinational technology company…
 
 validation:
   required: It can not be blank.
@@ -269,3 +275,60 @@ people:
   empty-description: You haven't created any person yet
   empty-search-description: Matches not found for “{0}”
   search: Search into people
+
+tags:
+  fetch-failure: There was an error while fetching the tags
+  fetch-one-failure: There was an error while fetching the tag details
+  create-header: Create a new tag
+  create-description: Tags allows you to group your library
+  update-header: Modify a tag
+  update-description: Modifying {0}
+  new: New tag
+  created-with-success: Tag created with success
+  created-with-failure: There was an error while creating the tag
+  edited-with-success: Tag edited with success
+  edited-with-failure: There was an error while editing the tag
+  deleted-with-success: Tag deleted with success
+  deleted-with-failure: There was an error while deleting the tag
+  empty-header: No tags found
+  empty-description: You haven't created any tags yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into tags
+
+contributor-roles:
+  fetch-failure: There was an error while fetching the contributor roles
+  fetch-one-failure: There was an error while fetching the contributor role details
+  create-header: Create a new contributor role
+  create-description: Roles allows you to map a person to its role in a book
+  update-header: Modify a contributor role
+  update-description: Modifying {0}
+  new: New role
+  created-with-success: Role created with success
+  created-with-failure: There was an error while creating the contributor role
+  edited-with-success: Role edited with success
+  edited-with-failure: There was an error while editing the contributor role
+  deleted-with-success: Role deleted with success
+  deleted-with-failure: There was an error while deleting the contributor role
+  empty-header: No contributor roles found
+  empty-description: You haven't created any contributor roles yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into roles
+
+stores:
+  fetch-failure: There was an error while fetching the stores
+  fetch-one-failure: There was an error while fetching the store details
+  create-header: Create a new store
+  create-description: Stores allows you to keep track where your books were bought
+  update-header: Modify a store
+  update-description: Modifying {0}
+  new: New store
+  created-with-success: Store created with success
+  created-with-failure: There was an error while creating the store
+  edited-with-success: Store edited with success
+  edited-with-failure: There was an error while editing the store
+  deleted-with-success: Store deleted with success
+  deleted-with-failure: There was an error while deleting the store
+  empty-header: No stores found
+  empty-description: You haven't created any stores yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into stores

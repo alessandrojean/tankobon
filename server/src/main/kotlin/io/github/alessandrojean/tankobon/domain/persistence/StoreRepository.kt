@@ -1,6 +1,9 @@
 package io.github.alessandrojean.tankobon.domain.persistence
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreSearch
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface StoreRepository {
   fun findById(storeId: String): Store
@@ -8,6 +11,7 @@ interface StoreRepository {
   fun findByLibraryId(libraryId: String): Collection<Store>
 
   fun findAll(): Collection<Store>
+  fun findAll(search: StoreSearch, pageable: Pageable): Page<Store>
   fun findAllByIds(storeIds: Collection<String>): Collection<Store>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean

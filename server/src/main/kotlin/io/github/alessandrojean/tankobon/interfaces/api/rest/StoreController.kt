@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreSearch
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
@@ -13,15 +14,20 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipTyp
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreUpdateDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -48,13 +54,42 @@ class StoreController(
   private val referenceExpansion: ReferenceExpansion,
 ) {
 
+  @GetMapping("v1/stores")
+  @Operation(summary = "Get all stores", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllStores(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
+    @RequestParam(name = "libraries", required = false)
+    @ArraySchema(schema = Schema(format = "uuid"))
+    libraryIds: Set<@UUID(version = [4]) String>? = null,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<StoreEntityDto> {
+    val storesPage = storeRepository.findAll(
+      search = StoreSearch(
+        libraryIds = libraryIds,
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    val stores = referenceExpansion.expand(
+      entities = storesPage.content.map { it.toDto() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(stores, storesPage.toPaginationDto())
+  }
+
   @GetMapping("v1/libraries/{libraryId}/stores")
   @Operation(summary = "Get all stores from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllStoresByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): SuccessCollectionResponseDto<StoreEntityDto> {
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<StoreEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
@@ -62,17 +97,16 @@ class StoreController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val stores = storeRepository
-      .findByLibraryId(libraryId)
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
-
-    val expanded = referenceExpansion.expand(
-      entities = stores,
-      relationsToExpand = includes,
+    val stores = storeRepository.findAll(
+      search = StoreSearch(
+        libraryIds = listOf(library.id),
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
     )
 
-    return SuccessCollectionResponseDto(expanded)
+    return stores.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/stores/{storeId}")

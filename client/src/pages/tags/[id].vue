@@ -1,0 +1,116 @@
+<script lang="ts" setup>
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { TagUpdate } from '@/types/tankobon-tag'
+import { getRelationship } from '@/utils/api'
+
+const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const tagId = computed(() => route.params.id?.toString())
+const notificator = useNotificator()
+
+const { data: tag, isLoading } = useTagQuery({
+  tagId,
+  includes: ['library'],
+  enabled: computed(() => route.params.id !== undefined),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('tags.fetch-one-failure'),
+      body: error.message,
+    })
+  }
+})
+const { mutate: deleteTag, isLoading: isDeleting } = useDeleteTagMutation()
+const { mutate: editTag, isLoading: isEditing } = useUpdateTagMutation()
+
+const library = computed(() => getRelationship(tag.value, 'LIBRARY'))
+
+function handleDelete() {
+  deleteTag(tagId.value, {
+    onSuccess: async () => {
+      notificator.success({ title: t('tags.deleted-with-success') })
+      await router.replace({ name: 'tags' })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('tags.deleted-with-failure'),
+        body: error.message,
+      })
+    }
+  })
+}
+
+const showEditDialog = ref(false)
+
+function handleEditTag(tag: TagUpdate) {
+  editTag(tag, {
+    onSuccess: async () => {
+      await notificator.success({ title: t('tags.edited-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('tags.edited-with-failure'),
+        body: error.message,
+      })
+    }
+  })
+}
+</script>
+
+<template>
+  <div>
+    <Header
+      :title="tag?.attributes.name ?? ''"
+      :subtitle="tag?.attributes.description"
+      :loading="isLoading"
+      class="mb-3 md:mb-0"
+    >
+      <template #title-badge v-if="library && library.attributes">
+        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
+      </template>
+      <template #actions>
+        <div class="flex space-x-2">
+          <Button
+            class="w-11 h-11"
+            :loading="isEditing"
+            :disabled="isDeleting"
+            :title="$t('common-actions.edit')"
+            @click="showEditDialog = true"
+          >
+            <span class="sr-only">{{ $t('common-actions.edit') }}</span>
+            <PencilIcon class="w-6 h-6" />
+          </Button>
+
+          <Button
+            class="w-11 h-11"
+            kind="danger"
+            :disabled="isEditing"
+            :loading="isDeleting"
+            :title="$t('common-actions.delete')"
+            @click="handleDelete"
+          >
+            <span class="sr-only">{{ $t('common-actions.delete') }}</span>
+            <TrashIcon class="w-6 h-6" />
+          </Button>
+        </div>
+      </template>
+    </Header>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
+      
+    </div>
+
+    <TagEditDialog
+      v-if="tag"
+      :is-open="showEditDialog"
+      :tag-entity="tag"
+      @submit="handleEditTag"
+      @close="showEditDialog = false"
+    />
+  </div>
+</template>
+
+<route lang="yaml">
+  meta:
+    layout: dashboard
+    isAdminOnly: true
+</route>

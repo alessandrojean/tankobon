@@ -1,6 +1,9 @@
 package io.github.alessandrojean.tankobon.domain.persistence
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
+import io.github.alessandrojean.tankobon.domain.model.ContributorRoleSearch
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface ContributorRoleRepository {
   fun findById(contributorRoleId: String): ContributorRole
@@ -10,6 +13,7 @@ interface ContributorRoleRepository {
   fun findByLibraryId(libraryId: String): Collection<ContributorRole>
 
   fun findAll(): Collection<ContributorRole>
+  fun findAll(search: ContributorRoleSearch, pageable: Pageable): Page<ContributorRole>
   fun findAllByIds(contributorRoleIds: Collection<String>): Collection<ContributorRole>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean

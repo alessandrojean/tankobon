@@ -1,9 +1,20 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Tag
+import io.github.alessandrojean.tankobon.domain.model.TagSearch
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.TagRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -13,7 +24,16 @@ import io.github.alessandrojean.tankobon.jooq.Tables.TAG as TableTag
 @Component
 class TagDao(
   private val dsl: DSLContext,
+  private val userDao: TankobonUserDao,
+  private val libraryDao: LibraryDao,
+  private val luceneHelper: LuceneHelper,
 ) : TagRepository {
+
+  private val sorts = mapOf(
+    "name" to TableTag.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableTag.CREATED_AT,
+    "modifiedAt" to TableTag.MODIFIED_AT,
+  )
 
   override fun findById(tagId: String): Tag = findByIdOrNull(tagId)!!
 
@@ -33,6 +53,43 @@ class TagDao(
     dsl.selectFrom(TableTag)
       .fetchInto(TableTag)
       .map { it.toDomain() }
+
+  override fun findAll(search: TagSearch, pageable: Pageable): Page<Tag> {
+    val tagsIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Tag)
+    val searchCondition = TableTag.ID.inOrNoCondition(tagsIds)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TableTag.ID)
+        .from(TableTag)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !tagsIds.isNullOrEmpty()) {
+        TableTag.ID.sortByValues(tagsIds, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val tags = dsl.selectFrom(TableTag)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TableTag)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      tags,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(tagIds: Collection<String>): Collection<Tag> =
     dsl.selectFrom(TableTag)
@@ -88,6 +145,30 @@ class TagDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TableTag).toLong()
+
+  private fun TagSearch.toCondition(): Condition {
+    val c = DSL.noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TableTag.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> DSL.noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TableTag.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> DSL.noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun TagRecord.toDomain(): Tag = Tag(
     name = name,

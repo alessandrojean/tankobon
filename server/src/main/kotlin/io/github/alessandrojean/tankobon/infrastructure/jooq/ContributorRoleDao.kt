@@ -1,11 +1,21 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
+import io.github.alessandrojean.tankobon.domain.model.ContributorRoleSearch
 import io.github.alessandrojean.tankobon.domain.persistence.ContributorRoleRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.ContributorRoleRecord
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.noCondition
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -15,7 +25,16 @@ import io.github.alessandrojean.tankobon.jooq.Tables.CONTRIBUTOR_ROLE as TableCo
 @Component
 class ContributorRoleDao(
   private val dsl: DSLContext,
+  private val userDao: TankobonUserDao,
+  private val libraryDao: LibraryDao,
+  private val luceneHelper: LuceneHelper,
 ) : ContributorRoleRepository {
+
+  private val sorts = mapOf(
+    "name" to TableContributorRole.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableContributorRole.CREATED_AT,
+    "modifiedAt" to TableContributorRole.MODIFIED_AT,
+  )
 
   override fun findById(contributorRoleId: String): ContributorRole = findByIdOrNull(contributorRoleId)!!
 
@@ -52,6 +71,43 @@ class ContributorRoleDao(
     dsl.selectFrom(TableContributorRole)
       .fetchInto(TableContributorRole)
       .map { it.toDomain() }
+
+  override fun findAll(search: ContributorRoleSearch, pageable: Pageable): Page<ContributorRole> {
+    val contributorRolesIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.ContributorRole)
+    val searchCondition = TableContributorRole.ID.inOrNoCondition(contributorRolesIds)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TableContributorRole.ID)
+        .from(TableContributorRole)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !contributorRolesIds.isNullOrEmpty()) {
+        TableContributorRole.ID.sortByValues(contributorRolesIds, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val contributorRoles = dsl.selectFrom(TableContributorRole)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TableContributorRole)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      contributorRoles,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(contributorRoleIds: Collection<String>): Collection<ContributorRole> =
     dsl.selectFrom(TableContributorRole)
@@ -107,6 +163,30 @@ class ContributorRoleDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TableContributorRole).toLong()
+
+  private fun ContributorRoleSearch.toCondition(): Condition {
+    val c = DSL.noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TableContributorRole.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> DSL.noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TableContributorRole.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> DSL.noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun ContributorRoleRecord.toDomain(): ContributorRole = ContributorRole(
     name = name,

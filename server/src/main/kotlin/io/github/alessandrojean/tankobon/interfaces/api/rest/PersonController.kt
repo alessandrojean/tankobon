@@ -56,7 +56,7 @@ class PersonController(
 
   @GetMapping("v1/people")
   @Operation(summary = "Get all people", security = [SecurityRequirement(name = "Basic Auth")])
-  fun getAllSeries(
+  fun getAllPeople(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(name = "libraries", required = false)

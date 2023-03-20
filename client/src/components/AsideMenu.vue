@@ -8,6 +8,7 @@ import {
   BookOpenIcon,
   BuildingLibraryIcon,
   BuildingOffice2Icon,
+  BuildingStorefrontIcon,
   ChevronDoubleLeftIcon,
   HomeIcon,
   QueueListIcon,
@@ -97,6 +98,15 @@ const items = computed<Item[]>(() => [
     })
   },
   {
+    key: 'stores',
+    label: t('entities.stores'),
+    icon: BuildingStorefrontIcon,
+    to: { name: 'stores' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('stores')
+    })
+  },
+  {
     key: 'people',
     label: t('entities.people'),
     icon: AcademicCapIcon,
@@ -109,13 +119,19 @@ const items = computed<Item[]>(() => [
     key: 'contributor-roles',
     label: t('entities.contributor-roles'),
     icon: QueueListIcon,
-    to: { name: 'welcome' },
+    to: { name: 'contributor-roles' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('contributor-roles')
+    })
   },
   {
     key: 'tags',
     label: t('entities.tags'),
     icon: TagIcon,
-    to: { name: 'welcome' },
+    to: { name: 'tags' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('tags')
+    })
   },
   {
     key: 'users',

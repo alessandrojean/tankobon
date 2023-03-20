@@ -9,6 +9,8 @@ export interface LogoProps {
 
 const props = withDefaults(defineProps<LogoProps>(), { dark: false })
 const { dark, label, iconOnly } = toRefs(props)
+
+const supText = computed(() => import.meta.env.DEV ? 'DEV' : null)
 </script>
 
 <template>
@@ -28,14 +30,14 @@ const { dark, label, iconOnly } = toRefs(props)
       Tankobon
     </span>
     <sup
-      v-if="!iconOnly"
+      v-if="!iconOnly && supText"
       :class="[
         'font-semibold text-[0.6rem] align-super ml-0.5',
         dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
       ]"
       aria-hidden="true"
     >
-      BETA
+      {{ supText }}
     </sup>
   </div>
 </template>

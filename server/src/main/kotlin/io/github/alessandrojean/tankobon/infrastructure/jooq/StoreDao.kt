@@ -1,9 +1,20 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreSearch
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.StoreRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -13,7 +24,16 @@ import io.github.alessandrojean.tankobon.jooq.Tables.STORE as TableStore
 @Component
 class StoreDao(
   private val dsl: DSLContext,
+  private val userDao: TankobonUserDao,
+  private val libraryDao: LibraryDao,
+  private val luceneHelper: LuceneHelper,
 ) : StoreRepository {
+
+  private val sorts = mapOf(
+    "name" to TableStore.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableStore.CREATED_AT,
+    "modifiedAt" to TableStore.MODIFIED_AT,
+  )
 
   override fun findById(storeId: String): Store = findByIdOrNull(storeId)!!
 
@@ -33,6 +53,43 @@ class StoreDao(
     dsl.selectFrom(TableStore)
       .fetchInto(TableStore)
       .map { it.toDomain() }
+
+  override fun findAll(search: StoreSearch, pageable: Pageable): Page<Store> {
+    val storesIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Store)
+    val searchCondition = TableStore.ID.inOrNoCondition(storesIds)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TableStore)
+        .from(TableStore)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !storesIds.isNullOrEmpty()) {
+        TableStore.ID.sortByValues(storesIds, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val stores = dsl.selectFrom(TableStore)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TableStore)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      stores,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(storeIds: Collection<String>): Collection<Store> =
     dsl.selectFrom(TableStore)
@@ -88,6 +145,30 @@ class StoreDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TableStore).toLong()
+
+  private fun StoreSearch.toCondition(): Condition {
+    val c = DSL.noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TableStore.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> DSL.noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TableStore.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> DSL.noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun StoreRecord.toDomain(): Store = Store(
     name = name,

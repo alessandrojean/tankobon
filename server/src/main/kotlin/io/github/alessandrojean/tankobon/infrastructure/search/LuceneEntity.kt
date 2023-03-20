@@ -1,9 +1,12 @@
 package io.github.alessandrojean.tankobon.infrastructure.search
 
 import io.github.alessandrojean.tankobon.domain.model.Collection
+import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.Series
+import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.Tag
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryAttributesDto
@@ -20,7 +23,10 @@ enum class LuceneEntity(val type: String, val id: String, val defaultFields: Arr
   Series("series", "series_id", arrayOf("name")),
   Collection("collection", "collection_id", arrayOf("name")),
   Publisher("publisher", "publisher_id", arrayOf("name")),
-  Person("person", "person_id", arrayOf("name"));
+  Person("person", "person_id", arrayOf("name")),
+  ContributorRole("contributor_role", "contributor_role_id", arrayOf("name")),
+  Tag("tag", "tag_id", arrayOf("name")),
+  Store("store", "store_id", arrayOf("name"));
 
   companion object {
     const val TYPE = "type"
@@ -72,4 +78,22 @@ fun Person.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Person.type, Field.Store.NO))
   add(StringField(LuceneEntity.Person.id, id, Field.Store.YES))
+}
+
+fun ContributorRole.toDocument() = Document().apply {
+  add(TextField("name", name, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.ContributorRole.type, Field.Store.NO))
+  add(StringField(LuceneEntity.ContributorRole.id, id, Field.Store.YES))
+}
+
+fun Tag.toDocument() = Document().apply {
+  add(TextField("name", name, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Tag.type, Field.Store.NO))
+  add(StringField(LuceneEntity.Tag.id, id, Field.Store.YES))
+}
+
+fun Store.toDocument() = Document().apply {
+  add(TextField("name", name, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Store.type, Field.Store.NO))
+  add(StringField(LuceneEntity.Store.id, id, Field.Store.YES))
 }
