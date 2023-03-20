@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonSearch
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -13,15 +14,20 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonCreationD
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -48,13 +54,42 @@ class PersonController(
   private val referenceExpansion: ReferenceExpansion,
 ) {
 
+  @GetMapping("v1/people")
+  @Operation(summary = "Get all people", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllSeries(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
+    @RequestParam(name = "libraries", required = false)
+    @ArraySchema(schema = Schema(format = "uuid"))
+    libraryIds: Set<@UUID(version = [4]) String>? = null,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<PersonEntityDto> {
+    val peoplePage = personRepository.findAll(
+      search = PersonSearch(
+        libraryIds = libraryIds,
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
+    )
+
+    val people = referenceExpansion.expand(
+      entities = peoplePage.content.map { it.toDto() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(people, peoplePage.toPaginationDto())
+  }
+
   @GetMapping("v1/libraries/{libraryId}/people")
   @Operation(summary = "Get all people from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllPeopleByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
-  ): SuccessCollectionResponseDto<PersonEntityDto> {
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<PersonEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
@@ -62,17 +97,16 @@ class PersonController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val people = personRepository
-      .findByLibraryId(libraryId)
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
-
-    val expanded = referenceExpansion.expand(
-      entities = people,
-      relationsToExpand = includes
+    val people = personRepository.findAll(
+      search = PersonSearch(
+        libraryIds = listOf(library.id),
+        searchTerm = searchTerm,
+        userId = principal.user.id,
+      ),
+      pageable = page,
     )
 
-    return SuccessCollectionResponseDto(expanded)
+    return people.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/people/{personId}")

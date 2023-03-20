@@ -47,6 +47,8 @@ common-placeholders:
   series-description: AKIRA is a japanese manga created by Katsuhiro Otomo…
   publisher-name: VIZ Media
   publisher-description: VIZ Media is an American entertainment company…
+  person-name: Katsuhiro Otomo
+  person-description: Katsuhiro Otomo is a japanese manga artist…
 
 validation:
   required: It can not be blank.
@@ -248,3 +250,22 @@ publishers:
   empty-description: You haven't created any publisher yet
   empty-search-description: Matches not found for “{0}”
   search: Search into publishers
+
+people:
+  fetch-failure: There was an error while fetching the person
+  fetch-one-failure: There was an error while fetching the person details
+  create-header: Create a new person
+  create-description: A person allow you to filter your library by authors
+  update-header: Modify a person
+  update-description: Modifying {0}
+  new: New person
+  created-with-success: Person created with success
+  created-with-failure: There was an error while creating the person
+  edited-with-success: Person edited with success
+  edited-with-failure: There was an error while editing the person
+  deleted-with-success: Person deleted with success
+  deleted-with-failure: There was an error while deleting the person
+  empty-header: No people found
+  empty-description: You haven't created any person yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into people

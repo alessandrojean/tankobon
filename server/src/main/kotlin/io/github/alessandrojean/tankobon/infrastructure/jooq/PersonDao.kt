@@ -1,11 +1,21 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonSearch
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
+import io.github.alessandrojean.tankobon.jooq.Tables
 import io.github.alessandrojean.tankobon.jooq.tables.records.PersonRecord
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.noCondition
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -15,7 +25,16 @@ import io.github.alessandrojean.tankobon.jooq.Tables.PERSON as TablePerson
 @Component
 class PersonDao(
   private val dsl: DSLContext,
+  private val libraryDao: LibraryDao,
+  private val userDao: TankobonUserDao,
+  private val luceneHelper: LuceneHelper,
 ) : PersonRepository {
+
+  private val sorts = mapOf(
+    "name" to TablePerson.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TablePerson.CREATED_AT,
+    "modifiedAt" to TablePerson.MODIFIED_AT,
+  )
 
   override fun findById(personId: String): Person = findByIdOrNull(personId)!!
 
@@ -52,6 +71,43 @@ class PersonDao(
     dsl.selectFrom(TablePerson)
       .fetchInto(TablePerson)
       .map { it.toDomain() }
+
+  override fun findAll(search: PersonSearch, pageable: Pageable): Page<Person> {
+    val peopleId = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Person)
+    val searchCondition = TablePerson.ID.inOrNoCondition(peopleId)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TablePerson.ID)
+        .from(TablePerson)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !peopleId.isNullOrEmpty()) {
+        TablePerson.ID.sortByValues(peopleId, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val people = dsl.selectFrom(TablePerson)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TablePerson)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      people,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(personIds: Collection<String>): Collection<Person> =
     dsl.selectFrom(TablePerson)
@@ -107,6 +163,30 @@ class PersonDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TablePerson).toLong()
+
+  private fun PersonSearch.toCondition(): Condition {
+    val c = noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TablePerson.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TablePerson.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun PersonRecord.toDomain(): Person = Person(
     name = name,

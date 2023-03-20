@@ -14,7 +14,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreati
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -90,7 +89,7 @@ class PublisherController(
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
     @Parameter(hidden = true) page: Pageable,
-  ): SuccessCollectionResponseDto<PublisherEntityDto> {
+  ): SuccessPaginatedCollectionResponseDto<PublisherEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 

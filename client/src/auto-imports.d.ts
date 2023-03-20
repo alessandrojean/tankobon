@@ -130,6 +130,7 @@ declare global {
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateCollectionMutation: typeof import('./mutations/collection/useCreateCollectionMutation')['default']
   const useCreateLibraryMutation: typeof import('./mutations/library/useCreateLibraryMutation')['default']
+  const useCreatePersonMutation: typeof import('./mutations/person/useCreatePersonMutation')['default']
   const useCreatePublisherMutation: typeof import('./mutations/publisher/useCreatePublisherMutation')['default']
   const useCreateSeriesMutation: typeof import('./mutations/series/useCreateSeriesMutation')['default']
   const useCreateUserMutation: typeof import('./mutations/user/useCreateUserMutation')['default']
@@ -145,6 +146,7 @@ declare global {
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
   const useDeleteCollectionMutation: typeof import('./mutations/collection/useDeleteCollectionMutation')['default']
   const useDeleteLibraryMutation: typeof import('./mutations/library/useDeleteLibraryMutation')['default']
+  const useDeletePersonMutation: typeof import('./mutations/person/useDeletePersonMutation')['default']
   const useDeletePublisherMutation: typeof import('./mutations/publisher/useDeletePublisherMutation')['default']
   const useDeleteSeriesMutation: typeof import('./mutations/series/useDeleteSeriesMutation')['default']
   const useDeleteUserAvatarMutation: typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']
@@ -189,6 +191,7 @@ declare global {
   const useKeyModifier: typeof import('@vueuse/core')['useKeyModifier']
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
   const useLibraryCollectionsQuery: typeof import('./queries/collection/useLibraryCollectionsQuery')['default']
+  const useLibraryPeopleQuery: typeof import('./queries/person/useLibraryPeopleQuery')['default']
   const useLibraryPublishersQuery: typeof import('./queries/publisher/useLibraryPublishersQuery')['default']
   const useLibraryQuery: typeof import('./queries/library/useLibraryQuery')['default']
   const useLibrarySeriesQuery: typeof import('./queries/series/useLibrarySeriesQuery')['default']
@@ -216,6 +219,7 @@ declare global {
   const usePageLeave: typeof import('@vueuse/core')['usePageLeave']
   const useParallax: typeof import('@vueuse/core')['useParallax']
   const usePermission: typeof import('@vueuse/core')['usePermission']
+  const usePersonQuery: typeof import('./queries/person/usePersonQuery')['default']
   const usePointer: typeof import('@vueuse/core')['usePointer']
   const usePointerLock: typeof import('@vueuse/core')['usePointerLock']
   const usePointerSwipe: typeof import('@vueuse/core')['usePointerSwipe']
@@ -270,6 +274,7 @@ declare global {
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUpdateCollectionMutation: typeof import('./mutations/collection/useUpdateCollectionMutation')['default']
   const useUpdateLibraryMutation: typeof import('./mutations/library/useUpdateLibraryMutation')['default']
+  const useUpdatePersonMutation: typeof import('./mutations/person/useUpdatePersonMutation')['default']
   const useUpdatePublisherMutation: typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']
   const useUpdateSeriesMutation: typeof import('./mutations/series/useUpdateSeriesMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/user/useUpdateUserMutation')['default']
@@ -445,6 +450,7 @@ declare module 'vue' {
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCreateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useCreateCollectionMutation')['default']>
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useCreateLibraryMutation')['default']>
+    readonly useCreatePersonMutation: UnwrapRef<typeof import('./mutations/person/useCreatePersonMutation')['default']>
     readonly useCreatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useCreatePublisherMutation')['default']>
     readonly useCreateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useCreateSeriesMutation')['default']>
     readonly useCreateUserMutation: UnwrapRef<typeof import('./mutations/user/useCreateUserMutation')['default']>
@@ -460,6 +466,7 @@ declare module 'vue' {
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
     readonly useDeleteCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useDeleteCollectionMutation')['default']>
     readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/library/useDeleteLibraryMutation')['default']>
+    readonly useDeletePersonMutation: UnwrapRef<typeof import('./mutations/person/useDeletePersonMutation')['default']>
     readonly useDeletePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useDeletePublisherMutation')['default']>
     readonly useDeleteSeriesMutation: UnwrapRef<typeof import('./mutations/series/useDeleteSeriesMutation')['default']>
     readonly useDeleteUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']>
@@ -504,6 +511,7 @@ declare module 'vue' {
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLibraryCollectionsQuery: UnwrapRef<typeof import('./queries/collection/useLibraryCollectionsQuery')['default']>
+    readonly useLibraryPeopleQuery: UnwrapRef<typeof import('./queries/person/useLibraryPeopleQuery')['default']>
     readonly useLibraryPublishersQuery: UnwrapRef<typeof import('./queries/publisher/useLibraryPublishersQuery')['default']>
     readonly useLibraryQuery: UnwrapRef<typeof import('./queries/library/useLibraryQuery')['default']>
     readonly useLibrarySeriesQuery: UnwrapRef<typeof import('./queries/series/useLibrarySeriesQuery')['default']>
@@ -531,6 +539,7 @@ declare module 'vue' {
     readonly usePageLeave: UnwrapRef<typeof import('@vueuse/core')['usePageLeave']>
     readonly useParallax: UnwrapRef<typeof import('@vueuse/core')['useParallax']>
     readonly usePermission: UnwrapRef<typeof import('@vueuse/core')['usePermission']>
+    readonly usePersonQuery: UnwrapRef<typeof import('./queries/person/usePersonQuery')['default']>
     readonly usePointer: UnwrapRef<typeof import('@vueuse/core')['usePointer']>
     readonly usePointerLock: UnwrapRef<typeof import('@vueuse/core')['usePointerLock']>
     readonly usePointerSwipe: UnwrapRef<typeof import('@vueuse/core')['usePointerSwipe']>
@@ -585,6 +594,7 @@ declare module 'vue' {
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUpdateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useUpdateCollectionMutation')['default']>
     readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useUpdateLibraryMutation')['default']>
+    readonly useUpdatePersonMutation: UnwrapRef<typeof import('./mutations/person/useUpdatePersonMutation')['default']>
     readonly useUpdatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']>
     readonly useUpdateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useUpdateSeriesMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/user/useUpdateUserMutation')['default']>

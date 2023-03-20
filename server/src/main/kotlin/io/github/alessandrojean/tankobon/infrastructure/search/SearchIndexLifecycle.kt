@@ -4,11 +4,14 @@ import io.github.alessandrojean.tankobon.domain.model.BookSearch
 import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.CollectionSearch
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
+import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonSearch
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.PublisherSearch
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
+import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
@@ -37,6 +40,7 @@ class SearchIndexLifecycle(
   private val bookDtoRepository: BookDtoRepository,
   private val seriesRepository: SeriesRepository,
   private val publisherRepository: PublisherRepository,
+  private val personRepository: PersonRepository,
   private val luceneHelper: LuceneHelper,
   private val referenceExpansion: ReferenceExpansion,
 ) {
@@ -67,6 +71,11 @@ class SearchIndexLifecycle(
           entity = it,
           { p: Pageable -> publisherRepository.findAll(PublisherSearch(), p) },
           { e: Publisher -> e.toDocument() }
+        )
+        LuceneEntity.Person -> rebuildIndex(
+          entity = it,
+          { p: Pageable -> personRepository.findAll(PersonSearch(), p) },
+          { e: Person -> e.toDocument() }
         )
       }
     }
@@ -138,8 +147,16 @@ class SearchIndexLifecycle(
           ?.toDocument()?.let { addEntity(it) }
       is DomainEvent.PublisherUpdated ->
         publisherRepository.findByIdOrNull(event.publisher.id)
-          ?.toDocument()?.let { updateEntity(LuceneEntity.Collection, event.publisher.id, it) }
-      is DomainEvent.PublisherDeleted -> deleteEntity(LuceneEntity.Collection, event.publisher.id)
+          ?.toDocument()?.let { updateEntity(LuceneEntity.Publisher, event.publisher.id, it) }
+      is DomainEvent.PublisherDeleted -> deleteEntity(LuceneEntity.Publisher, event.publisher.id)
+
+      is DomainEvent.PersonAdded ->
+        personRepository.findByIdOrNull(event.person.id)
+          ?.toDocument()?.let { addEntity(it) }
+      is DomainEvent.PersonUpdated ->
+        personRepository.findByIdOrNull(event.person.id)
+          ?.toDocument()?.let { updateEntity(LuceneEntity.Person, event.person.id, it) }
+      is DomainEvent.PersonDeleted -> deleteEntity(LuceneEntity.Person, event.person.id)
 
       else -> Unit
     }
