@@ -1,6 +1,9 @@
 package io.github.alessandrojean.tankobon.domain.persistence
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.domain.model.PublisherSearch
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface PublisherRepository {
   fun findById(publisherId: String): Publisher
@@ -9,6 +12,7 @@ interface PublisherRepository {
   fun findByLibraryId(libraryId: String): Collection<Publisher>
 
   fun findAll(): Collection<Publisher>
+  fun findAll(search: PublisherSearch, pageable: Pageable): Page<Publisher>
   fun findAllByIds(publisherIds: Collection<String>): Collection<Publisher>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean

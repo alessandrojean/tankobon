@@ -87,6 +87,7 @@ class SeriesController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<SeriesEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -96,7 +97,7 @@ class SeriesController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val collections = seriesRepository.findAll(
+    val series = seriesRepository.findAll(
       search = SeriesSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
@@ -105,7 +106,7 @@ class SeriesController(
       pageable = page,
     )
 
-    return collections.toSuccessCollectionResponseDto { it.toDto() }
+    return series.toSuccessCollectionResponseDto { it.toDto() }
   }
 
   @GetMapping("v1/series/{seriesId}")

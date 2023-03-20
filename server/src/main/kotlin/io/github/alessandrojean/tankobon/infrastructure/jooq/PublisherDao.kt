@@ -1,9 +1,20 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.domain.model.PublisherSearch
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
+import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.jooq.tables.records.PublisherRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -13,7 +24,16 @@ import io.github.alessandrojean.tankobon.jooq.Tables.PUBLISHER as TablePublisher
 @Component
 class PublisherDao(
   private val dsl: DSLContext,
+  private val userDao: TankobonUserDao,
+  private val libraryDao: LibraryDao,
+  private val luceneHelper: LuceneHelper,
 ) : PublisherRepository {
+
+  private val sorts = mapOf(
+    "name" to TablePublisher.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TablePublisher.CREATED_AT,
+    "modifiedAt" to TablePublisher.MODIFIED_AT,
+  )
 
   override fun findById(publisherId: String): Publisher = findByIdOrNull(publisherId)!!
 
@@ -40,6 +60,43 @@ class PublisherDao(
     dsl.selectFrom(TablePublisher)
       .fetchInto(TablePublisher)
       .map { it.toDomain() }
+
+  override fun findAll(search: PublisherSearch, pageable: Pageable): Page<Publisher> {
+    val publishersIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Publisher)
+    val searchCondition = TablePublisher.ID.inOrNoCondition(publishersIds)
+
+    val conditions = search.toCondition()
+      .and(searchCondition)
+
+    val count = dsl.fetchCount(
+      dsl.selectDistinct(TablePublisher.ID)
+        .from(TablePublisher)
+        .where(conditions)
+    )
+
+    val orderBy = pageable.sort.mapNotNull {
+      if (it.property == "relevance" && !publishersIds.isNullOrEmpty()) {
+        TablePublisher.ID.sortByValues(publishersIds, it.isAscending)
+      } else {
+        it.toSortField(sorts)
+      }
+    }
+
+    val publishers = dsl.selectFrom(TablePublisher)
+      .where(conditions)
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchInto(TablePublisher)
+      .map { it.toDomain() }
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      publishers,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      count.toLong(),
+    )
+  }
 
   override fun findAllByIds(publisherIds: Collection<String>): Collection<Publisher> =
     dsl.selectFrom(TablePublisher)
@@ -95,6 +152,30 @@ class PublisherDao(
   }
 
   override fun count(): Long = dsl.fetchCount(TablePublisher).toLong()
+
+  private fun PublisherSearch.toCondition(): Condition {
+    val c = DSL.noCondition()
+
+    if (userId.isNullOrEmpty()) {
+      return c
+    }
+
+    val user = userDao.findByIdOrNull(userId)!!
+    val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)
+    val filteredLibrariesIds = libraryIds.orEmpty()
+      .filter { it in librariesIdsUserHasAccess }
+
+    val libraryCondition = when {
+      user.isAdmin && !libraryIds.isNullOrEmpty() ->
+        TablePublisher.LIBRARY_ID.`in`(libraryIds)
+      user.isAdmin -> DSL.noCondition()
+      !libraryIds.isNullOrEmpty() ->
+        TablePublisher.LIBRARY_ID.inOrNoCondition(filteredLibrariesIds)
+      else -> DSL.noCondition()
+    }
+
+    return c.and(libraryCondition)
+  }
 
   private fun PublisherRecord.toDomain(): Publisher = Publisher(
     name = name,

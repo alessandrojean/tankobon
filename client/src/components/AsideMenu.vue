@@ -91,7 +91,10 @@ const items = computed<Item[]>(() => [
     key: 'publishers',
     label: t('entities.publishers'),
     icon: BuildingOffice2Icon,
-    to: { name: 'welcome' },
+    to: { name: 'publishers' },
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes('publishers')
+    })
   },
   {
     key: 'people',

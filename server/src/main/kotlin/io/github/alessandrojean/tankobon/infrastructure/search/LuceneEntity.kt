@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.search
 
 import io.github.alessandrojean.tankobon.domain.model.Collection
+import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
@@ -16,7 +17,8 @@ import org.apache.lucene.document.TextField
 enum class LuceneEntity(val type: String, val id: String, val defaultFields: Array<String>) {
   Book("book", "book_id", arrayOf("title", "code")),
   Series("series", "series_id", arrayOf("name")),
-  Collection("collection", "collection_id", arrayOf("name"));
+  Collection("collection", "collection_id", arrayOf("name")),
+  Publisher("publisher", "publisher_id", arrayOf("name"));
 
   companion object {
     const val TYPE = "type"
@@ -56,4 +58,10 @@ fun Collection.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Collection.type, Field.Store.NO))
   add(StringField(LuceneEntity.Collection.id, id, Field.Store.YES))
+}
+
+fun Publisher.toDocument() = Document().apply {
+  add(TextField("name", name, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Publisher.type, Field.Store.NO))
+  add(StringField(LuceneEntity.Publisher.id, id, Field.Store.YES))
 }

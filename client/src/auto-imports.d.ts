@@ -130,6 +130,7 @@ declare global {
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateCollectionMutation: typeof import('./mutations/collection/useCreateCollectionMutation')['default']
   const useCreateLibraryMutation: typeof import('./mutations/library/useCreateLibraryMutation')['default']
+  const useCreatePublisherMutation: typeof import('./mutations/publisher/useCreatePublisherMutation')['default']
   const useCreateSeriesMutation: typeof import('./mutations/series/useCreateSeriesMutation')['default']
   const useCreateUserMutation: typeof import('./mutations/user/useCreateUserMutation')['default']
   const useCssModule: typeof import('vue')['useCssModule']
@@ -144,6 +145,7 @@ declare global {
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
   const useDeleteCollectionMutation: typeof import('./mutations/collection/useDeleteCollectionMutation')['default']
   const useDeleteLibraryMutation: typeof import('./mutations/library/useDeleteLibraryMutation')['default']
+  const useDeletePublisherMutation: typeof import('./mutations/publisher/useDeletePublisherMutation')['default']
   const useDeleteSeriesMutation: typeof import('./mutations/series/useDeleteSeriesMutation')['default']
   const useDeleteUserAvatarMutation: typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']
   const useDeleteUserMutation: typeof import('./mutations/user/useDeleteUserMutation')['default']
@@ -187,6 +189,7 @@ declare global {
   const useKeyModifier: typeof import('@vueuse/core')['useKeyModifier']
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
   const useLibraryCollectionsQuery: typeof import('./queries/collection/useLibraryCollectionsQuery')['default']
+  const useLibraryPublishersQuery: typeof import('./queries/publisher/useLibraryPublishersQuery')['default']
   const useLibraryQuery: typeof import('./queries/library/useLibraryQuery')['default']
   const useLibrarySeriesQuery: typeof import('./queries/series/useLibrarySeriesQuery')['default']
   const useLink: typeof import('vue-router')['useLink']
@@ -222,6 +225,7 @@ declare global {
   const usePreferredLanguages: typeof import('@vueuse/core')['usePreferredLanguages']
   const usePreferredReducedMotion: typeof import('@vueuse/core')['usePreferredReducedMotion']
   const usePrevious: typeof import('@vueuse/core')['usePrevious']
+  const usePublisherQuery: typeof import('./queries/publisher/usePublisherQuery')['default']
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
   const useRefHistory: typeof import('@vueuse/core')['useRefHistory']
   const useResizeObserver: typeof import('@vueuse/core')['useResizeObserver']
@@ -266,6 +270,7 @@ declare global {
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUpdateCollectionMutation: typeof import('./mutations/collection/useUpdateCollectionMutation')['default']
   const useUpdateLibraryMutation: typeof import('./mutations/library/useUpdateLibraryMutation')['default']
+  const useUpdatePublisherMutation: typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']
   const useUpdateSeriesMutation: typeof import('./mutations/series/useUpdateSeriesMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/user/useUpdateUserMutation')['default']
   const useUploadUserAvatarMutation: typeof import('./mutations/user/useUploadUserAvatarMutation')['default']
@@ -440,6 +445,7 @@ declare module 'vue' {
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCreateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useCreateCollectionMutation')['default']>
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useCreateLibraryMutation')['default']>
+    readonly useCreatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useCreatePublisherMutation')['default']>
     readonly useCreateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useCreateSeriesMutation')['default']>
     readonly useCreateUserMutation: UnwrapRef<typeof import('./mutations/user/useCreateUserMutation')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
@@ -454,6 +460,7 @@ declare module 'vue' {
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
     readonly useDeleteCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useDeleteCollectionMutation')['default']>
     readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/library/useDeleteLibraryMutation')['default']>
+    readonly useDeletePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useDeletePublisherMutation')['default']>
     readonly useDeleteSeriesMutation: UnwrapRef<typeof import('./mutations/series/useDeleteSeriesMutation')['default']>
     readonly useDeleteUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useDeleteUserAvatarMutation')['default']>
     readonly useDeleteUserMutation: UnwrapRef<typeof import('./mutations/user/useDeleteUserMutation')['default']>
@@ -497,6 +504,7 @@ declare module 'vue' {
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLibraryCollectionsQuery: UnwrapRef<typeof import('./queries/collection/useLibraryCollectionsQuery')['default']>
+    readonly useLibraryPublishersQuery: UnwrapRef<typeof import('./queries/publisher/useLibraryPublishersQuery')['default']>
     readonly useLibraryQuery: UnwrapRef<typeof import('./queries/library/useLibraryQuery')['default']>
     readonly useLibrarySeriesQuery: UnwrapRef<typeof import('./queries/series/useLibrarySeriesQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
@@ -532,6 +540,7 @@ declare module 'vue' {
     readonly usePreferredLanguages: UnwrapRef<typeof import('@vueuse/core')['usePreferredLanguages']>
     readonly usePreferredReducedMotion: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedMotion']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
+    readonly usePublisherQuery: UnwrapRef<typeof import('./queries/publisher/usePublisherQuery')['default']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
     readonly useResizeObserver: UnwrapRef<typeof import('@vueuse/core')['useResizeObserver']>
@@ -576,6 +585,7 @@ declare module 'vue' {
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUpdateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useUpdateCollectionMutation')['default']>
     readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useUpdateLibraryMutation')['default']>
+    readonly useUpdatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']>
     readonly useUpdateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useUpdateSeriesMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/user/useUpdateUserMutation')['default']>
     readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useUploadUserAvatarMutation')['default']>
