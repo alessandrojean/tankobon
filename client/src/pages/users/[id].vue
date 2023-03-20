@@ -8,15 +8,23 @@ import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const userId = computed(() => route.params.id?.toString())
+const userId = useRouteParams<string | undefined>('id', undefined)
 const userStore = useUserStore()
 const notificator = useNotificator()
 
+const {
+  mutate: deleteUser,
+  isLoading: isDeleting,
+  isSuccess: isDeleted,
+} = useDeleteUserMutation()
+const { mutate: editUser, isLoading: isEditing } = useUpdateUserMutation()
+const { mutate: uploadAvatar, isLoading: isUploading } = useUploadUserAvatarMutation()
+const { mutate: deleteAvatar, isLoading: isDeletingAvatar } = useDeleteUserAvatarMutation()
+
 const { data: user, isLoading } = useUserQuery({
-  userId,
-  enabled: computed(() => route.params.id !== undefined),
+  userId: userId as Ref<string>,
+  enabled: computed(() => !!userId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('users.fetch-one-failure'),
@@ -24,17 +32,13 @@ const { data: user, isLoading } = useUserQuery({
     })
   }
 })
-const { mutate: deleteUser, isLoading: isDeleting } = useDeleteUserMutation()
-const { mutate: editUser, isLoading: isEditing } = useUpdateUserMutation()
-const { mutate: uploadAvatar, isLoading: isUploading } = useUploadUserAvatarMutation()
-const { mutate: deleteAvatar, isLoading: isDeletingAvatar } = useDeleteUserAvatarMutation()
 
 const avatar = computed(() => getRelationship(user.value, 'AVATAR'))
 const isAdmin = computed(() => user.value?.attributes.roles.includes('ROLE_ADMIN'))
 const isMe = computed(() => user.value?.id === userStore.me!.id)
 
 function handleDelete() {
-  deleteUser(userId.value, {
+  deleteUser(userId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('users.deleted-with-success') })
       await router.replace({ name: 'users' })
@@ -68,7 +72,7 @@ const showAvatarDialog = ref(false)
 
 function handleAvatar(avatar: AvatarResult) {
   if (avatar.file) {
-    uploadAvatar({ userId: userId.value, avatar: avatar.file }, {
+    uploadAvatar({ userId: userId.value!, avatar: avatar.file }, {
       onSuccess: async () => {
         await notificator.success({ title: t('users.avatar-uploaded-with-success') })
       },
@@ -80,7 +84,7 @@ function handleAvatar(avatar: AvatarResult) {
       }
     })
   } else if (avatar.removeExisting) {
-    deleteAvatar(userId.value, {
+    deleteAvatar(userId.value!, {
       onSuccess: async () => {
         await notificator.success({ title: t('users.avatar-removed-with-success') })
       },
@@ -173,7 +177,7 @@ function handleAvatar(avatar: AvatarResult) {
       </template>
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      <div>
+      <div v-if="userId">
         <h2 class="font-display font-medium text-xl">
           {{ $t('entities.libraries') }}
         </h2>
@@ -191,7 +195,7 @@ function handleAvatar(avatar: AvatarResult) {
         </LibrariesTable>
       </div>
 
-      <div>
+      <div v-if="userId">
         <h2 class="font-display font-medium text-xl">
           {{ $t('authentication-activity.header') }}
         </h2>

@@ -1,7 +1,6 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { Includes } from '@/types/tankobon-entity'
-import type { LibraryCreation, LibraryEntity, LibraryUpdate } from '@/types/tankobon-library'
+import type { LibraryCreation, LibraryEntity, LibraryIncludes, LibraryUpdate } from '@/types/tankobon-library'
 import { 
   type CollectionResponse,
   type ErrorResponse,
@@ -14,7 +13,7 @@ type LibraryCollection = CollectionResponse<LibraryEntity>
 
 export interface GetAllLibrariesParameters {
   ownerId?: string,
-  includes?: Includes
+  includes?: LibraryIncludes[]
 }
 
 export async function getAllLibraries(options: GetAllLibrariesParameters): Promise<LibraryEntity[]> {
@@ -39,7 +38,7 @@ export async function getAllLibraries(options: GetAllLibrariesParameters): Promi
 export interface GetAllLibrariesByUserParameters {
   userId?: string,
   includeShared?: boolean,
-  includes?: Includes
+  includes?: LibraryIncludes[]
 }
 
 export async function getAllLibrariesByUser(options: GetAllLibrariesByUserParameters): Promise<LibraryEntity[]> {
@@ -79,7 +78,7 @@ export async function addOneLibrary(library: LibraryCreation): Promise<LibraryEn
 
 export interface GetOneLibraryParameters {
   libraryId?: string,
-  includes?: Includes
+  includes?: LibraryIncludes[]
 }
 
 export async function getOneLibrary({ libraryId, includes }: GetOneLibraryParameters): Promise<LibraryEntity> {

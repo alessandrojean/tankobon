@@ -38,6 +38,12 @@ export default defineConfig({
         'vue-i18n',
         '@vueuse/head',
         '@vueuse/core',
+        { '@vueuse/router': ['useRouteHash', 'useRouteParams', 'useRouteQuery'] },
+        {
+          from: '@vueuse/core',
+          imports: ['MaybeRef'],
+          type: true,
+        }
       ],
       dts: 'src/auto-imports.d.ts',
       dirs: [

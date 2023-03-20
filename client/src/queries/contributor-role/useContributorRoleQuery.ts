@@ -1,13 +1,12 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import { MaybeRef } from '@vueuse/core'
-import { Includes } from '@/types/tankobon-entity'
 import { getOneContributorRole } from '@/services/tankobon-contributor-roles'
-import { ContributorRoleEntity } from '@/types/tankobon-contributor-role'
+import { ContributorRoleEntity, ContributorRoleIncludes } from '@/types/tankobon-contributor-role'
 
 interface UseContributorRoleQueryOptions<S = ContributorRoleEntity> extends UseQueryOptions<ContributorRoleEntity, ErrorResponse, S> {
   contributorRoleId: MaybeRef<string>,
-  includes?: MaybeRef<Includes>,
+  includes?: MaybeRef<ContributorRoleIncludes[]>,
 }
 
 type ErrorResponse = TankobonApiError | Error

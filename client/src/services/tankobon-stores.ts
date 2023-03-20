@@ -1,6 +1,5 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { Includes } from '@/types/tankobon-entity'
 import { 
   type ErrorResponse,
   type EntityResponse,
@@ -71,7 +70,7 @@ export async function addOneStore(store: StoreCreation): Promise<StoreEntity> {
 
 export interface GetOneStoreParameters {
   storeId?: string,
-  includes?: Includes
+  includes?: StoreIncludes[]
 }
 
 export async function getOneStore({ storeId, includes }: GetOneStoreParameters): Promise<StoreEntity> {

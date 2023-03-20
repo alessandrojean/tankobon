@@ -4,15 +4,17 @@ import { StoreUpdate } from '@/types/tankobon-store'
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const storeId = computed(() => route.params.id?.toString())
+const storeId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { mutate: deleteStore, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteStoreMutation()
+const { mutate: editStore, isLoading: isEditing } = useUpdateStoreMutation()
+
 const { data: store, isLoading } = useStoreQuery({
-  storeId,
+  storeId: storeId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!storeId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('stores.fetch-one-failure'),
@@ -20,13 +22,11 @@ const { data: store, isLoading } = useStoreQuery({
     })
   }
 })
-const { mutate: deleteStore, isLoading: isDeleting } = useDeleteStoreMutation()
-const { mutate: editStore, isLoading: isEditing } = useUpdateStoreMutation()
 
 const library = computed(() => getRelationship(store.value, 'LIBRARY'))
 
 function handleDelete() {
-  deleteStore(storeId.value, {
+  deleteStore(storeId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('stores.deleted-with-success') })
       await router.replace({ name: 'stores' })

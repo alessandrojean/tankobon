@@ -1,13 +1,12 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import { MaybeRef } from '@vueuse/core'
-import { Includes } from '@/types/tankobon-entity'
 import { getOneStore } from '@/services/tankobon-stores'
-import { StoreEntity } from '@/types/tankobon-store'
+import { StoreEntity, StoreIncludes } from '@/types/tankobon-store'
 
 interface UseStoreQueryOptions<S = StoreEntity> extends UseQueryOptions<StoreEntity, ErrorResponse, S> {
   storeId: MaybeRef<string>,
-  includes?: MaybeRef<Includes>,
+  includes?: MaybeRef<StoreIncludes[]>,
 }
 
 type ErrorResponse = TankobonApiError | Error

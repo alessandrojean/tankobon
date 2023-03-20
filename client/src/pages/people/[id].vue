@@ -4,15 +4,17 @@ import { PersonUpdate } from '@/types/tankobon-person'
 import { getRelationship } from '@/utils/api'
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const personId = computed(() => route.params.id?.toString())
+const personId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { mutate: deletePerson, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePersonMutation()
+const { mutate: editPerson, isLoading: isEditing } = useUpdatePersonMutation()
+
 const { data: person, isLoading } = usePersonQuery({
-  personId,
+  personId: personId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!personId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('people.fetch-one-failure'),
@@ -20,13 +22,11 @@ const { data: person, isLoading } = usePersonQuery({
     })
   }
 })
-const { mutate: deletePerson, isLoading: isDeleting } = useDeletePersonMutation()
-const { mutate: editPerson, isLoading: isEditing } = useUpdatePersonMutation()
 
 const library = computed(() => getRelationship(person.value, 'LIBRARY'))
 
 function handleDelete() {
-  deletePerson(personId.value, {
+  deletePerson(personId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('people.deleted-with-success') })
       await router.replace({ name: 'people' })

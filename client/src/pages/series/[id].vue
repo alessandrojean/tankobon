@@ -4,15 +4,17 @@ import { SeriesUpdate } from '@/types/tankobon-series'
 import { getRelationship } from '@/utils/api'
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const seriesId = computed(() => route.params.id?.toString())
+const seriesId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { mutate: deleteSeries, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteSeriesMutation()
+const { mutate: editSeries, isLoading: isEditing } = useUpdateSeriesMutation()
+
 const { data: series, isLoading } = useSeriesQuery({
-  seriesId,
+  seriesId: seriesId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!seriesId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('series.fetch-one-failure'),
@@ -20,13 +22,11 @@ const { data: series, isLoading } = useSeriesQuery({
     })
   }
 })
-const { mutate: deleteSeries, isLoading: isDeleting } = useDeleteSeriesMutation()
-const { mutate: editSeries, isLoading: isEditing } = useUpdateSeriesMutation()
 
 const library = computed(() => getRelationship(series.value, 'LIBRARY'))
 
 function handleDelete() {
-  deleteSeries(seriesId.value, {
+  deleteSeries(seriesId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('series.deleted-with-success') })
       await router.replace({ name: 'series' })

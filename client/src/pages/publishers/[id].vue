@@ -4,15 +4,17 @@ import { PublisherUpdate } from '@/types/tankobon-publisher'
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const publisherId = computed(() => route.params.id?.toString())
+const publisherId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
+const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
+
 const { data: publisher, isLoading } = usePublisherQuery({
-  publisherId,
+  publisherId: publisherId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!publisherId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('publishers.fetch-one-failure'),
@@ -20,13 +22,11 @@ const { data: publisher, isLoading } = usePublisherQuery({
     })
   }
 })
-const { mutate: deletePublisher, isLoading: isDeleting } = useDeletePublisherMutation()
-const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
 
 const library = computed(() => getRelationship(publisher.value, 'LIBRARY'))
 
 function handleDelete() {
-  deletePublisher(publisherId.value, {
+  deletePublisher(publisherId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('publishers.deleted-with-success') })
       await router.replace({ name: 'publishers' })

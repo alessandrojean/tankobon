@@ -4,15 +4,17 @@ import { ContributorRoleUpdate } from '@/types/tankobon-contributor-role'
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const contributorRoleId = computed(() => route.params.id?.toString())
+const contributorRoleId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { mutate: deleteContributorRole, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteContributorRoleMutation()
+const { mutate: editContributorRole, isLoading: isEditing } = useUpdateContributorRoleMutation()
+
 const { data: contributorRole, isLoading } = useContributorRoleQuery({
-  contributorRoleId,
+  contributorRoleId: contributorRoleId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!contributorRoleId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('contributor-roles.fetch-one-failure'),
@@ -20,13 +22,11 @@ const { data: contributorRole, isLoading } = useContributorRoleQuery({
     })
   }
 })
-const { mutate: deleteContributorRole, isLoading: isDeleting } = useDeleteContributorRoleMutation()
-const { mutate: editContributorRole, isLoading: isEditing } = useUpdateContributorRoleMutation()
 
 const library = computed(() => getRelationship(contributorRole.value, 'LIBRARY'))
 
 function handleDelete() {
-  deleteContributorRole(contributorRoleId.value, {
+  deleteContributorRole(contributorRoleId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('contributor-roles.deleted-with-success') })
       await router.replace({ name: 'contributor-roles' })

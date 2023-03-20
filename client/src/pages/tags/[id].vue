@@ -4,15 +4,22 @@ import { TagUpdate } from '@/types/tankobon-tag'
 import { getRelationship } from '@/utils/api'
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const tagId = computed(() => route.params.id?.toString())
+const tagId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 
+const { 
+  mutate: deleteTag,
+  isLoading: isDeleting,
+  isSuccess: isDeleted,
+} = useDeleteTagMutation()
+const { mutate: editTag, isLoading: isEditing } = useUpdateTagMutation()
 const { data: tag, isLoading } = useTagQuery({
-  tagId,
+  tagId: tagId as Ref<string>,
   includes: ['library'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => {
+    return !!tagId.value && !isDeleting.value && !isDeleted.value
+  }),
   onError: async (error) => {
     await notificator.failure({
       title: t('tags.fetch-one-failure'),
@@ -20,13 +27,11 @@ const { data: tag, isLoading } = useTagQuery({
     })
   }
 })
-const { mutate: deleteTag, isLoading: isDeleting } = useDeleteTagMutation()
-const { mutate: editTag, isLoading: isEditing } = useUpdateTagMutation()
 
 const library = computed(() => getRelationship(tag.value, 'LIBRARY'))
 
 function handleDelete() {
-  deleteTag(tagId.value, {
+  deleteTag(tagId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('tags.deleted-with-success') })
       await router.replace({ name: 'tags' })

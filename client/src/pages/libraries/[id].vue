@@ -4,11 +4,13 @@ import { LibraryUpdate } from '@/types/tankobon-library'
 import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
-const libraryId = computed(() => route.params.id?.toString())
+const libraryId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useNotificator()
 const userStore = useUserStore()
+
+const { mutate: deleteLibrary, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteLibraryMutation()
+const { mutate: editLibrary, isLoading: isEditing } = useUpdateLibraryMutation()
 
 const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
   userId: computed(() => userStore.me!.id),
@@ -16,10 +18,11 @@ const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
   select: (libraries) => libraries.length > 1,
   initialData: [],
 })
+
 const { data: library, isLoading } = useLibraryQuery({
-  libraryId,
+  libraryId: libraryId as Ref<string>,
   includes: ['owner'],
-  enabled: computed(() => route.params.id !== undefined),
+  enabled: computed(() => !!libraryId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-one-failure'),
@@ -27,13 +30,11 @@ const { data: library, isLoading } = useLibraryQuery({
     })
   }
 })
-const { mutate: deleteLibrary, isLoading: isDeleting } = useDeleteLibraryMutation()
-const { mutate: editLibrary, isLoading: isEditing } = useUpdateLibraryMutation()
 
 const owner = computed(() => getRelationship(library.value, 'OWNER'))
 
 function handleDelete() {
-  deleteLibrary(libraryId.value, {
+  deleteLibrary(libraryId.value!, {
     onSuccess: async () => {
       notificator.success({ title: t('libraries.deleted-with-success') })
       await router.replace({ name: 'libraries' })

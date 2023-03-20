@@ -22,3 +22,5 @@ export interface LibraryUpdate {
   owner?: string,
   sharedUsers: string[],
 }
+
+export type LibraryIncludes = 'owner'

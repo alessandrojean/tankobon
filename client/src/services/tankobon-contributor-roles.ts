@@ -1,6 +1,5 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { Includes } from '@/types/tankobon-entity'
 import { 
   type ErrorResponse,
   type EntityResponse,
@@ -71,7 +70,7 @@ export async function addOneContributorRole(contributorRole: ContributorRoleCrea
 
 export interface GetOneContributorRoleParameters {
   contributorRoleId?: string,
-  includes?: Includes
+  includes?: ContributorRoleIncludes[]
 }
 
 export async function getOneContributorRole({ contributorRoleId, includes }: GetOneContributorRoleParameters): Promise<ContributorRoleEntity> {

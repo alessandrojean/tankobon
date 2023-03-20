@@ -1,6 +1,5 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { Includes } from '@/types/tankobon-entity'
 import { 
   type ErrorResponse,
   type EntityResponse,
@@ -71,7 +70,7 @@ export async function addOnePublisher(publisher: PublisherCreation): Promise<Pub
 
 export interface GetOnePublisherParameters {
   publisherId?: string,
-  includes?: Includes
+  includes?: PublisherIncludes[]
 }
 
 export async function getOnePublisher({ publisherId, includes }: GetOnePublisherParameters): Promise<PublisherEntity> {

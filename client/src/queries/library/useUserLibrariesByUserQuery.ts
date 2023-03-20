@@ -1,7 +1,6 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 import { getAllLibrariesByUser } from '@/services/tankobon-libraries'
-import type { LibraryEntity } from '@/types/tankobon-library'
-import type { Includes } from '@/types/tankobon-entity'
+import type { LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import type { MaybeRef } from '@vueuse/core'
 
@@ -9,7 +8,7 @@ interface UseUserLibrariesQueryByUserOptions<S = LibraryEntity[]>
   extends UseQueryOptions<LibraryEntity[], ErrorResponse, S> {
   userId: MaybeRef<string>,
   includeShared?: MaybeRef<boolean>,
-  includes?: MaybeRef<Includes>,
+  includes?: MaybeRef<LibraryIncludes[]>,
 }
 
 type ErrorResponse = TankobonApiError | Error

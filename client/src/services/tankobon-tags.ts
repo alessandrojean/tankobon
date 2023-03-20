@@ -1,6 +1,5 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { Includes } from '@/types/tankobon-entity'
 import { 
   type ErrorResponse,
   type EntityResponse,
@@ -71,7 +70,7 @@ export async function addOneTag(tag: TagCreation): Promise<TagEntity> {
 
 export interface GetOneTagParameters {
   tagId?: string,
-  includes?: Includes
+  includes?: TagIncludes[]
 }
 
 export async function getOneTag({ tagId, includes }: GetOneTagParameters): Promise<TagEntity> {
