@@ -10,6 +10,9 @@ common-fields:
   biography: Biography
   avatar: Avatar
   ownership: Ownership
+  isbn: ISBN
+  library: Library
+  collection: Collection
 
 common-actions:
   sign-in: Sign in
@@ -28,6 +31,8 @@ common-actions:
   edit: Edit
   save: Save
   remove: Remove
+  import: Import
+  filter: Filter
 
 common-values:
   true-value: 'True'
@@ -55,6 +60,7 @@ common-placeholders:
   contributor-role-description: Person that wrote the story…
   store-name: Amazon
   store-description: Amazon is an American multinational technology company…
+  search-by-isbn: Search by ISBN…
 
 validation:
   required: It can not be blank.
@@ -62,6 +68,8 @@ validation:
   min: It should have at least {n} characters.
   available: It should be an available e-mail.
   maxSize: It should have a size lower than {0}.
+  max: It should have at most {0} characters.
+  isbn: It should be a valid ISBN.
 
 entities:
   users: Users
@@ -120,6 +128,7 @@ libraries:
   empty-description: The user haven't created any library yet
   shared: Shared
   yours: Yours
+  select: Select a library
 
 dashboard:
   title: Dashboard
@@ -218,6 +227,7 @@ collections:
   empty-description: You haven't created any collection yet
   empty-search-description: Matches not found for “{0}”
   search: Search into collections
+  select: Select a collection
 
 series:
   fetch-failure: There was an error while fetching the series
@@ -332,3 +342,33 @@ stores:
   empty-description: You haven't created any stores yet
   empty-search-description: Matches not found for “{0}”
   search: Search into stores
+
+importer:
+  header: Import by ISBN
+  results: Results
+  view-page: View book on {0}
+  fetch-failure: There was an error while searching by ISBN
+  imported-with-success: Book imported with success
+  imported-with-failure: There was an error while importing the book
+  collection-chooser-header: Choose a collection to import into
+  collection-chooser-description: Additional entities will be created automatically
+
+books:
+  page-count: '{n} page | {n} pages'
+  fetch-failure: There was an error while fetching the books
+  fetch-one-failure: There was an error while fetching the book details
+  create-header: Create a new book
+  create-description: A book can represent any type of physical publication
+  update-header: Modify a book
+  update-description: Modifying {0}
+  new: New book
+  created-with-success: Store created with success
+  created-with-failure: There was an error while creating the book
+  edited-with-success: Store edited with success
+  edited-with-failure: There was an error while editing the book
+  deleted-with-success: Store deleted with success
+  deleted-with-failure: There was an error while deleting the book
+  empty-header: No books found
+  empty-description: You haven't created any books yet
+  empty-search-description: Matches not found for “{0}”
+  search: Search into books

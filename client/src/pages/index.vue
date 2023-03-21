@@ -8,6 +8,6 @@
 
 <template>
   <div>
-    <h1>Authenticated</h1>
+    <Header title="Dashboard" />
   </div>
 </template>

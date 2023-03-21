@@ -42,7 +42,7 @@ export default { inheritAttrs: false }
         'peer w-full bg-white dark:bg-gray-900 shadow-sm rounded-md',
         'dark:text-gray-200',
         'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
-        'placeholder:text-gray-500',
+        'placeholder:text-gray-500 disabled:opacity-50',
         {
           'pl-10': $slots['left-icon'] && size === 'normal',
           'pl-9': $slots['left-icon'] && size === 'small',
@@ -67,7 +67,7 @@ export default { inheritAttrs: false }
       :class="[
         'absolute inset-y-0 flex items-center justify-center',
         'motion-safe:transition-colors',
-        size === 'small' ? 'left-2.5' : 'left-3.5',
+        size === 'small' ? 'left-2.5' : 'left-3',
         invalid 
           ? 'text-red-600 peer-focus:text-red-600'
           : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
@@ -80,7 +80,7 @@ export default { inheritAttrs: false }
       :class="[
         'absolute inset-y-0 flex items-center justify-center',
         'motion-safe:transition-colors',
-        size === 'small' ? 'right-2.5' : 'right-3.5',
+        size === 'small' ? 'right-2.5' : 'right-3',
         invalid 
           ? 'text-red-600 peer-focus:text-red-600'
           : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',

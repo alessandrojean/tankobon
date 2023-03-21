@@ -9,11 +9,13 @@ import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.service.CollectionLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
+import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -27,7 +29,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -63,15 +67,32 @@ class CollectionController(
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
-  ): SuccessPaginatedCollectionResponseDto<CollectionEntityDto> {
+  ): SuccessCollectionResponseDto<CollectionEntityDto> {
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
+      else -> Sort.unsorted()
+    }
+
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(
+        page.pageNumber,
+        page.pageSize,
+        sort,
+      )
+    }
+
     val collectionsPage = collectionRepository.findAll(
       search = CollectionSearch(
         libraryIds = libraryIds,
         searchTerm = searchTerm,
         userId = principal.user.id,
       ),
-      pageable = page,
+      pageable = pageRequest,
     )
 
     val collections = referenceExpansion.expand(
@@ -79,7 +100,11 @@ class CollectionController(
       relationsToExpand = includes,
     )
 
-    return SuccessPaginatedCollectionResponseDto(collections, collectionsPage.toPaginationDto())
+    return if (unpaged) {
+      SuccessCollectionResponseDto(collections)
+    } else {
+      SuccessPaginatedCollectionResponseDto(collections, collectionsPage.toPaginationDto())
+    }
   }
 
   @GetMapping("v1/libraries/{libraryId}/collections")
@@ -88,13 +113,30 @@ class CollectionController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
-  ): SuccessPaginatedCollectionResponseDto<CollectionEntityDto> {
+  ): SuccessCollectionResponseDto<CollectionEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
     if (!principal.user.canAccessLibrary(library)) {
       throw UserDoesNotHaveAccessException()
+    }
+
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
+      else -> Sort.unsorted()
+    }
+
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(
+        page.pageNumber,
+        page.pageSize,
+        sort,
+      )
     }
 
     val collections = collectionRepository.findAll(
@@ -103,10 +145,14 @@ class CollectionController(
         searchTerm = searchTerm,
         userId = principal.user.id,
       ),
-      pageable = page,
+      pageable = pageRequest,
     )
 
-    return collections.toSuccessCollectionResponseDto { it.toDto() }
+    return if (unpaged) {
+      SuccessCollectionResponseDto(collections.content.map { it.toDto() })
+    } else {
+      collections.toSuccessCollectionResponseDto { it.toDto() }
+    }
   }
 
   @GetMapping("v1/collections/{collectionId}")

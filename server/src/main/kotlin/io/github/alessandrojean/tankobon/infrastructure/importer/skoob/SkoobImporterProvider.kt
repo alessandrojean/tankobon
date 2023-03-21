@@ -4,6 +4,7 @@ import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookCon
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
+import io.github.alessandrojean.tankobon.infrastructure.importer.removeDashes
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -43,7 +44,7 @@ class SkoobImporterProvider(
           .pathSegment(
             "book",
             "search",
-            "term:$isbn",
+            "term:${isbn.removeDashes()}",
             "limit:8",
             "page:1",
             "isbn:true",

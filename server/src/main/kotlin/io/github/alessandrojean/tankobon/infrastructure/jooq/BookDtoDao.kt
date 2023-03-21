@@ -16,6 +16,8 @@ import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.importer.removeDashes
+import io.github.alessandrojean.tankobon.infrastructure.importer.toIsbn10
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
@@ -150,9 +152,28 @@ class BookDtoDao(
 
     return PageImpl(
       books,
-      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
       count.toLong(),
     )
+  }
+
+  override fun findAllByIsbnInLibraries(isbn: String, librariesIds: Collection<String>): Collection<BookEntityDto> {
+    return dsl.select(*TableBook.fields())
+      .from(TableBook)
+      .leftJoin(TableCollection)
+      .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
+      .where(TableCollection.LIBRARY_ID.`in`(librariesIds))
+      .and(
+        TableBook.CODE.eq(isbn.removeDashes())
+          .or(TableBook.CODE.eq(isbn.toIsbn10()))
+      )
+      .fetchInto(TableBook)
+      .map { it.toDomain() }
+      .toDto()
   }
 
   @Transactional

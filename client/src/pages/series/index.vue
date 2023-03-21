@@ -48,7 +48,6 @@ function handleCreateSeries(series: SeriesCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

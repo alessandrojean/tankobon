@@ -85,7 +85,11 @@ class CollectionDao(
 
     return PageImpl(
       collections,
-      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
       count.toLong(),
     )
   }

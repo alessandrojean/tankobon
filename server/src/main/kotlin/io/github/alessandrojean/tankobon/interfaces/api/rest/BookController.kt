@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.BookSearch
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
+import io.github.alessandrojean.tankobon.domain.model.Library
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
@@ -17,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
@@ -27,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.hibernate.validator.constraints.ISBN
 import org.hibernate.validator.constraints.UUID
 import org.springdoc.core.converters.models.PageableAsQueryParam
 import org.springframework.data.domain.PageImpl
@@ -98,6 +101,36 @@ class BookController(
 
     return PageImpl(books, booksPage.pageable, booksPage.totalElements)
       .toSuccessCollectionResponseDto { it }
+  }
+
+  @GetMapping("v1/books/isbn/{isbn}")
+  @Operation(summary = "Get all books by its ISBN", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllBooksByIsbn(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @RequestParam(required = false)
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    library: String? = null,
+    @PathVariable @ISBN @Schema(format = "isbn") isbn: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+  ): SuccessCollectionResponseDto<BookEntityDto> {
+    val libraries = if (library.isNullOrEmpty()) {
+      libraryRepository.findByOwnerIdIncludingShared(principal.user.id)
+    } else {
+      val library = libraryRepository.findByIdOrNull(library)
+        ?: throw RelationIdDoesNotExistException("Library not found")
+
+      if (!principal.user.canAccessLibrary(library)) {
+        throw UserDoesNotHaveAccessException()
+      }
+
+      listOf(library)
+    }
+
+    val books = bookDtoRepository.findAllByIsbnInLibraries(isbn, libraries.map(Library::id))
+    val dto = referenceExpansion.expand(books, includes)
+
+    return SuccessCollectionResponseDto(dto)
   }
 
   @GetMapping("v1/libraries/{libraryId}/books")

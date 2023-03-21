@@ -68,7 +68,11 @@ const items = computed<Item[]>(() => [
     key: 'books',
     label: t('entities.books'),
     icon: BookOpenIcon,
-    to: { name: 'welcome' },
+    to: { name: 'books' },
+    active: computed(() => {
+      const routeName = String(router.currentRoute.value.name)
+      return routeName.includes('books') || routeName.includes('import')
+    })
   },
   {
     key: 'collections',

@@ -48,7 +48,6 @@ function handleCreatePerson(person: PersonCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

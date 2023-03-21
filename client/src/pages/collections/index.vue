@@ -48,7 +48,6 @@ function handleCreateCollection(collection: CollectionCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

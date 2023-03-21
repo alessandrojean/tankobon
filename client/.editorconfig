@@ -1,0 +1,7 @@
+
+[*]
+ident_style = space
+ident_size = 4
+
+[*.{ts,js,vue}]
+quote_type = single

@@ -48,7 +48,6 @@ function handleCreateContributorRole(contributorRole: ContributorRoleCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

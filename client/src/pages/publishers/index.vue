@@ -48,7 +48,6 @@ function handleCreatePublisher(publisher: PublisherCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

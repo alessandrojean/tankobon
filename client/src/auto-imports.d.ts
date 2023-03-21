@@ -117,6 +117,7 @@ declare global {
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
   const useBluetooth: typeof import('@vueuse/core')['useBluetooth']
+  const useBookQuery: typeof import('./queries/book/useBookQuery')['default']
   const useBreakpoints: typeof import('@vueuse/core')['useBreakpoints']
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
@@ -174,6 +175,7 @@ declare global {
   const useEventBus: typeof import('@vueuse/core')['useEventBus']
   const useEventListener: typeof import('@vueuse/core')['useEventListener']
   const useEventSource: typeof import('@vueuse/core')['useEventSource']
+  const useExternalSourcesQuery: typeof import('./queries/importer/useExternalSourcesQuery')['default']
   const useEyeDropper: typeof import('@vueuse/core')['useEyeDropper']
   const useFavicon: typeof import('@vueuse/core')['useFavicon']
   const useFetch: typeof import('@vueuse/core')['useFetch']
@@ -191,13 +193,17 @@ declare global {
   const useImage: typeof import('@vueuse/core')['useImage']
   const useImageLazyLoader: typeof import('./composables/useImageLazyLoader')['default']
   const useImageLoader: typeof import('./composables/useImageLoader')['default']
+  const useImportBookMutation: typeof import('./mutations/importer/useImportBookMutation')['default']
+  const useImporterSearchQuery: typeof import('./queries/importer/useImporterSearchQuery')['default']
   const useInfiniteScroll: typeof import('@vueuse/core')['useInfiniteScroll']
   const useIntersectionObserver: typeof import('@vueuse/core')['useIntersectionObserver']
   const useInterval: typeof import('@vueuse/core')['useInterval']
   const useIntervalFn: typeof import('@vueuse/core')['useIntervalFn']
   const useKeyModifier: typeof import('@vueuse/core')['useKeyModifier']
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
+  const useLibraryBooksQuery: typeof import('./queries/book/useLibraryBooksQuery')['default']
   const useLibraryCollectionsQuery: typeof import('./queries/collection/useLibraryCollectionsQuery')['default']
+  const useLibraryCollectionsUnpagedQuery: typeof import('./queries/collection/useLibraryCollectionsUnpagedQuery')['default']
   const useLibraryContributorRolesQuery: typeof import('./queries/contributor-role/useLibraryContributorRolesQuery')['default']
   const useLibraryPeopleQuery: typeof import('./queries/person/useLibraryPeopleQuery')['default']
   const useLibraryPublishersQuery: typeof import('./queries/publisher/useLibraryPublishersQuery')['default']
@@ -457,6 +463,7 @@ declare module 'vue' {
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
     readonly useBluetooth: UnwrapRef<typeof import('@vueuse/core')['useBluetooth']>
+    readonly useBookQuery: UnwrapRef<typeof import('./queries/book/useBookQuery')['default']>
     readonly useBreakpoints: UnwrapRef<typeof import('@vueuse/core')['useBreakpoints']>
     readonly useBroadcastChannel: UnwrapRef<typeof import('@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('@vueuse/core')['useBrowserLocation']>
@@ -514,6 +521,7 @@ declare module 'vue' {
     readonly useEventBus: UnwrapRef<typeof import('@vueuse/core')['useEventBus']>
     readonly useEventListener: UnwrapRef<typeof import('@vueuse/core')['useEventListener']>
     readonly useEventSource: UnwrapRef<typeof import('@vueuse/core')['useEventSource']>
+    readonly useExternalSourcesQuery: UnwrapRef<typeof import('./queries/importer/useExternalSourcesQuery')['default']>
     readonly useEyeDropper: UnwrapRef<typeof import('@vueuse/core')['useEyeDropper']>
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
@@ -531,13 +539,17 @@ declare module 'vue' {
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>
     readonly useImageLazyLoader: UnwrapRef<typeof import('./composables/useImageLazyLoader')['default']>
     readonly useImageLoader: UnwrapRef<typeof import('./composables/useImageLoader')['default']>
+    readonly useImportBookMutation: UnwrapRef<typeof import('./mutations/importer/useImportBookMutation')['default']>
+    readonly useImporterSearchQuery: UnwrapRef<typeof import('./queries/importer/useImporterSearchQuery')['default']>
     readonly useInfiniteScroll: UnwrapRef<typeof import('@vueuse/core')['useInfiniteScroll']>
     readonly useIntersectionObserver: UnwrapRef<typeof import('@vueuse/core')['useIntersectionObserver']>
     readonly useInterval: UnwrapRef<typeof import('@vueuse/core')['useInterval']>
     readonly useIntervalFn: UnwrapRef<typeof import('@vueuse/core')['useIntervalFn']>
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
+    readonly useLibraryBooksQuery: UnwrapRef<typeof import('./queries/book/useLibraryBooksQuery')['default']>
     readonly useLibraryCollectionsQuery: UnwrapRef<typeof import('./queries/collection/useLibraryCollectionsQuery')['default']>
+    readonly useLibraryCollectionsUnpagedQuery: UnwrapRef<typeof import('./queries/collection/useLibraryCollectionsUnpagedQuery')['default']>
     readonly useLibraryContributorRolesQuery: UnwrapRef<typeof import('./queries/contributor-role/useLibraryContributorRolesQuery')['default']>
     readonly useLibraryPeopleQuery: UnwrapRef<typeof import('./queries/person/useLibraryPeopleQuery')['default']>
     readonly useLibraryPublishersQuery: UnwrapRef<typeof import('./queries/publisher/useLibraryPublishersQuery')['default']>

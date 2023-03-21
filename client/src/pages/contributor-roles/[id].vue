@@ -112,5 +112,4 @@ function handleEditContributorRole(contributorRole: ContributorRoleUpdate) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>

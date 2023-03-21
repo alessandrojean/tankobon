@@ -5,6 +5,7 @@ import {
   type EntityResponse,
   TankobonApiError,
 PaginatedResponse,
+CollectionResponse,
 } from '@/types/tankobon-response'
 import type {
   CollectionCreation,
@@ -13,10 +14,9 @@ import type {
   CollectionSort,
   CollectionUpdate
 } from '@/types/tankobon-collection'
-import { Paginated } from '@/types/tankobon-api'
+import { Paginated, PaginatedOrNot } from '@/types/tankobon-api'
 
 type CollectionOnly = EntityResponse<CollectionEntity>
-type CollectionPaginated = PaginatedResponse<CollectionEntity>
 
 export interface GetAllCollectionsByLibraryParameters extends Paginated<CollectionSort> {
   libraryId: string,
@@ -24,17 +24,20 @@ export interface GetAllCollectionsByLibraryParameters extends Paginated<Collecti
   includes?: CollectionIncludes[]
 }
 
-export async function getAllCollectionsByLibrary(options: GetAllCollectionsByLibraryParameters): Promise<CollectionPaginated> {
-  const { libraryId, includes, page, size, sort, search } = options
+export async function getAllCollectionsByLibrary<T extends GetAllCollectionsByLibraryParameters>(
+  options: T
+): Promise<PaginatedOrNot<T, CollectionEntity>> {
+  const { libraryId, includes, page, size, sort, search, unpaged } = options
   const searchOrUndefined = search && search.length > 2 ? search : undefined
 
   try {
-    const { data: collections } = await api.get<CollectionPaginated>(`libraries/${libraryId}/collections`, {
+    const { data: collections } = await api.get<PaginatedOrNot<T, CollectionEntity>>(`libraries/${libraryId}/collections`, {
       params: {
         search: searchOrUndefined,
         includes: includes?.join(','),
         page,
         size,
+        unpaged,
         sort: sort?.map(({ property, direction }) => {
           return `${property},${direction}`
         })

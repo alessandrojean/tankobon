@@ -1,5 +1,6 @@
 import { Entity, Relationship, RelationshipType } from '@/types/tankobon-entity'
 import { ImageDetailsAttributes } from '@/types/tankobon-image-details'
+import { ImporterSourceAttributes } from '@/types/tankobon-importer-source'
 import { LibraryAttributes } from '@/types/tankobon-library'
 import { UserAttributes } from '@/types/tankobon-user'
 
@@ -9,6 +10,7 @@ type AttributeType<T extends RelationshipType> =
   T extends 'AVATAR' ? ImageDetailsAttributes :
   T extends 'USER' ? UserAttributes :
   T extends 'OWNER' ? UserAttributes :
+  T extends 'IMPORTER_SOURCE' ? ImporterSourceAttributes :
   unknown
 
 

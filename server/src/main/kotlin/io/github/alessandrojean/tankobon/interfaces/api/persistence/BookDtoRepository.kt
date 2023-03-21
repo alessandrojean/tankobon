@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable
 interface BookDtoRepository {
   fun findByIdOrNull(bookId: String): BookEntityDto?
   fun findAll(search: BookSearch, pageable: Pageable): Page<BookEntityDto>
+  fun findAllByIsbnInLibraries(isbn: String, librariesIds: Collection<String>): Collection<BookEntityDto>
 
   fun insert(book: BookCreationDto, user: TankobonUser): String
   fun update(bookId: String, book: BookUpdateDto, user: TankobonUser)

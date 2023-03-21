@@ -1,14 +1,12 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
-import type { Includes } from '@/types/tankobon-entity'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
-import type { MaybeRef } from '@vueuse/core'
 import { CollectionEntity } from '@/types/tankobon-collection'
 import { getAllCollectionsByLibrary, GetAllCollectionsByLibraryParameters } from '@/services/tankobon-collections'
 import { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryCollectionsQueryOptions<S = PaginatedResponse<CollectionEntity>> =
   UseQueryOptions<PaginatedResponse<CollectionEntity>, ErrorResponse, S> &
-  MaybeRefDeep<GetAllCollectionsByLibraryParameters>
+  MaybeRefDeep<Omit<GetAllCollectionsByLibraryParameters, 'unpaged'>>
 
 type ErrorResponse = TankobonApiError | Error
 
@@ -25,6 +23,7 @@ export default function useLibraryCollectionsQuery<S = PaginatedResponse<Collect
         sort: options.sort,
         size: options.size,
         includes: options.includes,
+        unpaged: false,
       }
     ],
     queryFn: async () => {

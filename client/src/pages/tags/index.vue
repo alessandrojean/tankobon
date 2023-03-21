@@ -48,7 +48,6 @@ function handleCreateTag(tag: TagCreation) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>
 
 <template>

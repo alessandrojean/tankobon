@@ -117,5 +117,4 @@ function handleEditTag(tag: TagUpdate) {
 <route lang="yaml">
   meta:
     layout: dashboard
-    isAdminOnly: true
 </route>

@@ -1,10 +1,14 @@
 package io.github.alessandrojean.tankobon.infrastructure.importer.cbl
 
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.infrastructure.importer.AmazonCoverService
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookContributor
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
+import io.github.alessandrojean.tankobon.infrastructure.importer.removeDashes
+import io.github.alessandrojean.tankobon.infrastructure.importer.toIsbn10
+import io.github.alessandrojean.tankobon.infrastructure.importer.toIsbn13
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -15,6 +19,7 @@ import reactor.core.publisher.Mono
 @Component("cblImporterProvider")
 class CblImporterProvider(
   private val webClient: WebClient,
+  private val amazonCoverService: AmazonCoverService,
 ) : ImporterProvider() {
 
   override val key: ImporterSource = ImporterSource.CBL
@@ -41,13 +46,17 @@ class CblImporterProvider(
   override val language: String = "pt-BR"
 
   override suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult> {
+    val properIsbn = isbn.removeDashes()
+    val isbn13 = if (properIsbn.length == 10) isbn.toIsbn13() else isbn
+    val isbn10 = if (properIsbn.length == 13) isbn.toIsbn10() else isbn
+
     val bodyPayload = CblSearchRequestDto(
       count = true,
       facets = listOf("Imprint,count:50", "Authors,count:50"),
       filter = "",
       orderBy = null,
       queryType = "full",
-      search = isbn.replace("-", ""),
+      search = "$isbn13 OR $isbn10",
       searchFields = "FormattedKey,RowKey",
       searchMode = "any",
       select = FIELDS_TO_SELECT.joinToString(","),
@@ -55,7 +64,7 @@ class CblImporterProvider(
       top = 12
     )
 
-    return webClient.post()
+    val results = webClient.post()
       .uri("$baseUrl/search?api-version=$API_VERSION")
       .headers {
         it[HttpHeaders.ACCEPT] = MediaType.APPLICATION_JSON_VALUE
@@ -70,6 +79,14 @@ class CblImporterProvider(
       .awaitBodyOrNull<CblSearchResultDto>()
       ?.toDomain()
       .orEmpty()
+
+    val covers = results.associate {
+      val coverUrl = runCatching { amazonCoverService.findCoverUrl(it.isbn) }
+
+      it.isbn to coverUrl.getOrNull()
+    }
+
+    return results.map { it.copy(coverUrl = covers[it.isbn]) }
   }
 
   private fun CblSearchResultDto.toDomain(): List<ImporterBookResult> = value.map { it.toDomain() }
