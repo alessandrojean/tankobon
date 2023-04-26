@@ -39,9 +39,9 @@ const userStore = useUserStore()
 const libraryStore = useLibraryStore()
 
 const library = computed(() => libraryStore.library)
-const { data: userHasLibraries } = useUserLibrariesByUserQuery({
+const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
   userId: computed(() => userStore.me!.id),
-  select: (libraries) => libraries.length > 0,
+  select: (libraries) => libraries.length > 1,
   initialData: [],
 })
 </script>
@@ -62,7 +62,7 @@ const { data: userHasLibraries } = useUserLibrariesByUserQuery({
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center h-16">
         <Button
-          v-if="userHasLibraries"
+          v-if="userHasAtLeastTwoLibraries"
           class="lg:hidden -ml-1 mr-2 w-10 h-10"
           :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
           size="mini"
@@ -86,7 +86,7 @@ const { data: userHasLibraries } = useUserLibrariesByUserQuery({
         <div class="ml-auto inline-flex">
           <FadeTransition>
             <Button
-              v-if="userHasLibraries"
+              v-if="userHasAtLeastTwoLibraries"
               class="h-8 w-8 mr-2 sm:hidden"
               :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
               size="mini"
@@ -103,7 +103,7 @@ const { data: userHasLibraries } = useUserLibrariesByUserQuery({
           </FadeTransition>
           <FadeTransition>
             <Button
-              v-if="userHasLibraries"
+              v-if="userHasAtLeastTwoLibraries"
               class="h-8 mr-2 hidden sm:flex"
               :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
               size="mini"
