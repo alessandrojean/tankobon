@@ -176,9 +176,9 @@ val dbSqlite = mapOf(
 )
 
 val migrationDirsSqlite = listOf(
-  "$projectDir/src/flyway/resources/db/migration/sqlite",
-  "$projectDir/src/flyway/kotlin/db/migration/sqlite",
-)
+  file("$projectDir/src/flyway/resources/db/migration/sqlite"),
+  file("$projectDir/src/flyway/kotlin/db/migration/sqlite"),
+).filter(File::exists)
 
 flyway {
   url = dbSqlite["url"]
@@ -187,7 +187,7 @@ flyway {
 
 tasks.flywayMigrate {
   dependsOn("flywayClasses")
-  migrationDirsSqlite.forEach { inputs.dir(it) }
+  migrationDirsSqlite.forEach(inputs::dir)
   outputs.dir("${project.buildDir}/generated/flyway")
   doFirst {
     delete(outputs.files)
@@ -220,7 +220,7 @@ jooq {
 }
 
 tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
-  migrationDirsSqlite.forEach { inputs.dir(it) }
+  migrationDirsSqlite.forEach(inputs::dir)
   allInputsDeclared.set(true)
   dependsOn("flywayMigrate")
 }
