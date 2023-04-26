@@ -178,7 +178,7 @@ function handleAvatar(avatar: AvatarResult) {
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
       <div v-if="userId">
-        <h2 class="font-display font-medium text-xl">
+        <h2 class="font-display-safe font-medium text-xl">
           {{ $t('entities.libraries') }}
         </h2>
         <LibrariesTable
@@ -196,7 +196,7 @@ function handleAvatar(avatar: AvatarResult) {
       </div>
 
       <div v-if="userId">
-        <h2 class="font-display font-medium text-xl">
+        <h2 class="font-display-safe font-medium text-xl">
           {{ $t('authentication-activity.header') }}
         </h2>
         <UserAuthenticationActivityTable class="mt-4" :user-id="userId" />

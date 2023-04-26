@@ -22,7 +22,7 @@ const supText = computed(() => import.meta.env.DEV ? 'DEV' : null)
     <span
       v-if="!iconOnly"
       :class="[
-        'font-display font-semibold text-xl ml-3',
+        'font-sans-safe font-semibold text-xl ml-3',
         dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50'
       ]"
       aria-hidden="true"

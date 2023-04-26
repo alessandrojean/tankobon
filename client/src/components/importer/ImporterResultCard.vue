@@ -80,7 +80,7 @@ onMounted(() => setupObserver())
     </div>
 
     <div class="grow group-[:not(:last-child)]:border-b border-gray-200 dark:border-gray-700 pb-8">
-      <p class="text-xl font-display font-semibold line-clamp-2">
+      <p class="text-xl font-display-safe font-semibold line-clamp-2">
         {{ result.attributes.title }}
       </p>
       <p class="text-gray-600 dark:text-gray-300 mt-0.5 line-clamp-1">

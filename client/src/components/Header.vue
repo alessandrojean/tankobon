@@ -27,7 +27,7 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
               <slot name="title" v-else :title="title">
                 <h1
                   :class="[
-                    'text-xl lg:text-2xl font-display font-semibold',
+                    'text-xl lg:text-2xl font-display-safe font-semibold',
                     'text-gray-900 dark:text-gray-100',
                   ]"
                 >

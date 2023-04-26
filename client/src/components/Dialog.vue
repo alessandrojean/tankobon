@@ -97,7 +97,7 @@ export default { inheritAttrs: false }
               <div class="flex items-center">
                 <div class="flex-grow" v-if="title">
                   <DialogTitle
-                    class="text-xl font-medium font-display leading-6"
+                    class="text-xl font-medium font-display-safe leading-6"
                   >
                     {{ title }}
                   </DialogTitle>

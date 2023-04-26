@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 import * as colors from 'tailwindcss/colors'
 import * as defaultTheme from 'tailwindcss/defaultTheme'
 import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
@@ -17,9 +18,10 @@ export default {
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
       'sans-var': ['Inter var', ...defaultTheme.fontFamily.sans],
       display: [
-        ['Inter', ...defaultTheme.fontFamily.sans],
+        ['Inter var', ...defaultTheme.fontFamily.sans],
         {
-          fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"'
+          fontFeatureSettings: '"cv11", "ss01"',
+          fontVariationSettings: '"opsz" 32',
         }
       ]
     },
@@ -58,7 +60,7 @@ export default {
     formsPlugin,
     aspectRatioPlugin,
     headlessUiPlugin,
-    function ({ addVariant }) {
+    plugin(function ({ addVariant }) {
       addVariant(
         'supports-backdrop-blur',
         '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))'
@@ -74,12 +76,93 @@ export default {
         'supports-var-font',
         '@supports (font-variation-settings: normal)'
       )
-    },
-    function ({ matchUtilities, theme }) {
+    }),
+    plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         { skeleton: (value) => ({ backgroundColor: value }) },
         { values: flattenColorPalette(theme('backgroundColor')), type: 'color' }
       )
-    }
+    }),
+
+    /** Custom Inter font due to self-hosted nature. */
+    plugin(function ({ addBase, addUtilities, theme }) {
+      addUtilities({
+        '.font-sans-safe': {
+          fontFamily: theme('fontFamily.sans'),
+          '@supports (font-variation-settings: normal)': {
+            fontFamily: theme('fontFamily.sans-var'),
+          }
+        },
+        '.font-display-safe': {
+          fontFamily: theme('fontFamily.sans'),
+          fontFeatureSettings: '"cv11", "ss01"',
+          fontVariationSettings: '"opsz" 32',
+          '@supports (font-variation-settings: normal)': {
+            fontFamily: theme('fontFamily.sans-var'),
+          }
+        }
+      })
+
+      // Add the Inter var font-face.
+      addBase({
+        '@font-face': {
+          fontFamily: 'Inter var',
+          fontWeight: '100 900',
+          fontDisplay: 'swap',
+          fontStyle: 'normal',
+          src: [
+            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2-variations"), url("/fonts/Inter.var.woff2?v=3.19") format("woff2")',
+            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2") tech("variations")',
+          ],
+        },
+      })
+
+      addBase({
+        '@font-face': {
+          fontFamily: 'Inter var',
+          fontWeight: '100 900',
+          fontDisplay: 'swap',
+          fontStyle: 'italic',
+          src: [
+            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2-variations"), url("/fonts/Inter.var.woff2?v=3.19") format("woff2")',
+            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2") tech("variations")',
+          ],
+        },
+      })
+
+      const fonts = {
+        '100': 'Thin',
+        '200': 'ExtraLight',
+        '300': 'Light',
+        '400': 'Regular',
+        '500': 'Medium',
+        '600': 'SemiBold',
+        '700': 'Bold',
+        '800': 'ExtraBold',
+        '900': 'Black',
+      }
+
+      for (const [weight, name] of Object.entries(fonts)) {
+        addBase({
+          '@font-face': {
+            fontFamily: 'Inter',
+            fontStyle: 'normal',
+            fontWeight: weight,
+            fontDisplay: 'swap',
+            src: `url("/fonts/Inter-${name}.woff2?v=3.19") format("woff2")`,
+          }
+        })
+
+        addBase({
+          '@font-face': {
+            fontFamily: 'Inter',
+            fontStyle: 'italic',
+            fontWeight: weight,
+            fontDisplay: 'swap',
+            src: `url("/fonts/Inter-${name}Italic.woff2?v=3.19") format("woff2")`,
+          }
+        })
+      }
+    }),
   ],
 } satisfies Config

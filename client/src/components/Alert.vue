@@ -65,7 +65,7 @@ const titleClasses: Record<AlertProps['type'], string> = {
           v-if="title && title.length > 0"
           :class="[
             titleClasses[type],
-            'font-display font-medium text-md sm:text-lg dark:text-gray-100'
+            'font-display-safe font-medium text-md sm:text-lg dark:text-gray-100'
           ]"
         >
           {{ title }}

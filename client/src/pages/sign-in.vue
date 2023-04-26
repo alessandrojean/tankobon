@@ -99,7 +99,7 @@ async function handleSignIn() {
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>
 
-    <h1 class="mt-6 dark:text-gray-100 font-display font-semibold text-2xl sm:text-3xl">
+    <h1 class="mt-6 dark:text-gray-100 font-display-safe font-semibold text-2xl sm:text-3xl">
       {{ $t('sign-in.header') }}
     </h1>
 

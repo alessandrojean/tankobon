@@ -126,7 +126,7 @@ function handleImportBook(book: ImportOneBook) {
       </div>
 
       <div v-if="results && results.length > 0">
-        <h2 class="font-display font-medium text-xl">
+        <h2 class="font-display-safe font-medium text-xl">
           {{ $t('importer.results') }}
         </h2>
 
