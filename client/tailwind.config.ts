@@ -1,15 +1,14 @@
-const colors = require('tailwindcss/colors')
-const defaultTheme = require('tailwindcss/defaultTheme')
-const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
+import type { Config } from 'tailwindcss'
+import * as colors from 'tailwindcss/colors'
+import * as defaultTheme from 'tailwindcss/defaultTheme'
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
 
-const typographyPlugin = require('@tailwindcss/typography')
-const formsPlugin = require('@tailwindcss/forms')
-const aspectRatioPlugin = require('@tailwindcss/aspect-ratio')
-const lineClampPlugin = require('@tailwindcss/line-clamp')
-const headlessUiPlugin = require('@headlessui/tailwindcss')
+import typographyPlugin from '@tailwindcss/typography'
+import formsPlugin from '@tailwindcss/forms'
+import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
+import headlessUiPlugin from '@headlessui/tailwindcss'
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ['./index.html', './src/**/*.vue', './src/**/*.js', './src/**/*.ts'],
   darkMode: 'class',
   theme: {
@@ -17,7 +16,12 @@ module.exports = {
       ...defaultTheme.fontFamily,
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
       'sans-var': ['Inter var', ...defaultTheme.fontFamily.sans],
-      display: ['Inter', ...defaultTheme.fontFamily.sans],
+      display: [
+        ['Inter', ...defaultTheme.fontFamily.sans],
+        {
+          fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"'
+        }
+      ]
     },
     extend: {
       colors: {
@@ -25,7 +29,7 @@ module.exports = {
         secondary: colors.amber,
         current: 'currentColor',
         block: colors.gray[50],
-        'block-dark': '#18212F',
+        'block-dark': colors.gray[900],
       },
       fontSize: {
         xxs: '.7rem',
@@ -34,14 +38,14 @@ module.exports = {
         'fade-in': 'fade-in .3s ease',
         'fade-out': 'fade-out 3s ease 3s',
         'slide-in': 'slide-in .3s ease',
-        'notification': 'fade-in .3s ease, fade-out 3s ease 3s, slide-in .3s ease',
+        'toast': 'fade-in .3s ease, fade-out 3s ease 3s, slide-in .3s ease',
       },
       keyframes: {
         'fade-in': {
-          from: { opacity: 0 }
+          from: { opacity: '0' }
         },
         'fade-out': {
-          to: { opacity: 0 }
+          to: { opacity: '0' }
         },
         'slide-in': {
           from: { transform: 'translateX(100%)' },
@@ -53,7 +57,6 @@ module.exports = {
     typographyPlugin,
     formsPlugin,
     aspectRatioPlugin,
-    lineClampPlugin,
     headlessUiPlugin,
     function ({ addVariant }) {
       addVariant(
@@ -79,4 +82,4 @@ module.exports = {
       )
     }
   ],
-}
+} satisfies Config

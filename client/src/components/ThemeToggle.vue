@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<ThemeToggleProps>(), {
 })
 
 const { light, bottom, transparent } = toRefs(props)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const { t } = useI18n({ useScope: 'global' })
 const localTheme = useLocalStorage<Theme>('theme', 'system')

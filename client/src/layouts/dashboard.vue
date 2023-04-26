@@ -7,6 +7,7 @@ const smAndLarger = breakpoints.greaterOrEqual('sm')
 const lgAndLarger = breakpoints.greaterOrEqual('lg')
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const isAdmin = computed(() => userStore.isAdmin)
 const userId = computed(() => userStore.me!.id)
@@ -31,7 +32,7 @@ provide(ShowAsideDialogKey, openAsideDialog)
 </script>
 
 <template>
-  <div class="bg-white min-h-screen dark:bg-gray-900">
+  <div class="bg-white min-h-screen dark:bg-gray-950">
     <div class="md:flex w-full">
       <div class="shrink-0 hidden lg:block">
         <AsideMenu
@@ -44,7 +45,7 @@ provide(ShowAsideDialogKey, openAsideDialog)
       <div class="flex-1 flex flex-col relative" id="main-content">
         <Navbar
           class="sticky inset-x-0 top-0 shrink-0"
-          :transparent="false"
+          :transparent="route.meta?.transparentNavbar && smAndLarger"
         />
         <main role="main" class="flex-1">
           <RouterView v-slot="{ Component }">

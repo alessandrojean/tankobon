@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<PublishersTableProps>(), {
   search: undefined
 })
 const { libraryId, search } = toRefs(props)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const defaultSorting: ColumnSort = { id: 'name', desc: false }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })

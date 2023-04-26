@@ -73,7 +73,7 @@ const formattedValue = computed(() => {
 <template>
   <div
     :class="[
-      'bg-gray-100 dark:bg-gray-800 rounded-lg p-4'
+      'bg-gray-100 dark:bg-block-dark rounded-lg p-4'
     ]"
   >
     <p class="font-display text-sm font-medium text-gray-800 dark:text-gray-200">

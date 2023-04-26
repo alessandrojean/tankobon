@@ -18,7 +18,7 @@ const emit = defineEmits<PersonFormEmits>()
 const { collectionId } = toRefs(props)
 
 const { t } = useI18n()
-const notificator = useNotificator()
+const notificator = useToaster()
 const userStore = useUserStore()
 const library = ref<LibraryEntity | undefined>()
 const collection = computed({

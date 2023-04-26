@@ -6,7 +6,7 @@ const { t } = useI18n()
 const router = useRouter()
 const showCreateDialog = ref(false)
 const { mutate } = useCreateUserMutation()
-const notificator = useNotificator()
+const notificator = useToaster()
 
 function handleCreateUser(user: UserCreation) {
   mutate(user, {

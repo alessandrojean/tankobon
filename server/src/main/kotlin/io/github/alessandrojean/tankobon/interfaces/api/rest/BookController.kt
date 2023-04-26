@@ -117,14 +117,14 @@ class BookController(
     val libraries = if (library.isNullOrEmpty()) {
       libraryRepository.findByOwnerIdIncludingShared(principal.user.id)
     } else {
-      val library = libraryRepository.findByIdOrNull(library)
+      val libraryDomain = libraryRepository.findByIdOrNull(library)
         ?: throw RelationIdDoesNotExistException("Library not found")
 
-      if (!principal.user.canAccessLibrary(library)) {
+      if (!principal.user.canAccessLibrary(libraryDomain)) {
         throw UserDoesNotHaveAccessException()
       }
 
-      listOf(library)
+      listOf(libraryDomain)
     }
 
     val books = bookDtoRepository.findAllByIsbnInLibraries(isbn, libraries.map(Library::id))

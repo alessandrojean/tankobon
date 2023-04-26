@@ -13,7 +13,7 @@ const formState = reactive({
 })
 
 const { t } = useI18n()
-const notificator = useNotificator()
+const notificator = useToaster()
 const messageRequired = helpers.withMessage(t('validation.required'), required)
 const messageEmail = helpers.withMessage(t('validation.email'), email)
 
@@ -94,7 +94,7 @@ async function handleSignIn() {
 </script>
 
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-950 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>

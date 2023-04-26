@@ -412,7 +412,7 @@ class BookDtoDao(
         .from(TableBookContributor)
         .where(TableBookContributor.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookContributor.BOOK_ID) }) { record ->
-          RelationDto(record.get(TableBookContributor.PERSON_ID), RelationshipType.CONTRIBUTOR)
+          RelationDto(record.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR)
         }
 
       libraries = dsl

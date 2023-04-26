@@ -13,6 +13,8 @@ common-fields:
   isbn: ISBN
   library: Library
   collection: Collection
+  title: Title
+  book: Book
 
 common-actions:
   sign-in: Sign in
@@ -33,6 +35,8 @@ common-actions:
   remove: Remove
   import: Import
   filter: Filter
+  search-by: Search by {0}
+  select: Select
 
 common-values:
   true-value: 'True'
@@ -129,6 +133,7 @@ libraries:
   shared: Shared
   yours: Yours
   select: Select a library
+  selected: 'Selected library:'
 
 dashboard:
   title: Dashboard
@@ -323,6 +328,7 @@ contributor-roles:
   empty-description: You haven't created any contributor roles yet
   empty-search-description: Matches not found for “{0}”
   search: Search into roles
+  with-person: '{person} [{role}]'
 
 stores:
   fetch-failure: There was an error while fetching the stores
@@ -372,3 +378,6 @@ books:
   empty-description: You haven't created any books yet
   empty-search-description: Matches not found for “{0}”
   search: Search into books
+  cover: Cover of {title}
+  mark-as-read: Mark as read
+  mark-as-unread: Mark as unread

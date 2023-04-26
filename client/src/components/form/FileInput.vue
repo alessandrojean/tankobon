@@ -65,7 +65,7 @@ export default { inheritAttrs: false }
       {
         'border-primary-400 bg-primary-100': isDragging,
         'border-red-400 bg-red-100': invalid && !isDragging,
-        'border-gray-300': !isDragging && !invalid,
+        'border-gray-300 dark:border-gray-600': !isDragging && !invalid,
       }
     ]"
     @dragover.prevent="isDragging = true"
@@ -79,7 +79,7 @@ export default { inheritAttrs: false }
           {
             'text-primary-500': isDragging,
             'text-red-500': invalid && !isDragging,
-            'text-gray-400': !isDragging && !invalid,
+            'text-gray-400 dark:text-gray-500': !isDragging && !invalid,
           }
         ]"
         stroke="currentColor"
@@ -99,7 +99,7 @@ export default { inheritAttrs: false }
           'focus-within:ring-2 ',
           'focus-within:ring-offset-2',
           {
-            'text-primary-600 focus-within:ring-primary-500 hover:text-primary-500': !invalid || isDragging,
+            'text-primary-600 focus-within:ring-primary-500 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400': !invalid || isDragging,
             'text-red-600 focus-within:ring-red-500 hover:text-red-500': invalid && !isDragging,
           }
         ]"
@@ -120,6 +120,7 @@ export default { inheritAttrs: false }
           {
             'text-primary-600': isDragging,
             'text-red-600': invalid && !isDragging,
+            'dark:text-gray-300': !invalid && !isDragging,
           }
         ]"
       >
@@ -132,7 +133,7 @@ export default { inheritAttrs: false }
         {
           'text-primary-600': isDragging,
           'text-red-600': invalid && !isDragging,
-          'text-gray-500': !invalid && !isDragging,
+          'text-gray-500 dark:text-gray-400': !invalid && !isDragging,
         }
       ]"
     >

@@ -36,7 +36,7 @@ export default { inheritAttrs: false }
     <div class="relative">
       <textarea
         :class="[
-          'peer w-full bg-white dark:bg-gray-900 shadow-sm rounded-md pt-8',
+          'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8',
           'dark:text-gray-200',
           'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
           'placeholder:text-gray-500',
@@ -53,7 +53,7 @@ export default { inheritAttrs: false }
       <label
         :class="[
           'font-medium text-xs px-3 pt-3 absolute top-px inset-x-px rounded-t-md',
-          'select-none cursor-text bg-white dark:bg-gray-900',
+          'select-none cursor-text bg-white dark:bg-gray-950',
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
         :for="($attrs.id as string | undefined)"

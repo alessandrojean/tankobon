@@ -39,7 +39,7 @@ export default { inheritAttrs: false }
     <div class="relative">
       <input
         :class="[
-          'peer w-full bg-white dark:bg-gray-900 shadow-sm rounded-md pt-8',
+          'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8',
           'dark:text-gray-200',
           'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
           'placeholder:text-gray-500',

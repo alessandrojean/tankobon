@@ -27,6 +27,10 @@ class BookContributorDao(
   override fun findByIdAsDtoOrNull(bookContributorId: String): BookContributorEntityDto? =
     dsl.select(*TableBookContributor.fields(), TableContributorRole.NAME, TablePerson.NAME)
       .from(TableBookContributor)
+      .leftJoin(TableContributorRole)
+      .on(TableContributorRole.ID.eq(TableBookContributor.ROLE_ID))
+      .leftJoin(TablePerson)
+      .on(TablePerson.ID.eq(TableBookContributor.PERSON_ID))
       .where(TableBookContributor.ID.eq(bookContributorId))
       .fetchOne { record ->
         val domain = record.into(TableBookContributor).toDomain()
@@ -73,6 +77,10 @@ class BookContributorDao(
   override fun findAllAsDtoByBookId(bookId: String): Collection<BookContributorEntityDto> =
     dsl.select(*TableBookContributor.fields(), TableContributorRole.NAME, TablePerson.NAME)
       .from(TableBookContributor)
+      .leftJoin(TableContributorRole)
+      .on(TableContributorRole.ID.eq(TableBookContributor.ROLE_ID))
+      .leftJoin(TablePerson)
+      .on(TablePerson.ID.eq(TableBookContributor.PERSON_ID))
       .where(TableBookContributor.BOOK_ID.eq(bookId))
       .fetch { record ->
         val domain = record.into(TableBookContributor).toDomain()

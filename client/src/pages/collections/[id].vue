@@ -6,7 +6,7 @@ import { getRelationship } from '@/utils/api';
 const { t } = useI18n()
 const router = useRouter()
 const collectionId = useRouteParams<string | undefined>('id', undefined)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const { mutate: deleteCollection, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteCollectionMutation()
 const { mutate: editCollection, isLoading: isEditing } = useUpdateCollectionMutation()

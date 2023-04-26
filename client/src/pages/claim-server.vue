@@ -6,7 +6,7 @@ import { EnvelopeIcon, IdentificationIcon, KeyIcon } from '@heroicons/vue/24/out
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import type { ClaimAdmin } from '@/types/tankobon-claim'
 
-const notificator = useNotificator()
+const notificator = useToaster()
 const router = useRouter()
 const userStore = useUserStore()
 const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
@@ -72,7 +72,7 @@ const passwordFocused = ref(false)
 </script>
 
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-950 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>

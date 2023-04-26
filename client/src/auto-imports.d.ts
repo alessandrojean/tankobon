@@ -209,6 +209,7 @@ declare global {
   const useLibraryPublishersQuery: typeof import('./queries/publisher/useLibraryPublishersQuery')['default']
   const useLibraryQuery: typeof import('./queries/library/useLibraryQuery')['default']
   const useLibrarySeriesQuery: typeof import('./queries/series/useLibrarySeriesQuery')['default']
+  const useLibraryStore: typeof import('./stores/library')['useLibraryStore']
   const useLibraryStoresQuery: typeof import('./queries/store/useLibraryStoresQuery')['default']
   const useLibraryTagsQuery: typeof import('./queries/tag/useLibraryTagsQuery')['default']
   const useLink: typeof import('vue-router')['useLink']
@@ -227,7 +228,6 @@ declare global {
   const useMutationObserver: typeof import('@vueuse/core')['useMutationObserver']
   const useNavigatorLanguage: typeof import('@vueuse/core')['useNavigatorLanguage']
   const useNetwork: typeof import('@vueuse/core')['useNetwork']
-  const useNotificator: typeof import('./composables/useNotificator')['useNotificator']
   const useNow: typeof import('@vueuse/core')['useNow']
   const useObjectUrl: typeof import('@vueuse/core')['useObjectUrl']
   const useOffsetPagination: typeof import('@vueuse/core')['useOffsetPagination']
@@ -291,6 +291,7 @@ declare global {
   const useTitle: typeof import('@vueuse/core')['useTitle']
   const useToNumber: typeof import('@vueuse/core')['useToNumber']
   const useToString: typeof import('@vueuse/core')['useToString']
+  const useToaster: typeof import('./composables/useToaster')['useToaster']
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUpdateCollectionMutation: typeof import('./mutations/collection/useUpdateCollectionMutation')['default']
@@ -555,6 +556,7 @@ declare module 'vue' {
     readonly useLibraryPublishersQuery: UnwrapRef<typeof import('./queries/publisher/useLibraryPublishersQuery')['default']>
     readonly useLibraryQuery: UnwrapRef<typeof import('./queries/library/useLibraryQuery')['default']>
     readonly useLibrarySeriesQuery: UnwrapRef<typeof import('./queries/series/useLibrarySeriesQuery')['default']>
+    readonly useLibraryStore: UnwrapRef<typeof import('./stores/library')['useLibraryStore']>
     readonly useLibraryStoresQuery: UnwrapRef<typeof import('./queries/store/useLibraryStoresQuery')['default']>
     readonly useLibraryTagsQuery: UnwrapRef<typeof import('./queries/tag/useLibraryTagsQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
@@ -573,7 +575,6 @@ declare module 'vue' {
     readonly useMutationObserver: UnwrapRef<typeof import('@vueuse/core')['useMutationObserver']>
     readonly useNavigatorLanguage: UnwrapRef<typeof import('@vueuse/core')['useNavigatorLanguage']>
     readonly useNetwork: UnwrapRef<typeof import('@vueuse/core')['useNetwork']>
-    readonly useNotificator: UnwrapRef<typeof import('./composables/useNotificator')['useNotificator']>
     readonly useNow: UnwrapRef<typeof import('@vueuse/core')['useNow']>
     readonly useObjectUrl: UnwrapRef<typeof import('@vueuse/core')['useObjectUrl']>
     readonly useOffsetPagination: UnwrapRef<typeof import('@vueuse/core')['useOffsetPagination']>
@@ -637,6 +638,7 @@ declare module 'vue' {
     readonly useTitle: UnwrapRef<typeof import('@vueuse/core')['useTitle']>
     readonly useToNumber: UnwrapRef<typeof import('@vueuse/core')['useToNumber']>
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
+    readonly useToaster: UnwrapRef<typeof import('./composables/useToaster')['useToaster']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUpdateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useUpdateCollectionMutation')['default']>

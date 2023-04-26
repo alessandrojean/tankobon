@@ -9,7 +9,7 @@ import { FunnelIcon } from '@heroicons/vue/20/solid'
 
 const { t } = useI18n()
 const router = useRouter()
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const isbn = ref('')
 const isbnDebounced = refDebounced(isbn, 1_000)
@@ -83,7 +83,7 @@ function handleImportBook(book: ImportOneBook) {
     <Header :title="$t('importer.header')" />
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex gap-2">
+      <div class="bg-gray-100 dark:bg-block-dark rounded-lg p-4 flex gap-2">
         <div class="max-w-xs w-full">
           <label for="isbn" class="sr-only">
             {{ $t('common-fields.isbn') }}
@@ -135,6 +135,8 @@ function handleImportBook(book: ImportOneBook) {
             v-for="result in results"
             :key="result.id + result.attributes.isbn"
             :result="result"
+            :importing="isImporting && bookToImport?.id === result.id"
+            :disabled="isImporting"
             @click:import="handleResultImportClick(result)"
           />
         </div>

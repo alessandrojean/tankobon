@@ -19,7 +19,7 @@ export default { inheritAttrs: false }
   <div class="flex items-center space-x-2">
     <input
       :class="[
-        'rounded w-4 h-4 dark:bg-gray-900 border-gray-300 dark:border-gray-600',
+        'rounded w-4 h-4 dark:bg-gray-950 border-gray-300 dark:border-gray-600',
         'shadow-sm text-primary-500 focus:border-primary-500 focus:ring',
         'dark:focus:border-primary-400 dark:focus:ring-primary-200/30',
         'focus:ring-offset-0 focus:ring-primary-200 focus:ring-opacity-50',

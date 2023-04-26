@@ -6,7 +6,7 @@ import { getRelationship } from '@/utils/api';
 const { t } = useI18n()
 const router = useRouter()
 const bookId = useRouteParams<string | undefined>('id', undefined)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 // const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
 // const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
@@ -33,6 +33,10 @@ const { data: book, isLoading } = useBookQuery({
 })
 
 const library = computed(() => getRelationship(book.value, 'LIBRARY'))
+
+const showBookInfo = computed(() => {
+  return !isLoading.value && !!book.value
+})
 
 // function handleDelete() {
 //   deletePublisher(publisherId.value!, {
@@ -67,58 +71,106 @@ const library = computed(() => getRelationship(book.value, 'LIBRARY'))
 </script>
 
 <template>
-  <div>
-    <Header
-      :title="book?.attributes.title ?? ''"
-      :subtitle="book?.attributes.synopsis"
-      :loading="isLoading"
-      class="mb-3 md:mb-0"
-    >
-      <template #title-badge v-if="library && library.attributes">
-        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
-      </template>
-      <!-- <template #actions>
-        <div class="flex space-x-2">
-          <Button
-            class="w-11 h-11"
-            :loading="isEditing"
-            :disabled="isDeleting"
-            :title="$t('common-actions.edit')"
-            @click="showEditDialog = true"
-          >
-            <span class="sr-only">{{ $t('common-actions.edit') }}</span>
-            <PencilIcon class="w-6 h-6" />
-          </Button>
-
-          <Button
-            class="w-11 h-11"
-            kind="danger"
-            :disabled="isEditing"
-            :loading="isDeleting"
-            :title="$t('common-actions.delete')"
-            @click="handleDelete"
-          >
-            <span class="sr-only">{{ $t('common-actions.delete') }}</span>
-            <TrashIcon class="w-6 h-6" />
-          </Button>
-        </div>
-      </template> -->
-    </Header>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      <pre><code>{{ JSON.stringify(book, null, 2) }}</code></pre>
+  <div
+    :class="[
+      'bg-white dark:bg-gray-950 motion-safe:transition-colors',
+      'duration-300 ease-in-out -mt-16 relative'
+    ]"
+  >
+    <div class="absolute inset-x-0 top-0">
+      <BookBanner :loading="!showBookInfo" :book="book" />
     </div>
+  
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
+      <div class="book-grid">
+        <BookCover
+          class="book-cover"
+          :loading="!showBookInfo"
+          :book="book"
+        />
 
-    <!-- <PublisherEditDialog
-      v-if="publisher"
-      :is-open="showEditDialog"
-      :publisher-entity="publisher"
-      @submit="handleEditPublisher"
-      @close="showEditDialog = false"
-    /> -->
+        <BookTitle
+          class="book-title"
+          :loading="!showBookInfo"
+          :book="book"
+        />
+
+        <BookButtons
+          class="book-buttons pt-1.5"
+          :loading="!showBookInfo"
+          :book="book"
+          :editing="false"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <route lang="yaml">
   meta:
     layout: dashboard
+    transparentNavbar: true
 </route>
+
+<style lang="postcss">
+.book-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-areas:
+    'art title'
+    'buttons buttons'
+    'synopsis synopsis'
+    'attributes attributes'
+    'notes notes'
+    'tabs tabs';
+  grid-template-columns: 6rem 1fr;
+
+  @media (min-width: theme('screens.sm')) {
+    gap: 1.5rem;
+    grid-template-areas:
+      'art title'
+      'art buttons'
+      'art padding'
+      'attributes synopsis'
+      'attributes tags'
+      'attributes notes';
+    grid-template-columns: 14rem 1fr;
+  }
+
+  @media (min-width: theme('screens.2xl')) {
+    gap: 1.5rem;
+    grid-template-areas:
+      'art title title'
+      'art buttons buttons'
+      'art padding padding'
+      'attributes synopsis right'
+      'attributes tags right'
+      'attributes notes right';
+    grid-template-columns: 14rem 1fr 22rem;
+  }
+
+  .book-cover {
+    grid-area: art / art / art / art;
+  }
+
+  .book-buttons {
+    grid-area: buttons / buttons / buttons / buttons;
+  }
+
+  .book-title {
+    grid-area: title / title / title / title;
+  }
+
+  .book-synopsis {
+    grid-area: synopsis / synopsis / synopsis / synopsis;
+  }
+
+  .book-attributes {
+    grid-area: attributes / attributes / attributes / attributes;
+  }
+
+  .book-right {
+    grid-area: right / right / right / right;
+  }
+}
+</style>

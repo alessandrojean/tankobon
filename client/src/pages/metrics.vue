@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const { t } = useI18n()
-const notificator = useNotificator()
+const notificator = useToaster()
 const { data: metrics } = useMetricsQuery({
   metrics: [
     'disk.free',

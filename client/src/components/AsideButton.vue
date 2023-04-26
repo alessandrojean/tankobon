@@ -25,8 +25,8 @@ const { active, item, href } = toRefs(props)
       'font-medium dark:focus-visible:ring-offset-gray-800',
       item.icon ? 'h-10' : 'h-9',
       active
-        ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-gray-900'
-        : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 dark:hocus:bg-gray-700'
+        ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-gray-800'
+        : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 dark:hocus:bg-gray-800'
     ]"
     :title="item.label"
   >
@@ -42,8 +42,8 @@ const { active, item, href } = toRefs(props)
         :class="[
           'w-6 h-6 motion-safe:transition-colors',
           active
-            ? 'text-primary-600 dark:text-gray-100'
-            : 'text-gray-500 dark:text-gray-500 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
+            ? 'text-primary-600 dark:text-primary-500'
+            : 'text-gray-500 dark:text-gray-600 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
         ]"
       />
     </div>

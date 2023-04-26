@@ -110,20 +110,20 @@ watch(data, () => emit('update:row-selection', {}))
 </script>
 
 <template>
-  <section class="overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700 relative">
+  <section class="overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-800 relative">
     <table class="w-full">
       <thead>
         <tr
           v-for="headerGroup in table.getHeaderGroups()"
           :key="headerGroup.id"
-          class="border-b border-gray-200 dark:border-gray-700"
+          class="border-b border-gray-200 dark:border-gray-800"
         >
           <th
             v-for="header in headerGroup.headers"
             :key="header.id"
             :colspan="header.colSpan"
             :class="[
-              'bg-gray-50 dark:bg-gray-800 py-2.5 px-4 text-sm',
+              'bg-gray-50 dark:bg-gray-900 py-2.5 px-4 text-sm',
               'font-semibold text-gray-700 dark:text-gray-300 text-left',
               header.column.getCanSort() ? 'cursor-pointer select-none' : '',
               header.column.columnDef.meta?.headerClass,
@@ -151,7 +151,7 @@ watch(data, () => emit('update:row-selection', {}))
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
         <template v-if="table.getRowModel().rows.length > 0">
           <tr
             v-for="row in table.getRowModel().rows"
@@ -167,7 +167,7 @@ watch(data, () => emit('update:row-selection', {}))
                 cell.column.columnDef.meta?.cellClass,
                 row.getIsSelected()
                   ? 'bg-primary-50 dark:bg-gray-700/80 text-primary-800 dark:text-gray-100 group-hover:bg-primary-100/70 dark:group-hover:bg-gray-700'
-                  : 'dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-700/80'
+                  : 'dark:text-gray-300 dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/80'
               ]"
             >
               <FlexRender
@@ -187,8 +187,8 @@ watch(data, () => emit('update:row-selection', {}))
     <div
       v-if="showFooter"
       :class="[
-        'bg-gray-50 dark:bg-gray-800',
-        'border-t border-gray-200 dark:border-gray-700',
+        'bg-gray-50 dark:bg-gray-900',
+        'border-t border-gray-200 dark:border-gray-800',
         'px-4 py-2 flex justify-between items-center'
       ]"
     >

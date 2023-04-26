@@ -11,7 +11,7 @@ const { t } = useI18n()
 const router = useRouter()
 const userId = useRouteParams<string | undefined>('id', undefined)
 const userStore = useUserStore()
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const {
   mutate: deleteUser,

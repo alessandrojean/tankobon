@@ -13,7 +13,7 @@ export interface LibrariesTableProps {
 
 const props = defineProps<LibrariesTableProps>()
 const { userId } = toRefs(props)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const rowSelection = ref<Record<string, boolean>>({})
 

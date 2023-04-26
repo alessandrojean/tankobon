@@ -20,7 +20,7 @@ export interface UserAuthenticationActivityTableProps {
 const props = defineProps<UserAuthenticationActivityTableProps>()
 const { userId } = toRefs(props)
 
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const defaultSorting: ColumnSort = { id: 'timestamp', desc: true }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 10 })

@@ -42,9 +42,9 @@ export default { inheritAttrs: false, components: { ChevronUpDownIcon, CheckIcon
     <ListboxButton
       :class="[
         'relative w-full cursor-default rounded-md',
-        'bg-white dark:bg-gray-900 pl-3 pr-10 text-left',
+        'bg-white dark:bg-gray-800 pl-3 pr-10 text-left',
         'shadow-sm focus:outline-none focus:ring ui-open:ring border',
-        'border-gray-300 dark:border-gray-700',
+        'border-gray-300 dark:border-gray-800',
         'focus:border-primary-500 dark:focus:border-primary-400',
         'focus:ring-primary-200 dark:focus:ring-primary-200/30',
         'ui-open:border-primary-500 dark:ui-open:border-primary-400',

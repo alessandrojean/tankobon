@@ -5,14 +5,19 @@ import { ArrowDownOnSquareIcon, ArrowTopRightOnSquareIcon } from '@heroicons/vue
 import { BookOpenIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline';
 
 export interface ImporterResultCardProps {
-  result: ExternalBookEntity
+  disabled?: boolean,
+  importing?: boolean,
+  result: ExternalBookEntity,
 }
 
 export type ImporterResultCardEmits = {
   (e: 'click:import'): void
 }
 
-const props = defineProps<ImporterResultCardProps>()
+const props = withDefaults(defineProps<ImporterResultCardProps>(), {
+  disabled: false,
+  importing: false,
+})
 defineEmits<ImporterResultCardEmits>()
 
 const { result } = toRefs(props)
@@ -118,7 +123,11 @@ onMounted(() => setupObserver())
       </div>
 
       <div class="mt-4">
-        <Button @click="$emit('click:import')">
+        <Button
+          :disabled="disabled"
+          :loading="importing"
+          @click="$emit('click:import')"
+        >
           <ArrowDownOnSquareIcon class="w-5 h-5" />
           <span>{{ $t('common-actions.import') }}</span>
         </Button>

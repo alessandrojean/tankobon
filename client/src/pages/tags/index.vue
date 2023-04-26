@@ -1,33 +1,21 @@
 <script lang="ts" setup>
 import type { TagCreation } from '@/types/tankobon-tag'
-import { LibraryEntity } from '@/types/tankobon-library'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { TagIcon } from '@heroicons/vue/24/outline'
 import { MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
 
 const { t } = useI18n()
 const router = useRouter()
-const userStore = useUserStore()
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const showCreateDialog = ref(false)
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
 
 const { mutate } = useCreateTagMutation()
-const { data: libraries } = useUserLibrariesByUserQuery({
-  userId: computed(() => userStore.me!.id),
-  includeShared: true,
-  includes: ['owner'],
-  initialData: [],
-  onSuccess: (libraries) => {
-    if (!library.value || !libraries.find((l) => l.id === library.value!.id)) {
-      library.value = libraries[0]
-    }
-  }
-})
 
-const library = ref<LibraryEntity>()
+const libraryStore = useLibraryStore()
+const library = computed(() => libraryStore.library!)
 
 function handleCreateTag(tag: TagCreation) {
   mutate(tag, {
@@ -68,7 +56,7 @@ function handleCreateTag(tag: TagCreation) {
     </Header>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6">
-      <TableControls v-if="library && libraries">
+      <TableControls v-if="library">
         <div>
           <label class="sr-only" for="search-tag">
             {{ $t('tags.search') }}
@@ -86,12 +74,6 @@ function handleCreateTag(tag: TagCreation) {
             </template>
           </BasicTextInput>
         </div>
-        <LibrarySelector
-          class="w-48"
-          size="small"
-          v-model="library"
-          :options="libraries"
-        />
       </TableControls>
 
       <TagsTable

@@ -184,7 +184,8 @@ const allowedItems = computed(() => {
 <template>
   <aside
     :class="[
-      'box-content bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow',
+      'box-content bg-gray-50 dark:bg-gray-900 border-r',
+      'border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow',
       'motion-safe:transition-all',
       collapsed ? 'w-16' : 'w-72'
     ]"

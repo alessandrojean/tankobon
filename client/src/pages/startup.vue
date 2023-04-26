@@ -2,7 +2,7 @@
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
-const notificator = useNotificator()
+const notificator = useToaster()
 const { t } = useI18n()
 
 const { data: claimStatus, refetch: checkClaim } = useServerClaimStatusQuery({
@@ -38,7 +38,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 w-full h-full min-h-screen flex items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-950 w-full h-full min-h-screen flex items-center justify-center">
     <LoadingSpinIcon class="animate-spin w-10 h-10 text-primary-600" />
   </div>
 </template>

@@ -15,7 +15,7 @@ import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import { getRelationship } from '@/utils/api'
 
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const defaultSorting: ColumnSort = { id: 'createdAt', desc: true }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })

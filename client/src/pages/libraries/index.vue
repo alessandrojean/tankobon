@@ -5,8 +5,9 @@ import { PlusIcon } from '@heroicons/vue/20/solid'
 const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
+const libraryStore = useLibraryStore()
 const userId = computed(() => userStore.me!.id)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const showCreateDialog = ref(false)
 
@@ -17,6 +18,10 @@ function handleCreateLibrary(library: LibraryCreation) {
     onSuccess: async ({ id }) => {
       notificator.success({ title: t('libraries.created-with-success') })
       await router.push({ name: 'libraries-id', params: { id } })
+
+      if (libraryStore.library === null) {
+        await libraryStore.fetchAndSelectFirstStore(userId.value)
+      }
     },
     onError: async (error) => {
       await notificator.failure({

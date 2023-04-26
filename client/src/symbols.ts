@@ -1,10 +1,10 @@
-import type { Notification } from '@/App.vue'
+import type { Toast } from '@/App.vue'
 
 export type ShowAsideDialog = () => void
 
 export const ShowAsideDialogKey: InjectionKey<ShowAsideDialog> =
   Symbol('showAsideDialog')
 
-export type Notificate = (notification: Notification) => Promise<void>
+export type ShowToast = (toast: Toast) => Promise<void>
 
-export const NotificateKey: InjectionKey<Notificate> = Symbol('notificate')
+export const ShowToastKey: InjectionKey<ShowToast> = Symbol('showToast')

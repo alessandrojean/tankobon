@@ -15,8 +15,10 @@ export const useUserStore = defineStore('user', {
   actions: {
     async signIn({ email, password }: { email: string, password: string }) {
       const me = await getMeWithAuth(email, password)
-      
       this.$patch({ me })
+
+      const libraryStore = useLibraryStore()
+      await libraryStore.fetchAndSelectFirstStore(this.me!.id)
     },
 
     async signOut() {
@@ -25,10 +27,14 @@ export const useUserStore = defineStore('user', {
       } catch (_) {}
 
       this.$patch({ me: null })
+
+      const libraryStore = useLibraryStore()
+      libraryStore.setLibrary(null)
     },
 
     async checkSession() {
       const me = await getMe()
+      const meWasNull = this.me === null
 
       this.$patch({
         me: {
@@ -37,11 +43,17 @@ export const useUserStore = defineStore('user', {
           relationships: [...(me.relationships ?? [])],
         },
       })
+
+      if (meWasNull) {
+        const libraryStore = useLibraryStore()
+        await libraryStore.fetchAndSelectFirstStore(this.me!.id)
+      }
     },
 
     async sessionExists() {
       try {
         const me = await getMe()
+        const meWasNull = this.me === null
 
         this.$patch({
           me: {
@@ -50,6 +62,12 @@ export const useUserStore = defineStore('user', {
             relationships: [...(me.relationships ?? [])],
           },
         })
+
+        if (meWasNull) {
+          const libraryStore = useLibraryStore()
+          await libraryStore.fetchAndSelectFirstStore(this.me!.id)
+        }
+
         return true
       } catch (_) {
         return false

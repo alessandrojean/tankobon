@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { NotificateKey } from './symbols';
+import { ShowToastKey } from './symbols';
 
 export type Theme = 'system' | 'dark' | 'light'
-export interface Notification {
+export interface Toast {
   title: string,
   body?: string,
   type?: 'success' | 'info' | 'failure' | 'warning',
@@ -22,7 +22,7 @@ const localTheme = useLocalStorage('theme', THEME_SYSTEM)
 const { data: theme } = useUserPreferencesQuery({
   select: (preferences) => preferences.theme as Theme ?? localTheme.value,
   onError: (error) => {
-    notificate({
+    showToast({
       title: t('preferences.theme-failure'),
       body: error.message,
       type: 'failure',
@@ -46,40 +46,40 @@ watch(isAuthenticated, async (current, previous) => {
 
 const route = useRoute()
 const isDashboard = computed(() => route.meta.layout === 'dashboard')
-const notificationTop = computed(() => isDashboard.value ? 5 : 1)
+const toastTop = computed(() => isDashboard.value ? 5 : 1)
 
-type InnerNotification = Notification & { id: string }
+type InnerToast = Toast & { id: string }
 
-const notifications = ref<InnerNotification[]>([])
-const notificator = ref<HTMLDivElement | null>()
+const toasts = ref<InnerToast[]>([])
+const toaster = ref<HTMLDivElement | null>()
 const motionOk = useMediaQuery('(prefers-reduced-motion: no-preference)')
 
-async function addNotification(notification: Notification) {
+async function addToast(toast: Toast) {
   if (motionOk.value) {
-    return await flipNotification(notification)
+    return await flipToast(toast)
   } else {
     const id = new Date().getTime().toString(16)
 
-    notifications.value.push({ ...notification, id })
+    toasts.value.push({ ...toast, id })
     await nextTick()
 
-    return notificator.value!.querySelector<HTMLOutputElement>(`[data-id='${id}']`)
+    return toaster.value!.querySelector<HTMLOutputElement>(`[data-id='${id}']`)
   }
 }
 
-async function flipNotification(notification: Notification) {
+async function flipToast(toast: Toast) {
   const id = new Date().getTime().toString(16)
-  const last = notificator.value!.offsetHeight
+  const last = toaster.value!.offsetHeight
 
-  notifications.value.unshift({ ...notification, id })
+  toasts.value.unshift({ ...toast, id })
   await nextTick()
 
-  const first = notificator.value!.offsetHeight
+  const first = toaster.value!.offsetHeight
 
   const invert = last - first
 
-  if (notifications.value.length > 1) {
-    notificator.value!.animate(
+  if (toasts.value.length > 1) {
+    toaster.value!.animate(
       [
         { transform: `translateY(${invert}px)` },
         { transform: 'translateY(0)' }
@@ -91,32 +91,32 @@ async function flipNotification(notification: Notification) {
     )
   }
 
-  return notificator.value!.querySelector<HTMLOutputElement>(`[data-id='${id}']`)
+  return toaster.value!.querySelector<HTMLOutputElement>(`[data-id='${id}']`)
 }
 
-async function notificate(notification: Notification): Promise<void> {
-  const notificationElement = await addNotification(notification)
+async function showToast(toast: Toast): Promise<void> {
+  const toastElement = await addToast(toast)
   
-  if (!notificationElement) {
+  if (!toastElement) {
     return
   }
 
-  const id = notificationElement.dataset.id
+  const id = toastElement.dataset.id
 
   return new Promise(async (resolve) => {
     await Promise.allSettled(
-      notificationElement.getAnimations()
+      toastElement.getAnimations()
         .map(animation => animation.finished)
     )
 
-    const index = notifications.value.findIndex((n) => n.id === id)
-    notifications.value.splice(index, 1)
+    const index = toasts.value.findIndex((n) => n.id === id)
+    toasts.value.splice(index, 1)
     await nextTick()
     resolve()
   })
 }
 
-provide(NotificateKey, notificate)
+provide(ShowToastKey, showToast)
 </script>
 
 <template>
@@ -129,21 +129,21 @@ provide(NotificateKey, notificate)
 
     <div
       :class="[
-        'fixed z-50 top-[var(--top)] right-4',
-        'grid justify-end content-end gap-4',
+        'fixed z-50 top-[--top] right-4',
+        'grid justify-items-end justify-center gap-4',
         'pointer-events-none will-change-transform',
       ]"
-      :style="{ '--top': `${notificationTop}rem` }"
-      ref="notificator"
+      :style="{ '--top': `${toastTop}rem` }"
+      ref="toaster"
     >
-      <Notification
-        v-for="notification in notifications"
-        class="animate-notification"
-        :data-id="notification.id"
-        :key="notification.id"
-        :title="notification.title"
-        :body="notification.body"
-        :type="notification.type"
+      <Toast
+        v-for="toast in toasts"
+        class="animate-toast"
+        :data-id="toast.id"
+        :key="toast.id"
+        :title="toast.title"
+        :body="toast.body"
+        :type="toast.type"
       />
     </div>
   </div>

@@ -7,7 +7,7 @@ import { LibraryCreation } from '@/types/tankobon-library'
 
 const userStore = useUserStore()
 const router = useRouter()
-const notificator = useNotificator()
+const notificator = useToaster()
 const { data: libraries, refetch: refetchLibraries } = useUserLibrariesByUserQuery({
   userId: computed(() => userStore.me!.id),
   onError: async (error) => {
@@ -68,7 +68,7 @@ async function handleCreateLibrary() {
 </script>
 
 <template>
-  <div class="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center justify-center">
+  <div class="bg-gray-100 dark:bg-gray-950 min-h-screen flex flex-col items-center justify-center">
     <div>
       <BookOpenIcon class="w-12 h-12 text-primary-500" />
     </div>

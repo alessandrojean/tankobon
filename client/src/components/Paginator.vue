@@ -24,6 +24,7 @@ defineEmits<{
 <template>
   <div class="flex -space-x-px">
     <Button
+      kind="ghost-alt"
       class="rounded-r-none w-10"
       :disabled="!hasPreviousPage"
       @click="$emit('click:first-page')"
@@ -32,6 +33,7 @@ defineEmits<{
       <ChevronDoubleLeftIcon class="w-5 h-5" />
     </Button>
     <Button
+      kind="ghost-alt"
       class="rounded-none w-10"
       :disabled="!hasPreviousPage"
       @click="$emit('click:previous-page')"
@@ -40,6 +42,7 @@ defineEmits<{
       <ChevronLeftIcon class="w-5 h-5" />
     </Button>
     <Button
+      kind="ghost-alt"
       class="rounded-none w-10"
       :disabled="!hasNextPage"
       @click="$emit('click:next-page')"
@@ -48,6 +51,7 @@ defineEmits<{
       <ChevronRightIcon class="w-5 h-5" />
     </Button>
     <Button
+      kind="ghost-alt"
       class="rounded-l-none w-10"
       :disabled="!hasNextPage"
       @click="$emit('click:last-page')"

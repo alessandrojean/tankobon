@@ -47,7 +47,7 @@ export default { inheritAttrs: false }
   <div class="relative">
     <select
       :class="[
-        'w-full bg-white dark:bg-gray-900 shadow-sm rounded-md',
+        'w-full bg-white dark:bg-gray-800 shadow-sm rounded-md',
         'dark:text-gray-200',
         'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
         'placeholder:text-gray-500',
@@ -55,7 +55,7 @@ export default { inheritAttrs: false }
         size === 'small' ? 'text-sm py-1.5' : '',
         invalid 
           ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30' 
-          : 'border-gray-300 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30'
+          : 'border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30'
       ]"
       v-bind="$attrs"
       :placeholder="placeholder"

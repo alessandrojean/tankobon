@@ -11,7 +11,7 @@ defineProps<EmptyStateProps>()
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center p-4 md:p-6 gap-2">
+  <div class="flex flex-col items-center justify-center p-4 md:p-6 lg:p-10 gap-2">
     <slot name="icon">
       <component
         v-if="icon"

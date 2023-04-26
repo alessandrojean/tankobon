@@ -22,7 +22,7 @@ withDefaults(defineProps<LoadingIndicatorProps>(), {
       :class="[
         position,
         'flex justify-center items-center inset-0 bg-white/60 dark:bg-gray-900/40',
-        'z-[var(--z)]',
+        'z-[--z]',
         blur ? 'backdrop-blur-sm' : ''
       ]"
       :style="{ '--z': zIndex }"

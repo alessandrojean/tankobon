@@ -6,7 +6,7 @@ import { getRelationship } from '@/utils/api';
 const { t } = useI18n()
 const router = useRouter()
 const storeId = useRouteParams<string | undefined>('id', undefined)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const { mutate: deleteStore, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteStoreMutation()
 const { mutate: editStore, isLoading: isEditing } = useUpdateStoreMutation()

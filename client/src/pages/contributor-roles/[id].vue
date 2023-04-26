@@ -6,7 +6,7 @@ import { getRelationship } from '@/utils/api';
 const { t } = useI18n()
 const router = useRouter()
 const contributorRoleId = useRouteParams<string | undefined>('id', undefined)
-const notificator = useNotificator()
+const notificator = useToaster()
 
 const { mutate: deleteContributorRole, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteContributorRoleMutation()
 const { mutate: editContributorRole, isLoading: isEditing } = useUpdateContributorRoleMutation()

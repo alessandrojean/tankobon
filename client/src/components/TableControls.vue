@@ -1,7 +1,7 @@
 <template>
   <section
     :class="[
-      'bg-gray-100 dark:bg-gray-800 p-3 rounded-lg',
+      'bg-gray-50 dark:bg-gray-900 p-4 rounded-lg',
       'flex gap-2'
     ]"
   >
