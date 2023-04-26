@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { UserIcon } from '@heroicons/vue/20/solid'
 import { CheckIcon } from '@heroicons/vue/24/outline'
-import LibraryForm from '@/components/libraries/LibraryForm.vue'
-import { LibraryCreation, LibraryEntity } from '@/types/tankobon-library'
 import { getRelationship } from '@/utils/api';
 
 export interface LibrarySelectorDialogProps {
@@ -35,28 +33,35 @@ const { data: libraries } = useUserLibrariesByUserQuery({
   initialData: []
 })
 
-const library = computed(() => libraryStore.library ?? libraries.value![0])
+const library = computed(() => libraryStore.library!)
+const selected = ref('')
 
-function setLibrary(library: LibraryEntity) {
-  libraryStore.setLibrary(library)
+watch([isOpen, libraries, library], () => {
+  selected.value = library.value.id
+})
+
+function handleSubmit() {
+  const selectedLibrary = libraries.value?.find((l) => l.id === selected.value)
+  libraryStore.setLibrary(selectedLibrary ?? library.value)
+  emit('close')
 }
 </script>
 
 <template>
   <Dialog
-    as="div"
+    as="form"
+    novalidate
+    autocomplete="off"
     dialog-class="max-w-lg"
     body-paddingless
     :is-open="isOpen"
     :title="$t('libraries.select')"
     :full-height="false"
+    @submit.prevent="handleSubmit"
     @close="$emit('close')"
   >
     <template #default>
-      <RadioGroup
-        :model-value="library"
-        @update:model-value="setLibrary"
-      >
+      <RadioGroup v-model="selected">
         <RadioGroupLabel class="sr-only">
           {{ $t('entities.libraries') }}
         </RadioGroupLabel>
@@ -64,7 +69,7 @@ function setLibrary(library: LibraryEntity) {
           <RadioGroupOption
             v-for="libraryOption in libraries"
             :key="libraryOption.id"
-            :value="libraryOption"
+            :value="libraryOption.id"
             v-slot="{ checked }"
             as="template"
           >
@@ -91,13 +96,11 @@ function setLibrary(library: LibraryEntity) {
     </template>
     <template #footer>
       <Button
-        type="button"
+        type="submit"
         class="ml-auto"
         kind="primary"
-        @click="$emit('close')"
       >
-        <CheckIcon class="w-5 h-5" />
-        <span>{{ $t('common-actions.select') }}</span>
+        {{ $t('common-actions.select') }}
       </Button>
     </template>
   </Dialog>

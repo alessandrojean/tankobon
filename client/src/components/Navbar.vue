@@ -125,6 +125,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
     </div>
 
     <LibrarySelectorDialog
+      v-if="userHasAtLeastTwoLibraries"
       :is-open="librarySelectorOpen"
       @close="closeLibrarySelector"
     />
