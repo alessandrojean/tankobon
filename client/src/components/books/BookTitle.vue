@@ -12,10 +12,6 @@ const props = withDefaults(defineProps<BookTitleProps>(), {
   loading: false
 })
 
-defineEmits<{
-  (e: 'click:author', author: string): void
-}>()
-
 const { book, loading } = toRefs(props)
 const series = computed(() => getRelationship(book.value, 'SERIES'))
 const contributors = computed(() => getRelationships(book.value, 'CONTRIBUTOR'))
@@ -29,9 +25,15 @@ const listFormatter = computed(() => {
 })
 
 const contributorsList = computed(() => {
-  const unique = Array.from(new Set(contributors.value?.map((c) => c.attributes!.person) ?? []))
+  const unique = Array.from(new Set(contributors.value?.map((c) => c.id) ?? []))
 
   return listFormatter.value.formatToParts(unique)
+})
+
+const peopleMap = computed(() => {
+  return Object.fromEntries(
+    contributors.value?.map((c) => [c.id, c]) ?? []
+  )
 })
 </script>
 
@@ -63,14 +65,14 @@ const contributorsList = computed(() => {
       class="text-sm md:text-base sm:text-white/90 dark:text-white/90"
     >
       <template v-for="(part, idx) in contributorsList" :key="idx">
-        <a
+        <RouterLink
           v-if="part.type === 'element'"
-          href="#"
+          :to="{ name: 'people-id', params: { id: peopleMap[part.value].attributes?.person?.id } }"
           class="author"
-          :title="t('common-actions.search-by', [part.value])"
+          :title="t('common-actions.go-to-page', [peopleMap[part.value].attributes?.person?.name])"
         >
-          {{ part.value }}
-        </a>
+          {{ peopleMap[part.value].attributes?.person?.name }}
+        </RouterLink>
         <span v-else>
           {{ part.value }}
         </span>

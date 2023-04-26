@@ -73,6 +73,10 @@ export default defineConfig({
 
   server: {
     port: 8081,
+    proxy: {
+      '/api': 'http://localhost:8080',
+      '/images': 'http://localhost:8080',
+    },
     watch: {
       ignored: ['**/src/tests/**'],
     },

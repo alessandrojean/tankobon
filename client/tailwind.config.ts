@@ -127,6 +127,8 @@ export default {
       addUtilities({
         '.font-sans-safe': {
           fontFamily: theme('fontFamily.sans'),
+          fontFeatureSettings: 'initial',
+          fontVariationSettings: 'initial',
           '@supports (font-variation-settings: normal)': {
             fontFamily: theme('fontFamily.sans-var'),
           }

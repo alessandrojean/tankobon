@@ -110,7 +110,7 @@ const { t } = useI18n({ useScope: 'global' })
       v-if="showBookCover"
       class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none motion-safe:transition-opacity"
       type="button"
-      :title="t('dashboard.details.zoom.view')"
+      :title="$t('common-actions.zoom')"
       @click="openDialog"
     >
       <MagnifyingGlassPlusIcon class="w-8 h-8 text-white" />

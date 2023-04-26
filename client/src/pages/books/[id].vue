@@ -101,6 +101,18 @@ const showBookInfo = computed(() => {
           :book="book"
           :editing="false"
         />
+
+        <div class="book-synopsis">
+          {{ JSON.stringify(book, null, 2) }}
+        </div>
+
+        <div class="book-attributes">
+          <BookAttributes
+            class="sticky top-24"
+            :loading="!showBookInfo"
+            :book="book"
+          />
+        </div>
       </div>
     </div>
   </div>

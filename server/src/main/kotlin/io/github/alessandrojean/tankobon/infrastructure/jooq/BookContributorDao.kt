@@ -25,7 +25,7 @@ class BookContributorDao(
       ?.toDomain()
 
   override fun findByIdAsDtoOrNull(bookContributorId: String): BookContributorEntityDto? =
-    dsl.select(*TableBookContributor.fields(), TableContributorRole.NAME, TablePerson.NAME)
+    dsl.select(*TableBookContributor.fields(), *TableContributorRole.fields(), *TablePerson.fields())
       .from(TableBookContributor)
       .leftJoin(TableContributorRole)
       .on(TableContributorRole.ID.eq(TableBookContributor.ROLE_ID))
@@ -37,8 +37,10 @@ class BookContributorDao(
 
         domain.toDto().copy(
           attributes = domain.toAttributesDto(
-            role = record[TableContributorRole.NAME],
-            person = record[TablePerson.NAME]
+            roleId = record[TableContributorRole.ID],
+            roleName = record[TableContributorRole.NAME],
+            personId = record[TablePerson.ID],
+            personName = record[TablePerson.NAME]
           )
         )
       }
@@ -50,7 +52,7 @@ class BookContributorDao(
       .map { it.toDomain() }
 
   override fun findAllByIdsAsDto(bookContributorIds: Collection<String>): Collection<BookContributorEntityDto> =
-    dsl.select(*TableBookContributor.fields(), TableContributorRole.NAME, TablePerson.NAME)
+    dsl.select(*TableBookContributor.fields(), *TableContributorRole.fields(), *TablePerson.fields())
       .from(TableBookContributor)
       .leftJoin(TableContributorRole)
       .on(TableContributorRole.ID.eq(TableBookContributor.ROLE_ID))
@@ -62,8 +64,10 @@ class BookContributorDao(
 
         domain.toDto().copy(
           attributes = domain.toAttributesDto(
-            role = record[TableContributorRole.NAME],
-            person = record[TablePerson.NAME]
+            roleId = record[TableContributorRole.ID],
+            roleName = record[TableContributorRole.NAME],
+            personId = record[TablePerson.ID],
+            personName = record[TablePerson.NAME]
           )
         )
       }
@@ -75,7 +79,7 @@ class BookContributorDao(
       .map { it.toDomain() }
 
   override fun findAllAsDtoByBookId(bookId: String): Collection<BookContributorEntityDto> =
-    dsl.select(*TableBookContributor.fields(), TableContributorRole.NAME, TablePerson.NAME)
+    dsl.select(*TableBookContributor.fields(), *TableContributorRole.fields(), *TablePerson.fields())
       .from(TableBookContributor)
       .leftJoin(TableContributorRole)
       .on(TableContributorRole.ID.eq(TableBookContributor.ROLE_ID))
@@ -87,8 +91,10 @@ class BookContributorDao(
 
         domain.toDto().copy(
           attributes = domain.toAttributesDto(
-            role = record[TableContributorRole.NAME],
-            person = record[TablePerson.NAME]
+            roleId = record[TableContributorRole.ID],
+            roleName = record[TableContributorRole.NAME],
+            personId = record[TablePerson.ID],
+            personName = record[TablePerson.NAME]
           )
         )
       }

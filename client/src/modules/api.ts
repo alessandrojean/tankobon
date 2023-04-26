@@ -1,10 +1,8 @@
 import axios, { type AxiosInstance } from 'axios'
 
-export const API_BASE_URL = 'http://localhost:8080'
-
 function createInstance() {
   const instance: AxiosInstance = axios.create({
-    baseURL: `${API_BASE_URL}/api/v1`,
+    baseURL: `/api/v1`,
     withCredentials: true,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -45,5 +43,5 @@ export function getFullImageUrl({ collection, fileName, timeHex }: GetFullImageU
     return null
   }
 
-  return `${API_BASE_URL}/images/${collection}/${fileName}?${timeHex}`
+  return `/images/${collection}/${fileName}?${timeHex}`
 }

@@ -13,9 +13,19 @@ data class BookContributorEntityDto(
 }
 
 data class BookContributorAttributesDto(
-  val role: String,
-  val person: String,
+  val role: BookContributorRoleDto,
+  val person: BookContributorPersonDto,
 ) : EntityAttributesDto()
+
+data class BookContributorPersonDto(
+  val id: String,
+  val name: String,
+)
+
+data class BookContributorRoleDto(
+  val id: String,
+  val name: String,
+)
 
 fun BookContributor.toDto() = BookContributorEntityDto(
   id = id,
@@ -28,9 +38,17 @@ fun BookContributor.toDto() = BookContributorEntityDto(
 )
 
 fun BookContributor.toAttributesDto(
-  role: String = "",
-  person: String = ""
+  roleId: String = "",
+  roleName: String = "",
+  personId: String = "",
+  personName: String = ""
 ) = BookContributorAttributesDto(
-  role = role,
-  person = person,
+  role = BookContributorRoleDto(
+    id = roleId,
+    name = roleName,
+  ),
+  person = BookContributorPersonDto(
+    id = personId,
+    name = personName,
+  ),
 )

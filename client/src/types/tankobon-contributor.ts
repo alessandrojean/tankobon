@@ -1,4 +1,10 @@
 export interface ContributorAttributes {
-  role: string,
-  person: string,
+  role: {
+    id: string,
+    name: string,
+  },
+  person: {
+    id: string,
+    name: string,
+  },
 }

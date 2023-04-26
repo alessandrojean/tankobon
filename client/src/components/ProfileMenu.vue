@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { API_BASE_URL, getFullImageUrl } from '@/modules/api';
+import { getFullImageUrl } from '@/modules/api';
 import {
   Cog8ToothIcon,
   ChevronDownIcon,

@@ -1,5 +1,4 @@
-import { createI18n } from 'vue-i18n'
-import type { UserModule } from '@/types'
+import { DefaultDateTimeFormatSchema, DefaultNumberFormatSchema, createI18n } from 'vue-i18n'
 
 const messages = Object.fromEntries(
   Object
@@ -12,8 +11,49 @@ const messages = Object.fromEntries(
     })
 )
 
+const numberFormats = {
+  currency: {
+    style: 'currency',
+    notation: 'standard',
+  },
+  dimension: {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+    useGrouping: false,
+  },
+} satisfies DefaultNumberFormatSchema
+
+const dateTimeFormats = {
+  short: {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+  },
+  dateTime: {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }
+} satisfies DefaultDateTimeFormatSchema
+
+function createConfigForLang<
+  T = DefaultNumberFormatSchema | DefaultDateTimeFormatSchema
+>(schema: T): Record<string, T> {
+  return Object.fromEntries(
+    Object.keys(messages)
+      .map((lang) => [lang, schema])
+  )
+}
+
 export const i18n = createI18n({
   legacy: false,
   locale: 'en-US',
   messages,
+  numberFormats: createConfigForLang(numberFormats),
+  datetimeFormats: createConfigForLang(dateTimeFormats),
 })

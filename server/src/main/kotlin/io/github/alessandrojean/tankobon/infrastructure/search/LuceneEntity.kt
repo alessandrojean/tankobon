@@ -49,8 +49,8 @@ fun BookEntityDto.toDocument() = Document().apply {
     .filter { it.type == RelationshipType.CONTRIBUTOR && it.attributes != null }
     .forEach {
       val attributes = it.attributes as BookContributorAttributesDto
-      add(TextField("contributor", attributes.person, Field.Store.NO))
-      add(TextField(attributes.role, attributes.person, Field.Store.NO))
+      add(TextField("contributor", attributes.person.name, Field.Store.NO))
+      add(TextField(attributes.role.name, attributes.person.name, Field.Store.NO))
     }
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Book.type, Field.Store.NO))
   add(StringField(LuceneEntity.Book.id, id, Field.Store.YES))
