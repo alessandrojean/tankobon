@@ -46,6 +46,7 @@ common-actions:
   go-to-page: Go to {0} page
   select: Select
   zoom: Zoom
+  edit-picture: Edit picture
 
 common-values:
   true-value: 'True'
@@ -394,3 +395,12 @@ books:
   cover: Cover of {title}
   mark-as-read: Mark as read
   mark-as-unread: Mark as unread
+
+picture-upload:
+  header: Picture management
+  description: Upload or remove the current picture
+  uploaded-with-success: Picture uploaded with success
+  uploaded-with-failure: There was an error while uploading the picture
+  removed-with-success: Picture removed with success
+  removed-with-failure: There was an error while removing the picture
+  

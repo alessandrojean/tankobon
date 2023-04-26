@@ -3,7 +3,7 @@ import { getFullImageUrl } from '@/modules/api'
 import { UserUpdate } from '@/types/tankobon-user';
 import { EnvelopeIcon } from '@heroicons/vue/20/solid'
 import { PencilIcon, PhotoIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import type { AvatarResult } from '@/components/users/UserAvatarDialog.vue'
+import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
 import { getRelationship } from '@/utils/api';
 
@@ -70,7 +70,7 @@ function handleEditUser(user: UserUpdate) {
 
 const showAvatarDialog = ref(false)
 
-function handleAvatar(avatar: AvatarResult) {
+function handleAvatar(avatar: ImageResult) {
   if (avatar.file) {
     uploadAvatar({ userId: userId.value!, avatar: avatar.file }, {
       onSuccess: async () => {
@@ -212,10 +212,18 @@ function handleAvatar(avatar: AvatarResult) {
       @close="showEditDialog = false"
     />
 
-    <UserAvatarDialog
+    <EntityImageDialog
       v-if="user"
+      :title="$t('users.edit-avatar-header')"
+      :description="$t('users.edit-avatar-description')"
       :is-open="showAvatarDialog"
-      :user-entity="user"
+      :current-image-url="
+        getFullImageUrl({
+          collection: 'avatars',
+          fileName: avatar?.attributes?.versions['128'],
+          timeHex: avatar?.attributes?.timeHex,
+        })
+      "
       @submit="handleAvatar"
       @close="showAvatarDialog = false"
     />

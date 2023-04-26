@@ -123,7 +123,7 @@ watch(data, () => emit('update:row-selection', {}))
             :key="header.id"
             :colspan="header.colSpan"
             :class="[
-              'bg-gray-50 dark:bg-gray-900 py-2.5 px-4 text-sm',
+              'bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm',
               'font-semibold text-gray-700 dark:text-gray-300 text-left',
               header.column.getCanSort() ? 'cursor-pointer select-none' : '',
               header.column.columnDef.meta?.headerClass,

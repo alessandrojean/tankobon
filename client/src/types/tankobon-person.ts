@@ -22,4 +22,4 @@ export interface PersonUpdate {
 }
 
 export type PersonSort = 'name' | 'createdAt' | 'modifiedAt'
-export type PersonIncludes = 'library'
+export type PersonIncludes = 'library' | 'person_picture'

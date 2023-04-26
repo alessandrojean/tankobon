@@ -57,12 +57,12 @@ const isEmpty = computed(() => {
 <style lang="postcss" scoped>
 .avatar {
   @apply w-12 h-12 rounded-full relative shrink-0
-    border-2 border-primary-50 bg-primary-50
+    ring-1 ring-black/5
     motion-safe:transition-colors;
 }
 
 .avatar.is-empty {
-  @apply border-primary-500 bg-primary-500;
+  @apply border-2 border-primary-500 bg-primary-500;
 }
 
 .avatar:not(.is-dark) {

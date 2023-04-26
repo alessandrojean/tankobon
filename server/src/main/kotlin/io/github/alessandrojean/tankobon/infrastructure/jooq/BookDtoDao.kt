@@ -370,7 +370,7 @@ class BookDtoDao(
     val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, RelationshipType.LIBRARY)
 
     val cover = RelationDto(id, RelationshipType.COVER_ART)
-      .takeIf { bookCoverLifecycle.hasCover(id) }
+      .takeIf { bookCoverLifecycle.hasImage(id) }
 
     return toDto(
       library = library,
@@ -425,7 +425,7 @@ class BookDtoDao(
         .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], RelationshipType.LIBRARY) }
 
       covers = bookIds
-        .associateWith { bookCoverLifecycle.hasCover(it) }
+        .associateWith { bookCoverLifecycle.hasImage(it) }
         .filterValues { it }
         .mapValues { RelationDto(it.key, RelationshipType.COVER_ART) }
     }

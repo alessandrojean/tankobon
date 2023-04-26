@@ -31,7 +31,7 @@ function createInstance() {
 
 export const api = createInstance()
 
-export type ImageCollection = 'avatars' | 'covers'
+export type ImageCollection = 'avatars' | 'covers' | 'people'
 export interface GetFullImageUrlParams {
   collection: ImageCollection,
   fileName?: string,

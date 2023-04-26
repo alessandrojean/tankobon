@@ -5,6 +5,9 @@ import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import { PersonEntity, PersonSort } from '@/types/tankobon-person'
 import { Sort } from '@/types/tankobon-api'
+import { getRelationship } from '@/utils/api'
+import Avatar from '@/components/Avatar.vue'
+import { getFullImageUrl } from '@/modules/api'
 
 export interface PeopleTableProps {
   libraryId: string,
@@ -25,6 +28,7 @@ const rowSelection = ref<Record<string, boolean>>({})
 const { data: people, isLoading } = useLibraryPeopleQuery({
   libraryId,
   search,
+  includes: ['person_picture'],
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
   sort: computed<Sort<PersonSort>[]>(() => {
@@ -42,7 +46,7 @@ const { data: people, isLoading } = useLibraryPeopleQuery({
     })
   }
 })
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const columnHelper = createColumnHelper<PersonEntity>()
 
 const columns = [
@@ -67,11 +71,35 @@ const columns = [
       cellClass: 'align-middle',
     }
   }),
-  columnHelper.accessor('attributes.name', {
-    id: 'name',
-    header: () => t('common-fields.name'),
-    cell: (info) => info.getValue(),
-  }),
+  columnHelper.accessor(
+    (person) => ({
+      name: person.attributes.name,
+      picture: getRelationship(person, 'PERSON_PICTURE'),
+    }),
+    {
+      id: 'name',
+      header: () => t('common-fields.name'),
+      cell: (info) => {
+        const { name, picture } = info.getValue()
+
+        return h('div', { class: 'flex items-center space-x-3' }, [
+          h(Avatar, {
+            pictureUrl: getFullImageUrl({
+              collection: 'people',
+              fileName: picture?.attributes?.versions?.['64'],
+              timeHex: picture?.attributes?.timeHex,
+            }),
+            small: true
+          }),
+          h('span', { innerText: name })
+        ])
+      },
+      meta: {
+        headerClass: 'pl-0',
+        cellClass: 'pl-0',
+      },
+    }
+  ),
   columnHelper.accessor('attributes.description', {
     id: 'description',
     enableSorting: false,

@@ -91,6 +91,37 @@ export async function getOnePerson({ personId, includes }: GetOnePersonParameter
   }
 }
 
+export async function deletePersonPicture(personId: string): Promise<void> {
+  try {
+    await api.delete(`people/${personId}/picture`)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export interface UploadPersonPictureOptions {
+  personId: string,
+  picture: File,
+}
+
+export async function uploadPersonPicture(options: UploadPersonPictureOptions): Promise<void> {
+  try {
+    await api.postForm(`people/${options.personId}/picture`, {
+      picture: options.picture
+    })
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export async function updateOnePerson(person: PersonUpdate): Promise<void> {
   try {
     await api.put(`people/${person.id}`, person)

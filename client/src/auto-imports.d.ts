@@ -153,6 +153,7 @@ declare global {
   const useDeleteContributorRoleMutation: typeof import('./mutations/contributor-role/useDeleteContributorRoleMutation')['default']
   const useDeleteLibraryMutation: typeof import('./mutations/library/useDeleteLibraryMutation')['default']
   const useDeletePersonMutation: typeof import('./mutations/person/useDeletePersonMutation')['default']
+  const useDeletePersonPictureMutation: typeof import('./mutations/person/useDeletePersonPictureMutation')['default']
   const useDeletePublisherMutation: typeof import('./mutations/publisher/useDeletePublisherMutation')['default']
   const useDeleteSeriesMutation: typeof import('./mutations/series/useDeleteSeriesMutation')['default']
   const useDeleteStoreMutation: typeof import('./mutations/store/useDeleteStoreMutation')['default']
@@ -303,6 +304,7 @@ declare global {
   const useUpdateStoreMutation: typeof import('./mutations/store/useUpdateStoreMutation')['default']
   const useUpdateTagMutation: typeof import('./mutations/tag/useUpdateTagMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/user/useUpdateUserMutation')['default']
+  const useUploadPersonPictureMutation: typeof import('./mutations/person/useUploadPersonPictureMutation')['default']
   const useUploadUserAvatarMutation: typeof import('./mutations/user/useUploadUserAvatarMutation')['default']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserAuthenticationActivityQuery: typeof import('./queries/user/useUserAuthenticationActivityQuery')['default']
@@ -500,6 +502,7 @@ declare module 'vue' {
     readonly useDeleteContributorRoleMutation: UnwrapRef<typeof import('./mutations/contributor-role/useDeleteContributorRoleMutation')['default']>
     readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/library/useDeleteLibraryMutation')['default']>
     readonly useDeletePersonMutation: UnwrapRef<typeof import('./mutations/person/useDeletePersonMutation')['default']>
+    readonly useDeletePersonPictureMutation: UnwrapRef<typeof import('./mutations/person/useDeletePersonPictureMutation')['default']>
     readonly useDeletePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useDeletePublisherMutation')['default']>
     readonly useDeleteSeriesMutation: UnwrapRef<typeof import('./mutations/series/useDeleteSeriesMutation')['default']>
     readonly useDeleteStoreMutation: UnwrapRef<typeof import('./mutations/store/useDeleteStoreMutation')['default']>
@@ -650,6 +653,7 @@ declare module 'vue' {
     readonly useUpdateStoreMutation: UnwrapRef<typeof import('./mutations/store/useUpdateStoreMutation')['default']>
     readonly useUpdateTagMutation: UnwrapRef<typeof import('./mutations/tag/useUpdateTagMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/user/useUpdateUserMutation')['default']>
+    readonly useUploadPersonPictureMutation: UnwrapRef<typeof import('./mutations/person/useUploadPersonPictureMutation')['default']>
     readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useUploadUserAvatarMutation')['default']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
     readonly useUserAuthenticationActivityQuery: UnwrapRef<typeof import('./queries/user/useUserAuthenticationActivityQuery')['default']>

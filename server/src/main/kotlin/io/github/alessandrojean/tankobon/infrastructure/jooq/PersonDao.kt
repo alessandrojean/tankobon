@@ -6,7 +6,6 @@ import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
-import io.github.alessandrojean.tankobon.jooq.Tables
 import io.github.alessandrojean.tankobon.jooq.tables.records.PersonRecord
 import org.jooq.Condition
 import org.jooq.DSLContext

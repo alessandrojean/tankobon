@@ -127,7 +127,7 @@ class UserController(
       throw CantChangeDemoUserAttributesException()
     }
 
-    userAvatarLifecycle.createAvatar(principal.user.id, avatarFile.bytes)
+    userAvatarLifecycle.createImage(principal.user.id, avatarFile.bytes)
   }
 
   @DeleteMapping("me/avatar")
@@ -146,7 +146,7 @@ class UserController(
     val existing = userRepository.findByIdOrNull(principal.user.id)
       ?: throw IdDoesNotExistException("User not found")
 
-    userAvatarLifecycle.deleteAvatar(existing.id)
+    userAvatarLifecycle.deleteImage(existing.id)
   }
 
   @PatchMapping("me/password")
@@ -389,7 +389,7 @@ class UserController(
     val existing = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
 
-    userAvatarLifecycle.createAvatar(existing.id, avatarFile.bytes)
+    userAvatarLifecycle.createImage(existing.id, avatarFile.bytes)
   }
 
   @DeleteMapping("{userId}/avatar")
@@ -403,7 +403,7 @@ class UserController(
     val existing = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
 
-    userAvatarLifecycle.deleteAvatar(existing.id)
+    userAvatarLifecycle.deleteImage(existing.id)
   }
 
   @PatchMapping("{userId}/password")
@@ -430,7 +430,7 @@ class UserController(
   }
 
   private fun UserEntityDto.withAvatarIfExists(): UserEntityDto {
-    if (!userAvatarLifecycle.hasAvatar(id)) {
+    if (!userAvatarLifecycle.hasImage(id)) {
       return this
     }
 

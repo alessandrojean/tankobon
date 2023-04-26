@@ -120,7 +120,7 @@ class ImporterLifecycle(
     }
 
     if (!import.coverUrl.isNullOrEmpty()) {
-      bookCoverLifecycle.createCover(created!!.id, import.coverUrl)
+      bookCoverLifecycle.downloadCover(created!!.id, import.coverUrl)
     }
 
     // Get from the repository again to also check and get the cover art.

@@ -9,16 +9,18 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.service.PersonLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
+import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @Validated
 @RestController
@@ -52,6 +55,7 @@ class PersonController(
   private val personRepository: PersonRepository,
   private val personLifecycle: PersonLifecycle,
   private val referenceExpansion: ReferenceExpansion,
+  private val personPictureLifecycle: PersonPictureLifecycle,
 ) {
 
   @GetMapping("v1/people")
@@ -75,7 +79,7 @@ class PersonController(
     )
 
     val people = referenceExpansion.expand(
-      entities = peoplePage.content.map { it.toDto() },
+      entities = peoplePage.content.map { it.toDto().withPictureIfExists() },
       relationsToExpand = includes,
     )
 
@@ -88,6 +92,7 @@ class PersonController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PersonEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -97,7 +102,7 @@ class PersonController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val people = personRepository.findAll(
+    val peoplePage = personRepository.findAll(
       search = PersonSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
@@ -106,7 +111,12 @@ class PersonController(
       pageable = page,
     )
 
-    return people.toSuccessCollectionResponseDto { it.toDto() }
+    val people = referenceExpansion.expand(
+      entities = peoplePage.content.map { it.toDto().withPictureIfExists() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(people, peoplePage.toPaginationDto())
   }
 
   @GetMapping("v1/people/{personId}")
@@ -126,7 +136,7 @@ class PersonController(
     }
 
     val expanded = referenceExpansion.expand(
-      entity = person.toDto(),
+      entity = person.toDto().withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -158,6 +168,25 @@ class PersonController(
     return SuccessEntityResponseDto(created.toDto())
   }
 
+  @PostMapping("v1/people/{personId}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Upload a picture to a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun uploadPersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
+    @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
+  ) {
+    val libraryId = personRepository.getLibraryIdOrNull(personId)
+      ?: throw IdDoesNotExistException("Person not found")
+    val library = libraryRepository.findById(libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    personPictureLifecycle.createImage(personId, pictureFile.bytes)
+  }
+
   @DeleteMapping("v1/people/{personId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
@@ -175,6 +204,25 @@ class PersonController(
     }
 
     personLifecycle.deletePerson(existing)
+  }
+
+  @DeleteMapping("v1/people/{personId}/picture")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Delete a person picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun deletePersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String
+  ) {
+    val existing = personRepository.findByIdOrNull(personId)
+      ?: throw IdDoesNotExistException("Person not found")
+
+    val library = libraryRepository.findById(personRepository.getLibraryIdOrNull(existing.id)!!)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    personPictureLifecycle.deleteImage(personId)
   }
 
   @PutMapping("v1/people/{personId}")
@@ -201,5 +249,15 @@ class PersonController(
     )
 
     personLifecycle.updatePerson(toUpdate)
+  }
+
+  private fun PersonEntityDto.withPictureIfExists(): PersonEntityDto {
+    if (!personPictureLifecycle.hasImage(id)) {
+      return this
+    }
+
+    return copy(
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.PERSON_PICTURE))
+    )
   }
 }

@@ -248,7 +248,7 @@ class BookController(
       throw UserDoesNotHaveAccessException()
     }
 
-    bookCoverLifecycle.createCover(bookId, coverFile.bytes)
+    bookCoverLifecycle.createImage(bookId, coverFile.bytes)
   }
 
   @PutMapping("v1/books/{bookId}")
@@ -306,6 +306,6 @@ class BookController(
       throw UserDoesNotHaveAccessException()
     }
 
-    bookCoverLifecycle.deleteCover(bookId)
+    bookCoverLifecycle.deleteImage(bookId)
   }
 }

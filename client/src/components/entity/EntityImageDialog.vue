@@ -1,25 +1,24 @@
 <script lang="ts" setup>
-import type { UserEntity, UserUpdate } from '@/types/tankobon-user'
 import { CheckIcon } from '@heroicons/vue/20/solid'
-import { getFullImageUrl } from '@/modules/api';
-import { maxFileSize } from '@/utils/validation';
-import useVuelidate from '@vuelidate/core';
-import { helpers } from '@vuelidate/validators';
-import { getRelationship } from '@/utils/api';
+import { maxFileSize } from '@/utils/validation'
+import useVuelidate from '@vuelidate/core'
+import { helpers } from '@vuelidate/validators'
 
-export interface UserCreateDialogProps {
+export interface EntityImageDialogProps {
+  currentImageUrl: string | undefined | null,
+  description: string,
   isOpen: boolean,
-  userEntity: UserEntity,
+  title: string,
 }
 
-export interface AvatarResult {
+export interface ImageResult {
   removeExisting: boolean,
   file: File | null,
 }
 
 export type UserCreateDialogEmits = {
   (e: 'close'): void,
-  (e: 'submit', user: AvatarResult): void,
+  (e: 'submit', image: ImageResult): void,
 }
 
 const ACCEPT_FORMATS = [
@@ -31,11 +30,11 @@ const ACCEPT_FORMATS = [
   'image/webp',
 ]
 
-const props = defineProps<UserCreateDialogProps>()
+const props = defineProps<EntityImageDialogProps>()
 const emit = defineEmits<UserCreateDialogEmits>()
 const { t } = useI18n()
 
-const { isOpen, userEntity } = toRefs(props)
+const { isOpen, currentImageUrl } = toRefs(props)
 const formState = reactive({
   file: null as File | null,
 })
@@ -53,20 +52,6 @@ const rules = {
 const v$ = useVuelidate(rules, formState)
 
 whenever(isOpen, () => v$.value.$reset())
-
-const currentAvatarUrl = computed(() => {
-  if (removeExisting.value) {
-    return null
-  }
-
-  const avatar = getRelationship(userEntity.value, 'AVATAR')
-
-  return getFullImageUrl({
-    collection: 'avatars',
-    fileName: avatar?.attributes?.versions['128'],
-    timeHex: avatar?.attributes?.timeHex,
-  })
-})
 
 const uploadingBlobUrl = computed(() => {
   if (!formState.file || v$.value.file.$error) {
@@ -93,7 +78,7 @@ async function handleSubmit() {
 function handleRemove() {
   if (uploadingBlobUrl.value) {
     formState.file = null
-  } else if (currentAvatarUrl.value) {
+  } else if (currentImageUrl.value) {
     removeExisting.value = true
   }
 }
@@ -102,6 +87,8 @@ function handleUpload(files: FileList) {
   formState.file = files[0]
   v$.value.file.$touch()
 }
+
+const previewUrl = computed(() => removeExisting.value ? null : currentImageUrl.value)
 </script>
 
 <template>
@@ -111,8 +98,8 @@ function handleUpload(files: FileList) {
     dialog-class="max-w-md"
     novalidate
     :is-open="isOpen"
-    :title="$t('users.edit-avatar-header')"
-    :description="$t('users.edit-avatar-description')"
+    :title="title"
+    :description="description"
     :full-height="false"
     @close="$emit('close')"
     @submit.prevent="handleSubmit"
@@ -120,11 +107,13 @@ function handleUpload(files: FileList) {
     <template #default>
       <div>
         <div class="flex items-center space-x-3">
-          <Avatar :picture-url="uploadingBlobUrl ?? currentAvatarUrl" />
+          <slot name="preview" :picture-url="uploadingBlobUrl ?? previewUrl">
+            <Avatar :picture-url="uploadingBlobUrl ?? previewUrl" />
+          </slot>
           <Button
             size="small"
             class="h-fit"
-            :disabled="!currentAvatarUrl && !uploadingBlobUrl"
+            :disabled="!currentImageUrl && !uploadingBlobUrl"
             @click="handleRemove"
           >
             {{ $t('common-actions.remove') }}
@@ -132,7 +121,7 @@ function handleUpload(files: FileList) {
         </div>
         <div class="mt-6">
           <FileInput
-            id="avatar"
+            id="image"
             :accept="ACCEPT_FORMATS"
             :invalid="v$.file.$error"
             :errors="v$.file.$errors"

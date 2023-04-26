@@ -43,6 +43,7 @@ declare module '@vue/runtime-core' {
     DialogPanel: typeof import('@headlessui/vue')['DialogPanel']
     DialogTitle: typeof import('@headlessui/vue')['DialogTitle']
     EmptyState: typeof import('./components/EmptyState.vue')['default']
+    EntityImageDialog: typeof import('./components/entity/EntityImageDialog.vue')['default']
     FadeTransition: typeof import('./components/transitions/FadeTransition.vue')['default']
     FileInput: typeof import('./components/form/FileInput.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
