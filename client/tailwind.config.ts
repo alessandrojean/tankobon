@@ -60,6 +60,42 @@ export default {
     formsPlugin,
     aspectRatioPlugin,
     headlessUiPlugin,
+
+    /** Base theme */
+    plugin(function ({ addBase, addUtilities, theme }) {
+      addBase({
+        'html.dark': {
+          colorScheme: 'dark',
+        },
+      })
+
+      addUtilities({
+        '.fancy-scrollbar': {
+          /* Firefox */
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'var(--scrollbar-thumb) var(--scrollbar-track)',
+      
+          /* Chrome, Edge, and Safari */
+          '&::-webkit-scrollbar': {
+            width: '10px',
+          },
+      
+          '&::-webkit-scrollbar-track': {
+            background: 'var(--scrollbar-track)',
+          },
+      
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'var(--scrollbar-thumb)',
+      
+            '&:hover': {
+              backgroundColor: 'var(--scrollbar-thumb-hover)',
+            },
+          }
+        }
+      })
+    }),
+
+    /** Custom variants */
     plugin(function ({ addVariant }) {
       addVariant(
         'supports-backdrop-blur',
@@ -77,6 +113,8 @@ export default {
         '@supports (font-variation-settings: normal)'
       )
     }),
+
+    /** Skeleton loading. */
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         { skeleton: (value) => ({ backgroundColor: value }) },
