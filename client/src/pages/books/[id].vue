@@ -2,8 +2,10 @@
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import { PublisherUpdate } from '@/types/tankobon-publisher'
 import { getRelationship } from '@/utils/api';
+import { isIsbnCode } from '@/types/tankobon-book';
+import { createFlagUrl } from '@/utils/flags';
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
@@ -68,6 +70,25 @@ const showBookInfo = computed(() => {
 //     }
 //   })
 // }
+
+const regionCode = computed(() => {
+  const code = book.value?.attributes?.code
+  return isIsbnCode(code) ? code.region : null
+})
+
+const regionName = computed(() => {
+  if (regionCode.value === null) {
+    return null
+  }
+
+  const formatter = new Intl.DisplayNames(locale.value, { type: 'region' })
+
+  return formatter.of(regionCode.value!)
+})
+
+const flagUrl = computed(() => {
+  return regionCode.value ? createFlagUrl(regionCode.value, 'rectangle') : null
+})
 </script>
 
 <template>
@@ -87,7 +108,18 @@ const showBookInfo = computed(() => {
           class="book-cover"
           :loading="!showBookInfo"
           :book="book"
-        />
+        >
+          <img
+            v-if="flagUrl"
+            :src="flagUrl"
+            :alt="$t('common.flag', [regionName])"
+            :class="[
+              'inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm',
+              'shadow absolute right-1.5 sm:right-3',
+              'bottom-1.5 sm:bottom-3 pointer-events-none',
+            ]"
+          >
+        </BookCover>
 
         <BookTitle
           class="book-title"

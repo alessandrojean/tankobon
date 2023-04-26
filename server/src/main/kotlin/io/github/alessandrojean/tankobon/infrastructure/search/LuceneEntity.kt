@@ -35,7 +35,7 @@ enum class LuceneEntity(val type: String, val id: String, val defaultFields: Arr
 
 fun BookEntityDto.toDocument() = Document().apply {
   add(TextField("title", attributes.title, Field.Store.NO))
-  add(TextField("code", attributes.code, Field.Store.NO))
+  add(TextField("code", attributes.code.code, Field.Store.NO))
   relationships.orEmpty()
     .filter { it.type == RelationshipType.TAG && it.attributes != null }
     .forEach { add(TextField("tag", (it.attributes as TagAttributesDto).name, Field.Store.NO)) }

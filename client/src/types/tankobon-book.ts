@@ -11,7 +11,7 @@ export interface BookAttributes {
   barcode?: string,
   billedAt?: string,
   boughtAt?: string,
-  code: string,
+  code: BookCode,
   createdAt: string,
   dimensions: Dimensions,
   isInLibrary: boolean,
@@ -28,6 +28,23 @@ export interface BookAttributes {
 export interface BookContributor {
   name: string,
   role: string,
+}
+
+export type BookCodeType = 'ISBN_13' | 'ISBN_10' | 'ISSN' | 'EAN_13' | 'UNKNOWN'
+
+export interface BookCode {
+  type: BookCodeType,
+  code: string,
+}
+
+export type BookCodeIsbn = { type: 'ISBN_13' | 'ISBN_10' } & BookCode & {
+  group: number | null,
+  region: string | null,
+  language: string | null,
+}
+
+export function isIsbnCode(code: BookCode | BookCodeIsbn | undefined): code is BookCodeIsbn {
+  return code?.type === 'ISBN_10' || code?.type === 'ISBN_13'
 }
 
 export type BookIncludes = 'contributor' | 'collection' | 'publisher'

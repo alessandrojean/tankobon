@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BookEntity } from '@/types/tankobon-book';
+import { BookEntity, isIsbnCode } from '@/types/tankobon-book';
 import { MonetaryAmount } from '@/types/tankobon-monetary';
 import { getRelationships, getRelationship } from '@/utils/api';
 import {
@@ -26,8 +26,6 @@ defineEmits<{
 
 const { book, loading } = toRefs(props)
 const { t, d, n, locale, numberFormats } = useI18n()
-
-console.log(numberFormats.value)
 
 function formatPrice(price: MonetaryAmount | null | undefined) {
   if (!price) {
@@ -60,37 +58,44 @@ function formatDate(date: string | null | undefined, format = 'short') {
   return t('date.unknown')
 }
 
-// const country = computed(() => book.value?.isbnData)
+const isbnCode = computed(() => {
+  return isIsbnCode(book.value?.attributes?.code) 
+    ? book.value?.attributes?.code
+    : null
+})
 
-// const language = computed(() => {
-//   if (!country.value) {
-//     return null
-//   }
+const language = computed(() => {
+  if (!isbnCode.value || !isbnCode.value.language) {
+    return null
+  }
 
-//   const languageNames = new Intl.DisplayNames([locale.value], {
-//     type: 'language'
-//   })
-//   const localizedName = languageNames.of(country.value.locale)!
+  const languageNames = new Intl.DisplayNames([locale.value], {
+    type: 'language'
+  })
+  const localizedName = languageNames.of(isbnCode.value.language)!
 
-//   return (
-//     localizedName.charAt(0).toLocaleUpperCase(locale.value) +
-//     localizedName.slice(1)
-//   )
-// })
+  return (
+    localizedName.charAt(0).toLocaleUpperCase(locale.value) +
+    localizedName.slice(1)
+  )
+})
 
 const metadata = computed(() => {
+  const attributes = book.value?.attributes
   const sameCurrency =
     book.value?.attributes?.paidPrice?.currency === book.value?.attributes?.labelPrice?.currency
   const publishers = getRelationships(book.value, 'PUBLISHER')
 
   return [
-    // {
-    //   title: t('book.properties.language'),
-    //   value: country.value ? language.value : null
-    // },
     {
-      title: t('common-fields.code'),
-      value: book.value?.attributes.code
+      title: t('common-fields.language'),
+      value: language.value,
+    },
+    {
+      title: (attributes?.code.type ?? 'UNKNOWN') !== 'UNKNOWN'
+        ? attributes!.code.type.replace(/_/g, '-')
+        : t('common-fields.code'),
+      value: attributes?.code.code
     },
     {
       title: t('publishers.publisher', publishers?.length ?? 0),
@@ -108,30 +113,30 @@ const metadata = computed(() => {
     },
     {
       title: t('common-fields.dimensions'),
-      value: book.value?.attributes.dimensions
-        ? n(book.value.attributes.dimensions.widthCm, 'dimension') +
+      value: attributes?.dimensions
+        ? n(attributes!.dimensions.widthCm, 'dimension') +
           ' × ' +
-          n(book.value.attributes.dimensions.heightCm, 'dimension') +
+          n(attributes!.dimensions.heightCm, 'dimension') +
           ' cm'
         : null
     },
     {
       title: t('common-fields.label-price'),
-      value: formatPrice(book.value?.attributes?.labelPrice)
+      value: formatPrice(attributes?.labelPrice)
     },
     {
       title: t('common-fields.paid-price'),
-      value: formatPrice(book.value?.attributes?.paidPrice),
+      value: formatPrice(attributes?.paidPrice),
       badge: sameCurrency
-        ? (book.value?.attributes?.paidPrice?.amount ?? 0) >
-          (book.value?.attributes?.labelPrice?.amount ?? 0)
-          ? (book.value?.attributes?.paidPrice?.amount ?? 1) /
-            (book.value?.attributes?.labelPrice?.amount ?? 1)
+        ? (attributes?.paidPrice?.amount ?? 0) >
+          (attributes?.labelPrice?.amount ?? 0)
+          ? (attributes?.paidPrice?.amount ?? 1) /
+            (attributes?.labelPrice?.amount ?? 1)
           : 1 -
-            (book.value?.attributes?.paidPrice?.amount ?? 1) /
-              (book.value?.attributes?.labelPrice?.amount ?? 1)
+            (attributes?.paidPrice?.amount ?? 1) /
+              (attributes?.labelPrice?.amount ?? 1)
         : null,
-      samePrice: book.value?.attributes?.paidPrice?.amount === book.value?.attributes?.labelPrice?.amount
+      samePrice: attributes?.paidPrice?.amount === attributes?.labelPrice?.amount
     },
     {
       title: t('common-fields.store'),
@@ -141,7 +146,7 @@ const metadata = computed(() => {
     },
     {
       title: t('common-fields.bought-at'),
-      value: book.value?.attributes?.boughtAt,
+      value: attributes?.boughtAt,
       time: true
     },
     // {

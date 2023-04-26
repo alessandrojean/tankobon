@@ -1,6 +1,9 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Book
+import io.github.alessandrojean.tankobon.infrastructure.parser.CodeType
+import io.github.alessandrojean.tankobon.infrastructure.parser.guessCodeType
+import io.github.alessandrojean.tankobon.infrastructure.parser.toIsbnInformation
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.swagger.v3.oas.annotations.media.Schema
@@ -22,7 +25,7 @@ data class BookEntityDto(
 }
 
 data class BookAttributesDto(
-  val code: String,
+  val code: CodeDto,
   val barcode: String?,
   val title: String,
   val paidPrice: MonetaryAmount,
@@ -40,8 +43,41 @@ data class BookAttributesDto(
   val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
 
+interface CodeDto {
+  val type: CodeType
+  val code: String
+}
+
+data class SimpleCodeDto(
+  override val type: CodeType,
+  override val code: String,
+) : CodeDto
+
+data class IsbnCodeDto(
+  override val type: CodeType,
+  override val code: String,
+  val group: Int?,
+  val region: String?,
+  val language: String?,
+) : CodeDto
+
+fun String.toCodeDto(): CodeDto = when (val type = guessCodeType()) {
+  CodeType.ISBN_13, CodeType.ISBN_10 -> {
+    val isbnInformation = toIsbnInformation()
+
+    IsbnCodeDto(
+      type = type,
+      code = this,
+      group = isbnInformation?.group,
+      region = isbnInformation?.region,
+      language = isbnInformation?.language
+    )
+  }
+  else -> SimpleCodeDto(type = type, code = this)
+}
+
 fun Book.toAttributesDto() = BookAttributesDto(
-  code = code,
+  code = code.toCodeDto(),
   barcode = barcode,
   title = title,
   paidPrice = paidPrice,
