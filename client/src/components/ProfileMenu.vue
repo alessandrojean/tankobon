@@ -21,6 +21,7 @@ const { light, transparent } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
 const userStore = useUserStore()
 const avatar = computed(() => userStore.avatar)
+const me = computed(() => userStore.me)
 
 const avatarUrl = computed(() => {
   return getFullImageUrl({
@@ -42,7 +43,7 @@ async function signOut() {
         class="max-w-xs flex items-center text-sm focus:outline-none group"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
-        <Avatar :picture-url="avatarUrl" size="mini" />
+        <Avatar :picture-url="avatarUrl" size="mini" kind="gray" />
         <span aria-hidden="true">
           <ChevronDownIcon
             :class="[
@@ -65,8 +66,20 @@ async function signOut() {
     <ScaleTransition>
       <MenuItems
         as="ul"
-        class="absolute right-6 md:right-0 z-40 min-w-[9rem] mt-2 p-1.5 space-y-1 origin-top-right bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="absolute right-6 md:right-0 z-40 min-w-[15rem] mt-2 p-1.5 space-y-1 origin-top-right bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
+        <div
+          :class="[
+            'px-1 pt-2 pb-2 flex gap-3 text-sm select-none'
+          ]"
+        >
+          <Avatar class="shrink-0" :picture-url="avatarUrl" size="small" kind="gray" />
+          <div class="min-w-0 grow">
+            <p class="font-medium truncate">{{ me!.attributes.name }}</p>
+            <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ me!.attributes.email }}</p>
+          </div>
+        </div>
+        <hr class="pb-1 dark:border-gray-700" />
         <MenuItem v-slot="{ active }">
           <RouterLink
             :to="{ name: 'welcome' }"

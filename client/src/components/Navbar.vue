@@ -101,7 +101,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
           </Button>
         </FadeTransition>
 
-        <div class="ml-auto inline-flex">
+        <div class="ml-auto inline-flex items-center">
           <SearchButton
             class="hidden lg:block mr-3"
             :transparent="transparent && !isScrolling"
