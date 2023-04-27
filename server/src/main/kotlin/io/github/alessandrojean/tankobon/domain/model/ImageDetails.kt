@@ -12,5 +12,6 @@ data class ImageDetails(
   val format: String,
   val mimeType: String,
   val timeHex: String,
+  val blurHash: String,
 ) : Serializable
 

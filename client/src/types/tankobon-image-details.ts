@@ -7,4 +7,5 @@ export interface ImageDetailsAttributes {
   format: string,
   mimeType: string,
   timeHex: string,
+  blurHash: string,
 }

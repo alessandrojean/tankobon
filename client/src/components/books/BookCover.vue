@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { getFullImageUrl } from '@/modules/api';
+import { decode as decodeBlurHash } from 'blurhash'
+import { getFullImageUrl } from '@/modules/api'
 import { BookEntity } from '@/types/tankobon-book'
-import { getRelationship } from '@/utils/api';
+import { getRelationship } from '@/utils/api'
 
 import {
   ExclamationCircleIcon,
@@ -36,7 +37,7 @@ const coverUrl = computed(() => {
   }) ?? ''
 })
 
-const { imageHasError, imageLoading, imageAspectRatio, loadImage } =
+const { imageHasError, imageLoading, loadImage } =
   useImageLoader(coverUrl)
 
 const showBookCover = computed(() => {
@@ -70,6 +71,32 @@ function closeDialog() {
 }
 
 const { t } = useI18n({ useScope: 'global' })
+
+const figure = ref<HTMLElement>()
+const canvas = ref<HTMLCanvasElement>()
+
+const imageAspectRatio = computed(() => {
+  return coverArt.value ? coverArt.value.attributes!.aspectRatio : '2 / 3'
+})
+
+whenever(coverArt, async (coverArt) => {
+  if (!canvas.value || !figure.value) {
+    return
+  }
+
+  const { width, height, blurHash } = coverArt.attributes!
+
+  const figureWidth = figure.value.clientWidth
+  const figureHeight = Math.floor((figureWidth * height) / width)
+
+  console.log(figureWidth, figureHeight)
+
+  const pixels = decodeBlurHash(blurHash, figureHeight, figureHeight)
+  const context = canvas.value.getContext('2d')!
+  const imageData = context.createImageData(figureHeight, figureHeight)
+  imageData.data.set(pixels)
+  context.putImageData(imageData, 0, 0)
+})
 </script>
 
 <template>
@@ -79,6 +106,7 @@ const { t } = useI18n({ useScope: 'global' })
       'bg-gray-200 dark:bg-gray-800 relative shadow-md'
     ]"
     :style="{ '--aspect': imageAspectRatio }"
+    ref="figure"
   >
     <FadeTransition>
       <img
@@ -91,12 +119,12 @@ const { t } = useI18n({ useScope: 'global' })
         "
         class="w-full h-full"
       />
-      <div v-else class="w-full h-full flex items-center justify-center">
+      <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
         <PhotoIcon
-          v-if="imageLoading || loading || coverUrl.length === 0"
+          v-if="loading || coverUrl.length === 0"
           :class="[
             'w-10 h-10 text-gray-500 dark:text-gray-600',
-            imageLoading || loading ? 'motion-safe:animate-pulse' : ''
+            loading ? 'motion-safe:animate-pulse' : ''
           ]"
         />
         <ExclamationCircleIcon
@@ -105,6 +133,15 @@ const { t } = useI18n({ useScope: 'global' })
         />
       </div>
     </FadeTransition>
+
+    <canvas
+      :class="[
+        'w-full h-full motion-safe:transition-opacity motion-safe:duration-500',
+        'motion-safe:animate-pulse',
+        { 'opacity-0': showBookCover || loading || coverUrl.length === 0 }
+      ]"
+      ref="canvas"
+    />
 
     <button
       v-if="showBookCover"

@@ -11,6 +11,7 @@ data class ImageDetailsAttributesDto(
   val format: String,
   val mimeType: String,
   val timeHex: String,
+  val blurHash: String,
 ) : EntityAttributesDto()
 
 fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
@@ -22,4 +23,5 @@ fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
   format = format,
   mimeType = mimeType,
   timeHex = timeHex,
+  blurHash = blurHash,
 )

@@ -50,6 +50,7 @@ dependencies {
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.4")
   implementation("net.coobird:thumbnailator:0.4.19")
   implementation("org.apache.tika:tika-core:2.7.0")
+  implementation("io.trbl:blurhash:1.0.0")
 
   runtimeOnly("com.twelvemonkeys.imageio:imageio-webp:3.9.4")
 

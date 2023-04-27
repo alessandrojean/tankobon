@@ -6,6 +6,7 @@ import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.ImageDetails
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_EVENTS
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_FACTORY
+import io.trbl.blurhash.BlurHash
 import mu.KotlinLogging
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.jms.annotation.JmsListener
@@ -137,6 +138,7 @@ abstract class EntityImageLifecycle(
       format = imageFilePath.extension,
       mimeType = URLConnection.guessContentTypeFromName(imageFilePath.fileNameString()),
       timeHex = attributes.lastModifiedTime().toMillis().toString(16),
+      blurHash = BlurHash.encode(image)
     )
   }
 
