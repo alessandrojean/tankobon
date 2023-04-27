@@ -92,7 +92,7 @@ const columns = [
               fileName: avatar?.attributes?.versions?.['64'],
               timeHex: avatar?.attributes?.timeHex,
             }),
-            small: true
+            size: 'mini'
           }),
           h('span', { innerText: name })
         ])

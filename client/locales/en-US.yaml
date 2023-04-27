@@ -97,7 +97,7 @@ entities:
   people: People
   collections: Collections
   stores: Stores
-  contributor-roles: Contributor Roles
+  contributor-roles: Roles
   series: Series
   tags: Tags
   books: Books

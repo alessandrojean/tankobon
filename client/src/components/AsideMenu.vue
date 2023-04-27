@@ -16,6 +16,7 @@ import {
   Square2StackIcon,
   TagIcon,
   UserIcon,
+UsersIcon,
 } from '@heroicons/vue/24/outline'
 
 export interface Item {
@@ -140,7 +141,7 @@ const items = computed<Item[]>(() => [
   {
     key: 'users',
     label: t('entities.users'),
-    icon: UserIcon,
+    icon: UsersIcon,
     to: { name: 'users' },
     isAdminOnly: true,
     active: computed(() => {
