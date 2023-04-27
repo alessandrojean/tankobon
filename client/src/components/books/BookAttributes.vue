@@ -6,6 +6,7 @@ import {
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon
 } from '@heroicons/vue/20/solid'
+import { RouteLocationRaw } from 'vue-router';
 
 export interface BookAttributesProps {
   book?: BookEntity | null
@@ -85,6 +86,7 @@ const metadata = computed(() => {
   const sameCurrency =
     book.value?.attributes?.paidPrice?.currency === book.value?.attributes?.labelPrice?.currency
   const publishers = getRelationships(book.value, 'PUBLISHER')
+  const collection = getRelationship(book.value, 'COLLECTION')
 
   return [
     {
@@ -99,17 +101,24 @@ const metadata = computed(() => {
     },
     {
       title: t('publishers.publisher', publishers?.length ?? 0),
-      key: 'publisher',
-      value: listFormatter.value.format(
-        publishers?.map((p) => p.attributes!.name) ?? []
-      ),
-      searchable: true
+      key: 'publishers',
+      values: publishers?.map((p) => ({
+        key: p.id,
+        value: p.attributes!.name,
+        link: {
+          name: 'publishers-id',
+          params: { id: p.id },
+        }
+      })),
     },
     {
       title: t('common-fields.collection'),
       key: 'collection',
-      value: getRelationship(book.value, 'COLLECTION')?.attributes?.name,
-      searchable: true
+      value: collection?.attributes?.name,
+      link: {
+        name: 'collections-id',
+        params: { id: collection?.id }
+      }
     },
     {
       title: t('common-fields.dimensions'),
@@ -160,12 +169,12 @@ const metadata = computed(() => {
 
 <template>
   <Block as="dl">
-    <div class="space-y-4">
+    <div class="space-y-5">
       <template v-for="(mt, i) in metadata" :key="i">
-        <div v-if="mt.value || loading">
+        <div v-if="mt.value || mt.values || loading">
           <dt
             v-if="!loading"
-            class="text-sm font-medium text-gray-500 dark:text-gray-400"
+            class="text-sm font-medium text-gray-950 dark:text-gray-100"
           >
             {{ mt.title }}
           </dt>
@@ -173,37 +182,54 @@ const metadata = computed(() => {
 
           <dd
             v-if="!loading"
-            class="mt-1 text-sm text-gray-900 dark:text-gray-200 inline-flex items-center"
+            class="mt-1 text-sm text-gray-700 dark:text-gray-300/90 inline-flex items-center"
           >
             <time v-if="mt.time" :datetime="mt.value">
               {{ formatDate(mt.value!) }}
             </time>
-            <a
-              v-else-if="mt.searchable"
-              href="#"
-              class="search-link has-ring-focus"
-              :title="t('common-actions.search-by', [mt.value])"
-              @click.prevent="$emit(`click:${mt.key}`, mt.value!)"
+            <RouterLink
+              v-else-if="mt.link"
+              :to="mt.link"
+              :title="$t('common-actions.go-to-page', [mt.value])"
+              :class="[
+                'hover:underline hover:text-primary-600 dark:hover:text-primary-500',
+                'motion-safe:transition'
+              ]"
             >
               {{ mt.value }}
-            </a>
+            </RouterLink>
+            <ul
+              v-else-if="mt.values"
+              class="space-y-1"
+            >
+              <li
+                v-for="value in mt.values"
+                :key="value.key"
+              >
+                <RouterLink
+                  :to="value.link"
+                  :title="$t('common-actions.go-to-page', [value.value])"
+                  :class="[
+                    'hover:underline hover:text-primary-600 dark:hover:text-primary-500',
+                    'motion-safe:transition'
+                  ]"
+                >
+                  {{ value.value }}
+                </RouterLink>
+              </li>
+            </ul>
             <span v-else>{{ mt.value }}</span>
 
-            <div
+            <Badge
               v-if="mt.badge && !mt.samePrice"
-              :class="[
-                mt.badge <= 1
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : 'bg-red-100 text-red-800',
-                'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
-              ]"
+              :color="mt.badge <= 1 ? 'green' : 'red'"
             >
               <span aria-hidden="true">
                 <ArrowTrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
                 <ArrowTrendingUpIcon v-else class="w-4 h-4" />
               </span>
               <span>{{ n(mt.badge, 'percent') }}</span>
-            </div>
+            </Badge>
           </dd>
           <div v-else aria-hidden="true" class="mt-1 skeleton w-32 h-6" />
         </div>

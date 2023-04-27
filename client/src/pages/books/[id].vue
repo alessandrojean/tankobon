@@ -34,6 +34,19 @@ const { data: book, isLoading } = useBookQuery({
   }
 })
 
+const { data: contributors, isLoading: isLoadingContributors } = useBookContributorsQuery({
+  bookId: bookId as Ref<string>,
+  includes: ['person_picture'],
+  select: (response) => response.data,
+  enabled: computed(() => !!bookId.value), //&& !isDeleting.value && !isDeleted.value),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('book-contributors.fetch-failure'),
+      body: error.message,
+    })
+  }
+})
+
 const library = computed(() => getRelationship(book.value, 'LIBRARY'))
 
 const showBookInfo = computed(() => {
@@ -135,7 +148,12 @@ const flagUrl = computed(() => {
         />
 
         <div class="book-synopsis">
-          {{ JSON.stringify(book, null, 2) }}
+          <BookContributors
+            :loading="isLoadingContributors"
+            :contributors="contributors"
+          />
+          
+          <div>{{ JSON.stringify(book, null, 2) }}</div>
         </div>
 
         <div class="book-attributes">

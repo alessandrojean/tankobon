@@ -27,7 +27,7 @@ const { as } = toRefs(props)
         {{ title }}
       </h2>
     </slot>
-    <div :class="{ 'mt-4': title }">
+    <div :class="{ 'mt-4 md:mt-6': title }">
       <slot />
     </div>
   </component>

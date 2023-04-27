@@ -2,7 +2,10 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.BookContributor
 import io.github.alessandrojean.tankobon.domain.persistence.BookContributorRepository
+import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorEntityDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookContributorRecord
@@ -16,6 +19,7 @@ import io.github.alessandrojean.tankobon.jooq.Tables.PERSON as TablePerson
 @Component
 class BookContributorDao(
   private val dsl: DSLContext,
+  private val personPictureLifecycle: PersonPictureLifecycle,
 ) : BookContributorRepository {
 
   override fun findByIdOrNull(bookContributorId: String): BookContributor? =
@@ -42,7 +46,7 @@ class BookContributorDao(
             personId = record[TablePerson.ID],
             personName = record[TablePerson.NAME]
           )
-        )
+        ).withPictureIfExists()
       }
 
   override fun findAllByIds(bookContributorIds: Collection<String>): Collection<BookContributor> =
@@ -69,7 +73,7 @@ class BookContributorDao(
             personId = record[TablePerson.ID],
             personName = record[TablePerson.NAME]
           )
-        )
+        ).withPictureIfExists()
       }
 
   override fun findAllByBookId(bookId: String): Collection<BookContributor> =
@@ -96,7 +100,7 @@ class BookContributorDao(
             personId = record[TablePerson.ID],
             personName = record[TablePerson.NAME]
           )
-        )
+        ).withPictureIfExists()
       }
 
   @Transactional
@@ -150,5 +154,17 @@ class BookContributorDao(
     personId = personId,
     roleId = roleId,
   )
+
+  private fun BookContributorEntityDto.withPictureIfExists(): BookContributorEntityDto {
+    val personId = attributes.person.id
+
+    if (!personPictureLifecycle.hasImage(personId)) {
+      return this
+    }
+
+    return copy(
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = RelationshipType.PERSON_PICTURE))
+    )
+  }
 
 }

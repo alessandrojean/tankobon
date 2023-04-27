@@ -42,7 +42,7 @@ async function signOut() {
         class="max-w-xs flex items-center text-sm focus:outline-none group"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
-        <Avatar :picture-url="avatarUrl" small />
+        <Avatar :picture-url="avatarUrl" size="mini" />
         <span aria-hidden="true">
           <ChevronDownIcon
             :class="[

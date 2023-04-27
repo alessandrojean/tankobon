@@ -121,6 +121,7 @@
     "useBase64": true,
     "useBattery": true,
     "useBluetooth": true,
+    "useBookContributorsQuery": true,
     "useBookQuery": true,
     "useBreakpoints": true,
     "useBroadcastChannel": true,

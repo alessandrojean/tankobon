@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { UserIcon } from '@heroicons/vue/20/solid'
-
 export interface AvatarProps {
-  alt?: string
-  dark?: boolean
-  pictureUrl: string | null | undefined
-  small?: boolean
+  alt?: string,
+  dark?: boolean,
+  kind?: 'primary' | 'gray',
+  pictureUrl: string | null | undefined,
+  size?: 'mini' | 'small' | 'normal',
 }
 
 const props = withDefaults(defineProps<AvatarProps>(), {
   alt: undefined,
   dark: false,
-  small: false
+  kind: 'primary',
+  size: 'normal',
 })
 
 const { alt, pictureUrl } = toRefs(props)
@@ -31,9 +31,12 @@ const isEmpty = computed(() => {
     :class="[
       'avatar', 
       {
-        'is-small': small,
+        'is-mini': size === 'mini',
+        'is-small': size === 'small',
         'is-dark': dark,
         'is-empty': isEmpty,
+        'is-gray': kind === 'gray',
+        'is-primary': kind === 'primary',
       }
     ]"
   >
@@ -41,12 +44,15 @@ const isEmpty = computed(() => {
       v-if="isEmpty"
       :class="[
         'w-full h-full overflow-hidden rounded-full',
-        'bg-primary-500 dark:bg-primary-700',
         'motion-safe:transition-colors',
         { 'motion-safe:animate-pulse': imageLoading },  
       ]"
     >
-      <svg class="h-full w-full text-primary-200 dark:text-primary-300 motion-safe:transition-colors" fill="currentColor" viewBox="0 0 24 24">
+      <svg
+        class="h-full w-full motion-safe:transition-colors"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
     </div>
@@ -61,40 +67,42 @@ const isEmpty = computed(() => {
     motion-safe:transition-colors;
 }
 
-.avatar.is-empty {
+.avatar.is-empty.is-primary {
   @apply border-2 border-primary-500 bg-primary-500;
+
+  svg {
+    @apply text-primary-200 dark:text-primary-300;
+  }
+}
+
+.avatar.is-empty.is-gray {
+  @apply border-2 border-gray-500 bg-gray-500;
+
+  svg {
+    @apply text-gray-400 dark:text-gray-400;
+  }
 }
 
 .avatar:not(.is-dark) {
   @apply dark:border-gray-700 dark:bg-gray-700;
 }
 
-.avatar.is-empty:not(.is-dark) {
+.avatar.is-empty:not(.is-dark).is-primary {
   @apply border-primary-500 bg-primary-500
     dark:border-primary-700 dark:bg-primary-700;
 }
 
-.avatar.is-small {
+.avatar.is-empty:not(.is-dark).is-gray {
+  @apply border-gray-200 bg-gray-200
+    dark:border-gray-700 dark:bg-gray-700;
+}
+
+.avatar.is-mini {
   @apply w-8 h-8;
 }
 
-.empty-avatar {
-  @apply w-full h-full rounded-full overflow-hidden
-    flex items-start justify-center
-    bg-primary-600 text-primary-100
-    motion-safe:transition-colors;
-}
-
-.avatar:not(.is-dark) .empty-avatar {
-  @apply dark:bg-primary-700 dark:text-primary-200;
-}
-
-.user-icon {
-  @apply w-16 h-16 block pb-3;
-}
-
-.avatar.is-small .user-icon {
-  @apply w-9 h-9 pb-0;
+.avatar.is-small {
+  @apply w-10 h-10;
 }
 
 .avatar-img {

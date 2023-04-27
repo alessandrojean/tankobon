@@ -1,6 +1,6 @@
 import { BookEntity, BookIncludes } from '@/types/tankobon-book'
 import { CollectionAttributes } from '@/types/tankobon-collection'
-import { ContributorAttributes } from '@/types/tankobon-contributor'
+import { ContributorAttributes, ContributorEntity, ContributorIncludes } from '@/types/tankobon-contributor'
 import { Entity, Relationship } from '@/types/tankobon-entity'
 import { ExternalBookEntity, ExternalBookIncludes } from '@/types/tankobon-external-book'
 import { ImageDetailsAttributes } from '@/types/tankobon-image-details'
@@ -26,6 +26,7 @@ type AttributeType<E extends object, T extends EntityAttributes<E>> =
   T extends 'PUBLISHER' ? PublisherAttributes :
   T extends 'COLLECTION' ? CollectionAttributes :
   T extends 'STORE' ? StoreAttributes :
+  T extends 'CONTRIBUTOR' ? ContributorAttributes :
   unknown
 
 type EntityAttributes<T> =
@@ -34,6 +35,7 @@ type EntityAttributes<T> =
   T extends ExternalBookEntity ? Uppercase<ExternalBookIncludes> :
   T extends BookEntity ? Uppercase<BookIncludes> :
   T extends PersonEntity ? Uppercase<PersonIncludes> :
+  T extends ContributorEntity ? Uppercase<ContributorIncludes> :
   unknown
 
 export function getRelationship<A extends object, E extends Entity<A>, T extends EntityAttributes<E>>(

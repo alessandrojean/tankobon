@@ -114,7 +114,7 @@ class ReferenceExpansion(
 
     val relationsAttributes = entities
       .flatMap { it.relationships.orEmpty() }
-      .distinctBy { it.id }
+      .distinctBy { "${it.type}-${it.id}" }
       .filter { it.type in relationsToExpand }
       .groupBy({ it.type }, { it.id })
       .mapValues { (type, ids) -> expansionMap[type]!!.invoke(ids) }

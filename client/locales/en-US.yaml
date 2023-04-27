@@ -100,6 +100,7 @@ entities:
   series: Series
   tags: Tags
   books: Books
+  book-contributors: Contributors
 
 errors:
   general-error-title: An error occurred
@@ -399,6 +400,9 @@ books:
   cover: Cover of {title}
   mark-as-read: Mark as read
   mark-as-unread: Mark as unread
+
+book-contributors:
+  fetch-failure: There was an error while fetching the book contributors
 
 picture-upload:
   header: Picture management

@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     BookAttributes: typeof import('./components/books/BookAttributes.vue')['default']
     BookBanner: typeof import('./components/books/BookBanner.vue')['default']
     BookButtons: typeof import('./components/books/BookButtons.vue')['default']
+    BookContributors: typeof import('./components/books/BookContributors.vue')['default']
     BookCover: typeof import('./components/books/BookCover.vue')['default']
     BookCoverDialog: typeof import('./components/books/BookCoverDialog.vue')['default']
     BooksTable: typeof import('./components/books/BooksTable.vue')['default']
