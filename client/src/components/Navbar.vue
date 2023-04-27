@@ -2,7 +2,7 @@
 import { ShowAsideDialogKey } from '@/symbols'
 import { injectStrict } from '@/utils/injetion'
 import { Bars3Icon } from '@heroicons/vue/20/solid'
-import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
+import { BuildingLibraryIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 
 export interface NavbarProps {
   transparent?: boolean
@@ -83,11 +83,47 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
           icon-only
         />
 
+        <FadeTransition>
+          <Button
+            v-if="userHasAtLeastTwoLibraries"
+            class="h-8 -ml-2 hidden lg:flex"
+            :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
+            size="mini"
+            rounded
+            :title="$t('libraries.select')"
+            @click="showLibrarySelector"
+          >
+            <BuildingLibraryIcon class="w-5 h-5" />
+            <div>
+              <span class="sr-only">{{ $t('libraries.selected') }}</span>
+              {{ library?.attributes?.name }}
+            </div>
+          </Button>
+        </FadeTransition>
+
         <div class="ml-auto inline-flex">
+          <SearchButton
+            class="hidden lg:block mr-3"
+            :transparent="transparent && !isScrolling"
+          />
+
+          <Button
+            class="h-8 w-8 mr-2 lg:hidden"
+            :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
+            size="mini"
+            rounded
+            :title="$t('common-actions.search-collection')"
+          >
+            <div class="sr-only">
+              {{ $t('common-actions.search-collection') }}
+            </div>
+            <MagnifyingGlassIcon class="w-6 h-6" />
+          </Button>
+
           <FadeTransition>
             <Button
               v-if="userHasAtLeastTwoLibraries"
-              class="h-8 w-8 mr-2 sm:hidden"
+              class="h-8 w-8 mr-2 lg:hidden"
               :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
               size="mini"
               rounded
@@ -101,23 +137,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
               <BuildingLibraryIcon class="w-6 h-6" />
             </Button>
           </FadeTransition>
-          <FadeTransition>
-            <Button
-              v-if="userHasAtLeastTwoLibraries"
-              class="h-8 mr-2 hidden sm:flex"
-              :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
-              size="mini"
-              rounded
-              :title="$t('libraries.select')"
-              @click="showLibrarySelector"
-            >
-              <BuildingLibraryIcon class="w-5 h-5" />
-              <div>
-                <span class="sr-only">{{ $t('libraries.selected') }}</span>
-                {{ library?.attributes?.name }}
-              </div>
-            </Button>
-          </FadeTransition>
+          
           <ThemeToggle :transparent="transparent && !isScrolling" />
           <ProfileMenu :transparent="transparent && !isScrolling" />
         </div>

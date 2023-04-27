@@ -43,7 +43,7 @@ const { active, item, href } = toRefs(props)
           'w-6 h-6 motion-safe:transition-colors',
           active
             ? 'text-primary-600 dark:text-primary-500'
-            : 'text-gray-500 dark:text-gray-600 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
+            : 'text-gray-500 dark:text-gray-400 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
         ]"
       />
     </div>

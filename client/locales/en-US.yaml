@@ -51,6 +51,7 @@ common-actions:
   select: Select
   zoom: Zoom
   edit-picture: Edit picture
+  search-collection: Search the collection…
 
 common-values:
   true-value: 'True'

@@ -92,6 +92,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScaleTransition: typeof import('./components/transitions/ScaleTransition.vue')['default']
+    SearchButton: typeof import('./components/SearchButton.vue')['default']
     Select: typeof import('./components/form/Select.vue')['default']
     SeriesCreateDialog: typeof import('./components/series/SeriesCreateDialog.vue')['default']
     SeriesEditDialog: typeof import('./components/series/SeriesEditDialog.vue')['default']

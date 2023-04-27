@@ -65,7 +65,7 @@ function handleSubmit() {
         <RadioGroupLabel class="sr-only">
           {{ $t('entities.libraries') }}
         </RadioGroupLabel>
-        <div class="divide-y select-none">
+        <div class="divide-y dark:divide-gray-700 select-none">
           <RadioGroupOption
             v-for="libraryOption in libraries"
             :key="libraryOption.id"
@@ -79,15 +79,15 @@ function handleSubmit() {
                   {{ libraryOption.attributes.name }}
                 </div>
                 <div class="flex items-center mt-0.5">
-                  <UserIcon class="w-4 h-4 text-gray-400 -ml-1" />
-                  <span class="ml-1.5 text-sm text-gray-700">
+                  <UserIcon class="w-4 h-4 text-gray-400 dark:text-gray-500 -ml-1" />
+                  <span class="ml-1.5 text-sm text-gray-700 dark:text-gray-300">
                     {{ getRelationship(libraryOption, 'OWNER')!.attributes!.name }}
                   </span>
                 </div>
               </div>
               <CheckIcon
                 v-if="checked"
-                class="w-6 h-6 text-primary-600 shrink-0"
+                class="w-6 h-6 text-primary-600 dark:text-primary-500 shrink-0"
               />
             </div>
           </RadioGroupOption>
