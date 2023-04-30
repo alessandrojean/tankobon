@@ -6,7 +6,7 @@ import type { RouterLinkProps } from 'vue-router'
 const button = cva(
   [
     'font-medium motion-safe:transition-all',
-    'border flex items-center justify-center relative',
+    'border border-inset flex items-center justify-center relative',
   ],
   {
     variants: {
@@ -51,7 +51,7 @@ const button = cva(
       size: {
         mini: 'text-sm px-3',
         small: 'text-sm px-3 py-2',
-        normal: 'px-3 py-2',
+        normal: 'px-4 py-2',
         large: 'text-lg px-5 py-2',
       },
       loading: {

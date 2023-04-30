@@ -3,10 +3,10 @@ import { BookEntity } from '@/types/tankobon-book'
 import {
   BookmarkIcon as BookmarkSolidIcon,
   PencilIcon,
+  TrashIcon,
 } from '@heroicons/vue/24/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
-  TrashIcon
 } from '@heroicons/vue/24/outline'
 import { breakpointsTailwind } from '@vueuse/core'
 
@@ -38,32 +38,24 @@ const { editing, loading } = toRefs(props)
 const disabled = computed(() => loading.value || editing.value)
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
-const editIconOnly = breakpoints.smaller('md')
 const iconOnly = breakpoints.smaller('2xl')
 </script>
 
 <template>
   <div
-    class="flex w-full justify-center sm:justify-start items-center"
+    class="flex w-full justify-center sm:justify-start items-center gap-2"
     v-if="canEdit"
   >
     <Button
       v-if="!loading"
-      size="large"
-      :class="{ 'w-12 h-12': editIconOnly }"
+      class="aspect-1"
+      size="small"
       @click="$emit('click:edit', $event)"
       :disabled="disabled"
-      :kind="editIconOnly ? 'normal' : 'primary'"
       :title="$t('common-actions.edit')"
     >
-      <template #default v-if="!editIconOnly">
-        <PencilIcon class="w-6 h-6" />
-        <span>{{ $t('common-actions.edit') }}</span>
-      </template>
-      <template #default v-else>
-        <span class="sr-only">{{ $t('common-actions.edit') }}</span>
-        <PencilIcon class="w-6 h-6" />
-      </template>
+      <span class="sr-only">{{ $t('common-actions.edit') }}</span>
+      <PencilIcon class="w-5 h-5" />
     </Button>
 
     <!-- <Button
@@ -96,20 +88,14 @@ const iconOnly = breakpoints.smaller('2xl')
 
     <Button
       v-if="!loading"
-      :class="['ml-2', { 'w-12 h-12': iconOnly }]"
-      size="large"
+      class="aspect-1"
+      size="small"
       :disabled="disabled"
       :title="$t('common-actions.delete')"
       @click="$emit('click:delete', $event)"
     >
-      <template #default v-if="!iconOnly">
-        <TrashIcon class="w-6 h-6" />
-        <span>{{ $t('common-actions.delete') }}</span>
-      </template>
-      <template #default v-else>
-        <span class="sr-only">{{ $t('common-actions.delete') }}</span>
-        <TrashIcon class="w-6 h-6" />
-      </template>
+      <span class="sr-only">{{ $t('common-actions.delete') }}</span>
+      <TrashIcon class="w-5 h-5" />
     </Button>
   </div>
 </template>
