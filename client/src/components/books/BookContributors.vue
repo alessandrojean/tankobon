@@ -47,6 +47,7 @@ const pictures = computed(() => {
         <Avatar
           size="small"
           kind="gray"
+          empty-style="letter"
           class="relative z-10"
           :picture-url="
             getFullImageUrl({
@@ -56,6 +57,8 @@ const pictures = computed(() => {
             })
           "
           :alt="contributor.attributes!.person.name"
+          :letter="contributor.attributes!.person.name.charAt(0)"
+          :letter-id="contributor.id"
         />
         <div class="text-sm">
           <RouterLink

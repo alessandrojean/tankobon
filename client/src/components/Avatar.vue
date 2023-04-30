@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 export interface AvatarProps {
   alt?: string,
+  emptyStyle?: 'icon' | 'letter',
   dark?: boolean,
   kind?: 'primary' | 'gray',
+  letter?: string,
+  letterId?: string,
   pictureUrl: string | null | undefined,
   size?: 'mini' | 'small' | 'normal',
 }
@@ -10,11 +13,14 @@ export interface AvatarProps {
 const props = withDefaults(defineProps<AvatarProps>(), {
   alt: undefined,
   dark: false,
+  emptyStyle: 'icon',
   kind: 'primary',
+  letter: undefined,
+  letterId: '',
   size: 'normal',
 })
 
-const { alt, pictureUrl } = toRefs(props)
+const { alt, pictureUrl, letterId } = toRefs(props)
 
 const { imageLoading, imageHasError, loadImage, unloadImage } = useImageLoader(pictureUrl)
 
@@ -23,6 +29,33 @@ onUnmounted(() => unloadImage())
 
 const isEmpty = computed(() => {
   return !pictureUrl.value || imageHasError.value || imageLoading.value
+})
+
+const letterBackgroundColor = computed(() => {
+  let hash = 0
+  
+  for (let i = 0; i < letterId.value.length; i++) {
+    hash = letterId.value.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  
+  let color = '#'
+  
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF
+    color += ('00' + value.toString(16)).slice(-2)
+  }
+  
+  return color
+})
+
+const colorIsLight = computed(() => {
+  const hex = letterBackgroundColor.value.replace('#', '')
+  const red = parseInt(hex.substring(0, 0 + 2), 16)
+  const green = parseInt(hex.substring(2, 2 + 2), 16)
+  const blue = parseInt(hex.substring(4, 4 + 2), 16)
+  const brightness = ((red * 299) + (green * 587) + (blue * 114)) / 1000
+
+  return brightness > 180
 })
 </script>
 
@@ -52,9 +85,29 @@ const isEmpty = computed(() => {
         class="h-full w-full motion-safe:transition-colors"
         fill="currentColor"
         viewBox="0 0 24 24"
+        v-if="emptyStyle === 'icon'"
       >
         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
+      <div
+        v-else
+        :class="[
+          'w-full h-full flex items-center justify-center',
+          'font-semibold bg-[--letter-bg-color] dark:opacity-80'
+        ]"
+        :style="{
+          '--letter-bg-color': letterBackgroundColor,
+        }"
+      >
+        <span
+          :class="{
+            'text-white/80 dark:text-white': !colorIsLight,
+            'text-black/70 dark:text-black': colorIsLight,
+          }"
+        >
+          {{ letter }}
+        </span>
+      </div>
     </div>
     <img v-else class="avatar-img" :alt="alt" :src="pictureUrl ?? undefined" />
   </div>
