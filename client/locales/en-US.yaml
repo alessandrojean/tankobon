@@ -26,6 +26,7 @@ common-fields:
   store: Store
   bought-at: Bought at
   language: Language
+  synopsis: Synopsis
 
 common-actions:
   sign-in: Sign in
@@ -401,6 +402,7 @@ books:
   cover: Cover of {title}
   mark-as-read: Mark as read
   mark-as-unread: Mark as unread
+  empty-synopsis: The book doesn't have a synopsis.
 
 book-contributors:
   fetch-failure: There was an error while fetching the book contributors

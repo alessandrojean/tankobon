@@ -61,13 +61,9 @@ function handleEditSeries(series: SeriesUpdate) {
   <div>
     <Header
       :title="series?.attributes.name ?? ''"
-      :subtitle="series?.attributes.description"
       :loading="isLoading"
       class="mb-3 md:mb-0"
     >
-      <template #title-badge v-if="library && library.attributes">
-        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
-      </template>
       <template #actions>
         <div class="flex space-x-2">
           <Button
@@ -96,7 +92,11 @@ function handleEditSeries(series: SeriesUpdate) {
       </template>
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      
+      <BlockMarkdown
+        :loading="isLoading"
+        :markdown="series?.attributes?.description"
+        :title="$t('common-fields.description')"
+      />
     </div>
 
     <SeriesEditDialog

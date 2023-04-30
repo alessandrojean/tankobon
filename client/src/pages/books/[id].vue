@@ -38,7 +38,7 @@ const { data: contributors, isLoading: isLoadingContributors } = useBookContribu
   bookId: bookId as Ref<string>,
   includes: ['person_picture'],
   select: (response) => response.data,
-  enabled: computed(() => !!bookId.value), //&& !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value && !isLoading.value), //&& !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('book-contributors.fetch-failure'),
@@ -147,13 +147,19 @@ const flagUrl = computed(() => {
           :editing="false"
         />
 
-        <div class="book-synopsis">
+        <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
+          <BlockMarkdown
+            :title="$t('common-fields.synopsis')"
+            :empty-message="$t('books.empty-synopsis')"
+            :loading="!showBookInfo"
+            :markdown="book?.attributes?.synopsis ?? undefined"
+            :blur="false"
+          />
+
           <BookContributors
             :loading="isLoadingContributors"
             :contributors="contributors"
           />
-          
-          <div>{{ JSON.stringify(book, null, 2) }}</div>
         </div>
 
         <div class="book-attributes">

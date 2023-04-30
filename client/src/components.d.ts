@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     BasicSelect: typeof import('./components/form/BasicSelect.vue')['default']
     BasicTextInput: typeof import('./components/form/BasicTextInput.vue')['default']
     Block: typeof import('./components/Block.vue')['default']
+    BlockMarkdown: typeof import('./components/BlockMarkdown.vue')['default']
     BookAttributes: typeof import('./components/books/BookAttributes.vue')['default']
     BookBanner: typeof import('./components/books/BookBanner.vue')['default']
     BookButtons: typeof import('./components/books/BookButtons.vue')['default']

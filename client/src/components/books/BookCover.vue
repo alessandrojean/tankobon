@@ -32,7 +32,7 @@ const coverUrl = computed(() => {
 
   return getFullImageUrl({
     collection: 'covers',
-    fileName: coverArt.value?.attributes?.fileName,
+    fileName: coverArt.value?.attributes?.versions?.['256'],
     timeHex: coverArt.value?.attributes?.timeHex,
   }) ?? ''
 })

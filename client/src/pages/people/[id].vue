@@ -97,7 +97,6 @@ function handleImage(image: ImageResult) {
   <div>
     <Header
       :title="person?.attributes.name ?? ''"
-      :subtitle="person?.attributes.description"
       :loading="isLoading"
       class="mb-3 md:mb-0"
     >
@@ -111,9 +110,6 @@ function handleImage(image: ImageResult) {
             })
           "
         />
-      </template>
-      <template #title-badge v-if="library && library.attributes">
-        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
       </template>
       <template #actions>
         <div class="flex space-x-2">
@@ -155,7 +151,11 @@ function handleImage(image: ImageResult) {
       </template>
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      
+      <BlockMarkdown
+        :loading="isLoading"
+        :markdown="person?.attributes?.description"
+        :title="$t('common-fields.description')"
+      />
     </div>
 
     <PersonEditDialog

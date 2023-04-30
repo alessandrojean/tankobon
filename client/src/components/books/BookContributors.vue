@@ -23,7 +23,22 @@ const pictures = computed(() => {
 
 <template>
   <Block as="section" :title="$t('entities.book-contributors')">
-    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+      <div
+        v-for="i in 5"
+        :key="i"
+        class="flex gap-4 items-center"
+      >
+        <div class="skeleton rounded-full w-10 h-10"></div>
+
+        <div class="grow">
+          <div class="skeleton w-3/4 h-5"></div>
+          <div class="mt-1 skeleton w-24 h-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <ul v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
       <li
         v-for="(contributor, idx) in contributors"
         :key="contributor.id"

@@ -222,6 +222,7 @@
     "useLocalStorage": true,
     "useMagicKeys": true,
     "useManualRefHistory": true,
+    "useMarkdown": true,
     "useMediaControls": true,
     "useMediaQuery": true,
     "useMemoize": true,

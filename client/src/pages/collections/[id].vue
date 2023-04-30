@@ -61,13 +61,9 @@ function handleEditCollection(collection: CollectionUpdate) {
   <div>
     <Header
       :title="collection?.attributes.name ?? ''"
-      :subtitle="collection?.attributes.description"
       :loading="isLoading"
       class="mb-3 md:mb-0"
     >
-      <template #title-badge v-if="library && library.attributes">
-        <Badge class="ml-2">{{ library?.attributes?.name }}</Badge>
-      </template>
       <template #actions>
         <div class="flex space-x-2">
           <Button
@@ -96,7 +92,11 @@ function handleEditCollection(collection: CollectionUpdate) {
       </template>
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      
+      <BlockMarkdown
+        :loading="isLoading"
+        :markdown="collection?.attributes?.description"
+        :title="$t('common-fields.description')"
+      />
     </div>
 
     <CollectionEditDialog
