@@ -19,6 +19,8 @@ const button = cva(
           'shadow-sm border-gray-300 bg-white text-gray-700 not-disabled:hover:bg-gray-50',
           'dark:bg-gray-800 dark:text-gray-100 dark:border-gray-800',
           'dark:not-disabled:hover:bg-gray-700 dark:not-disabled:hover:border-gray-700',
+          '[&_svg]:text-gray-600 [&_svg]:hover:text-gray-700',
+          '[&_svg]:dark:text-gray-300 [&_svg]:dark:hover:text-gray-200'
         ],
         ghost: [
           'border-transparent bg-transparent text-primary-600 dark:text-primary-500',
