@@ -102,6 +102,7 @@ function handleImage(image: ImageResult) {
     >
       <template #avatar>
         <Avatar
+          :loading="isLoading"
           :picture-url="
             getFullImageUrl({
               collection: 'people',

@@ -108,6 +108,7 @@ function handleAvatar(avatar: ImageResult) {
     >
       <template #avatar>
         <Avatar
+          :loading="isLoading"
           :picture-url="
             getFullImageUrl({
               collection: 'avatars',
@@ -121,7 +122,8 @@ function handleAvatar(avatar: ImageResult) {
         <Badge v-if="isMe" class="ml-2">{{ $t('user.you') }}</Badge>
       </template>
       <template #subtitle>
-        <ul class="flex items-center space-x-2 mt-0.5">
+        <div v-if="isLoading" class="skeleton w-24 h-5 mt-1.5"></div>
+        <ul v-else class="flex items-center space-x-2 mt-0.5">
           <li v-if="isAdmin">
             <Badge color="blue">
               {{ $t('user.role-admin') }}

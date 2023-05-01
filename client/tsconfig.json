@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-        "target": "ESNext",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -25,7 +25,7 @@
       "@types/gapi.client.sheets",
       "@types/google.accounts",
       "@types/google.visualization",
-      "@intlify/vite-plugin-vue-i18n/client",
+      "@intlify/vite-plugin-vue-i18n/client"
     ],
     "baseUrl": ".",
     "paths": {

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { cva, type VariantProps } from 'cva'
 import type { ButtonHTMLAttributes } from 'vue'
 import type { RouterLinkProps } from 'vue-router'
 

@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { resolve, dirname } from 'node:path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
@@ -9,6 +10,9 @@ import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import postcss from './postcss.config.js'
 
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export default defineConfig({
   resolve: {
@@ -43,7 +47,9 @@ export default defineConfig({
           from: '@vueuse/core',
           imports: ['MaybeRef'],
           type: true,
-        }
+        },
+        { 'cva': ['cva'] },
+        { from: 'cva', imports: ['VariantProps'], type: true },
       ],
       dts: 'src/auto-imports.d.ts',
       dirs: [

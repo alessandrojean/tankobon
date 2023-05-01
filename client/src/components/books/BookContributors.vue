@@ -29,7 +29,7 @@ const pictures = computed(() => {
         :key="i"
         class="flex gap-4 items-center"
       >
-        <div class="skeleton rounded-full w-10 h-10"></div>
+        <Avatar loading size="small" />
 
         <div class="grow">
           <div class="skeleton w-3/4 h-5"></div>

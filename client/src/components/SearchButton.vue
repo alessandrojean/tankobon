@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { cva, type VariantProps } from 'cva'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
 const searchButton = cva(

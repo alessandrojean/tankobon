@@ -1,13 +1,41 @@
 <script lang="ts" setup>
+import { VariantProps } from 'cva'
+
+const avatar = cva(
+  [
+    'rounded-full relative shrink-0 ring-1 ring-black/5',
+    'motion-safe:transition-colors',
+  ],
+  {
+    variants: {
+      kind: {
+        primary: [
+          'bg-primary-500 text-primary-200 dark:text-primary-300'
+        ],
+        gray: [
+          'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+        ],
+      },
+      size: {
+        mini: ['w-8 h-8'],
+        small: ['w-10 h-10'],
+        normal: ['w-12 h-12'],
+      }
+    }
+  }
+)
+
+type AvatarCvaProps = VariantProps<typeof avatar>
+
 export interface AvatarProps {
   alt?: string,
   emptyStyle?: 'icon' | 'letter',
-  dark?: boolean,
-  kind?: 'primary' | 'gray',
+  kind?: AvatarCvaProps['kind'],
   letter?: string,
   letterId?: string,
+  loading?: boolean,
   pictureUrl: string | null | undefined,
-  size?: 'mini' | 'small' | 'normal',
+  size?: AvatarCvaProps['size'],
 }
 
 const props = withDefaults(defineProps<AvatarProps>(), {
@@ -17,10 +45,11 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   kind: 'primary',
   letter: undefined,
   letterId: '',
+  loading: false,
   size: 'normal',
 })
 
-const { alt, pictureUrl, letterId } = toRefs(props)
+const { alt, pictureUrl, letterId, loading } = toRefs(props)
 
 const { imageLoading, imageHasError, loadImage, unloadImage } = useImageLoader(pictureUrl)
 
@@ -60,19 +89,8 @@ const colorIsLight = computed(() => {
 </script>
 
 <template>
-  <div
-    :class="[
-      'avatar', 
-      {
-        'is-mini': size === 'mini',
-        'is-small': size === 'small',
-        'is-dark': dark,
-        'is-empty': isEmpty,
-        'is-gray': kind === 'gray',
-        'is-primary': kind === 'primary',
-      }
-    ]"
-  >
+  <div v-if="loading" :class="avatar({ size, class: 'skeleton' })" />
+  <div v-else :class="avatar({ kind, size })">
     <div
       v-if="isEmpty"
       :class="[
@@ -92,7 +110,7 @@ const colorIsLight = computed(() => {
       <div
         v-else
         :class="[
-          'w-full h-full flex items-center justify-center',
+          'w-full h-full flex items-center justify-center select-none',
           'font-semibold bg-[--letter-bg-color] dark:opacity-80'
         ]"
         :style="{
@@ -109,56 +127,11 @@ const colorIsLight = computed(() => {
         </span>
       </div>
     </div>
-    <img v-else class="avatar-img" :alt="alt" :src="pictureUrl ?? undefined" />
+    <img
+      v-else
+      class="w-full h-full rounded-full object-contain"
+      :alt="alt"
+      :src="pictureUrl ?? undefined"
+    />
   </div>
 </template>
-
-<style lang="postcss" scoped>
-.avatar {
-  @apply w-12 h-12 rounded-full relative shrink-0
-    ring-1 ring-black/5
-    motion-safe:transition-colors;
-}
-
-.avatar.is-empty.is-primary {
-  @apply border-2 border-primary-500 bg-primary-500;
-
-  svg {
-    @apply text-primary-200 dark:text-primary-300;
-  }
-}
-
-.avatar.is-empty.is-gray {
-  @apply border-2 border-gray-500 bg-gray-500;
-
-  svg {
-    @apply text-gray-400 dark:text-gray-400;
-  }
-}
-
-.avatar:not(.is-dark) {
-  @apply dark:border-gray-700 dark:bg-gray-700;
-}
-
-.avatar.is-empty:not(.is-dark).is-primary {
-  @apply border-primary-500 bg-primary-500
-    dark:border-primary-700 dark:bg-primary-700;
-}
-
-.avatar.is-empty:not(.is-dark).is-gray {
-  @apply border-gray-200 bg-gray-200
-    dark:border-gray-700 dark:bg-gray-700;
-}
-
-.avatar.is-mini {
-  @apply w-8 h-8;
-}
-
-.avatar.is-small {
-  @apply w-10 h-10;
-}
-
-.avatar-img {
-  @apply w-full h-full rounded-full object-contain;
-}
-</style>

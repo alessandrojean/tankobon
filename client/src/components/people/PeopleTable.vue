@@ -73,6 +73,7 @@ const columns = [
   }),
   columnHelper.accessor(
     (person) => ({
+      id: person.id,
       name: person.attributes.name,
       picture: getRelationship(person, 'PERSON_PICTURE'),
     }),
@@ -80,7 +81,7 @@ const columns = [
       id: 'name',
       header: () => t('common-fields.name'),
       cell: (info) => {
-        const { name, picture } = info.getValue()
+        const { id, name, picture } = info.getValue()
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
@@ -89,7 +90,7 @@ const columns = [
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),
-            size: 'mini'
+            size: 'mini',
           }),
           h('span', { innerText: name })
         ])
