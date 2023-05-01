@@ -9,11 +9,18 @@ export interface BookCoverDialogProps {
 
 const props = withDefaults(defineProps<BookCoverDialogProps>(), { open: false })
 
-defineEmits<{ (e: 'close'): void }>()
-
-const { t } = useI18n({ useScope: 'global' })
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { open } = toRefs(props)
+
+onBeforeRouteLeave(() => {
+  if (!open.value) {
+    return true
+  }
+
+  emit('close')
+  return false
+})
 </script>
 
 <template>
@@ -53,7 +60,7 @@ const { open } = toRefs(props)
         >
           <DialogPanel class="dialog-content">
             <DialogTitle as="h3" class="sr-only">
-              {{ t('dashboard.details.zoom.title') }}
+              {{ $t('common-actions.zoom') }}
             </DialogTitle>
 
             <img
@@ -66,14 +73,14 @@ const { open } = toRefs(props)
               <button
                 type="button"
                 class="close-button"
-                :title="t('dashboard.details.zoom.title')"
+                :title="$t('common-actions.close')"
                 @click="$emit('close')"
               >
                 <span aria-hidden="true">
                   <XMarkIcon class="w-6 h-6" />
                 </span>
                 <span class="sr-only">
-                  {{ t('dashboard.details.zoom.close') }}
+                  {{ $t('common-actions.close') }}
                 </span>
               </button>
             </div>

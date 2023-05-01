@@ -19,9 +19,18 @@ const props = withDefaults(defineProps<DialogProps>(), {
   fullHeight: true,
 })
 
-defineEmits<{ (e: 'close'): void }>()
+const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { dialogClass, fullHeight } = toRefs(props)
+const { dialogClass, fullHeight, isOpen } = toRefs(props)
+
+onBeforeRouteLeave(() => {
+  if (!isOpen.value) {
+    return true
+  }
+
+  emit('close')
+  return false
+})
 </script>
 
 <script lang="ts">
