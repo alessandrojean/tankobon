@@ -9,9 +9,13 @@ import { getRelationship } from '@/utils/api';
 
 const { t } = useI18n()
 const router = useRouter()
-const userId = useRouteParams<string | undefined>('id', undefined)
+const userIdRoute = useRouteParams<string | undefined>('id', undefined)
 const userStore = useUserStore()
 const notificator = useToaster()
+
+const userId = computed(() => {
+  return userIdRoute.value === 'me' ? userStore.me?.id : userIdRoute.value
+})
 
 const {
   mutate: deleteUser,
