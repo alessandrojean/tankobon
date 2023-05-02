@@ -10,6 +10,7 @@ import type {
   BookEntity,
   BookIncludes,
   BookSort,
+BookUpdate,
 } from '@/types/tankobon-book'
 import { Paginated } from '@/types/tankobon-api'
 
@@ -66,6 +67,18 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
     })
 
     return book.data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function updateOneBook(book: BookUpdate): Promise<void> {
+  try {
+    await api.put(`books/${book.id}`, book)
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)

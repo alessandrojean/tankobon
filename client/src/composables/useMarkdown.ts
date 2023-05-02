@@ -46,7 +46,7 @@ export interface UseMarkdownOptions {
   mdOptions?: md.Options,
 }
 
-export default function useMarkdown(options: UseMarkdownOptions) {
+export default function useMarkdown(options?: UseMarkdownOptions) {
   const markdown = md(options?.mdOptions ?? {})
     .use(mdAbbr)
     .use(imageLazyLoad)

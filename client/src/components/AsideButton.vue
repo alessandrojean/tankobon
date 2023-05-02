@@ -21,8 +21,9 @@ const { active, item, href } = toRefs(props)
     :href="href"
     :target="item.external ? '_blank' : undefined"
     :class="[
-      'group flex items-center flex-nowrap text-sm rounded-lg w-full has-ring-focus',
-      'font-medium dark:focus-visible:ring-offset-gray-800',
+      'group flex items-center flex-nowrap text-sm rounded-lg w-full',
+      'font-medium dark:focus-visible:ring-white/90',
+      'focus:outline-none focus-visible:ring-2 focus-visible:ring-black',
       item.icon ? 'h-10' : 'h-9',
       active
         ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-gray-800'

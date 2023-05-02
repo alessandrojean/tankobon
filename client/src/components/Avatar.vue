@@ -34,7 +34,7 @@ export interface AvatarProps {
   letter?: string,
   letterId?: string,
   loading?: boolean,
-  pictureUrl: string | null | undefined,
+  pictureUrl?: string | null | undefined,
   size?: AvatarCvaProps['size'],
 }
 
@@ -46,6 +46,7 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   letter: undefined,
   letterId: '',
   loading: false,
+  pictureUrl: undefined,
   size: 'normal',
 })
 

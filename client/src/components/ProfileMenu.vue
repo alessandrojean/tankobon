@@ -66,7 +66,11 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
   <Menu as="div" class="ml-3 relative inline-block" v-slot="{ open }">
     <div>
       <MenuButton
-        class="max-w-xs flex items-center text-sm focus:outline-none group"
+        :class="[
+          'max-w-xs flex items-center text-sm group rounded-md',
+          'focus:outline-none focus-visible:ring-2',
+          light ? 'focus-visible:ring-black' : 'focus-visible:ring-white/90',
+        ]"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
         <Avatar :picture-url="avatarUrl" size="mini" kind="gray" />

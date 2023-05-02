@@ -52,10 +52,10 @@ defineExpose({ v$ })
       @input="$emit('update:name', $event.target.value)"
     />
 
-    <TextAreaInput
+    <MarkdownInput
       :model-value="description"
       id="description"
-      rows="5"
+      rows="8"
       :label-text="$t('common-fields.description')"
       :placeholder="$t('common-placeholders.series-description')"
       @input="$emit('update:description', $event.target.value)"

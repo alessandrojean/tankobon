@@ -112,6 +112,7 @@ export default {
         'supports-var-font',
         '@supports (font-variation-settings: normal)'
       )
+      addVariant('aria-selected', '&[aria-selected="true"]')
     }),
 
     /** Skeleton loading. */
@@ -164,8 +165,8 @@ export default {
           fontDisplay: 'swap',
           fontStyle: 'italic',
           src: [
-            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2-variations"), url("/fonts/Inter.var.woff2?v=3.19") format("woff2")',
-            'url("/fonts/Inter.var.woff2?v=3.19") format("woff2") tech("variations")',
+            'url("/fonts/Inter-Italic.var.woff2?v=3.19") format("woff2-variations"), url("/fonts/Inter-Italic.var.woff2?v=3.19") format("woff2")',
+            'url("/fonts/Inter-Italic.var.woff2?v=3.19") format("woff2") tech("variations")',
           ],
         },
       })

@@ -26,7 +26,13 @@ export default defineConfig({
 
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-vue
-    Vue(),
+    Vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'markdown-toolbar' || tag.substring(0, 3) === 'md-'
+        }
+      }
+    }),
 
     // https://github.com/hannoeru/vite-plugin-pages
     Pages(),

@@ -43,14 +43,22 @@ const iconOnly = breakpoints.smaller('2xl')
 
 <template>
   <div
+    v-if="loading"
     class="flex w-full justify-center sm:justify-start items-center gap-2"
-    v-if="canEdit"
+  >
+    <div class="skeleton w-12 h-12" />
+    <div class="skeleton w-12 h-12" />
+  </div>
+  <div
+    class="flex w-full justify-center sm:justify-start items-center gap-2"
+    v-else-if="canEdit"
   >
     <Button
       v-if="!loading"
       class="aspect-1"
       size="small"
-      @click="$emit('click:edit', $event)"
+      is-router-link
+      :to="{ name: 'books-id-edit', params: { id: book?.id } }"
       :disabled="disabled"
       :title="$t('common-actions.edit')"
     >

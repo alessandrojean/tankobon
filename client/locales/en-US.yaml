@@ -27,6 +27,7 @@ common-fields:
   bought-at: Bought at
   language: Language
   synopsis: Synopsis
+  notes: Notes
 
 common-actions:
   sign-in: Sign in
@@ -53,6 +54,7 @@ common-actions:
   zoom: Zoom
   edit-picture: Edit picture
   search-collection: Search the collection…
+  back: Go back
 
 common-values:
   true-value: 'True'
@@ -81,6 +83,10 @@ common-placeholders:
   store-name: Amazon
   store-description: Amazon is an American multinational technology company…
   search-by-isbn: Search by ISBN…
+  book-code: '9781934287729'
+  book-title: MW
+  book-synopsis: A secret U.S. chemical weapon called "MW" accidentally leaks…
+  book-notes: The manga inner cover is signed by Tezuka.
 
 validation:
   required: It can not be blank.
@@ -403,6 +409,10 @@ books:
   mark-as-read: Mark as read
   mark-as-unread: Mark as unread
   empty-synopsis: The book doesn't have a synopsis.
+  metadata: Metadata
+  cover-art: Cover art
+  organization: Organization
+  relationships: Relationships
 
 book-contributors:
   fetch-failure: There was an error while fetching the book contributors
@@ -414,3 +424,20 @@ picture-upload:
   uploaded-with-failure: There was an error while uploading the picture
   removed-with-success: Picture removed with success
   removed-with-failure: There was an error while removing the picture
+
+markdown-input:
+  edit: Edit
+  preview: Preview
+  no-preview: No content to preview
+  bold: Bold
+  bold-letter: B
+  italic: Italic
+  italic-letter: I
+  striketrough: Striketrough
+  striketrough-letter: S
+  link: Link
+  unordered-list: Unordered list
+  guide: Markdown guide
+  description: 'Markdown input: {0}'
+  preview-mode: preview mode selected
+  edit-mode: edit mode selected

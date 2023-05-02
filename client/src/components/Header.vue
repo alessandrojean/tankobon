@@ -55,7 +55,7 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
           </div>
         </div>
 
-        <div v-if="$slots.tabs" class="mt-6">
+        <div v-if="$slots.tabs" class="mt-3">
           <slot name="tabs" />
         </div>
       </div>

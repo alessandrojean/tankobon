@@ -51,3 +51,32 @@ export type BookIncludes = 'contributor' | 'collection' | 'publisher'
   | 'series' | 'store' | 'tag' | 'library' | 'cover_art'
 export type BookSort = 'title' | 'createdAt' | 'modifiedAt' |
   'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount'
+
+export interface BookUpdate {
+  id: string,
+  arrivedAt?: string | null,
+  barcode?: string | null,
+  billedAt?: string | null,
+  boughtAt?: string | null,
+  code: string,
+  collection: string,
+  contributors: BookContributorCreateUpdate[],
+  dimensions: Dimensions,
+  isInLibrary: boolean,
+  labelPrice: MonetaryAmount,
+  notes: string,
+  number: string,
+  pageCount: number,
+  paidPrice: MonetaryAmount,
+  publishers: string[],
+  series?: string | null,
+  store?: string | null,
+  synopsis: string,
+  tags?: string[] | null,
+  title: string,
+}
+
+export interface BookContributorCreateUpdate {
+  person: string,
+  role: string,
+}

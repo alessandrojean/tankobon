@@ -4,8 +4,9 @@ import type { RouterLinkProps } from 'vue-router'
 
 const button = cva(
   [
-    'font-medium motion-safe:transition-all',
+    'font-medium motion-safe:transition-colors',
     'border border-inset flex items-center justify-center relative',
+    'focus:outline-none focus-visible:ring-2',
   ],
   {
     variants: {
@@ -13,62 +14,91 @@ const button = cva(
         primary: [
           'shadow-sm border-primary-500 bg-primary-500 text-primary-50',
           'not-disabled:hover:bg-primary-600 not-disabled:hover:border-primary-600',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90'
         ],
         normal: [
           'shadow-sm border-gray-300 bg-white text-gray-700 not-disabled:hover:bg-gray-50',
           'dark:bg-gray-800 dark:text-gray-100 dark:border-gray-800',
           'dark:not-disabled:hover:bg-gray-700 dark:not-disabled:hover:border-gray-700',
           '[&_svg]:text-gray-600 [&_svg]:hover:text-gray-700',
-          '[&_svg]:dark:text-gray-300 [&_svg]:dark:hover:text-gray-200'
+          '[&_svg]:dark:text-gray-300 [&_svg]:dark:hover:text-gray-200',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90'
         ],
         ghost: [
           'border-transparent bg-transparent text-primary-600 dark:text-primary-500',
           'not-disabled:hover:bg-gray-700/10 dark:not-disabled:hover:bg-gray-300/10',
           'not-disabled:hover:text-primary-800 dark:not-disabled:hover:text-primary-400',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90'
         ],
         'ghost-alt': [
           'border-transparent bg-transparent text-gray-500 dark:text-gray-300',
-          'not-disabled:hover:bg-gray-700/10 dark:not-disabled:hover:bg-gray-300/10',
-          'not-disabled:hover:text-gray-600 dark:not-disabled:hover:text-gray-100',
+          'not-disabled:hocus:bg-gray-700/10 dark:not-disabled:hocus:bg-gray-300/10',
+          'not-disabled:hocus:text-gray-600 dark:not-disabled:hocus:text-gray-100',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90'
         ],
         'navbar-dark': [
           'border-transparent bg-transparent text-gray-300',
-          'not-disabled:hover:bg-gray-700 not-disabled:hover:text-gray-200'
+          'not-disabled:hocus:bg-gray-700 not-disabled:hocus:text-gray-200',
+          'focus-visible:ring-white/90'
         ],
         'navbar-dark-elevated': [
           'border-gray-800 bg-gray-800 text-gray-300',
-          'not-disabled:hover:bg-gray-700 not-disabled:hover:border-gray-700',
-          'not-disabled:hover:text-gray-200'
+          'not-disabled:hocus:bg-gray-700 not-disabled:hocus:border-gray-700',
+          'not-disabled:hocus:text-gray-200',
+          'focus-visible:ring-white/90'
         ],
         'navbar-light': [
           'border-transparent bg-transparent text-white/80',
-          'not-disabled:hover:bg-white/20 not-disabled:hover:text-white/95'
+          'not-disabled:hocus:bg-white/20 not-disabled:hocus:text-white/95',
+          'focus-visible:ring-white/90'
         ],
         danger: [
           'shadow-sm border-red-600 text-white bg-red-600',
           'not-disabled:hover:bg-red-700 nod-disabled:hover:border-red-700',
-        ]
+        ],
+        'pill-tab': [
+          'border-transparent bg-transparent',
+          'text-gray-500 hocus:text-gray-800',
+          'aria-selected:bg-primary-100 aria-selected:text-primary-600',
+          'hocus:aria-selected:text-primary-600',
+          'dark:text-gray-400 dark:hocus:text-gray-100',
+          'dark:aria-selected:bg-primary-900 dark:aria-selected:text-primary-50',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
+        ],
+        'underline-tab': [
+          'border-x-0 border-t-0 border-b-2 border-b-transparent',
+          'text-gray-500 hocus:text-gray-800 hocus:border-gray-300',
+          'ui-selected:text-primary-600 ui-selected:border-primary-600',
+          'hocus:ui-selected:text-primary-600 hocus:ui-selected:border-primary-600',
+          'dark:text-gray-400 dark:hocus:text-gray-100 dark:hocus:border-gray-600',
+          'dark:ui-selected:text-primary-500 dark:ui-selected:border-primary-500',
+          'dark:hocus:ui-selected:text-primary-500 dark:hocus:ui-selected:border-primary-500',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
+        ],
       },
       size: {
         mini: 'text-sm px-3',
         small: 'text-sm px-3 py-2',
         normal: 'px-4 py-2',
         large: 'text-lg px-5 py-2',
+        'underline-tab': 'text-sm py-3.5 px-0.5',
+        'pill-tab': 'text-sm py-1.5 px-2.5',
       },
       loading: {
         true: 'disabled:opacity-80',
         false: 'disabled:opacity-50',
       },
       rounded: {
-        true: 'rounded-full',
-        false: 'rounded-md',
+        full: 'rounded-full',
+        normal: 'rounded-md',
+        none: 'rounded-0',
       }
     },
     defaultVariants: {
       kind: 'normal',
       size: 'normal',
       loading: false,
-      rounded: false,
+      rounded: 'normal',
     }
   }
 )
@@ -81,7 +111,7 @@ interface ButtonProps {
   isRouterLink?: boolean,
   loading?: boolean,
   kind?: ButtonCvaProps['kind'],
-  rounded?: boolean,
+  rounded?: ButtonCvaProps['rounded'],
   size?: ButtonCvaProps['size'],
   to?: RouterLinkProps['to'],
   type?: ButtonHTMLAttributes['type'],
@@ -93,7 +123,7 @@ withDefaults(defineProps<ButtonProps>(), {
   isRouterLink: false,
   loading: false,
   kind: 'normal',
-  rounded: false,
+  rounded: 'normal',
   size: 'normal',
   to: () => ({}),
   type: 'button',

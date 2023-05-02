@@ -74,7 +74,7 @@ async function setTheme(theme: Theme) {
     ]"
   >
     <ListboxButton
-      class="theme-chooser has-ring-focus"
+      class="theme-chooser"
       :title="t('theme-toggle.label')"
     >
       <span aria-hidden="true">
@@ -142,7 +142,8 @@ async function setTheme(theme: Theme) {
 .theme-chooser {
   @apply w-8 h-8 flex items-center justify-center rounded-full
     text-gray-400 dark:text-gray-300
-    motion-safe:transition;
+    motion-safe:transition focus:outline-none
+    focus-visible:ring-2 focus-visible:ring-white/90;
 }
 
 .theme-chooser svg.not-system {
@@ -165,12 +166,8 @@ async function setTheme(theme: Theme) {
   @apply bg-gray-200 dark:bg-gray-700;
 }
 
-.theme-chooser:focus-visible {
-  @apply ring-primary-500 ring-offset-gray-800;
-}
-
 .light .theme-chooser:focus-visible {
-  @apply ring-offset-white dark:ring-offset-gray-900;
+  @apply ring-black;
 }
 
 .transparent .theme-chooser {
@@ -186,6 +183,10 @@ async function setTheme(theme: Theme) {
     svg.not-system {
       @apply text-white/95;
     }
+  }
+
+  &:focus-visible {
+    @apply ring-white/90;
   }
 }
 

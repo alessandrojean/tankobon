@@ -191,6 +191,7 @@
     "useFileSystemAccess": true,
     "useFocus": true,
     "useFocusWithin": true,
+    "useFocusZone": true,
     "useFps": true,
     "useFullscreen": true,
     "useGamepad": true,

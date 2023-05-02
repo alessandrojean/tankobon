@@ -66,7 +66,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
           class="lg:hidden -ml-1 mr-2 w-10 h-10"
           :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
           size="mini"
-          rounded
+          rounded="full"
           :title="$t('common-actions.open-menu')"
           @click="showAsideDialog()"
         >
@@ -89,7 +89,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
             class="h-8 -ml-2 hidden lg:flex"
             :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
             size="mini"
-            rounded
+            rounded="full"
             :title="$t('libraries.select')"
             @click="showLibrarySelector"
           >
@@ -111,7 +111,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
             class="h-8 w-8 mr-2 lg:hidden"
             :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
             size="mini"
-            rounded
+            rounded="full"
             :title="$t('common-actions.search-collection')"
           >
             <div class="sr-only">
@@ -126,7 +126,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
               class="h-8 w-8 mr-2 lg:hidden"
               :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
               size="mini"
-              rounded
+              rounded="full"
               :title="$t('libraries.select')"
               @click="showLibrarySelector"
             >

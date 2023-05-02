@@ -52,7 +52,7 @@ async function handleSubmit() {
   <Dialog
     as="form"
     autocomplete="off"
-    dialog-class="max-w-md"
+    dialog-class="max-w-2xl"
     novalidate
     :is-open="isOpen"
     :title="$t('series.update-header')"
