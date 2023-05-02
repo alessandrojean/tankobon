@@ -1,6 +1,7 @@
 import md, { type PluginSimple } from 'markdown-it'
 import mdAbbr from 'markdown-it-abbr'
 import mdImplicitFigures from 'markdown-it-implicit-figures'
+import mdLinkAttributes from 'markdown-it-link-attributes'
 
 const imageLazyLoad: PluginSimple = (md) => {
   const defaultRenderer = md.renderer.rules.image!
@@ -18,39 +19,22 @@ const imageLazyLoad: PluginSimple = (md) => {
   }
 }
 
-const externalLinks: PluginSimple = (md) => {
-  const defaultRenderer =
-    md.renderer.rules.link_open ??
-    function (tokens, idx, options, env, self) {
-      return self.renderToken(tokens, idx, options)
-    }
-
-  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
-    const aIndex = tokens[idx].attrIndex('target')
-    const hrefIndex = tokens[idx].attrIndex('href')
-
-    if (tokens[idx].attrs![hrefIndex][1][0] !== '#') {
-      if (aIndex < 0) {
-        tokens[idx].attrPush(['target', '_blank'])
-      } else {
-        tokens[idx].attrs![aIndex][1] = '_blank'
-      }
-    }
-
-    return defaultRenderer(tokens, idx, options, env, self)
-  }
-}
-
 export interface UseMarkdownOptions {
   disable?: string[],
   mdOptions?: md.Options,
 }
 
-export default function useMarkdown(options?: UseMarkdownOptions) {
-  const markdown = md(options?.mdOptions ?? {})
+export default function useMarkdown(options: UseMarkdownOptions = {}) {
+  const markdown = md(options.mdOptions ?? {})
     .use(mdAbbr)
     .use(imageLazyLoad)
-    .use(externalLinks)
+    .use(mdLinkAttributes, {
+      matcher: (link: string) => /^https?:\/\//.test(link),
+      attrs: {
+        target: '_blank',
+        rel: 'noopener',
+      },
+    })
     .use(mdImplicitFigures, { figcaption: true })
     .disable([
       'code',
@@ -58,7 +42,7 @@ export default function useMarkdown(options?: UseMarkdownOptions) {
       'hr',
       'html_block',
       'lheading',
-      ...(options?.disable ?? []),
+      ...(options.disable ?? []),
     ])
 
   function renderMarkdown(source: string) {

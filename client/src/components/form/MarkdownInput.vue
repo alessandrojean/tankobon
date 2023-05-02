@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ErrorObject } from '@vuelidate/core'
 import { EyeIcon, LinkIcon, ListBulletIcon, PencilIcon } from '@heroicons/vue/20/solid'
-import { required } from '@vuelidate/validators'
 import { TextareaHTMLAttributes } from 'vue'
 
 export interface TextInputProps {
@@ -24,7 +23,7 @@ defineEmits<{
   (e: 'update:modelValue', modelValue: string): void
 }>()
 
-const { errors, modelValue } = toRefs(props)
+const { errors, modelValue, required } = toRefs(props)
 
 const errorMessage = computed(() => errors.value?.[0]?.$message)
 const attributes: TextareaHTMLAttributes = useAttrs()

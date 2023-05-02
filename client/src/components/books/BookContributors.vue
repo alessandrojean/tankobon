@@ -16,10 +16,18 @@ const props = withDefaults(defineProps<BookAttributesProps>(), {
 })
 
 const { contributors, loading } = toRefs(props)
-const { t, d, n, locale } = useI18n()
 
 const pictures = computed(() => {
   return contributors.value.map((c) => getRelationship(c, 'PERSON_PICTURE'))
+})
+
+const container = ref<HTMLUListElement>()
+
+useFocusZone({
+  containerRef: container,
+  bindKeys: FocusKeys.ArrowAll | FocusKeys.HomeAndEnd,
+  focusInStrategy: 'closest',
+  focusOutBehavior: 'wrap',
 })
 </script>
 
@@ -40,11 +48,10 @@ const pictures = computed(() => {
       </div>
     </div>
 
-    <Toolbar
+    <ul
       v-else
-      as="ul"
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6"
-      :bind-keys="FocusKeys.ArrowAll | FocusKeys.HomeAndEnd"
+      ref="container"
     >
       <li
         v-for="(contributor, idx) in contributors"
@@ -91,6 +98,6 @@ const pictures = computed(() => {
           ]"
         />
       </li>
-    </Toolbar>
+    </ul>
   </Block>
 </template>
