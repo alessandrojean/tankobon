@@ -70,7 +70,7 @@ function handleEditTag(tag: TagUpdate) {
       class="mb-3 md:mb-0"
     >
       <template #actions>
-        <div class="flex space-x-2">
+        <Toolbar class="flex space-x-2">
           <Button
             class="w-11 h-11"
             :loading="isEditing"
@@ -93,7 +93,7 @@ function handleEditTag(tag: TagUpdate) {
             <span class="sr-only">{{ $t('common-actions.delete') }}</span>
             <TrashIcon class="w-6 h-6" />
           </Button>
-        </div>
+        </Toolbar>
       </template>
     </Header>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">

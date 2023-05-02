@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { FocusKeys } from '@primer/behaviors'
 import type { ErrorObject } from '@vuelidate/core'
 import { EyeIcon, LinkIcon, ListBulletIcon, PencilIcon } from '@heroicons/vue/20/solid'
 import { required } from '@vuelidate/validators'
@@ -43,19 +42,11 @@ function togglePreview() {
   }
 }
 
-const toolbar = ref<HTMLElement>()
 const mdBold = ref<HTMLElement>()
 const mdItalic = ref<HTMLElement>()
 const mdStrikethrough = ref<HTMLElement>()
 const mdUnorderedList = ref<HTMLElement>()
 const mdLink = ref<HTMLElement>()
-
-useFocusZone({
-  containerRef: toolbar,
-  focusInStrategy: 'closest',
-  bindKeys: FocusKeys.ArrowHorizontal | FocusKeys.HomeAndEnd,
-  focusOutBehavior: 'wrap',
-})
 
 const characterCount = computed(() => modelValue.value.length)
 
@@ -121,11 +112,9 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
           <EyeIcon v-else class="w-4 h-4" />
         </Button>
 
-        <div
+        <Toolbar
           class="flex gap-1 ml-auto"
           v-if="!showPreview"
-          role="toolbar"
-          ref="toolbar"
         >
           <Button
             kind="ghost-alt"
@@ -192,7 +181,7 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
             <span class="sr-only">{{ $t('markdown-input.link') }}</span>
             <LinkIcon class="w-5 h-5" />
           </Button>
-        </div>
+        </Toolbar>
       </div>
 
       <div class="pb-2.5">

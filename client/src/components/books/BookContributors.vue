@@ -2,6 +2,8 @@
 import { getFullImageUrl } from '@/modules/api';
 import { ContributorEntity } from '@/types/tankobon-contributor';
 import { getRelationships, getRelationship } from '@/utils/api';
+import Toolbar from '../Toolbar.vue';
+import { FocusKeys } from '@primer/behaviors';
 
 export interface BookAttributesProps {
   contributors?: ContributorEntity[],
@@ -38,7 +40,12 @@ const pictures = computed(() => {
       </div>
     </div>
 
-    <ul v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+    <Toolbar
+      v-else
+      as="ul"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6"
+      :bind-keys="FocusKeys.ArrowAll | FocusKeys.HomeAndEnd"
+    >
       <li
         v-for="(contributor, idx) in contributors"
         :key="contributor.id"
@@ -62,7 +69,7 @@ const pictures = computed(() => {
         />
         <div class="text-sm">
           <RouterLink
-            class="block font-medium dark:text-gray-200"
+            class="block font-medium dark:text-gray-200 focus:outline-none"
             :to="{ name: 'people-id', params: { id: contributor.attributes.person.id } }"
             :title="$t('common-actions.go-to-page', [contributor.attributes.person.name])"
           >
@@ -76,11 +83,14 @@ const pictures = computed(() => {
         <div
           :class="[
             'absolute -inset-2 scale-95 bg-gray-200/50 dark:bg-gray-800',
-            'motion-safe:transition opacity-0 group-hover:opacity-100',
-            'group-hover:scale-100 rounded-lg'
+            'motion-safe:transition opacity-0',
+            'group-hover:opacity-100 group-focus-within:opacity-100',
+            'group-hover:scale-100 group-focus-within:scale-100',
+            'rounded-lg group-focus-within:ring-2',
+            'group-focus-within:ring-black dark:group-focus-within:ring-white/90'
           ]"
         />
       </li>
-    </ul>
+    </Toolbar>
   </Block>
 </template>

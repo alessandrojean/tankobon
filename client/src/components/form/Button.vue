@@ -55,6 +55,7 @@ const button = cva(
         danger: [
           'shadow-sm border-red-600 text-white bg-red-600',
           'not-disabled:hover:bg-red-700 nod-disabled:hover:border-red-700',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
         'pill-tab': [
           'border-transparent bg-transparent',

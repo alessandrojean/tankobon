@@ -123,6 +123,7 @@ declare module '@vue/runtime-core' {
     TextInput: typeof import('./components/form/TextInput.vue')['default']
     ThemeToggle: typeof import('./components/ThemeToggle.vue')['default']
     Toast: typeof import('./components/Toast.vue')['default']
+    Toolbar: typeof import('./components/Toolbar.vue')['default']
     TransitionChild: typeof import('@headlessui/vue')['TransitionChild']
     TransitionRoot: typeof import('@headlessui/vue')['TransitionRoot']
     UserAuthenticationActivityTable: typeof import('./components/users/UserAuthenticationActivityTable.vue')['default']

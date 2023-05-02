@@ -49,7 +49,7 @@ const iconOnly = breakpoints.smaller('2xl')
     <div class="skeleton w-12 h-12" />
     <div class="skeleton w-12 h-12" />
   </div>
-  <div
+  <Toolbar
     class="flex w-full justify-center sm:justify-start items-center gap-2"
     v-else-if="canEdit"
   >
@@ -105,5 +105,5 @@ const iconOnly = breakpoints.smaller('2xl')
       <span class="sr-only">{{ $t('common-actions.delete') }}</span>
       <TrashIcon class="w-5 h-5" />
     </Button>
-  </div>
+  </Toolbar>
 </template>
