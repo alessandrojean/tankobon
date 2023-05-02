@@ -1,6 +1,8 @@
 import { helpers, email } from '@vuelidate/validators'
 import { checkEmailAvailability } from '@/services/tankobon-users'
 
+export const positiveDecimal = helpers.regex(/^\d+([,.]\d+)?$/)
+
 export const emailIsAvailable = helpers.withAsync(async (value: string) => {
   if (value.length === 0 || !email.$validator(value, null, null)) {
     return true

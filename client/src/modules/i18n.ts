@@ -16,6 +16,11 @@ const numberFormats = {
     style: 'currency',
     notation: 'standard',
   },
+  decimal: {
+    style: 'decimal',
+    maximumFractionDigits: 2,
+    useGrouping: false,
+  },
   dimension: {
     style: 'decimal',
     minimumFractionDigits: 0,

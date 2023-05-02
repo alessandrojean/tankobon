@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import { BookUpdate } from '@/types/tankobon-book'
+import { DimensionsString } from '@/types/tankobon-dimensions'
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 
-const { t } = useI18n()
+const { t, n } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const notificator = useToaster()
@@ -38,7 +39,12 @@ const tabs = [
   { key: '3', text: 'books.organization' },
 ]
 
-const updatedBook = reactive<BookUpdate>({
+interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount'> {
+  dimensions: DimensionsString,
+  pageCount: string,
+}
+
+const updatedBook = reactive<CustomBookUpdate>({
   id: '',
   arrivedAt: null,
   barcode: null,
@@ -47,18 +53,18 @@ const updatedBook = reactive<BookUpdate>({
   code: '',
   collection: '',
   contributors: [],
-  dimensions: {
-    widthCm: 0,
-    heightCm: 0,
-  },
   isInLibrary: true,
+  dimensions: {
+    widthCm: '0',
+    heightCm: '0',
+  },
   labelPrice: {
     amount: 0,
     currency: 'USD',
   },
   notes: '',
   number: '',
-  pageCount: 0,
+  pageCount: '0',
   paidPrice: {
     amount: 0,
     currency: 'USD',
@@ -72,18 +78,22 @@ const updatedBook = reactive<BookUpdate>({
 })
 
 whenever(book, (loadedBook) => {
-  Object.assign(updatedBook, <Partial<BookUpdate>> {
+  Object.assign(updatedBook, <Partial<CustomBookUpdate>> {
     id: loadedBook.id,
     code: loadedBook.attributes.code.code,
     number: loadedBook.attributes.number,
     barcode: loadedBook.attributes.barcode,
     title: loadedBook.attributes.title,
     synopsis: loadedBook.attributes.synopsis,
-    pageCount: loadedBook.attributes.pageCount,
+    pageCount: String(loadedBook.attributes.pageCount),
     notes: loadedBook.attributes.notes,
     boughtAt: loadedBook.attributes.boughtAt,
     billedAt: loadedBook.attributes.billedAt,
     arrivedAt: loadedBook.attributes.arrivedAt,
+    dimensions: {
+      widthCm: n(loadedBook.attributes.dimensions.widthCm, 'decimal'),
+      heightCm: n(loadedBook.attributes.dimensions.heightCm, 'decimal')
+    },
   })
 }, { immediate: true })
 
@@ -161,6 +171,7 @@ const activeTab = ref(tabs[0])
               v-model:bought-at="updatedBook.boughtAt"
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
+              v-model:dimensions="updatedBook.dimensions"
             />
           </TabPanel>
           <TabPanel>Relationships</TabPanel>

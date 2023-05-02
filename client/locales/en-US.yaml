@@ -21,6 +21,8 @@ common-fields:
   code: Code
   publisher: Publisher
   dimensions: Dimensions
+  height: Height
+  width: Width
   label-price: Label price
   paid-price: Paid price
   store: Store
@@ -95,6 +97,8 @@ common-placeholders:
   book-number: '1'
   book-barcode: '9781934287729'
   book-page-count: '582'
+  book-width-cm: '16.5'
+  book-height-cm: '20.9'
 
 validation:
   required: It can not be blank.
@@ -106,6 +110,7 @@ validation:
   max: It should have at most {0} characters.
   isbn: It should be a valid ISBN.
   integer: It should be a valid integer.
+  decimal: It should be a valid decimal.
 
 entities:
   users: Users

@@ -190,9 +190,10 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
               'bg-white dark:bg-gray-950 min-h-[9rem]',
               'border-0 rounded-md focus:outline-none',
               'placeholder:text-gray-500 w-full font-mono text-sm/6',
+              'motion-safe:transition',
               invalid 
                 ? 'ring-1 ring-red-500 dark:ring-red-500/95'
-                : 'focus:ring-1 focus:ring-primary-500',
+                : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
             ]"
             :value="modelValue"
             :placeholder="placeholder"
@@ -234,7 +235,7 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
           <div
             v-else
             v-html="markdownContent"
-            class="prose px-3 prose-sm max-w-full dark:prose-invert"
+            class="prose prose- px-6 py-1 prose-sm lg:prose-base max-w-none lg:max-w-none dark:prose-invert"
           />
         </div>
       </div>

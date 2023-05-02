@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import { DimensionsString } from '@/types/tankobon-dimensions'
 import { convertLocalTimeZoneToUtc, convertUtcToLocalTimeZone } from '@/utils/date'
+import { positiveDecimal } from '@/utils/validation'
 import { useVuelidate } from '@vuelidate/core'
-import { helpers, required, integer, minValue, and } from '@vuelidate/validators'
-import { ArgumentsType } from '@vueuse/core'
+import { helpers, required, integer, minValue } from '@vuelidate/validators'
 
 export interface BookMetadataFormProps {
   code: string,
@@ -11,10 +12,11 @@ export interface BookMetadataFormProps {
   title: string,
   synopsis: string,
   notes: string,
-  pageCount: number,
+  pageCount: string,
   billedAt: string | null | undefined,
   boughtAt: string | null | undefined,
   arrivedAt: string | null | undefined,
+  dimensions: DimensionsString,
   mode?: 'creation' | 'update',
 }
 
@@ -28,7 +30,8 @@ export type BookMetadataFormEmits = {
   (e: 'update:billedAt', billedAt: string): void,
   (e: 'update:arrivedAt', arrivedAt: string): void,
   (e: 'update:boughtAt', boughtAt: string): void,
-  (e: 'update:pageCount', pageCount: number): void,
+  (e: 'update:pageCount', pageCount: string): void,
+  (e: 'update:dimensions', dimensions: DimensionsString): void,
   (e: 'validate', isValid: boolean): void,
 }
 
@@ -37,7 +40,7 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { code, title, pageCount } = toRefs(props)
+const { code, title, pageCount, dimensions } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -45,25 +48,24 @@ const rules = computed(() => {
   const messageRequired = helpers.withMessage(t('validation.required'), required)
   const messageInteger = helpers.withMessage(t('validation.integer'), integer)
   const messageMinValue = helpers.withMessage(({ $params }) => t('validation.min-value', [$params.min]), minValue(0))
+  const messageDecimal = helpers.withMessage(t('validation.decimal'), positiveDecimal)
 
   return {
     code: { messageRequired },
     title: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
+    dimensions: {
+      widthCm: { messageDecimal },
+      heightCm: { messageDecimal },
+    }
   }
 })
 
-const v$ = useVuelidate(rules, { code, title, pageCount })
+const v$ = useVuelidate(rules, { code, title, pageCount, dimensions })
 
 watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
 
 defineExpose({ v$ })
-
-function handlePageCountInput(event: KeyboardEvent) {
-  const input = event.target as HTMLInputElement
-  const pageCount = input.value.length === 0 ? NaN : Number(input.value)
-  emit('update:pageCount', pageCount)
-}
 
 function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt' | 'arrivedAt') {
   const input = event.target as HTMLInputElement
@@ -165,17 +167,36 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
-        :model-value="pageCount ? String(pageCount) : ''"
+        :model-value="pageCount ?? ''"
         id="page-count"
         required
         inputmode="numeric"
-        :input-mask="{ regex: '\\d*' }"
-        :label-text="$t('common-fields.page-count')"
+        :input-mask="{
+          regex: '\\d+',
+          showMaskOnHover: false,
+          showMaskOnFocus: false,
+        }"
         :placeholder="$t('common-placeholders.book-page-count')"
+        :label-text="$t('common-fields.page-count')"
         :invalid="v$.pageCount.$error"
         :errors="v$.pageCount.$errors"
         @blur="v$.pageCount.$touch()"
-        @input="handlePageCountInput"
+        @input="$emit('update:pageCount', $event.target.value)"
+      />
+
+      <DimensionsInput
+        :model-value="dimensions"
+        id="dimensions"
+        required
+        :placeholder-width="$t('common-placeholders.book-width-cm')"
+        :placeholder-height="$t('common-placeholders.book-height-cm')"
+        :invalid-width="v$.dimensions.widthCm.$error"
+        :errors-width="v$.dimensions.widthCm.$errors"
+        :invalid-height="v$.dimensions.heightCm.$error"
+        :errors-height="v$.dimensions.heightCm.$errors"
+        @blur:width="v$.dimensions.widthCm.$touch()"
+        @blur:height="v$.dimensions.heightCm.$touch()"
+        @update:model-value="$emit('update:dimensions', $event)"
       />
     </div>
 
