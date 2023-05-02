@@ -248,7 +248,7 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
       {{ errorMessage }}
     </p>
 
-    <markdown-toolbar :for="$attrs.id">
+    <markdown-toolbar :for="$attrs.id" class="hidden">
       <md-bold ref="mdBold" />
       <md-italic ref="mdItalic" />
       <md-link ref="mdLink" />
