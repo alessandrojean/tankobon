@@ -1,25 +1,29 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
-import { maxFileSize } from '@/utils/validation'
 import useVuelidate from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
+import { maxFileSize } from '@/utils/validation'
 
 export interface EntityImageDialogProps {
-  currentImageUrl: string | undefined | null,
-  description: string,
-  isOpen: boolean,
-  title: string,
+  currentImageUrl: string | undefined | null
+  description: string
+  isOpen: boolean
+  title: string
 }
 
 export interface ImageResult {
-  removeExisting: boolean,
-  file: File | null,
+  removeExisting: boolean
+  file: File | null
 }
 
-export type UserCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', image: ImageResult): void,
+export interface UserCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', image: ImageResult): void
 }
+
+const props = defineProps<EntityImageDialogProps>()
+
+const emit = defineEmits<UserCreateDialogEmits>()
 
 const ACCEPT_FORMATS = [
   'image/png',
@@ -30,8 +34,6 @@ const ACCEPT_FORMATS = [
   'image/webp',
 ]
 
-const props = defineProps<EntityImageDialogProps>()
-const emit = defineEmits<UserCreateDialogEmits>()
 const { t } = useI18n()
 
 const { isOpen, currentImageUrl } = toRefs(props)
@@ -44,9 +46,9 @@ const rules = {
   file: {
     maxFileSize: helpers.withMessage(
       ({ $params }) => t('validation.max-size', [$params.sizeString]),
-      maxFileSize(5 * 1_024 * 1_024, '5MB')
-    )
-  }
+      maxFileSize(5 * 1_024 * 1_024, '5MB'),
+    ),
+  },
 }
 
 const v$ = useVuelidate(rules, formState)
@@ -54,9 +56,8 @@ const v$ = useVuelidate(rules, formState)
 whenever(isOpen, () => v$.value.$reset())
 
 const uploadingBlobUrl = computed(() => {
-  if (!formState.file || v$.value.file.$error) {
+  if (!formState.file || v$.value.file.$error)
     return null
-  }
 
   return URL.createObjectURL(formState.file)
 })
@@ -64,9 +65,8 @@ const uploadingBlobUrl = computed(() => {
 async function handleSubmit() {
   const isValid = await v$.value.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('submit', {
     removeExisting: removeExisting.value,
@@ -76,11 +76,10 @@ async function handleSubmit() {
 }
 
 function handleRemove() {
-  if (uploadingBlobUrl.value) {
+  if (uploadingBlobUrl.value)
     formState.file = null
-  } else if (currentImageUrl.value) {
+  else if (currentImageUrl.value)
     removeExisting.value = true
-  }
 }
 
 function handleUpload(files: FileList) {

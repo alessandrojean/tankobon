@@ -4,16 +4,17 @@ import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
-import { LibraryEntity } from '@/types/tankobon-library'
+import type { LibraryEntity } from '@/types/tankobon-library'
 import { getRelationship } from '@/utils/api'
 
 export interface LibrariesTableProps {
-  userId: string,
+  userId: string
 }
 
 const props = defineProps<LibrariesTableProps>()
 const { userId } = toRefs(props)
 const notificator = useToaster()
+const { t } = useI18n()
 
 const rowSelection = ref<Record<string, boolean>>({})
 
@@ -26,9 +27,8 @@ const { data: libraries, isLoading } = useUserLibrariesByUserQuery({
       title: t('libraries.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
-const { t, locale } = useI18n()
 const columnHelper = createColumnHelper<LibraryEntity>()
 
 const columns = [
@@ -46,41 +46,41 @@ const columns = [
         disabled: !row.getCanSelect(),
         indeterminate: row.getIsSomeSelected(),
         onChange: row.getToggleSelectedHandler(),
-      })
+      }),
     ]),
     meta: {
       headerClass: 'w-12',
       cellClass: 'align-middle',
-    }
+    },
   }),
   columnHelper.accessor('attributes.name', {
     id: 'name',
     enableSorting: false,
     header: () => t('common-fields.name'),
-    cell: (info) => info.getValue(),
+    cell: info => info.getValue(),
   }),
   columnHelper.accessor('attributes.description', {
     id: 'description',
     enableSorting: false,
     header: () => t('common-fields.description'),
-    cell: (info) => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
+    cell: info => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
   }),
   columnHelper.accessor(
-    (library) => getRelationship(library, 'OWNER')?.id !== userId.value,
+    library => getRelationship(library, 'OWNER')?.id !== userId.value,
     {
       id: 'isShared',
       enableSorting: false,
       header: () => t('common-fields.ownership'),
-      cell: (info) => h(
+      cell: info => h(
         Badge,
         { color: info.getValue() ? 'blue' : 'gray' },
-        { default: () => info.getValue() ? t('libraries.owner-shared') : t('libraries.owner-self') }
+        { default: () => info.getValue() ? t('libraries.owner-shared') : t('libraries.owner-self') },
       ),
       meta: {
         cellClass: 'text-right',
         headerContainerClass: 'justify-end',
       },
-    }
+    },
   ),
   columnHelper.display({
     id: 'actions',
@@ -97,22 +97,22 @@ const columns = [
         default: () => [
           h('span', { class: 'sr-only', text: () => t('common-actions.view-details') }),
           h(EllipsisHorizontalIcon, { class: 'w-5 h-5' }),
-        ]
-      }
+        ],
+      },
     ),
     meta: {
       headerClass: 'w-12',
-    }
+    },
   }),
 ]
 </script>
 
 <template>
   <Table
+    v-model:row-selection="rowSelection"
     :data="libraries"
     :columns="columns"
     :loading="isLoading"
-    v-model:row-selection="rowSelection"
   >
     <template #empty>
       <slot name="empty" />

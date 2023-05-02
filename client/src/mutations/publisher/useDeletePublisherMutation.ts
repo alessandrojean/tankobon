@@ -12,6 +12,6 @@ export default function useDeletePublisherMutation() {
     onSuccess(_, publisherId) {
       queryClient.invalidateQueries(['publishers'])
       queryClient.invalidateQueries(['publisher', { id: publisherId }])
-    }
+    },
   })
 }

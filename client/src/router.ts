@@ -28,17 +28,16 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const userStore = useUserStore()
 
-  if (to.name === 'sign-in' && userStore.isAuthenticated) {
+  if (to.name === 'sign-in' && userStore.isAuthenticated)
     return { name: 'index' }
-  } else if (to.name === 'sign-in' && (await userStore.sessionExists())) {
+  else if (to.name === 'sign-in' && (await userStore.sessionExists()))
     return { name: 'index' }
-  }
 
   if (
-    to.name !== 'sign-in' &&
-    to.name !== 'claim-server' &&
-    to.name !== 'startup' &&
-    !userStore.isAuthenticated
+    to.name !== 'sign-in'
+    && to.name !== 'claim-server'
+    && to.name !== 'startup'
+    && !userStore.isAuthenticated
   ) {
     const query = Object.assign({}, to.query, { redirect: to.fullPath })
     return { name: 'startup', query }
@@ -48,9 +47,8 @@ router.beforeEach(async (to) => {
 router.beforeEach((to) => {
   const userStore = useUserStore()
 
-  if (to.meta.isAdminOnly && !userStore.isAdmin) {
+  if (to.meta.isAdminOnly && !userStore.isAdmin)
     return { name: 'index' }
-  }
 })
 
 export default router

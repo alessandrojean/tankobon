@@ -12,6 +12,6 @@ export default function useDeleteCollectionMutation() {
     onSuccess(_, collectionId) {
       queryClient.invalidateQueries(['collections'])
       queryClient.invalidateQueries(['collection', { id: collectionId }])
-    }
+    },
   })
 }

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
-import { ExternalBookEntity } from '@/types/tankobon-external-book';
-import { ImportOneBook } from '@/types/tankobon-importer-source';
-import { getRelationship } from '@/utils/api';
+import type { ExternalBookEntity } from '@/types/tankobon-external-book'
+import type { ImportOneBook } from '@/types/tankobon-importer-source'
+import { getRelationship } from '@/utils/api'
 
 export interface PersonCreateDialogProps {
-  externalBook: ExternalBookEntity,
-  isOpen: boolean,
+  externalBook: ExternalBookEntity
+  isOpen: boolean
 }
 
-export type PersonCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', book: ImportOneBook): void,
+export interface PersonCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', book: ImportOneBook): void
 }
 
 type CustomImport = Omit<ImportOneBook, 'collection'> & { collection?: string }
@@ -30,12 +30,12 @@ const importData = reactive<CustomImport>({
 })
 
 whenever(isOpen, async () => {
-  Object.assign(importData, <CustomImport> {
+  Object.assign(importData, {
     id: externalBook.value.id,
     isbn: externalBook.value.attributes.isbn,
     collection: undefined,
-    source: source.value!.id,
-  })
+    source: source.value!.id as CustomImport['source'],
+  } satisfies CustomImport)
 }, { immediate: true })
 
 async function handleSubmit() {

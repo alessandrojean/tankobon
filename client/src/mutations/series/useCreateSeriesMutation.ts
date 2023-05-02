@@ -12,6 +12,6 @@ export default function useCreateSeriesMutation() {
     mutationFn: addOneSeries,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['series', { libraryId: creation.library }])
-    }
+    },
   })
 }

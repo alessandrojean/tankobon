@@ -1,29 +1,29 @@
 <script lang="ts" setup>
 import {
+  type ColumnDef,
   FlexRender,
+  type PaginationState,
+  type SortingState,
   getCoreRowModel,
   useVueTable,
-  type SortingState,
-  type PaginationState,
-  type ColumnDef,
 } from '@tanstack/vue-table'
 import { ArrowSmallDownIcon, ArrowSmallUpIcon } from '@heroicons/vue/20/solid'
 
 export interface TableProps {
-  data?: any[],
-  columns: ColumnDef<any, any>[],
-  pageCount?: number,
-  itemsCount?: number,
-  pagination?: PaginationState,
-  rowSelection?: Record<string, boolean>,
-  sorting?: SortingState,
-  loading?: boolean,
+  data?: any[]
+  columns: ColumnDef<any, any>[]
+  pageCount?: number
+  itemsCount?: number
+  pagination?: PaginationState
+  rowSelection?: Record<string, boolean>
+  sorting?: SortingState
+  loading?: boolean
 }
 
-export type TableEmits = {
-  (e: 'update:pagination', pagination: PaginationState): void,
-  (e: 'update:row-selection', rowSelection: Record<string, boolean>): void,
-  (e: 'update:sorting', sorting: SortingState): void,
+export interface TableEmits {
+  (e: 'update:pagination', pagination: PaginationState): void
+  (e: 'update:row-selection', rowSelection: Record<string, boolean>): void
+  (e: 'update:sorting', sorting: SortingState): void
 }
 
 const props = withDefaults(defineProps<TableProps>(), {
@@ -59,7 +59,7 @@ const table = useVueTable({
     return pageCount.value
   },
   state: {
-    get pagination () {
+    get pagination() {
       return pagination.value
     },
     get rowSelection() {
@@ -67,14 +67,14 @@ const table = useVueTable({
     },
     get sorting() {
       return sorting.value
-    }
+    },
   },
   onPaginationChange: (updaterOrValue) => {
     emit(
       'update:pagination',
       typeof updaterOrValue === 'function'
         ? updaterOrValue(pagination.value!)
-        : updaterOrValue
+        : updaterOrValue,
     )
   },
   onRowSelectionChange: (updaterOrValue) => {
@@ -82,7 +82,7 @@ const table = useVueTable({
       'update:row-selection',
       typeof updaterOrValue === 'function'
         ? updaterOrValue(rowSelection.value!)
-        : updaterOrValue
+        : updaterOrValue,
     )
   },
   onSortingChange: (updaterOrValue) => {
@@ -90,16 +90,12 @@ const table = useVueTable({
       'update:sorting',
       typeof updaterOrValue === 'function'
         ? updaterOrValue(sorting.value!)
-        : updaterOrValue
+        : updaterOrValue,
     )
   },
   getCoreRowModel: getCoreRowModel(),
   manualPagination: true,
   manualSorting: true,
-})
-
-const hasPagination = computed(() => {
-  return pagination.value && (table.getCanNextPage() || table.getCanPreviousPage())
 })
 
 const showFooter = computed(() => {
@@ -122,9 +118,7 @@ watch(data, () => emit('update:row-selection', {}))
             v-for="header in headerGroup.headers"
             :key="header.id"
             :colspan="header.colSpan"
-            :class="[
-              'bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm',
-              'font-semibold text-gray-700 dark:text-gray-300 text-left',
+            class="bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300 text-left" :class="[
               header.column.getCanSort() ? 'cursor-pointer select-none' : '',
               header.column.columnDef.meta?.headerClass,
             ]"
@@ -132,9 +126,8 @@ watch(data, () => emit('update:row-selection', {}))
           >
             <div
               v-if="!header.isPlaceholder"
-              :class="[
-                'flex items-center',
-                header.column.columnDef.meta?.headerContainerClass
+              class="flex items-center" :class="[
+                header.column.columnDef.meta?.headerContainerClass,
               ]"
             >
               <FlexRender
@@ -142,9 +135,9 @@ watch(data, () => emit('update:row-selection', {}))
                 :props="header.getContext()"
               />
 
-              <component
-                v-if="header.column.getIsSorted()"
+              <Component
                 :is="header.column.getIsSorted() === 'asc' ? ArrowSmallUpIcon : ArrowSmallDownIcon"
+                v-if="header.column.getIsSorted()"
                 class="w-5 h-5 inline-block text-gray-500 dark:text-gray-400"
               />
             </div>
@@ -161,13 +154,12 @@ watch(data, () => emit('update:row-selection', {}))
             <td
               v-for="cell in row.getVisibleCells()"
               :key="cell.id"
-              :class="[
-                'px-4 py-2 text-sm',
+              class="px-4 py-2 text-sm" :class="[
                 cell.column.columnDef.meta?.tabular ? 'tabular-nums' : '',
                 cell.column.columnDef.meta?.cellClass,
                 row.getIsSelected()
                   ? 'bg-primary-50 dark:bg-gray-700/80 text-primary-800 dark:text-gray-100 group-hover:bg-primary-100/70 dark:group-hover:bg-gray-700'
-                  : 'dark:text-gray-300 dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/80'
+                  : 'dark:text-gray-300 dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/80',
               ]"
             >
               <FlexRender
@@ -186,11 +178,7 @@ watch(data, () => emit('update:row-selection', {}))
     </table>
     <div
       v-if="showFooter"
-      :class="[
-        'bg-gray-50 dark:bg-gray-900',
-        'border-t border-gray-200 dark:border-gray-800',
-        'px-4 py-2 flex justify-between items-center'
-      ]"
+      class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center"
     >
       <div>
         <label for="items-per-page" class="sr-only">

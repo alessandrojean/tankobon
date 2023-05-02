@@ -12,6 +12,6 @@ export default function useCreatePublisherMutation() {
     mutationFn: addOnePublisher,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['publishers', { libraryId: creation.library }])
-    }
+    },
   })
 }

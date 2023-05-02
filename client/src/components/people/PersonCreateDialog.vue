@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import PersonForm from '@/components/people/PersonForm.vue'
-import { PersonCreation } from '@/types/tankobon-person'
+import type { PersonCreation } from '@/types/tankobon-person'
 
 export interface PersonCreateDialogProps {
-  libraryId: string,
-  isOpen: boolean,
+  libraryId: string
+  isOpen: boolean
 }
 
-export type PersonCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', person: PersonCreation): void,
+export interface PersonCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', person: PersonCreation): void
 }
 
 const props = defineProps<PersonCreateDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await personForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(person))

@@ -11,28 +11,24 @@ withDefaults(defineProps<LoadingIndicatorProps>(), {
   blur: true,
   position: 'absolute',
   small: false,
-  zIndex: 1
+  zIndex: 1,
 })
 </script>
 
 <template>
   <FadeTransition>
     <div
-      aria-hidden="true"
+      v-if="loading"
+      aria-hidden="true" class="flex justify-center items-center inset-0 bg-white/60 dark:bg-gray-900/40 z-[--z]"
       :class="[
         position,
-        'flex justify-center items-center inset-0 bg-white/60 dark:bg-gray-900/40',
-        'z-[--z]',
-        blur ? 'backdrop-blur-sm' : ''
+        blur ? 'backdrop-blur-sm' : '',
       ]"
       :style="{ '--z': zIndex }"
-      v-if="loading"
     >
       <LoadingSpinIcon
-        :class="[
-          `motion-safe:animate-spin`,
+        class="motion-safe:animate-spin mx-auto text-primary-500" :class="[
           small ? 'h-8 w-8' : 'h-10 w-18',
-          'mx-auto text-primary-500'
         ]"
       />
     </div>

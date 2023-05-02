@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import { resolve, dirname } from 'node:path'
+import { dirname, resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
@@ -7,8 +7,6 @@ import Layouts from 'vite-plugin-vue-layouts'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
-import postcss from './postcss.config.js'
-
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -22,16 +20,14 @@ export default defineConfig({
     },
   },
 
-  css: { postcss },
-
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-vue
     Vue({
       template: {
         compilerOptions: {
-          isCustomElement: (tag) => tag === 'markdown-toolbar' || tag.substring(0, 3) === 'md-'
-        }
-      }
+          isCustomElement: tag => tag.includes('-'),
+        },
+      },
     }),
 
     // https://github.com/hannoeru/vite-plugin-pages
@@ -54,7 +50,7 @@ export default defineConfig({
           imports: ['MaybeRef'],
           type: true,
         },
-        { 'cva': ['cva'] },
+        { cva: ['cva'] },
         { from: 'cva', imports: ['VariantProps'], type: true },
       ],
       dts: 'src/auto-imports.d.ts',
@@ -71,7 +67,7 @@ export default defineConfig({
     // https://github.com/antfu/unplugin-vue-components
     Components({
       dts: 'src/components.d.ts',
-      resolvers: [HeadlessUiResolver()]
+      resolvers: [HeadlessUiResolver()],
     }),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n

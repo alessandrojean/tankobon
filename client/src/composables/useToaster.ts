@@ -23,6 +23,6 @@ export function useToaster() {
     },
     warning: async (notification: SimpleToast) => {
       await toastSimple(notification, 'warning')
-    }
+    },
   }
 }

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { LibraryUpdate } from '@/types/tankobon-library'
-import { getRelationship } from '@/utils/api';
+import type { LibraryUpdate } from '@/types/tankobon-library'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -15,7 +14,7 @@ const { mutate: editLibrary, isLoading: isEditing } = useUpdateLibraryMutation()
 const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
   userId: computed(() => userStore.me!.id),
   includeShared: false,
-  select: (libraries) => libraries.length > 1,
+  select: libraries => libraries.length > 1,
   initialData: [],
 })
 
@@ -28,10 +27,8 @@ const { data: library, isLoading } = useLibraryQuery({
       title: t('libraries.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const owner = computed(() => getRelationship(library.value, 'OWNER'))
 
 function handleDelete() {
   deleteLibrary(libraryId.value!, {
@@ -44,7 +41,7 @@ function handleDelete() {
         title: t('libraries.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -60,7 +57,7 @@ function handleEditLibrary(library: LibraryUpdate) {
         title: t('libraries.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -100,9 +97,7 @@ function handleEditLibrary(library: LibraryUpdate) {
         </Toolbar>
       </template>
     </Header>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10">
-      
-    </div>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-10" />
 
     <LibraryEditDialog
       v-if="library"
@@ -115,6 +110,6 @@ function handleEditLibrary(library: LibraryUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

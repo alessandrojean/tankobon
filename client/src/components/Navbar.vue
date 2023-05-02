@@ -1,15 +1,15 @@
 <script lang="ts" setup>
+import { Bars3Icon } from '@heroicons/vue/20/solid'
+import { BuildingLibraryIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { ShowAsideDialogKey } from '@/symbols'
 import { injectStrict } from '@/utils/injetion'
-import { Bars3Icon } from '@heroicons/vue/20/solid'
-import { BuildingLibraryIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 
 export interface NavbarProps {
   transparent?: boolean
 }
 
 const props = withDefaults(defineProps<NavbarProps>(), {
-  transparent: false
+  transparent: false,
 })
 
 const { transparent } = toRefs(props)
@@ -41,20 +41,15 @@ const libraryStore = useLibraryStore()
 const library = computed(() => libraryStore.library)
 const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
   userId: computed(() => userStore.me!.id),
-  select: (libraries) => libraries.length > 1,
+  select: libraries => libraries.length > 1,
   initialData: [],
 })
 </script>
 
 <template>
   <nav
-    :class="[
-      'z-20 bg-gray-900 supports-backdrop-blur:bg-gray-900/95',
-      'backdrop-blur sm:backdrop-filter-none md:backdrop-blur',
-      'transition duration-300 ease-in-out sm:left-16 md:left-0',
-      'dark:border-b dark:border-gray-800',
-      'motion-safe:transition-colors motion-safe:duration-300',
-      transparent && !isScrolling 
+    class="z-20 bg-gray-900 supports-backdrop-blur:bg-gray-900/95 backdrop-blur sm:backdrop-filter-none md:backdrop-blur transition duration-300 ease-in-out sm:left-16 md:left-0 dark:border-b dark:border-gray-800 motion-safe:transition-colors motion-safe:duration-300" :class="[
+      transparent && !isScrolling
         ? '!bg-transparent !backdrop-blur-none !border-transparent'
         : '',
     ]"
@@ -137,7 +132,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
               <BuildingLibraryIcon class="w-6 h-6" />
             </Button>
           </FadeTransition>
-          
+
           <ThemeToggle :transparent="transparent && !isScrolling" />
           <ProfileMenu :transparent="transparent && !isScrolling" />
         </div>

@@ -1,7 +1,6 @@
-
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { getClaimStatus } from '@/services/tankobon-claim'
-import { TankobonApiError } from '@/types/tankobon-response'
+import type { TankobonApiError } from '@/types/tankobon-response'
 import type { ClaimStatus } from '@/types/tankobon-claim'
 
 type ErrorResponse = TankobonApiError | Error

@@ -2,6 +2,18 @@
 import type { ButtonHTMLAttributes } from 'vue'
 import type { RouterLinkProps } from 'vue-router'
 
+withDefaults(defineProps<ButtonProps>(), {
+  disabled: false,
+  isLink: false,
+  isRouterLink: false,
+  loading: false,
+  kind: 'normal',
+  rounded: 'normal',
+  size: 'normal',
+  to: () => ({}),
+  type: 'button',
+})
+
 const button = cva(
   [
     'font-medium motion-safe:transition-colors',
@@ -11,48 +23,48 @@ const button = cva(
   {
     variants: {
       kind: {
-        primary: [
+        'primary': [
           'shadow-sm border-primary-500 bg-primary-500 text-primary-50',
           'not-disabled:hover:bg-primary-600 not-disabled:hover:border-primary-600',
-          'focus-visible:ring-black dark:focus-visible:ring-white/90'
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
-        normal: [
+        'normal': [
           'shadow-sm border-gray-300 bg-white text-gray-700 not-disabled:hover:bg-gray-50',
           'dark:bg-gray-800 dark:text-gray-100 dark:border-gray-800',
           'dark:not-disabled:hover:bg-gray-700 dark:not-disabled:hover:border-gray-700',
           '[&_svg]:text-gray-600 [&_svg]:hover:text-gray-700',
           '[&_svg]:dark:text-gray-300 [&_svg]:dark:hover:text-gray-200',
-          'focus-visible:ring-black dark:focus-visible:ring-white/90'
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
-        ghost: [
+        'ghost': [
           'border-transparent bg-transparent text-primary-600 dark:text-primary-500',
           'not-disabled:hover:bg-gray-700/10 dark:not-disabled:hover:bg-gray-300/10',
           'not-disabled:hover:text-primary-800 dark:not-disabled:hover:text-primary-400',
-          'focus-visible:ring-black dark:focus-visible:ring-white/90'
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
         'ghost-alt': [
           'border-transparent bg-transparent text-gray-500 dark:text-gray-300',
           'not-disabled:hocus:bg-gray-700/10 dark:not-disabled:hocus:bg-gray-300/10',
           'not-disabled:hocus:text-gray-600 dark:not-disabled:hocus:text-gray-100',
-          'focus-visible:ring-black dark:focus-visible:ring-white/90'
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
         'navbar-dark': [
           'border-transparent bg-transparent text-gray-300',
           'not-disabled:hocus:bg-gray-700 not-disabled:hocus:text-gray-200',
-          'focus-visible:ring-white/90'
+          'focus-visible:ring-white/90',
         ],
         'navbar-dark-elevated': [
           'border-gray-800 bg-gray-800 text-gray-300',
           'not-disabled:hocus:bg-gray-700 not-disabled:hocus:border-gray-700',
           'not-disabled:hocus:text-gray-200',
-          'focus-visible:ring-white/90'
+          'focus-visible:ring-white/90',
         ],
         'navbar-light': [
           'border-transparent bg-transparent text-white/80',
           'not-disabled:hocus:bg-white/20 not-disabled:hocus:text-white/95',
-          'focus-visible:ring-white/90'
+          'focus-visible:ring-white/90',
         ],
-        danger: [
+        'danger': [
           'shadow-sm border-red-600 text-white bg-red-600',
           'not-disabled:hover:bg-red-700 nod-disabled:hover:border-red-700',
           'focus-visible:ring-black dark:focus-visible:ring-white/90',
@@ -78,10 +90,10 @@ const button = cva(
         ],
       },
       size: {
-        mini: 'text-sm px-3',
-        small: 'text-sm px-3 py-2',
-        normal: 'px-4 py-2',
-        large: 'text-lg px-5 py-2',
+        'mini': 'text-sm px-3',
+        'small': 'text-sm px-3 py-2',
+        'normal': 'px-4 py-2',
+        'large': 'text-lg px-5 py-2',
         'underline-tab': 'text-sm py-3.5 px-0.5',
         'pill-tab': 'text-sm py-1.5 px-2.5',
       },
@@ -93,42 +105,30 @@ const button = cva(
         full: 'rounded-full',
         normal: 'rounded-md',
         none: 'rounded-0',
-      }
+      },
     },
     defaultVariants: {
       kind: 'normal',
       size: 'normal',
       loading: false,
       rounded: 'normal',
-    }
-  }
+    },
+  },
 )
 
 type ButtonCvaProps = VariantProps<typeof button>
 
 interface ButtonProps {
-  disabled?: boolean,
-  isLink?: boolean,
-  isRouterLink?: boolean,
-  loading?: boolean,
-  kind?: ButtonCvaProps['kind'],
-  rounded?: ButtonCvaProps['rounded'],
-  size?: ButtonCvaProps['size'],
-  to?: RouterLinkProps['to'],
-  type?: ButtonHTMLAttributes['type'],
+  disabled?: boolean
+  isLink?: boolean
+  isRouterLink?: boolean
+  loading?: boolean
+  kind?: ButtonCvaProps['kind']
+  rounded?: ButtonCvaProps['rounded']
+  size?: ButtonCvaProps['size']
+  to?: RouterLinkProps['to']
+  type?: ButtonHTMLAttributes['type']
 }
-
-withDefaults(defineProps<ButtonProps>(), {
-  disabled: false,
-  isLink: false,
-  isRouterLink: false,
-  loading: false,
-  kind: 'normal',
-  rounded: 'normal',
-  size: 'normal',
-  to: () => ({}),
-  type: 'button',
-})
 </script>
 
 <template>
@@ -139,11 +139,8 @@ withDefaults(defineProps<ButtonProps>(), {
     :disabled="disabled || loading"
   >
     <div
-      :class="[
+      class="flex items-center justify-center [&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2 transition-colors" :class="[
         { 'text-transparent': loading },
-        'flex items-center justify-center',
-        '[&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2',
-        'transition-colors',
       ]"
     >
       <slot />
@@ -155,8 +152,7 @@ withDefaults(defineProps<ButtonProps>(), {
         aria-hidden="true"
       >
         <LoadingSpinIcon
-          :class="[
-            'animate-spin',
+          class="animate-spin" :class="[
             size === 'large' ? 'w-7 h-7' : 'w-6 h-6',
           ]"
         />
@@ -168,10 +164,7 @@ withDefaults(defineProps<ButtonProps>(), {
     :class="button({ kind, size, loading })"
   >
     <div
-      :class="[
-        'flex items-center justify-center',
-        '[&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2'
-      ]"
+      class="flex items-center justify-center [&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2"
     >
       <slot />
     </div>
@@ -182,10 +175,7 @@ withDefaults(defineProps<ButtonProps>(), {
     :class="button({ kind, size, loading })"
   >
     <div
-      :class="[
-        'flex items-center justify-center',
-        '[&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2'
-      ]"
+      class="flex items-center justify-center [&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2"
     >
       <slot />
     </div>

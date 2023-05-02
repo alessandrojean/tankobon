@@ -6,7 +6,7 @@ export interface ScaleTransitionProps {
 
 withDefaults(defineProps<ScaleTransitionProps>(), {
   mode: 'out-in',
-  simultaneous: false
+  simultaneous: false,
 })
 </script>
 
@@ -17,6 +17,6 @@ withDefaults(defineProps<ScaleTransitionProps>(), {
     enter-from-class="opacity-0 -translate-y-1.5"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <slot></slot>
+    <slot />
   </Transition>
 </template>

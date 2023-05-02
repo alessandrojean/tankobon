@@ -12,6 +12,6 @@ export default function useCreateStoreMutation() {
     mutationFn: addOneStore,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['stores', { libraryId: creation.library }])
-    }
+    },
   })
 }

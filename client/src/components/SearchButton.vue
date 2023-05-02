@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
+withDefaults(defineProps<SearchButtonProps>(), {
+  transparent: undefined,
+})
+
 const searchButton = cva(
   'flex items-center motion-safe:transition-colors rounded-lg',
   {
@@ -9,7 +13,7 @@ const searchButton = cva(
         false: [
           'bg-gray-700/70 text-gray-300/80',
           'hover:bg-gray-700 focus-within:bg-gray-700',
-          'hover:text-gray-300 focus-within:text-gray-300'
+          'hover:text-gray-300 focus-within:text-gray-300',
         ],
         true: [
           'bg-white/80 supports-backdrop-blur:bg-white/70',
@@ -17,14 +21,14 @@ const searchButton = cva(
           'backdrop-blur text-gray-700 dark:text-gray-400',
           'hover:bg-white/90 hover:supports-backdrop-blur:bg-white/80',
           'hover:dark:bg-gray-900/80 hover:dark:supports-backdrop-blur:bg-gray-900/70',
-          'hover:text-gray-800 hover:dark:text-gray-300'
+          'hover:text-gray-800 hover:dark:text-gray-300',
         ],
-      }
+      },
     },
     defaultVariants: {
       transparent: false,
-    }
-  }
+    },
+  },
 )
 
 const kbd = cva(
@@ -36,37 +40,31 @@ const kbd = cva(
     variants: {
       transparent: {
         false: [
-          'border-gray-500 text-gray-200'
+          'border-gray-500 text-gray-200',
         ],
         true: [
           'border-transparent bg-white/80 text-gray-950',
           'dark:bg-transparent dark:text-gray-100',
-          'dark:border-gray-500/50 group-hover:dark:border-gray-500/70'
-        ]
-      }
+          'dark:border-gray-500/50 group-hover:dark:border-gray-500/70',
+        ],
+      },
     },
     defaultVariants: {
-      transparent: false
-    }
-  }
+      transparent: false,
+    },
+  },
 )
 
 type SearchButtonCvaProps = Required<VariantProps<typeof searchButton>>
 
 interface SearchButtonProps {
-  transparent?: SearchButtonCvaProps['transparent'],
+  transparent?: SearchButtonCvaProps['transparent']
 }
 
-const props = withDefaults(defineProps<SearchButtonProps>(), {
-  transparent: undefined,
-})
-
 const isMac = ref(
-  // @ts-ignore
   navigator.userAgentData
-    ? // @ts-ignore
-      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
-    : navigator.platform.toLowerCase().indexOf('mac') > -1
+    ? navigator.userAgentData.platform.toLowerCase().includes('mac')
+    : navigator.platform.toLowerCase().includes('mac'),
 )
 </script>
 
@@ -74,11 +72,7 @@ const isMac = ref(
   <div :class="searchButton({ transparent })">
     <button
       type="button"
-      :class="[
-        'flex items-center px-3 py-2 group rounded-lg',
-        'focus:outline-none focus-visible:ring-2',
-        'focus-visible:ring-white/90',
-      ]"
+      class="flex items-center px-3 py-2 group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90"
     >
       <MagnifyingGlassIcon class="w-5 h-5" />
       <span class="ml-3 text-sm w-56 text-left">
@@ -89,8 +83,8 @@ const isMac = ref(
         class="space-x-1 flex"
       >
         <kbd :class="kbd({ transparent })">
-          <abbr title="Control" class="no-underline" v-if="!isMac">Ctrl</abbr>
-          <abbr title="Command" class="no-underline" v-else>⌘</abbr>
+          <abbr v-if="!isMac" title="Control" class="no-underline">Ctrl</abbr>
+          <abbr v-else title="Command" class="no-underline">⌘</abbr>
         </kbd>
         <kbd :class="kbd({ transparent })">K</kbd>
       </div>

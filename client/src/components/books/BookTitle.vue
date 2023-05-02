@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { BookEntity } from '@/types/tankobon-book'
-import { getRelationship, getRelationships } from '@/utils/api';
+import type { BookEntity } from '@/types/tankobon-book'
+import { getRelationships } from '@/utils/api'
 
 export interface BookTitleProps {
   book?: BookEntity | null
@@ -9,11 +9,10 @@ export interface BookTitleProps {
 
 const props = withDefaults(defineProps<BookTitleProps>(), {
   book: undefined,
-  loading: false
+  loading: false,
 })
 
 const { book, loading } = toRefs(props)
-const series = computed(() => getRelationship(book.value, 'SERIES'))
 const contributors = computed(() => getRelationships(book.value, 'CONTRIBUTOR'))
 const { t, locale } = useI18n()
 
@@ -25,14 +24,14 @@ const listFormatter = computed(() => {
 })
 
 const contributorsList = computed(() => {
-  const unique = Array.from(new Set(contributors.value?.map((c) => c.id) ?? []))
+  const unique = Array.from(new Set(contributors.value?.map(c => c.id) ?? []))
 
   return listFormatter.value.formatToParts(unique)
 })
 
 const peopleMap = computed(() => {
   return Object.fromEntries(
-    contributors.value?.map((c) => [c.id, c]) ?? []
+    contributors.value?.map(c => [c.id, c]) ?? [],
   )
 })
 </script>
@@ -64,16 +63,17 @@ const peopleMap = computed(() => {
       v-if="!loading"
       class="text-sm md:text-base sm:text-white/90 dark:text-white/90"
     >
-      <template v-for="(part, idx) in contributorsList" :key="idx">
+      <template v-for="(part, idx) in contributorsList">
         <RouterLink
           v-if="part.type === 'element'"
+          :key="`${idx}-router-link`"
           :to="{ name: 'people-id', params: { id: peopleMap[part.value].attributes?.person?.id } }"
           class="author"
           :title="t('common-actions.go-to-page', [peopleMap[part.value].attributes?.person?.name])"
         >
           {{ peopleMap[part.value].attributes?.person?.name }}
         </RouterLink>
-        <span v-else>
+        <span v-else :key="`${idx}-span`">
           {{ part.value }}
         </span>
       </template>

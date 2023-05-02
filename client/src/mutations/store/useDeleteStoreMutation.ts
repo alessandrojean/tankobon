@@ -12,6 +12,6 @@ export default function useDeleteStoreMutation() {
     onSuccess(_, storeId) {
       queryClient.invalidateQueries(['stores'])
       queryClient.invalidateQueries(['store', { id: storeId }])
-    }
+    },
   })
 }

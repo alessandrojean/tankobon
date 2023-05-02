@@ -13,6 +13,6 @@ export default function useDeleteUserMutation() {
       queryClient.invalidateQueries(['users'])
       queryClient.invalidateQueries(['user', { id: userId }])
       queryClient.invalidateQueries(['authentication-activity', { userId }])
-    }
+    },
   })
 }

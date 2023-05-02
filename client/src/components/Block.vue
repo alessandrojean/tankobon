@@ -5,20 +5,20 @@ export interface BlockProps {
 }
 
 const props = withDefaults(defineProps<BlockProps>(), {
-  as: 'section'
+  as: 'section',
 })
 
 const { as } = toRefs(props)
 </script>
 
 <template>
-  <component
+  <Component
     :is="as"
     class="bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition"
   >
     <slot
       name="title"
-      titleClasses="text-md sm:text-lg font-medium font-display dark:text-gray-100"
+      title-classes="text-md sm:text-lg font-medium font-display dark:text-gray-100"
     >
       <h2
         v-if="title"

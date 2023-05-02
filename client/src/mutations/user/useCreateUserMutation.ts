@@ -12,6 +12,6 @@ export default function useCreateUserMutation() {
     mutationFn: addOneUser,
     onSuccess() {
       queryClient.invalidateQueries(['users'])
-    }
+    },
   })
 }

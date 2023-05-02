@@ -14,9 +14,8 @@ export default function useDeleteUserAvatarMutation() {
       queryClient.invalidateQueries(['users'])
       queryClient.invalidateQueries(['user', { id: userId }])
 
-      if (userId === userStore.me?.id) {
+      if (userId === userStore.me?.id)
         await userStore.checkSession()
-      }
-    }
+    },
   })
 }

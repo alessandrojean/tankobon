@@ -1,16 +1,16 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import { 
+import {
+  type CollectionResponse,
   type ErrorResponse,
   TankobonApiError,
-  type CollectionResponse,
 } from '@/types/tankobon-response'
-import { ContributorEntity, ContributorIncludes } from '@/types/tankobon-contributor'
+import type { ContributorEntity, ContributorIncludes } from '@/types/tankobon-contributor'
 
 type ContributorCollection = CollectionResponse<ContributorEntity>
 
 export interface GetAllContributorsByBookParameters {
-  bookId: String,
+  bookId: String
   includes?: ContributorIncludes[]
 }
 
@@ -25,12 +25,11 @@ export async function getAllContributorsByBook(options: GetAllContributorsByBook
     })
 
     return contributors
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
-

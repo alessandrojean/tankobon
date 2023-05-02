@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { StoreUpdate } from '@/types/tankobon-store'
-import { getRelationship } from '@/utils/api';
+import type { StoreUpdate } from '@/types/tankobon-store'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,10 +19,8 @@ const { data: store, isLoading } = useStoreQuery({
       title: t('stores.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(store.value, 'LIBRARY'))
 
 function handleDelete() {
   deleteStore(storeId.value!, {
@@ -36,7 +33,7 @@ function handleDelete() {
         title: t('stores.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -52,7 +49,7 @@ function handleEditStore(store: StoreUpdate) {
         title: t('stores.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -110,6 +107,6 @@ function handleEditStore(store: StoreUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

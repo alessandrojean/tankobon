@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { StoreEntity, StoreUpdate } from '@/types/tankobon-store'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { StoreEntity, StoreUpdate } from '@/types/tankobon-store'
 import StoreForm from '@/components/stores/StoreForm.vue'
 
 export interface StoreEditDialogProps {
-  isOpen: boolean,
-  storeEntity: StoreEntity,
+  isOpen: boolean
+  storeEntity: StoreEntity
 }
 
-export type StoreEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', store: StoreUpdate): void,
+export interface StoreEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', store: StoreUpdate): void
 }
 
 const props = defineProps<StoreEditDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await storeForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(store))

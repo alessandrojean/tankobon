@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { ContributorRoleEntity, ContributorRoleUpdate } from '@/types/tankobon-contributor-role'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { ContributorRoleEntity, ContributorRoleUpdate } from '@/types/tankobon-contributor-role'
 import ContributorRoleForm from '@/components/contributor-roles/ContributorRoleForm.vue'
 
 export interface ContributorRoleEditDialogProps {
-  isOpen: boolean,
-  contributorRoleEntity: ContributorRoleEntity,
+  isOpen: boolean
+  contributorRoleEntity: ContributorRoleEntity
 }
 
-export type ContributorRoleEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', contributorRole: ContributorRoleUpdate): void,
+export interface ContributorRoleEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', contributorRole: ContributorRoleUpdate): void
 }
 
 const props = defineProps<ContributorRoleEditDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await contributorRoleForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(contributorRole))

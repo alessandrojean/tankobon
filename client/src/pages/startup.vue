@@ -11,26 +11,27 @@ const { data: claimStatus, refetch: checkClaim } = useServerClaimStatusQuery({
       title: t('claim-server.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 onBeforeMount(async () => {
   try {
     await checkClaim()
     await userStore.checkSession()
-    
-    if (route.query.redirect) {
+
+    if (route.query.redirect)
       await router.replace({ path: route.query.redirect.toString() })
-    } else {
+    else
       await router.replace({ name: 'index' })
-    }
-  } catch (e) {
+  }
+  catch (e) {
     if (claimStatus.value?.isClaimed) {
       router.replace({
         name: 'sign-in',
-        query: { redirect: route.query.redirect }
+        query: { redirect: route.query.redirect },
       })
-    } else {
+    }
+    else {
       router.replace({ name: 'claim-server' })
     }
   }

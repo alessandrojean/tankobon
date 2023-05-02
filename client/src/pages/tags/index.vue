@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { TagCreation } from '@/types/tankobon-tag'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { TagIcon } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon as MagnifyingGlassIconOutline, TagIcon } from '@heroicons/vue/24/outline'
+import type { TagCreation } from '@/types/tankobon-tag'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -28,14 +27,14 @@ function handleCreateTag(tag: TagCreation) {
         title: t('tags.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -63,8 +62,8 @@ function handleCreateTag(tag: TagCreation) {
           </label>
           <BasicTextInput
             id="search-tag"
-            class="w-48"
             v-model="search"
+            class="w-48"
             size="small"
             type="search"
             :placeholder="$t('common-placeholders.search')"
@@ -92,7 +91,7 @@ function handleCreateTag(tag: TagCreation) {
                 : $t('tags.empty-description')
             "
           >
-            <template #actions v-if="searchTerm.length === 0">
+            <template v-if="searchTerm.length === 0" #actions>
               <Button
                 kind="primary"
                 @click="showCreateDialog = true"

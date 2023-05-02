@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { BookEntity, isIsbnCode } from '@/types/tankobon-book';
-import { MonetaryAmount } from '@/types/tankobon-monetary';
-import { getRelationships, getRelationship } from '@/utils/api';
 import {
   ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
 } from '@heroicons/vue/20/solid'
-import { RouteLocationRaw } from 'vue-router';
+import type { BookEntity } from '@/types/tankobon-book'
+import { isIsbnCode } from '@/types/tankobon-book'
+import type { MonetaryAmount } from '@/types/tankobon-monetary'
+import { getRelationship, getRelationships } from '@/utils/api'
 
 export interface BookAttributesProps {
   book?: BookEntity | null
@@ -16,7 +16,7 @@ export interface BookAttributesProps {
 const props = withDefaults(defineProps<BookAttributesProps>(), {
   book: undefined,
   loading: false,
-  timeZone: undefined
+  timeZone: undefined,
 })
 
 defineEmits<{
@@ -26,33 +26,25 @@ defineEmits<{
 }>()
 
 const { book, loading } = toRefs(props)
-const { t, d, n, locale, numberFormats } = useI18n()
+const { t, d, n, locale } = useI18n()
 
 function formatPrice(price: MonetaryAmount | null | undefined) {
-  if (!price) {
+  if (!price)
     return null
-  }
 
   const { amount, currency } = price
 
-  // @ts-ignore
+  // @ts-expect-error wrong type from lib
   return n(amount, 'currency', { currency })
 }
-
-const listFormatter = computed(() => {
-  return new Intl.ListFormat(locale.value, {
-    style: 'long',
-    type: 'conjunction',
-  })
-})
 
 function formatDate(date: string | null | undefined, format = 'short') {
   if (typeof date === 'string' && date.length > 0) {
     return d(
       new Date(date),
       format,
-      // @ts-ignore
-      { timeZone: timeZone.value.name }
+      // @ts-expect-error wrong type from lib
+      { timeZone: timeZone.value.name },
     )
   }
 
@@ -60,31 +52,30 @@ function formatDate(date: string | null | undefined, format = 'short') {
 }
 
 const isbnCode = computed(() => {
-  return isIsbnCode(book.value?.attributes?.code) 
+  return isIsbnCode(book.value?.attributes?.code)
     ? book.value?.attributes?.code
     : null
 })
 
 const language = computed(() => {
-  if (!isbnCode.value || !isbnCode.value.language) {
+  if (!isbnCode.value || !isbnCode.value.language)
     return null
-  }
 
   const languageNames = new Intl.DisplayNames([locale.value], {
-    type: 'language'
+    type: 'language',
   })
   const localizedName = languageNames.of(isbnCode.value.language)!
 
   return (
-    localizedName.charAt(0).toLocaleUpperCase(locale.value) +
-    localizedName.slice(1)
+    localizedName.charAt(0).toLocaleUpperCase(locale.value)
+    + localizedName.slice(1)
   )
 })
 
 const metadata = computed(() => {
   const attributes = book.value?.attributes
-  const sameCurrency =
-    book.value?.attributes?.paidPrice?.currency === book.value?.attributes?.labelPrice?.currency
+  const sameCurrency
+    = book.value?.attributes?.paidPrice?.currency === book.value?.attributes?.labelPrice?.currency
   const publishers = getRelationships(book.value, 'PUBLISHER')
   const collection = getRelationship(book.value, 'COLLECTION')
 
@@ -97,18 +88,18 @@ const metadata = computed(() => {
       title: (attributes?.code.type ?? 'UNKNOWN') !== 'UNKNOWN'
         ? attributes!.code.type.replace(/_/g, '-')
         : t('common-fields.code'),
-      value: attributes?.code.code
+      value: attributes?.code.code,
     },
     {
       title: t('publishers.publisher', publishers?.length ?? 0),
       key: 'publishers',
-      values: publishers?.map((p) => ({
+      values: publishers?.map(p => ({
         key: p.id,
         value: p.attributes!.name,
         link: {
           name: 'publishers-id',
           params: { id: p.id },
-        }
+        },
       })),
     },
     {
@@ -117,46 +108,46 @@ const metadata = computed(() => {
       value: collection?.attributes?.name,
       link: {
         name: 'collections-id',
-        params: { id: collection?.id }
-      }
+        params: { id: collection?.id },
+      },
     },
     {
       title: t('common-fields.dimensions'),
       value: attributes?.dimensions
-        ? n(attributes!.dimensions.widthCm, 'dimension') +
-          ' × ' +
-          n(attributes!.dimensions.heightCm, 'dimension') +
-          ' cm'
-        : null
+        ? `${n(attributes!.dimensions.widthCm, 'dimension')
+          } × ${
+          n(attributes!.dimensions.heightCm, 'dimension')
+          } cm`
+        : null,
     },
     {
       title: t('common-fields.label-price'),
-      value: formatPrice(attributes?.labelPrice)
+      value: formatPrice(attributes?.labelPrice),
     },
     {
       title: t('common-fields.paid-price'),
       value: formatPrice(attributes?.paidPrice),
       badge: sameCurrency
-        ? (attributes?.paidPrice?.amount ?? 0) >
-          (attributes?.labelPrice?.amount ?? 0)
-          ? (attributes?.paidPrice?.amount ?? 1) /
-            (attributes?.labelPrice?.amount ?? 1)
-          : 1 -
-            (attributes?.paidPrice?.amount ?? 1) /
-              (attributes?.labelPrice?.amount ?? 1)
+        ? (attributes?.paidPrice?.amount ?? 0)
+          > (attributes?.labelPrice?.amount ?? 0)
+            ? (attributes?.paidPrice?.amount ?? 1)
+            / (attributes?.labelPrice?.amount ?? 1)
+            : 1
+            - (attributes?.paidPrice?.amount ?? 1)
+              / (attributes?.labelPrice?.amount ?? 1)
         : null,
-      samePrice: attributes?.paidPrice?.amount === attributes?.labelPrice?.amount
+      samePrice: attributes?.paidPrice?.amount === attributes?.labelPrice?.amount,
     },
     {
       title: t('common-fields.store'),
       key: 'store',
       value: getRelationship(book.value, 'STORE')?.attributes?.name,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('common-fields.bought-at'),
       value: attributes?.boughtAt,
-      time: true
+      time: true,
     },
     // {
     //   title: t('book.properties.readAt'),
@@ -170,8 +161,8 @@ const metadata = computed(() => {
 <template>
   <Block as="dl">
     <div class="space-y-5">
-      <template v-for="(mt, i) in metadata" :key="i">
-        <div v-if="mt.value || mt.values || loading">
+      <template v-for="(mt, i) in metadata">
+        <div v-if="mt.value || mt.values || loading" :key="i">
           <dt
             v-if="!loading"
             class="text-sm font-medium text-gray-950 dark:text-gray-100"
@@ -191,10 +182,7 @@ const metadata = computed(() => {
               v-else-if="mt.link"
               :to="mt.link"
               :title="$t('common-actions.go-to-page', [mt.value])"
-              :class="[
-                'hover:underline hover:text-primary-600 dark:hover:text-primary-500',
-                'motion-safe:transition'
-              ]"
+              class="hover:underline hover:text-primary-600 dark:hover:text-primary-500 motion-safe:transition"
             >
               {{ mt.value }}
             </RouterLink>
@@ -209,10 +197,7 @@ const metadata = computed(() => {
                 <RouterLink
                   :to="value.link"
                   :title="$t('common-actions.go-to-page', [value.value])"
-                  :class="[
-                    'hover:underline hover:text-primary-600 dark:hover:text-primary-500',
-                    'motion-safe:transition'
-                  ]"
+                  class="hover:underline hover:text-primary-600 dark:hover:text-primary-500 motion-safe:transition"
                 >
                   {{ value.value }}
                 </RouterLink>

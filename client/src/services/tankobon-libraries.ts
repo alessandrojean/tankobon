@@ -1,10 +1,10 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
 import type { LibraryCreation, LibraryEntity, LibraryIncludes, LibraryUpdate } from '@/types/tankobon-library'
-import { 
+import {
   type CollectionResponse,
-  type ErrorResponse,
   type EntityResponse,
+  type ErrorResponse,
   TankobonApiError,
 } from '@/types/tankobon-response'
 
@@ -12,7 +12,7 @@ type LibraryOnly = EntityResponse<LibraryEntity>
 type LibraryCollection = CollectionResponse<LibraryEntity>
 
 export interface GetAllLibrariesParameters {
-  ownerId?: string,
+  ownerId?: string
   includes?: LibraryIncludes[]
 }
 
@@ -26,18 +26,18 @@ export async function getAllLibraries(options: GetAllLibrariesParameters): Promi
     })
 
     return libraries.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface GetAllLibrariesByUserParameters {
-  userId?: string,
-  includeShared?: boolean,
+  userId?: string
+  includeShared?: boolean
   includes?: LibraryIncludes[]
 }
 
@@ -48,15 +48,15 @@ export async function getAllLibrariesByUser(options: GetAllLibrariesByUserParame
     const { data: libraries } = await api.get<LibraryCollection>(`users/${userId}/libraries`, {
       params: {
         includes: includes?.join(','),
-        includeShared: includeShared,
+        includeShared,
       },
     })
 
     return libraries.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -67,17 +67,17 @@ export async function addOneLibrary(library: LibraryCreation): Promise<LibraryEn
     const { data } = await api.post<LibraryOnly>('libraries', library)
 
     return data.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface GetOneLibraryParameters {
-  libraryId?: string,
+  libraryId?: string
   includes?: LibraryIncludes[]
 }
 
@@ -86,14 +86,14 @@ export async function getOneLibrary({ libraryId, includes }: GetOneLibraryParame
     const { data: library } = await api.get<EntityResponse<LibraryEntity>>(`libraries/${libraryId}`, {
       params: {
         includes: includes?.join(','),
-      }
+      },
     })
 
     return library.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -102,10 +102,10 @@ export async function getOneLibrary({ libraryId, includes }: GetOneLibraryParame
 export async function updateOneLibrary(library: LibraryUpdate): Promise<void> {
   try {
     await api.put(`libraries/${library.id}`, library)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -114,10 +114,10 @@ export async function updateOneLibrary(library: LibraryUpdate): Promise<void> {
 export async function deleteOneLibrary(libraryId: string): Promise<void> {
   try {
     await api.delete(`libraries/${libraryId}`)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }

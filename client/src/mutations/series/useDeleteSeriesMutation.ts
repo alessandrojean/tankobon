@@ -12,6 +12,6 @@ export default function useDeleteSeriesMutation() {
     onSuccess(_, seriesId) {
       queryClient.invalidateQueries(['series'])
       queryClient.invalidateQueries(['series', { id: seriesId }])
-    }
+    },
   })
 }

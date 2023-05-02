@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import type { UserEntity, UserUpdate } from '@/types/tankobon-user'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { UserEntity, UserUpdate } from '@/types/tankobon-user'
 import UserForm from '@/components/users/UserForm.vue'
 
 export interface UserCreateDialogProps {
-  isMe?: boolean,
-  isOpen: boolean,
-  userEntity: UserEntity,
+  isMe?: boolean
+  isOpen: boolean
+  userEntity: UserEntity
 }
 
-export type UserCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', user: UserUpdate): void,
+export interface UserCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', user: UserUpdate): void
 }
 
 const props = withDefaults(defineProps<UserCreateDialogProps>(), {
-  isMe: false
+  isMe: false,
 })
 const emit = defineEmits<UserCreateDialogEmits>()
 
@@ -46,9 +46,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await userForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(user))

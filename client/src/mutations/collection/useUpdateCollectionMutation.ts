@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { CollectionUpdate } from '@/types/tankobon-collection'
+import type { CollectionUpdate } from '@/types/tankobon-collection'
 import { updateOneCollection } from '@/services/tankobon-collections'
 
 type ErrorResponse = TankobonApiError | Error
@@ -13,6 +13,6 @@ export default function useUpdateCollectionMutation() {
     async onSuccess(_, { id }) {
       queryClient.invalidateQueries(['collections'])
       queryClient.invalidateQueries(['collection', { id }])
-    }
+    },
   })
 }

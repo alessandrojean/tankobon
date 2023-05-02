@@ -10,8 +10,8 @@ const searchTerm = refDebounced(search, 500)
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -37,8 +37,8 @@ const searchTerm = refDebounced(search, 500)
           </label>
           <BasicTextInput
             id="search-publisher"
-            class="w-48"
             v-model="search"
+            class="w-48"
             size="small"
             type="search"
             :placeholder="$t('common-placeholders.search')"
@@ -66,7 +66,7 @@ const searchTerm = refDebounced(search, 500)
                 : $t('books.empty-description')
             "
           >
-            <template #actions v-if="searchTerm.length === 0">
+            <template v-if="searchTerm.length === 0" #actions>
               <Button
                 kind="primary"
                 is-router-link

@@ -10,7 +10,7 @@ export const useLibraryStore = defineStore('library', {
     async fetchAndSelectFirstStore(userId: string) {
       const libraries = await getAllLibrariesByUser({
         includes: ['owner'],
-        userId: userId,
+        userId,
       })
 
       this.setLibrary(libraries.length > 0 ? libraries[0] : null)
@@ -22,6 +22,5 @@ export const useLibraryStore = defineStore('library', {
   },
 })
 
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useLibraryStore, import.meta.hot))
-}

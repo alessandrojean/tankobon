@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { LibraryCreation } from '@/types/tankobon-library'
 import { PlusIcon } from '@heroicons/vue/20/solid'
+import type { LibraryCreation } from '@/types/tankobon-library'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,23 +19,22 @@ function handleCreateLibrary(library: LibraryCreation) {
       notificator.success({ title: t('libraries.created-with-success') })
       await router.push({ name: 'libraries-id', params: { id } })
 
-      if (libraryStore.library === null) {
+      if (libraryStore.library === null)
         await libraryStore.fetchAndSelectFirstStore(userId.value)
-      }
     },
     onError: async (error) => {
       await notificator.failure({
         title: t('libraries.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>

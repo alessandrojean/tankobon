@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
-import { BookUpdate } from '@/types/tankobon-book'
-import { DimensionsString } from '@/types/tankobon-dimensions'
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
+import type { BookUpdate } from '@/types/tankobon-book'
+import type { DimensionsString } from '@/types/tankobon-dimensions'
+import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -23,13 +24,13 @@ const { data: book, isLoading } = useBookQuery({
     'library',
     'cover_art',
   ],
-  enabled: computed(() => !!bookId.value), //&& !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value), // && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('books.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 const tabs = [
@@ -39,9 +40,11 @@ const tabs = [
   { key: '3', text: 'books.organization' },
 ]
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount'> {
-  dimensions: DimensionsString,
-  pageCount: string,
+interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice'> {
+  dimensions: DimensionsString
+  labelPrice: MonetaryAmountString
+  paidPrice: MonetaryAmountString
+  pageCount: string
 }
 
 const updatedBook = reactive<CustomBookUpdate>({
@@ -59,14 +62,14 @@ const updatedBook = reactive<CustomBookUpdate>({
     heightCm: '0',
   },
   labelPrice: {
-    amount: 0,
+    amount: '0',
     currency: 'USD',
   },
   notes: '',
   number: '',
   pageCount: '0',
   paidPrice: {
-    amount: 0,
+    amount: '0',
     currency: 'USD',
   },
   publishers: [],
@@ -79,7 +82,7 @@ const updatedBook = reactive<CustomBookUpdate>({
 })
 
 whenever(book, (loadedBook) => {
-  Object.assign(updatedBook, <Partial<CustomBookUpdate>> {
+  Object.assign(updatedBook, {
     id: loadedBook.id,
     code: loadedBook.attributes.code.code,
     number: loadedBook.attributes.number,
@@ -94,9 +97,17 @@ whenever(book, (loadedBook) => {
     arrivedAt: loadedBook.attributes.arrivedAt,
     dimensions: {
       widthCm: n(loadedBook.attributes.dimensions.widthCm, 'decimal'),
-      heightCm: n(loadedBook.attributes.dimensions.heightCm, 'decimal')
+      heightCm: n(loadedBook.attributes.dimensions.heightCm, 'decimal'),
     },
-  })
+    labelPrice: {
+      amount: String(loadedBook.attributes.labelPrice.amount),
+      currency: loadedBook.attributes.labelPrice.currency,
+    },
+    paidPrice: {
+      amount: String(loadedBook.attributes.paidPrice.amount),
+      currency: loadedBook.attributes.paidPrice.currency,
+    },
+  } satisfies Partial<CustomBookUpdate>)
 }, { immediate: true })
 
 const activeTab = ref(tabs[0])
@@ -137,8 +148,8 @@ const activeTab = ref(tabs[0])
             <Tab
               v-for="tab in tabs"
               :key="tab"
-              as="template"
               v-slot="{ selected }"
+              as="template"
             >
               <Button
                 kind="underline-tab"
@@ -151,8 +162,8 @@ const activeTab = ref(tabs[0])
             </Tab>
           </TabList>
           <BasicSelect
-            class="md:hidden mb-4"
             v-model="activeTab"
+            class="md:hidden mb-4"
             :options="tabs"
             :option-text="(tab: any) => $t(tab.text)"
             :option-value="(tab: any) => tab.key"
@@ -185,6 +196,8 @@ const activeTab = ref(tabs[0])
               v-model:bought-at="updatedBook.boughtAt"
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
+              v-model:label-price="updatedBook.labelPrice"
+              v-model:paid-price="updatedBook.paidPrice"
             />
           </TabPanel>
         </TabPanels>
@@ -194,6 +207,6 @@ const activeTab = ref(tabs[0])
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

@@ -14,9 +14,8 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { open } = toRefs(props)
 
 onBeforeRouteLeave(() => {
-  if (!open.value) {
+  if (!open.value)
     return true
-  }
 
   emit('close')
   return false
@@ -38,11 +37,7 @@ onBeforeRouteLeave(() => {
         >
           <slot name="overlay" :close="() => $emit('close')">
             <div
-              :class="[
-                'hidden sm:block fixed inset-0',
-                'bg-gray-700/75 dark:bg-gray-900/90',
-                'motion-safe:transition-opacity',
-              ]"
+              class="hidden sm:block fixed inset-0 bg-gray-700/75 dark:bg-gray-900/90 motion-safe:transition-opacity"
               @click="$emit('close')"
             />
           </slot>
@@ -66,7 +61,7 @@ onBeforeRouteLeave(() => {
               :src="coverUrl"
               alt=""
               class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
-            />
+            >
 
             <div class="hidden sm:block absolute w-10 h-10 -right-12 -top-1">
               <button

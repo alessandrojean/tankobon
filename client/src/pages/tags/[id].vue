@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { TagUpdate } from '@/types/tankobon-tag'
-import { getRelationship } from '@/utils/api'
+import type { TagUpdate } from '@/types/tankobon-tag'
 
 const { t } = useI18n()
 const router = useRouter()
 const tagId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
-const { 
+const {
   mutate: deleteTag,
   isLoading: isDeleting,
   isSuccess: isDeleted,
@@ -25,10 +24,8 @@ const { data: tag, isLoading } = useTagQuery({
       title: t('tags.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(tag.value, 'LIBRARY'))
 
 function handleDelete() {
   deleteTag(tagId.value!, {
@@ -41,7 +38,7 @@ function handleDelete() {
         title: t('tags.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -57,7 +54,7 @@ function handleEditTag(tag: TagUpdate) {
         title: t('tags.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -115,6 +112,6 @@ function handleEditTag(tag: TagUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

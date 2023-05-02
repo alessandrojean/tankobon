@@ -14,10 +14,9 @@ export default function useUpdateUserMutation() {
     async onSuccess(_, { id }) {
       queryClient.invalidateQueries(['users'])
       queryClient.invalidateQueries(['user', { id }])
-      
-      if (id === userStore.me?.id) {
+
+      if (id === userStore.me?.id)
         await userStore.checkSession()
-      }
-    }
+    },
   })
 }

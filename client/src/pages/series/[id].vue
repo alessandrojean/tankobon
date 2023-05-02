@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { SeriesUpdate } from '@/types/tankobon-series'
-import { getRelationship } from '@/utils/api'
+import type { SeriesUpdate } from '@/types/tankobon-series'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,10 +19,8 @@ const { data: series, isLoading } = useSeriesQuery({
       title: t('series.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(series.value, 'LIBRARY'))
 
 function handleDelete() {
   deleteSeries(seriesId.value!, {
@@ -36,7 +33,7 @@ function handleDelete() {
         title: t('series.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -52,7 +49,7 @@ function handleEditSeries(series: SeriesUpdate) {
         title: t('series.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -110,6 +107,6 @@ function handleEditSeries(series: SeriesUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

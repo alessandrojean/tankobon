@@ -6,8 +6,8 @@ export type PreferenceEntity = Entity<PreferenceAttributes> & {
 }
 
 export interface PreferenceAttributes {
-  key: string,
-  value: string,
+  key: string
+  value: string
 }
 
 export type Preferences = Record<string, string>

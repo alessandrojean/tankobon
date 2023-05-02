@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { PersonUpdate } from '@/types/tankobon-person'
+import { UserCircleIcon } from '@heroicons/vue/20/solid'
+import type { PersonUpdate } from '@/types/tankobon-person'
 import { getRelationship } from '@/utils/api'
 import { getFullImageUrl } from '@/modules/api'
-import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 
 const { t } = useI18n()
@@ -25,10 +25,9 @@ const { data: person, isLoading } = usePersonQuery({
       title: t('people.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
-const library = computed(() => getRelationship(person.value, 'LIBRARY'))
 const picture = computed(() => getRelationship(person.value, 'PERSON_PICTURE'))
 
 function handleDelete() {
@@ -42,7 +41,7 @@ function handleDelete() {
         title: t('people.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -58,7 +57,7 @@ function handleEditPerson(person: PersonUpdate) {
         title: t('people.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -75,9 +74,10 @@ function handleImage(image: ImageResult) {
           title: t('picture-upload.uploaded-with-failure'),
           body: error.message,
         })
-      }
+      },
     })
-  } else if (image.removeExisting) {
+  }
+  else if (image.removeExisting) {
     deletePicture(personId.value!, {
       onSuccess: async () => {
         await notificator.success({ title: t('picture-upload.removed-with-success') })
@@ -87,7 +87,7 @@ function handleImage(image: ImageResult) {
           title: t('picture-upload.uploaded-with-failure'),
           body: error.message,
         })
-      }
+      },
     })
   }
 }
@@ -124,7 +124,6 @@ function handleImage(image: ImageResult) {
             <span class="sr-only">{{ $t('common-actions.edit-picture') }}</span>
             <UserCircleIcon class="w-6 h-6" />
           </Button>
-
 
           <Button
             class="w-11 h-11"
@@ -186,6 +185,6 @@ function handleImage(image: ImageResult) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

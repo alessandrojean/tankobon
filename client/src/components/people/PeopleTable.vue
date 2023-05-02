@@ -1,24 +1,26 @@
 <script lang="ts" setup>
-import { ColumnSort, createColumnHelper, PaginationState, SortingState } from '@tanstack/vue-table'
+import type { ColumnSort, PaginationState, SortingState } from '@tanstack/vue-table'
+import { createColumnHelper } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
-import { PersonEntity, PersonSort } from '@/types/tankobon-person'
-import { Sort } from '@/types/tankobon-api'
+import type { PersonEntity, PersonSort } from '@/types/tankobon-person'
+import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import Avatar from '@/components/Avatar.vue'
 import { getFullImageUrl } from '@/modules/api'
 
 export interface PeopleTableProps {
-  libraryId: string,
-  search?: string,
+  libraryId: string
+  search?: string
 }
 
 const props = withDefaults(defineProps<PeopleTableProps>(), {
-  search: undefined
+  search: undefined,
 })
 const { libraryId, search } = toRefs(props)
 const notificator = useToaster()
+const { t } = useI18n()
 
 const defaultSorting: ColumnSort = { id: 'name', desc: false }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
@@ -32,7 +34,7 @@ const { data: people, isLoading } = useLibraryPeopleQuery({
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
   sort: computed<Sort<PersonSort>[]>(() => {
-    return sorting.value.map((sort) => ({
+    return sorting.value.map(sort => ({
       property: sort.id as PersonSort,
       direction: sort.desc ? 'desc' : 'asc',
     }))
@@ -44,9 +46,8 @@ const { data: people, isLoading } = useLibraryPeopleQuery({
       title: t('people.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
-const { t } = useI18n()
 const columnHelper = createColumnHelper<PersonEntity>()
 
 const columns = [
@@ -64,16 +65,15 @@ const columns = [
         disabled: !row.getCanSelect(),
         indeterminate: row.getIsSomeSelected(),
         onChange: row.getToggleSelectedHandler(),
-      })
+      }),
     ]),
     meta: {
       headerClass: 'w-12',
       cellClass: 'align-middle',
-    }
+    },
   }),
   columnHelper.accessor(
-    (person) => ({
-      id: person.id,
+    person => ({
       name: person.attributes.name,
       picture: getRelationship(person, 'PERSON_PICTURE'),
     }),
@@ -81,7 +81,7 @@ const columns = [
       id: 'name',
       header: () => t('common-fields.name'),
       cell: (info) => {
-        const { id, name, picture } = info.getValue()
+        const { name, picture } = info.getValue()
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
@@ -92,20 +92,20 @@ const columns = [
             }),
             size: 'mini',
           }),
-          h('span', { innerText: name })
+          h('span', { innerText: name }),
         ])
       },
       meta: {
         headerClass: 'pl-0',
         cellClass: 'pl-0',
       },
-    }
+    },
   ),
   columnHelper.accessor('attributes.description', {
     id: 'description',
     enableSorting: false,
     header: () => t('common-fields.description'),
-    cell: (info) => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
+    cell: info => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
   }),
   columnHelper.display({
     id: 'actions',
@@ -122,26 +122,26 @@ const columns = [
         default: () => [
           h('span', { class: 'sr-only', text: () => t('common-actions.view-details') }),
           h(EllipsisHorizontalIcon, { class: 'w-5 h-5' }),
-        ]
-      }
+        ],
+      },
     ),
     meta: {
       headerClass: 'w-12',
-    }
+    },
   }),
 ]
 </script>
 
 <template>
   <Table
+    v-model:pagination="pagination"
+    v-model:row-selection="rowSelection"
+    v-model:sorting="sorting"
     :data="people?.data"
     :columns="columns"
     :page-count="people?.pagination?.totalPages"
     :items-count="people?.pagination?.totalElements"
     :loading="isLoading"
-    v-model:pagination="pagination"
-    v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
   >
     <template #empty>
       <slot name="empty" />

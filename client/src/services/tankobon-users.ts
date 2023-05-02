@@ -1,9 +1,10 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import { EntityResponse, PaginatedResponse, TankobonApiError, type ErrorResponse } from '@/types/tankobon-response'
+import { TankobonApiError } from '@/types/tankobon-response'
+import type { EntityResponse, type ErrorResponse, PaginatedResponse } from '@/types/tankobon-response'
 import type { EmailAvailability, UserCreation, UserEntity, UserIncludes, UserSort, UserSuccessResponse, UserUpdate } from '@/types/tankobon-user'
 import type { Paginated } from '@/types/tankobon-api'
-import { AuthenticationActivityEntity, AuthenticationActivitySort } from '@/types/tankobon-authentication-activity'
+import type { AuthenticationActivityEntity, AuthenticationActivitySort } from '@/types/tankobon-authentication-activity'
 
 export async function getMeWithAuth(email: string, password: string): Promise<UserEntity> {
   try {
@@ -11,15 +12,15 @@ export async function getMeWithAuth(email: string, password: string): Promise<Us
       params: { includes: 'avatar' },
       auth: {
         username: email,
-        password: password,
-      }
+        password,
+      },
     })
 
     return me.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -32,10 +33,10 @@ export async function getMe(): Promise<UserEntity> {
     })
 
     return me.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -44,17 +45,17 @@ export async function getMe(): Promise<UserEntity> {
 export async function signOut() {
   try {
     await api.post('sign-out')
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface GetAllUsersOptions extends Paginated<UserSort> {
-  includes?: UserIncludes[],
+  includes?: UserIncludes[]
 }
 
 export async function getAllUsers(options?: GetAllUsersOptions): Promise<PaginatedResponse<UserEntity>> {
@@ -64,7 +65,7 @@ export async function getAllUsers(options?: GetAllUsersOptions): Promise<Paginat
         ...options,
         sort: options?.sort?.map(({ property, direction }) => {
           return `${property},${direction}`
-        })
+        }),
       },
       paramsSerializer: {
         indexes: null,
@@ -72,10 +73,10 @@ export async function getAllUsers(options?: GetAllUsersOptions): Promise<Paginat
     })
 
     return data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -88,18 +89,18 @@ export async function getOneUser(userId: string): Promise<UserEntity> {
     })
 
     return user.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface GetAuthenticationActivityFromUserOptions extends Paginated<AuthenticationActivitySort> {
-  userId: string,
-  includes?: UserIncludes[],
+  userId: string
+  includes?: UserIncludes[]
 }
 
 export async function getAuthenticationActivityFromUser(options: GetAuthenticationActivityFromUserOptions): Promise<PaginatedResponse<AuthenticationActivityEntity>> {
@@ -112,19 +113,19 @@ export async function getAuthenticationActivityFromUser(options: GetAuthenticati
           userId: undefined,
           sort: options?.sort?.map(({ property, direction }) => {
             return `${property},${direction}`
-          })
+          }),
         },
         paramsSerializer: {
           indexes: null,
         },
-      }
+      },
     )
 
     return data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -135,10 +136,10 @@ export async function checkEmailAvailability(email: string): Promise<boolean> {
     const { data } = await api.get<EmailAvailability>(`users/availability/${email}`)
 
     return data.isAvailable
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -149,10 +150,10 @@ export async function addOneUser(user: UserCreation): Promise<UserEntity> {
     const { data: createdUser } = await api.post<EntityResponse<UserEntity>>('users', user)
 
     return createdUser.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -161,29 +162,29 @@ export async function addOneUser(user: UserCreation): Promise<UserEntity> {
 export async function deleteUserAvatar(userId: string): Promise<void> {
   try {
     await api.delete(`users/${userId}/avatar`)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface UploadUserAvatarOptions {
-  userId: string,
-  avatar: File,
+  userId: string
+  avatar: File
 }
 
 export async function uploadUserAvatar(options: UploadUserAvatarOptions): Promise<void> {
   try {
     await api.postForm(`users/${options.userId}/avatar`, {
-      avatar: options.avatar
+      avatar: options.avatar,
     })
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -192,10 +193,10 @@ export async function uploadUserAvatar(options: UploadUserAvatarOptions): Promis
 export async function updateUser(user: UserUpdate): Promise<void> {
   try {
     await api.put(`users/${user.id}`, user)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -204,10 +205,10 @@ export async function updateUser(user: UserUpdate): Promise<void> {
 export async function deleteOneUser(userId: string): Promise<void> {
   try {
     await api.delete(`users/${userId}`)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }

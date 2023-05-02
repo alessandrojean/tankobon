@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { CollectionEntity, CollectionUpdate } from '@/types/tankobon-collection'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { CollectionEntity, CollectionUpdate } from '@/types/tankobon-collection'
 import CollectionForm from '@/components/collections/CollectionForm.vue'
 
 export interface CollectionEditDialogProps {
-  isOpen: boolean,
-  collectionEntity: CollectionEntity,
+  isOpen: boolean
+  collectionEntity: CollectionEntity
 }
 
-export type CollectionEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', collection: CollectionUpdate): void,
+export interface CollectionEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', collection: CollectionUpdate): void
 }
 
 const props = defineProps<CollectionEditDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await collectionForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(collection))

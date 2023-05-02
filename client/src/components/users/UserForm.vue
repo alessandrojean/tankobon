@@ -1,30 +1,30 @@
 <script lang="ts" setup>
 import { useVuelidate } from '@vuelidate/core'
 import { email as emailValidator, helpers, required } from '@vuelidate/validators'
+import { ArrowPathIcon } from '@heroicons/vue/20/solid'
 import { emailIsAvailable, emailIsAvailableIfNotSame } from '@/utils/validation'
 import type { UserRole } from '@/types/tankobon-user'
-import { ArrowPathIcon } from '@heroicons/vue/20/solid'
 
 export interface UserFormProps {
-  name: string,
-  email: string,
-  hidePassword?: boolean,
-  password?: string,
-  hideRoles?: boolean,
-  roles: UserRole[],
-  hideBiography?: boolean,
-  biography?: string,
-  mode?: 'creation' | 'update',
+  name: string
+  email: string
+  hidePassword?: boolean
+  password?: string
+  hideRoles?: boolean
+  roles: UserRole[]
+  hideBiography?: boolean
+  biography?: string
+  mode?: 'creation' | 'update'
 }
 
-export type UserFormEmits = {
-  (e: 'click:regenerate-password'): void,
-  (e: 'update:name', name: string): void,
-  (e: 'update:email', email: string): void,
-  (e: 'update:password', password: string): void,
-  (e: 'update:roles', roles: UserRole[]): void,
-  (e: 'update:biography', biography: ''): void,
-  (e: 'validate', isValid: boolean): void,
+export interface UserFormEmits {
+  (e: 'click:regenerate-password'): void
+  (e: 'update:name', name: string): void
+  (e: 'update:email', email: string): void
+  (e: 'update:password', password: string): void
+  (e: 'update:roles', roles: UserRole[]): void
+  (e: 'update:biography', biography: ''): void
+  (e: 'validate', isValid: boolean): void
 }
 
 const props = withDefaults(defineProps<UserFormProps>(), {
@@ -39,7 +39,7 @@ const { name, email, password, roles, mode, hidePassword } = toRefs(props)
 
 const isAdmin = computed({
   get: () => roles.value.includes('ROLE_ADMIN'),
-  set: (isAdmin) => emit('update:roles', isAdmin ? ['ROLE_ADMIN'] : ['ROLE_USER'])
+  set: isAdmin => emit('update:roles', isAdmin ? ['ROLE_ADMIN'] : ['ROLE_USER']),
 })
 
 const { t } = useI18n()
@@ -55,8 +55,8 @@ const rules = computed(() => {
       messageEmail,
       availableIfNotSame: helpers.withMessage(
         t('validation.available'),
-        mode.value === 'creation' ? emailIsAvailable : emailIsAvailableIfNotSame(email.value)
-      )
+        mode.value === 'creation' ? emailIsAvailable : emailIsAvailableIfNotSame(email.value),
+      ),
     },
     password: { required: hidePassword.value ? () => true : messageRequired },
   }
@@ -65,12 +65,12 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, {
   name,
   email,
-  password
+  password,
 })
 
 const passwordFocused = ref(false)
 
-watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
+watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
 defineExpose({ v$ })
 </script>
@@ -79,8 +79,8 @@ defineExpose({ v$ })
   <div class="space-y-4">
     <div class="space-y-2">
       <TextInput
-        :model-value="name"
         id="name"
+        :model-value="name"
         required
         :label-text="$t('common-fields.name')"
         :placeholder="$t('common-placeholders.name')"
@@ -91,8 +91,8 @@ defineExpose({ v$ })
       />
 
       <TextInput
-        :model-value="email"
         id="email"
+        :model-value="email"
         required
         :label-text="$t('common-fields.email')"
         :placeholder="$t('common-placeholders.email').replace('[at]', '@')"
@@ -104,8 +104,8 @@ defineExpose({ v$ })
 
       <TextAreaInput
         v-if="!hideBiography && biography !== undefined"
-        :model-value="biography"
         id="biography"
+        :model-value="biography"
         rows="3"
         :label-text="$t('common-fields.biography')"
         :placeholder="$t('common-placeholders.user-biography')"
@@ -114,8 +114,8 @@ defineExpose({ v$ })
 
       <TextInput
         v-if="!hidePassword && password !== undefined"
-        :model-value="password"
         id="password"
+        :model-value="password"
         class="font-mono"
         required
         :label-text="$t('common-fields.password')"
@@ -152,8 +152,8 @@ defineExpose({ v$ })
 
     <CheckboxInput
       v-if="!hideRoles"
-      v-model="isAdmin"
       id="isAdmin"
+      v-model="isAdmin"
       :label-text="$t('user.role-admin')"
     />
   </div>

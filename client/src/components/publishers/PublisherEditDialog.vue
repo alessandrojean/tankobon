@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { PublisherEntity, PublisherUpdate } from '@/types/tankobon-publisher'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { PublisherEntity, PublisherUpdate } from '@/types/tankobon-publisher'
 import PublisherForm from '@/components/publishers/PublisherForm.vue'
 
 export interface PublisherEditDialogProps {
-  isOpen: boolean,
-  publisherEntity: PublisherEntity,
+  isOpen: boolean
+  publisherEntity: PublisherEntity
 }
 
-export type PublisherEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', publisher: PublisherUpdate): void,
+export interface PublisherEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', publisher: PublisherUpdate): void
 }
 
 const props = defineProps<PublisherEditDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await publisherForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(publisher))

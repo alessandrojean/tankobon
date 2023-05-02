@@ -13,6 +13,6 @@ export default function useCreateLibraryMutation() {
     onSuccess() {
       queryClient.invalidateQueries(['libraries'])
       queryClient.invalidateQueries(['libraries-owned'])
-    }
+    },
   })
 }

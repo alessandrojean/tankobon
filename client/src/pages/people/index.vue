@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { PersonCreation } from '@/types/tankobon-person'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { AcademicCapIcon } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import { AcademicCapIcon, MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import type { PersonCreation } from '@/types/tankobon-person'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -28,14 +27,14 @@ function handleCreatePerson(person: PersonCreation) {
         title: t('people.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -63,8 +62,8 @@ function handleCreatePerson(person: PersonCreation) {
           </label>
           <BasicTextInput
             id="search-person"
-            class="w-48"
             v-model="search"
+            class="w-48"
             size="small"
             type="search"
             :placeholder="$t('common-placeholders.search')"
@@ -92,7 +91,7 @@ function handleCreatePerson(person: PersonCreation) {
                 : $t('people.empty-description')
             "
           >
-            <template #actions v-if="searchTerm.length === 0">
+            <template v-if="searchTerm.length === 0" #actions>
               <Button
                 kind="primary"
                 @click="showCreateDialog = true"

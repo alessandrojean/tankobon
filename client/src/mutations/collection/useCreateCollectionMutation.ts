@@ -12,6 +12,6 @@ export default function useCreateCollectionMutation() {
     mutationFn: addOneCollection,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['collections', { libraryId: creation.library }])
-    }
+    },
   })
 }

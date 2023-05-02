@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import type { LibraryEntity } from '@/types/tankobon-library'
-import { getRelationship } from '@/utils/api';
+import { getRelationship } from '@/utils/api'
 
 export interface LibrarySelectorProps {
-  modelValue: LibraryEntity,
-  options: LibraryEntity[],
-  size?: 'normal' | 'small',
+  modelValue: LibraryEntity
+  options: LibraryEntity[]
+  size?: 'normal' | 'small'
 }
 
-export type LibrarySelectorEmits = {
+export interface LibrarySelectorEmits {
   (e: 'update:model-value', library: LibraryEntity): void
 }
 
@@ -29,9 +29,8 @@ const hasShared = computed(() => {
 })
 
 function sharedText(library: LibraryEntity) {
-  if (!hasShared.value) {
+  if (!hasShared.value)
     return null
-  }
 
   const owner = getRelationship(library, 'OWNER')!
 
@@ -41,11 +40,10 @@ function sharedText(library: LibraryEntity) {
 }
 
 function handleUpdate(libraryId: string) {
-  const library = libraries.value.find((l) => l.id === libraryId)
+  const library = libraries.value.find(l => l.id === libraryId)
 
-  if (library) {
+  if (library)
     emit('update:model-value', library)
-  }
 }
 </script>
 
@@ -65,8 +63,8 @@ function handleUpdate(libraryId: string) {
           {{ library?.attributes.name }}
         </span>
         <span
-          class="block truncate text-xs opacity-80"
           v-if="library && sharedText(library)"
+          class="block truncate text-xs opacity-80"
         >
           {{ library ? sharedText(library) : '' }}
         </span>
@@ -75,16 +73,15 @@ function handleUpdate(libraryId: string) {
     <template #option="{ option, selected }">
       <div>
         <span
-          :class="[
+          class="block truncate text-sm" :class="[
             selected ? 'font-medium' : 'font-normal',
-            'block truncate text-sm'
           ]"
         >
           {{ (option as LibraryEntity).attributes.name }}
         </span>
         <span
-          class="block truncate text-xs opacity-80"
           v-if="library && sharedText(library)"
+          class="block truncate text-xs opacity-80"
         >
           {{ sharedText(option) }}
         </span>

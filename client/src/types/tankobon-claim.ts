@@ -1,9 +1,9 @@
 export interface ClaimStatus {
-  isClaimed: boolean,
+  isClaimed: boolean
 }
 
 export interface ClaimAdmin {
-  name: string,
-  email: string,
-  password: string,
+  name: string
+  email: string
+  password: string
 }

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { ShowToastKey } from './symbols';
+import { ShowToastKey } from './symbols'
 
 export type Theme = 'system' | 'dark' | 'light'
 export interface Toast {
-  title: string,
-  body?: string,
-  type?: 'success' | 'info' | 'failure' | 'warning',
+  title: string
+  body?: string
+  type?: 'success' | 'info' | 'failure' | 'warning'
 }
 
 const THEME_SYSTEM: Theme = 'system'
@@ -20,28 +20,26 @@ const isAuthenticated = computed(() => userStore.isAuthenticated)
 const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
 const localTheme = useLocalStorage('theme', THEME_SYSTEM)
 const { data: theme } = useUserPreferencesQuery({
-  select: (preferences) => preferences.theme as Theme ?? localTheme.value,
+  select: preferences => preferences.theme as Theme ?? localTheme.value,
   onError: (error) => {
     showToast({
       title: t('preferences.theme-failure'),
       body: error.message,
       type: 'failure',
     })
-  }
+  },
 })
 
 watch([theme, isPreferredDark], ([theme, isPreferredDark]) => {
-  if ((theme === THEME_SYSTEM && isPreferredDark) || theme === THEME_DARK) {
+  if ((theme === THEME_SYSTEM && isPreferredDark) || theme === THEME_DARK)
     document.documentElement.classList.add(THEME_DARK)
-  } else if ((theme === THEME_SYSTEM && !isPreferredDark) || theme === THEME_LIGHT) {
+  else if ((theme === THEME_SYSTEM && !isPreferredDark) || theme === THEME_LIGHT)
     document.documentElement.classList.remove(THEME_DARK)
-  }
 })
 
 watch(isAuthenticated, async (current, previous) => {
-  if (!current && previous) {
+  if (!current && previous)
     await router.push({ name: 'sign-in' })
-  }
 })
 
 const route = useRoute()
@@ -57,7 +55,8 @@ const motionOk = useMediaQuery('(prefers-reduced-motion: no-preference)')
 async function addToast(toast: Toast) {
   if (motionOk.value) {
     return await flipToast(toast)
-  } else {
+  }
+  else {
     const id = new Date().getTime().toString(16)
 
     toasts.value.push({ ...toast, id })
@@ -82,12 +81,12 @@ async function flipToast(toast: Toast) {
     toaster.value!.animate(
       [
         { transform: `translateY(${invert}px)` },
-        { transform: 'translateY(0)' }
+        { transform: 'translateY(0)' },
       ],
       {
         duration: 150,
         easing: 'ease-out',
-      }
+      },
     )
   }
 
@@ -96,23 +95,23 @@ async function flipToast(toast: Toast) {
 
 async function showToast(toast: Toast): Promise<void> {
   const toastElement = await addToast(toast)
-  
-  if (!toastElement) {
+
+  if (!toastElement)
     return
-  }
 
   const id = toastElement.dataset.id
 
-  return new Promise(async (resolve) => {
-    await Promise.allSettled(
-      toastElement.getAnimations()
-        .map(animation => animation.finished)
-    )
-
-    const index = toasts.value.findIndex((n) => n.id === id)
-    toasts.value.splice(index, 1)
-    await nextTick()
-    resolve()
+  return new Promise((resolve) => {
+    Promise
+      .allSettled(
+        toastElement.getAnimations()
+          .map(animation => animation.finished),
+      )
+      .then(() => {
+        const index = toasts.value.findIndex(n => n.id === id)
+        toasts.value.splice(index, 1)
+        nextTick(() => resolve())
+      })
   })
 }
 
@@ -121,26 +120,22 @@ provide(ShowToastKey, showToast)
 
 <template>
   <div>
-    <router-view v-slot="{ Component }">
+    <RouterView v-slot="{ Component }">
       <FadeTransition>
-        <component :is="Component" />
+        <Component :is="Component" />
       </FadeTransition>
-    </router-view>
+    </RouterView>
 
     <div
-      :class="[
-        'fixed z-50 top-[--top] right-4',
-        'grid justify-items-end justify-center gap-4',
-        'pointer-events-none will-change-transform',
-      ]"
-      :style="{ '--top': `${toastTop}rem` }"
       ref="toaster"
+      class="fixed z-50 top-[--top] right-4 grid justify-items-end justify-center gap-4 pointer-events-none will-change-transform"
+      :style="{ '--top': `${toastTop}rem` }"
     >
       <Toast
         v-for="toast in toasts"
+        :key="toast.id"
         class="animate-toast"
         :data-id="toast.id"
-        :key="toast.id"
         :title="toast.title"
         :body="toast.body"
         :type="toast.type"

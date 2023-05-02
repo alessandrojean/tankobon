@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+withDefaults(defineProps<BadgeProps>(), {
+  color: undefined,
+})
+
 const badge = cva(
   [
     'px-2.5 py-0.5 inline-flex text-xs leading-5',
@@ -22,24 +26,20 @@ const badge = cva(
         blue: [
           'bg-blue-100 dark:bg-blue-800/40',
           'text-blue-700 dark:text-blue-300 dark:border-blue-400/40',
-        ]
-      }
+        ],
+      },
     },
     defaultVariants: {
       color: 'gray',
     },
-  }
+  },
 )
 
 type BadgeCvaProps = Required<VariantProps<typeof badge>>
 
 interface BadgeProps {
-  color?: BadgeCvaProps['color'],
+  color?: BadgeCvaProps['color']
 }
-
-withDefaults(defineProps<BadgeProps>(), {
-  color: undefined
-})
 </script>
 
 <template>

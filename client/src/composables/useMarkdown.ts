@@ -9,19 +9,18 @@ const imageLazyLoad: PluginSimple = (md) => {
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const aIndex = tokens[idx].attrIndex('loading')
 
-    if (aIndex < 0) {
+    if (aIndex < 0)
       tokens[idx].attrPush(['loading', 'lazy'])
-    } else {
+    else
       tokens[idx].attrs![aIndex][1] = 'lazy'
-    }
 
     return defaultRenderer(tokens, idx, options, env, self)
   }
 }
 
 export interface UseMarkdownOptions {
-  disable?: string[],
-  mdOptions?: md.Options,
+  disable?: string[]
+  mdOptions?: md.Options
 }
 
 export default function useMarkdown(options: UseMarkdownOptions = {}) {

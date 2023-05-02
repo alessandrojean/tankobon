@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { uploadUserAvatar, type UploadUserAvatarOptions } from '@/services/tankobon-users'
+import { type UploadUserAvatarOptions, uploadUserAvatar } from '@/services/tankobon-users'
 
 type ErrorResponse = TankobonApiError | Error
 
@@ -14,9 +14,8 @@ export default function useUploadUserAvatarMutation() {
       queryClient.invalidateQueries(['users'])
       queryClient.invalidateQueries(['user', { id: userId }])
 
-      if (userId === userStore.me?.id) {
+      if (userId === userStore.me?.id)
         await userStore.checkSession()
-      }
-    }
+    },
   })
 }

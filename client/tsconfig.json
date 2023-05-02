@@ -1,39 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
+    "baseUrl": ".",
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
+    "target": "ESNext",
     "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
     "skipLibCheck": true,
-    "noEmit": true,
-    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
     "types": [
       "vitest",
       "vite/client",
       "vue/ref-macros",
-      "vite-plugin-pwa/client",
       "vite-plugin-pages/client",
       "vite-plugin-vue-layouts/client",
-      "@types/gapi.client",
-      "@types/gapi.client.drive",
-      "@types/gapi.client.sheets",
-      "@types/google.accounts",
-      "@types/google.visualization",
+      "vite-plugin-pwa/client",
       "@intlify/vite-plugin-vue-i18n/client"
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "~~/*": ["./*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["dist", "node_modules"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": ["dist", "node_modules"]
 }

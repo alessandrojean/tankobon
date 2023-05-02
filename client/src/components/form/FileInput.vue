@@ -4,13 +4,13 @@ import type { ErrorObject } from '@vuelidate/core'
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 
 export interface FileInputProps {
-  accept?: string[],
-  errors?: ErrorObject[],
-  invalid?: boolean,
-  label?: string,
+  accept?: string[]
+  errors?: ErrorObject[]
+  invalid?: boolean
+  label?: string
 }
 
-export type FileInputEmits = {
+export interface FileInputEmits {
   (e: 'change', files: FileList): void
 }
 
@@ -28,18 +28,17 @@ const fileInput = ref<HTMLInputElement | null>(null)
 
 const extensions = computed(() => {
   const ext = accept.value
-    ?.map((mimeType) => mime.extension(mimeType))
-    ?.filter((extension) => typeof extension === 'string')
-    ?.map((extension) => (extension as string).toUpperCase())
+    ?.map(mimeType => mime.extension(mimeType))
+    ?.filter(extension => typeof extension === 'string')
+    ?.map(extension => (extension as string).toUpperCase())
     ?.sort()
-  
+
   return [...new Set(ext)]
 })
 
 function handleDrop(e: DragEvent) {
-  if (!fileInput.value || !e.dataTransfer?.files) {
+  if (!fileInput.value || !e.dataTransfer?.files)
     return
-  }
 
   fileInput.value.files = e.dataTransfer.files
   isDragging.value = false
@@ -59,14 +58,12 @@ export default { inheritAttrs: false }
 
 <template>
   <div
-    :class="[
-      'flex flex-col items-center rounded-md border-2 border-dashed',
-      'px-6 pt-5 pb-6 motion-safe:transition-colors',
+    class="flex flex-col items-center rounded-md border-2 border-dashed px-6 pt-5 pb-6 motion-safe:transition-colors" :class="[
       {
         'border-primary-400 bg-primary-100': isDragging,
         'border-red-400 bg-red-100': invalid && !isDragging,
         'border-gray-300 dark:border-gray-600': !isDragging && !invalid,
-      }
+      },
     ]"
     @dragover.prevent="isDragging = true"
     @dragleave="isDragging = false"
@@ -74,13 +71,12 @@ export default { inheritAttrs: false }
   >
     <slot name="icon">
       <svg
-        :class="[
-          'mx-auto h-12 w-12',
+        class="mx-auto h-12 w-12" :class="[
           {
             'text-primary-500': isDragging,
             'text-red-500': invalid && !isDragging,
             'text-gray-400 dark:text-gray-500': !isDragging && !invalid,
-          }
+          },
         ]"
         stroke="currentColor"
         fill="none"
@@ -92,16 +88,12 @@ export default { inheritAttrs: false }
     </slot>
     <div class="flex text-sm text-gray-600">
       <label
-        :for="$attrs.id as string | undefined"
-        :class="[
-          'relative cursor-pointer rounded-md font-medium',
-          'focus-within:outline-none',
-          'focus-within:ring-2 ',
-          'focus-within:ring-offset-2',
+        :for="String($attrs.id)"
+        class="relative cursor-pointer rounded-md font-medium focus-within:outline-none focus-within:ring-2  focus-within:ring-offset-2" :class="[
           {
             'text-primary-600 focus-within:ring-primary-500 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400': !invalid || isDragging,
             'text-red-600 focus-within:ring-red-500 hover:text-red-500': invalid && !isDragging,
-          }
+          },
         ]"
       >
         <span>{{ $t('upload.prompt') }}</span>
@@ -115,26 +107,24 @@ export default { inheritAttrs: false }
         @change="handleChange"
       >
       <p
-        :class="[
-          'pl-1',
+        class="pl-1" :class="[
           {
             'text-primary-600': isDragging,
             'text-red-600': invalid && !isDragging,
             'dark:text-gray-300': !invalid && !isDragging,
-          }
+          },
         ]"
       >
         {{ $t('upload.drag-and-drop') }}
       </p>
     </div>
     <p
-      :class="[
-        'text-xs',
+      class="text-xs" :class="[
         {
           'text-primary-600': isDragging,
           'text-red-600': invalid && !isDragging,
           'text-gray-500 dark:text-gray-400': !invalid && !isDragging,
-        }
+        },
       ]"
     >
       {{ $t('upload.formats', [extensions.join(', '), '5MB']) }}
@@ -142,10 +132,7 @@ export default { inheritAttrs: false }
 
     <p
       v-if="invalid && errorMessage"
-      :class="[
-        'text-red-700 font-medium mt-4 text-sm bg-white',
-        'px-2 py-1 rounded flex items-center border border-red-200',
-      ]"
+      class="text-red-700 font-medium mt-4 text-sm bg-white px-2 py-1 rounded flex items-center border border-red-200"
     >
       <ExclamationCircleIcon class="w-5 h-5 -ml-1 mr-2" />
       <span>{{ errorMessage }}</span>

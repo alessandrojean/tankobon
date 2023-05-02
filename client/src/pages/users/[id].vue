@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { getFullImageUrl } from '@/modules/api'
-import { UserUpdate } from '@/types/tankobon-user';
 import { EnvelopeIcon } from '@heroicons/vue/20/solid'
 import { PencilIcon, PhotoIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { BuildingLibraryIcon } from '@heroicons/vue/24/outline'
+import { getFullImageUrl } from '@/modules/api'
+import type { UserUpdate } from '@/types/tankobon-user'
 import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
-import { BuildingLibraryIcon } from '@heroicons/vue/24/outline';
-import { getRelationship } from '@/utils/api';
+import { getRelationship } from '@/utils/api'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -34,7 +34,7 @@ const { data: user, isLoading } = useUserQuery({
       title: t('users.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 const avatar = computed(() => getRelationship(user.value, 'AVATAR'))
@@ -52,7 +52,7 @@ function handleDelete() {
         title: t('users.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -68,7 +68,7 @@ function handleEditUser(user: UserUpdate) {
         title: t('users.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -85,9 +85,10 @@ function handleAvatar(avatar: ImageResult) {
           title: t('users.avatar-uploaded-with-failure'),
           body: error.message,
         })
-      }
+      },
     })
-  } else if (avatar.removeExisting) {
+  }
+  else if (avatar.removeExisting) {
     deleteAvatar(userId.value!, {
       onSuccess: async () => {
         await notificator.success({ title: t('users.avatar-removed-with-success') })
@@ -97,7 +98,7 @@ function handleAvatar(avatar: ImageResult) {
           title: t('users.avatar-removed-with-failure'),
           body: error.message,
         })
-      }
+      },
     })
   }
 }
@@ -123,10 +124,12 @@ function handleAvatar(avatar: ImageResult) {
         />
       </template>
       <template #title-badge>
-        <Badge v-if="isMe" class="ml-2">{{ $t('user.you') }}</Badge>
+        <Badge v-if="isMe" class="ml-2">
+          {{ $t('user.you') }}
+        </Badge>
       </template>
       <template #subtitle>
-        <div v-if="isLoading" class="skeleton w-24 h-5 mt-1.5"></div>
+        <div v-if="isLoading" class="skeleton w-24 h-5 mt-1.5" />
         <ul v-else class="flex items-center space-x-2 mt-0.5">
           <li v-if="isAdmin">
             <Badge color="blue">
@@ -237,7 +240,7 @@ function handleAvatar(avatar: ImageResult) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
-    isAdminOnly: true
+meta:
+  layout: dashboard
+  isAdminOnly: true
 </route>

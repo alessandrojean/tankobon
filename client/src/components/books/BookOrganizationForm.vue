@@ -1,24 +1,29 @@
 <script lang="ts" setup>
-import { DimensionsString } from '@/types/tankobon-dimensions'
+import { useVuelidate } from '@vuelidate/core'
+import { helpers, required } from '@vuelidate/validators'
+import MonetaryAmountInput from '../form/MonetaryAmountInput.vue'
+import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import { convertLocalTimeZoneToUtc, convertUtcToLocalTimeZone } from '@/utils/date'
 import { positiveDecimal } from '@/utils/validation'
-import { useVuelidate } from '@vuelidate/core'
-import { helpers, required, integer, minValue } from '@vuelidate/validators'
 
 export interface BookMetadataFormProps {
-  notes: string,
-  billedAt: string | null | undefined,
-  boughtAt: string | null | undefined,
-  arrivedAt: string | null | undefined,
-  mode?: 'creation' | 'update',
+  notes: string
+  billedAt: string | null | undefined
+  boughtAt: string | null | undefined
+  arrivedAt: string | null | undefined
+  labelPrice: MonetaryAmountString
+  paidPrice: MonetaryAmountString
+  mode?: 'creation' | 'update'
 }
 
-export type BookMetadataFormEmits = {
-  (e: 'update:notes', notes: string): void,
-  (e: 'update:billedAt', billedAt: string): void,
-  (e: 'update:arrivedAt', arrivedAt: string): void,
-  (e: 'update:boughtAt', boughtAt: string): void,
-  (e: 'validate', isValid: boolean): void,
+export interface BookMetadataFormEmits {
+  (e: 'update:notes', notes: string): void
+  (e: 'update:billedAt', billedAt: string): void
+  (e: 'update:arrivedAt', arrivedAt: string): void
+  (e: 'update:boughtAt', boughtAt: string): void
+  (e: 'update:labelPrice', labelPrice: MonetaryAmountString): void
+  (e: 'update:paidPrice', paidPrice: MonetaryAmountString): void
+  (e: 'validate', isValid: boolean): void
 }
 
 const props = withDefaults(defineProps<BookMetadataFormProps>(), {
@@ -26,70 +31,95 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const {  } = toRefs(props)
+const { paidPrice, labelPrice } = toRefs(props)
 
 const { t } = useI18n()
 
-// const rules = computed(() => {
-//   const messageRequired = helpers.withMessage(t('validation.required'), required)
-//   const messageInteger = helpers.withMessage(t('validation.integer'), integer)
-//   const messageMinValue = helpers.withMessage(({ $params }) => t('validation.min-value', [$params.min]), minValue(0))
-//   const messageDecimal = helpers.withMessage(t('validation.decimal'), positiveDecimal)
+const rules = computed(() => {
+  const messageRequired = helpers.withMessage(t('validation.required'), required)
+  const messageDecimal = helpers.withMessage(t('validation.decimal'), positiveDecimal)
 
-//   return {
-//     code: { messageRequired },
-//     title: { messageRequired },
-//     pageCount: { messageInteger, messageMinValue },
-//     dimensions: {
-//       widthCm: { messageDecimal },
-//       heightCm: { messageDecimal },
-//     }
-//   }
-// })
+  return {
+    labelPrice: {
+      amount: { messageRequired, messageDecimal },
+      currency: { messageRequired },
+    },
+    paidPrice: {
+      amount: { messageRequired, messageDecimal },
+      currency: { messageRequired },
+    },
+  }
+})
 
-// const v$ = useVuelidate(rules, { code, title, pageCount, dimensions })
+const v$ = useVuelidate(rules, { paidPrice, labelPrice })
 
-// watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
+watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
-// defineExpose({ v$ })
+defineExpose({ v$ })
 
 function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt' | 'arrivedAt') {
   const input = event.target as HTMLInputElement
-  console.log(input.value)
   const value = convertLocalTimeZoneToUtc(input.value)
 
-  if (field === 'boughtAt') {
+  if (field === 'boughtAt')
     emit('update:boughtAt', value)
-  } else if (field === 'billedAt') {
+  else if (field === 'billedAt')
     emit('update:billedAt', value)
-  } else {
+  else
     emit('update:arrivedAt', value)
-  }
 }
 </script>
 
 <template>
-  <div class="space-y-2">
+  <div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+      <MonetaryAmountInput
+        id="label-price"
+        :model-value="labelPrice"
+        :label-text="$t('common-fields.label-price')"
+        :invalid-amount="v$.labelPrice.amount.$error"
+        :invalid-currency="v$.labelPrice.currency.$error"
+        :errors-amount="v$.labelPrice.amount.$errors"
+        :errors-currency="v$.labelPrice.currency.$errors"
+        @blur:amount="v$.labelPrice.amount.$touch()"
+        @blur:currency="v$.labelPrice.currency.$touch()"
+        @update:model-value="$emit('update:labelPrice', $event)"
+      />
+
+      <MonetaryAmountInput
+        id="paid-price"
+        :model-value="paidPrice"
+        :label-text="$t('common-fields.paid-price')"
+        :invalid-amount="v$.paidPrice.amount.$error"
+        :invalid-currency="v$.paidPrice.currency.$error"
+        :errors-amount="v$.paidPrice.amount.$errors"
+        :errors-currency="v$.paidPrice.currency.$errors"
+        @blur:amount="v$.paidPrice.amount.$touch()"
+        @blur:currency="v$.paidPrice.currency.$touch()"
+        @update:model-value="$emit('update:paidPrice', $event)"
+      />
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
-        :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
         id="bought-at"
+        :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
         type="datetime-local"
         :label-text="$t('common-fields.bought-at')"
         @input="handleDateTimeInput($event, 'boughtAt')"
       />
 
       <TextInput
-        :model-value="billedAt ? convertUtcToLocalTimeZone(billedAt) : ''"
         id="billed-at"
+        :model-value="billedAt ? convertUtcToLocalTimeZone(billedAt) : ''"
         type="datetime-local"
         :label-text="$t('common-fields.billed-at')"
         @input="handleDateTimeInput($event, 'billedAt')"
       />
 
       <TextInput
-        :model-value="arrivedAt ? convertUtcToLocalTimeZone(arrivedAt) : ''"
         id="arrived-at"
+        :model-value="arrivedAt ? convertUtcToLocalTimeZone(arrivedAt) : ''"
         type="datetime-local"
         :label-text="$t('common-fields.arrived-at')"
         @input="handleDateTimeInput($event, 'arrivedAt')"
@@ -97,8 +127,8 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
     </div>
 
     <MarkdownInput
-      :model-value="notes ?? ''"
       id="notes"
+      :model-value="notes ?? ''"
       rows="5"
       :label-text="$t('common-fields.notes')"
       :placeholder="$t('common-placeholders.book-notes')"

@@ -13,6 +13,6 @@ export default function useDeleteLibraryMutation() {
       queryClient.invalidateQueries(['libraries'])
       queryClient.invalidateQueries(['libraries-owned'])
       queryClient.invalidateQueries(['library', { id: libraryId }])
-    }
+    },
   })
 }

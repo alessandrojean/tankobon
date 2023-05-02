@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 export interface PasswordRequirementsProps {
-  minimumLength: number,
-  password: string,
+  minimumLength: number
+  password: string
 }
 
 const props = defineProps<PasswordRequirementsProps>()
@@ -43,8 +43,7 @@ const infoTable = [
       <div
         v-for="criterium in 5"
         :key="criterium"
-        :class="[
-          'motion-safe:transition-colors',
+        class="motion-safe:transition-colors" :class="[
           criteriumMeetCount >= criterium
             ? infoTable[criteriumMeetCount].bg
             : 'bg-gray-200 dark:bg-gray-600',
@@ -52,9 +51,8 @@ const infoTable = [
       />
     </div>
     <p
-      :class="[
-        'text-right mt-1 text-xs font-medium',
-        infoTable[criteriumMeetCount].tc
+      class="text-right mt-1 text-xs font-medium" :class="[
+        infoTable[criteriumMeetCount].tc,
       ]"
     >
       {{ $t(infoTable[criteriumMeetCount].tk) }}

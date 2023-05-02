@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { CollectionUpdate } from '@/types/tankobon-collection'
-import { getRelationship } from '@/utils/api';
+import type { CollectionUpdate } from '@/types/tankobon-collection'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,10 +19,8 @@ const { data: collection, isLoading } = useCollectionQuery({
       title: t('collections.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(collection.value, 'LIBRARY'))
 
 function handleDelete() {
   deleteCollection(collectionId.value!, {
@@ -36,7 +33,7 @@ function handleDelete() {
         title: t('collections.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -52,7 +49,7 @@ function handleEditCollection(collection: CollectionUpdate) {
         title: t('collections.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -110,6 +107,6 @@ function handleEditCollection(collection: CollectionUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

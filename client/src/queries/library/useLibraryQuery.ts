@@ -1,18 +1,18 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import type { MaybeRef } from '@vueuse/core'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { MaybeRef } from '@vueuse/core'
-import { LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
+import type { LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
 import { getOneLibrary } from '@/services/tankobon-libraries'
 
 interface UseLibraryQueryOptions<S = LibraryEntity> extends UseQueryOptions<LibraryEntity, ErrorResponse, S> {
-  libraryId: MaybeRef<string>,
-  includes?: MaybeRef<LibraryIncludes[]>,
+  libraryId: MaybeRef<string>
+  includes?: MaybeRef<LibraryIncludes[]>
 }
 
 type ErrorResponse = TankobonApiError | Error
 
 export default function useLibraryQuery<S = LibraryEntity>(
-  options: UseLibraryQueryOptions<S>
+  options: UseLibraryQueryOptions<S>,
 ) {
   return useQuery<LibraryEntity, ErrorResponse, S>({
     queryKey: ['library', { id: options.libraryId }],

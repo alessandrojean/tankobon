@@ -1,8 +1,9 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
-import { PersonEntity } from '@/types/tankobon-person'
-import { getAllPeopleByLibrary, GetAllPeopleByLibraryParameters } from '@/services/tankobon-people'
-import { MaybeRefDeep } from '@/types/reactivity'
+import type { PersonEntity } from '@/types/tankobon-person'
+import type { GetAllPeopleByLibraryParameters } from '@/services/tankobon-people'
+import { getAllPeopleByLibrary } from '@/services/tankobon-people'
+import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryPeopleQueryOptions<S = PaginatedResponse<PersonEntity>> =
   UseQueryOptions<PaginatedResponse<PersonEntity>, ErrorResponse, S> &
@@ -11,7 +12,7 @@ type UseLibraryPeopleQueryOptions<S = PaginatedResponse<PersonEntity>> =
 type ErrorResponse = TankobonApiError | Error
 
 export default function useLibraryPeopleQuery<S = PaginatedResponse<PersonEntity>>(
-  options: UseLibraryPeopleQueryOptions<S>
+  options: UseLibraryPeopleQueryOptions<S>,
 ) {
   return useQuery<PaginatedResponse<PersonEntity>, ErrorResponse, S>({
     queryKey: [
@@ -23,10 +24,10 @@ export default function useLibraryPeopleQuery<S = PaginatedResponse<PersonEntity
         sort: options.sort,
         size: options.size,
         includes: options.includes,
-      }
+      },
     ],
     queryFn: async () => {
-      return await getAllPeopleByLibrary({ 
+      return await getAllPeopleByLibrary({
         libraryId: unref(options.libraryId),
         search: unref(options.search),
         page: unref(options.page),

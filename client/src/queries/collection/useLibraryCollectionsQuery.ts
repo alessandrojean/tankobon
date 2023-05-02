@@ -1,8 +1,9 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
-import { CollectionEntity } from '@/types/tankobon-collection'
-import { getAllCollectionsByLibrary, GetAllCollectionsByLibraryParameters } from '@/services/tankobon-collections'
-import { MaybeRefDeep } from '@/types/reactivity'
+import type { CollectionEntity } from '@/types/tankobon-collection'
+import type { GetAllCollectionsByLibraryParameters } from '@/services/tankobon-collections'
+import { getAllCollectionsByLibrary } from '@/services/tankobon-collections'
+import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryCollectionsQueryOptions<S = PaginatedResponse<CollectionEntity>> =
   UseQueryOptions<PaginatedResponse<CollectionEntity>, ErrorResponse, S> &
@@ -11,7 +12,7 @@ type UseLibraryCollectionsQueryOptions<S = PaginatedResponse<CollectionEntity>> 
 type ErrorResponse = TankobonApiError | Error
 
 export default function useLibraryCollectionsQuery<S = PaginatedResponse<CollectionEntity>>(
-  options: UseLibraryCollectionsQueryOptions<S>
+  options: UseLibraryCollectionsQueryOptions<S>,
 ) {
   return useQuery<PaginatedResponse<CollectionEntity>, ErrorResponse, S>({
     queryKey: [
@@ -24,10 +25,10 @@ export default function useLibraryCollectionsQuery<S = PaginatedResponse<Collect
         size: options.size,
         includes: options.includes,
         unpaged: false,
-      }
+      },
     ],
     queryFn: async () => {
-      return await getAllCollectionsByLibrary({ 
+      return await getAllCollectionsByLibrary({
         libraryId: unref(options.libraryId),
         search: unref(options.search),
         page: unref(options.page),

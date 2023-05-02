@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { UserCreation } from '@/types/tankobon-user'
 import { PlusIcon } from '@heroicons/vue/20/solid'
+import type { UserCreation } from '@/types/tankobon-user'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,7 +19,7 @@ function handleCreateUser(user: UserCreation) {
         title: t('users.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -53,7 +53,7 @@ function handleCreateUser(user: UserCreation) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
-    isAdminOnly: true
+meta:
+  layout: dashboard
+  isAdminOnly: true
 </route>

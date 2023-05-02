@@ -21,9 +21,8 @@ const supText = computed(() => import.meta.env.DEV ? 'DEV' : null)
     <span class="sr-only">{{ label }}</span>
     <span
       v-if="!iconOnly"
-      :class="[
-        'font-sans-safe font-semibold text-xl ml-3',
-        dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50'
+      class="font-sans-safe font-semibold text-xl ml-3" :class="[
+        dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50',
       ]"
       aria-hidden="true"
     >
@@ -31,9 +30,8 @@ const supText = computed(() => import.meta.env.DEV ? 'DEV' : null)
     </span>
     <sup
       v-if="!iconOnly && supText"
-      :class="[
-        'font-semibold text-[0.6rem] align-super ml-0.5',
-        dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
+      class="font-semibold text-[0.6rem] align-super ml-0.5" :class="[
+        dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400',
       ]"
       aria-hidden="true"
     >

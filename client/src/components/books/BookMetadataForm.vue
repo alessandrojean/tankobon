@@ -1,31 +1,31 @@
 <script lang="ts" setup>
-import { DimensionsString } from '@/types/tankobon-dimensions'
-import { positiveDecimal } from '@/utils/validation'
 import { useVuelidate } from '@vuelidate/core'
-import { helpers, required, integer, minValue } from '@vuelidate/validators'
+import { helpers, integer, minValue, required } from '@vuelidate/validators'
+import type { DimensionsString } from '@/types/tankobon-dimensions'
+import { positiveDecimal } from '@/utils/validation'
 
 export interface BookMetadataFormProps {
-  code: string,
-  barcode: string | null | undefined,
-  number: string,
-  title: string,
-  subtitle: string,
-  synopsis: string,
-  pageCount: string,
-  dimensions: DimensionsString,
-  mode?: 'creation' | 'update',
+  code: string
+  barcode: string | null | undefined
+  number: string
+  title: string
+  subtitle: string
+  synopsis: string
+  pageCount: string
+  dimensions: DimensionsString
+  mode?: 'creation' | 'update'
 }
 
-export type BookMetadataFormEmits = {
-  (e: 'update:code', code: string): void,
-  (e: 'update:barcode', barcode: string): void,
-  (e: 'update:number', number: string): void,
-  (e: 'update:title', title: string): void,
-  (e: 'update:subtitle', subtitle: string): void,
-  (e: 'update:synopsis', synopsis: string): void,
-  (e: 'update:pageCount', pageCount: string): void,
-  (e: 'update:dimensions', dimensions: DimensionsString): void,
-  (e: 'validate', isValid: boolean): void,
+export interface BookMetadataFormEmits {
+  (e: 'update:code', code: string): void
+  (e: 'update:barcode', barcode: string): void
+  (e: 'update:number', number: string): void
+  (e: 'update:title', title: string): void
+  (e: 'update:subtitle', subtitle: string): void
+  (e: 'update:synopsis', synopsis: string): void
+  (e: 'update:pageCount', pageCount: string): void
+  (e: 'update:dimensions', dimensions: DimensionsString): void
+  (e: 'validate', isValid: boolean): void
 }
 
 const props = withDefaults(defineProps<BookMetadataFormProps>(), {
@@ -50,57 +50,57 @@ const rules = computed(() => {
     dimensions: {
       widthCm: { messageDecimal },
       heightCm: { messageDecimal },
-    }
+    },
   }
 })
 
 const v$ = useVuelidate(rules, { code, title, pageCount, dimensions })
 
-watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
+watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
 defineExpose({ v$ })
 </script>
 
 <template>
-  <div class="space-y-2">
-    <TextInput
-      :model-value="title ?? ''"
-      id="title"
-      required
-      :label-text="$t('common-fields.title')"
-      :placeholder="$t('common-placeholders.book-title')"
-      :invalid="v$.title.$error"
-      :errors="v$.title.$errors"
-      @blur="v$.title.$touch()"
-      @input="$emit('update:title', $event.target.value)"
-    />
-
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
-      <div class="lg:col-span-3">
+  <div class="space-y-6">
+    <div class="space-y-2">
+      <TextInput
+        id="title"
+        :model-value="title ?? ''"
+        required
+        :label-text="$t('common-fields.title')"
+        :placeholder="$t('common-placeholders.book-title')"
+        :invalid="v$.title.$error"
+        :errors="v$.title.$errors"
+        @blur="v$.title.$touch()"
+        @input="$emit('update:title', $event.target.value)"
+      />
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+        <div class="lg:col-span-3">
+          <TextInput
+            id="subtitle"
+            :model-value="subtitle ?? ''"
+            :label-text="$t('common-fields.subtitle')"
+            :placeholder="$t('common-placeholders.book-subtitle')"
+            @input="$emit('update:subtitle', $event.target.value)"
+          />
+        </div>
         <TextInput
-          :model-value="subtitle ?? ''"
-          id="subtitle"
-          :label-text="$t('common-fields.subtitle')"
-          :placeholder="$t('common-placeholders.book-subtitle')"
-          @input="$emit('update:subtitle', $event.target.value)"
+          id="number"
+          :model-value="number ?? ''"
+          required
+          inputmode="decimal"
+          :label-text="$t('common-fields.number')"
+          :placeholder="$t('common-placeholders.book-number')"
+          @input="$emit('update:number', $event.target.value)"
         />
       </div>
-
-      <TextInput
-        :model-value="number ?? ''"
-        id="number"
-        required
-        inputmode="decimal"
-        :label-text="$t('common-fields.number')"
-        :placeholder="$t('common-placeholders.book-number')"
-        @input="$emit('update:number', $event.target.value)"
-      />
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
-        :model-value="code ?? ''"
         id="code"
+        :model-value="code ?? ''"
         required
         :label-text="$t('common-fields.code')"
         :placeholder="$t('common-placeholders.book-code')"
@@ -111,8 +111,8 @@ defineExpose({ v$ })
       />
 
       <TextInput
-        :model-value="barcode ?? ''"
         id="barcode"
+        :model-value="barcode ?? ''"
         required
         inputmode="numeric"
         :label-text="$t('common-fields.barcode')"
@@ -122,8 +122,8 @@ defineExpose({ v$ })
     </div>
 
     <MarkdownInput
-      :model-value="synopsis ?? ''"
       id="synopsis"
+      :model-value="synopsis ?? ''"
       rows="10"
       :label-text="$t('common-fields.synopsis')"
       :placeholder="$t('common-placeholders.book-synopsis')"
@@ -132,8 +132,8 @@ defineExpose({ v$ })
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
-        :model-value="pageCount ?? ''"
         id="page-count"
+        :model-value="pageCount ?? ''"
         required
         inputmode="numeric"
         :input-mask="{
@@ -150,8 +150,8 @@ defineExpose({ v$ })
       />
 
       <DimensionsInput
-        :model-value="dimensions"
         id="dimensions"
+        :model-value="dimensions"
         required
         :placeholder-width="$t('common-placeholders.book-width-cm')"
         :placeholder-height="$t('common-placeholders.book-height-cm')"

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import SeriesForm from '@/components/series/SeriesForm.vue'
-import { SeriesCreation } from '@/types/tankobon-series'
+import type { SeriesCreation } from '@/types/tankobon-series'
 
 export interface SeriesCreateDialogProps {
-  libraryId: string,
-  isOpen: boolean,
+  libraryId: string
+  isOpen: boolean
 }
 
-export type SeriesCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', series: SeriesCreation): void,
+export interface SeriesCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', series: SeriesCreation): void
 }
 
 const props = defineProps<SeriesCreateDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await seriesForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(series))

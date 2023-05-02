@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import useVuelidate from '@vuelidate/core'
-import { email, required, helpers } from '@vuelidate/validators'
+import { email, helpers, required } from '@vuelidate/validators'
 
 import { EnvelopeIcon, IdentificationIcon, KeyIcon } from '@heroicons/vue/24/outline'
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import type { ClaimAdmin } from '@/types/tankobon-claim'
 
 const notificator = useToaster()
+const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
@@ -15,7 +16,7 @@ const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
       title: t('claim-server.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
 const { mutateAsync: claimServer } = useClaimServerMutation()
 
@@ -28,7 +29,6 @@ const formState = reactive<ClaimAdmin>({
   password: '',
 })
 
-const { t } = useI18n()
 const messageRequired = helpers.withMessage(t('validation.required'), required)
 const messageEmail = helpers.withMessage(t('validation.email'), email)
 
@@ -41,17 +41,15 @@ const rules = {
 const v$ = useVuelidate(rules, formState)
 
 watch([claimStatus, isFetched], () => {
-  if (claimStatus.value?.isClaimed && !userStore.isAuthenticated && !isLoading.value) {
+  if (claimStatus.value?.isClaimed && !userStore.isAuthenticated && !isLoading.value)
     router.replace({ name: 'sign-in' })
-  }
 })
 
 async function handleSignIn() {
   const isFormValid = await v$.value.$validate()
 
-  if (!isFormValid) {
+  if (!isFormValid)
     return
-  }
 
   isLoading.value = true
   error.value = null
@@ -61,9 +59,11 @@ async function handleSignIn() {
     await claimServer(admin)
     await userStore.signIn({ email: admin.email, password: admin.password })
     await router.replace({ name: 'welcome' })
-  } catch (e) {
+  }
+  catch (e) {
     error.value = (e instanceof Error) ? e : error.value
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -94,12 +94,12 @@ const passwordFocused = ref(false)
       >
         <p>{{ error?.message }}</p>
       </Alert>
-      
-      <form class="space-y-6" @submit.prevent="handleSignIn" novalidate>
+
+      <form class="space-y-6" novalidate @submit.prevent="handleSignIn">
         <div class="space-y-2">
           <TextInput
-            v-model="v$.name.$model"
             id="name"
+            v-model="v$.name.$model"
             :label-text="$t('common-fields.name')"
             auto-complete="name"
             :placeholder="$t('common-placeholders.name')"
@@ -112,8 +112,8 @@ const passwordFocused = ref(false)
             </template>
           </TextInput>
           <TextInput
-            v-model="v$.email.$model"
             id="email"
+            v-model="v$.email.$model"
             type="email"
             :label-text="$t('common-fields.email')"
             auto-complete="email"
@@ -127,17 +127,17 @@ const passwordFocused = ref(false)
             </template>
           </TextInput>
           <TextInput
-            v-model="v$.password.$model"
             id="password"
+            v-model="v$.password.$model"
             type="password"
             :label-text="$t('common-fields.password')"
             auto-complete="current-password"
             :placeholder="$t('common-placeholders.password')"
             :invalid="v$.password.$error"
             :errors="v$.password.$errors"
+            required
             @focus="passwordFocused = true"
             @blur="passwordFocused = false"
-            required
           >
             <template #left-icon>
               <KeyIcon class="w-7 h-7 text-current" />

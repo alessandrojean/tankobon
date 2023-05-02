@@ -7,17 +7,17 @@ import {
 } from '@heroicons/vue/20/solid'
 
 export interface PaginatorProps {
-  hasPreviousPage: boolean,
-  hasNextPage: boolean,
+  hasPreviousPage: boolean
+  hasNextPage: boolean
 }
 
 defineProps<PaginatorProps>()
 
 defineEmits<{
-  (e: 'click:first-page'): void,
-  (e: 'click:previous-page'): void,
-  (e: 'click:next-page'): void,
-  (e:' click:last-page'): void,
+  (e: 'click:first-page'): void
+  (e: 'click:previous-page'): void
+  (e: 'click:next-page'): void
+  (e: 'click:last-page'): void
 }>()
 </script>
 

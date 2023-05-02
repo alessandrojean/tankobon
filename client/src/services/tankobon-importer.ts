@@ -1,9 +1,10 @@
-import { api } from '@/modules/api'
-import { BookEntity } from '@/types/tankobon-book'
-import { ExternalBookEntity, ExternalBookIncludes } from '@/types/tankobon-external-book'
-import { ImporterSourceEntity, ImporterSources, ImportOneBook } from '@/types/tankobon-importer-source'
-import { CollectionResponse, EntityResponse, ErrorResponse, TankobonApiError } from '@/types/tankobon-response'
 import { isAxiosError } from 'axios'
+import { api } from '@/modules/api'
+import type { BookEntity } from '@/types/tankobon-book'
+import type { ExternalBookEntity, ExternalBookIncludes } from '@/types/tankobon-external-book'
+import type { ImportOneBook, ImporterSourceEntity, ImporterSources } from '@/types/tankobon-importer-source'
+import type { CollectionResponse, EntityResponse, ErrorResponse } from '@/types/tankobon-response'
+import { TankobonApiError } from '@/types/tankobon-response'
 
 type ImporterColletion = CollectionResponse<ImporterSourceEntity>
 type ExternalBookCollection = CollectionResponse<ExternalBookEntity>
@@ -14,19 +15,19 @@ export async function getAllSources(): Promise<ImporterSourceEntity[]> {
     const { data: sources } = await api.get<ImporterColletion>('importer/sources')
 
     return sources.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface SearchByIsbnOptions {
-  isbn: string,
-  sources?: ImporterSources[],
-  includes?: ExternalBookIncludes[],
+  isbn: string
+  sources?: ImporterSources[]
+  includes?: ExternalBookIncludes[]
 }
 
 export async function searchByIsbn(options: SearchByIsbnOptions): Promise<ExternalBookEntity[]> {
@@ -37,29 +38,28 @@ export async function searchByIsbn(options: SearchByIsbnOptions): Promise<Extern
       params: {
         sources: sources?.join(','),
         includes: includes?.join(','),
-      }
+      },
     })
 
     return results.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
-
 
 export async function importOneBook(book: ImportOneBook): Promise<BookEntity> {
   try {
     const { data } = await api.post<BookSingle>('importer/import', book)
 
     return data.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }

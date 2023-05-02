@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue'
 import type { ErrorObject } from '@vuelidate/core'
 
 export interface TextInputProps {
-  errors?: ErrorObject[],
-  invalid?: boolean,
-  modelValue: string,
-  labelText: string,
-  autoComplete?: HTMLTextAreaElement['autocomplete'],
-  placeholder?: string,
-  required?: boolean,
+  errors?: ErrorObject[]
+  invalid?: boolean
+  modelValue: string
+  labelText: string
+  autoComplete?: HTMLTextAreaElement['autocomplete']
+  placeholder?: string
+  required?: boolean
 }
 
 const props = withDefaults(defineProps<TextInputProps>(), {
@@ -34,19 +33,15 @@ export default { inheritAttrs: false }
 <template>
   <div>
     <div
-      :class="[
-        'w-full border bg-white dark:bg-gray-950 shadow-sm rounded-md',
-        'focus-within:ring focus-within:ring-opacity-50 motion-safe:transition-shadow',
-        invalid 
-          ? 'border-red-500 dark:border-red-500/95 focus-within:border-red-500 dark:focus-within:border-red-500/95 focus-within:ring-red-200 dark:focus-within:ring-red-200/30' 
-          : 'border-gray-300 dark:border-gray-700 focus-within:border-primary-500 dark:focus-within:border-primary-400 focus-within:ring-primary-200 dark:focus-within:ring-primary-200/30'
+      class="w-full border bg-white dark:bg-gray-950 shadow-sm rounded-md focus-within:ring focus-within:ring-opacity-50 motion-safe:transition-shadow" :class="[
+        invalid
+          ? 'border-red-500 dark:border-red-500/95 focus-within:border-red-500 dark:focus-within:border-red-500/95 focus-within:ring-red-200 dark:focus-within:ring-red-200/30'
+          : 'border-gray-300 dark:border-gray-700 focus-within:border-primary-500 dark:focus-within:border-primary-400 focus-within:ring-primary-200 dark:focus-within:ring-primary-200/30',
       ]"
     >
       <label
-        :class="[
-          'font-medium text-xs px-3 pt-3 pb-1',
-          'select-none block',
-          invalid 
+        class="font-medium text-xs px-3 pt-3 pb-1 select-none block" :class="[
+          invalid
             ? 'text-red-800 dark:text-red-600'
             : 'text-gray-700 dark:text-gray-300',
         ]"
@@ -55,11 +50,7 @@ export default { inheritAttrs: false }
         {{ labelText }}
       </label>
       <textarea
-        :class="[
-          'w-full bg-white dark:bg-gray-950 rounded-md',
-          'dark:text-gray-200 focus:outline-none border-0 focus:ring-0',
-          'placeholder:text-gray-500',
-        ]"
+        class="w-full bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 focus:outline-none border-0 focus:ring-0 placeholder:text-gray-500"
         v-bind="$attrs"
         :placeholder="placeholder"
         :required="required"

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { PublisherUpdate } from '@/types/tankobon-publisher'
-import { getRelationship } from '@/utils/api';
+import type { PublisherUpdate } from '@/types/tankobon-publisher'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,10 +19,8 @@ const { data: publisher, isLoading } = usePublisherQuery({
       title: t('publishers.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(publisher.value, 'LIBRARY'))
 
 function handleDelete() {
   deletePublisher(publisherId.value!, {
@@ -36,7 +33,7 @@ function handleDelete() {
         title: t('publishers.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -52,7 +49,7 @@ function handleEditPublisher(publisher: PublisherUpdate) {
         title: t('publishers.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -110,6 +107,6 @@ function handleEditPublisher(publisher: PublisherUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

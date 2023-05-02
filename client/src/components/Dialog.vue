@@ -3,13 +3,13 @@ import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 export interface DialogProps {
-  as?: string,
-  bodyPaddingless?: boolean,
-  description?: string,
-  dialogClass?: string,
-  fullHeight?: boolean,
-  isOpen: boolean,
-  title?: string,
+  as?: string
+  bodyPaddingless?: boolean
+  description?: string
+  dialogClass?: string
+  fullHeight?: boolean
+  isOpen: boolean
+  title?: string
 }
 
 const props = withDefaults(defineProps<DialogProps>(), {
@@ -24,9 +24,8 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { dialogClass, fullHeight, isOpen } = toRefs(props)
 
 onBeforeRouteLeave(() => {
-  if (!isOpen.value) {
+  if (!isOpen.value)
     return true
-  }
 
   emit('close')
   return false
@@ -50,9 +49,7 @@ export default { inheritAttrs: false }
       @close="$emit('close')"
     >
       <div
-        :class="[
-          'fixed z-30 inset-0 flex flex-col items-center',
-          'px-4 sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16',
+        class="fixed z-30 inset-0 flex flex-col items-center px-4 sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16" :class="[
           { 'justify-center': !fullHeight },
         ]"
       >
@@ -67,11 +64,7 @@ export default { inheritAttrs: false }
         >
           <slot name="overlay" :close="() => $emit('close')">
             <div
-              :class="[
-                'fixed inset-0',
-                'bg-gray-700/75 dark:bg-gray-950/80',
-                'motion-safe:transition-opacity',
-              ]"
+              class="fixed inset-0 bg-gray-700/75 dark:bg-gray-950/80 motion-safe:transition-opacity"
               @click="$emit('close')"
             />
           </slot>
@@ -79,10 +72,7 @@ export default { inheritAttrs: false }
 
         <TransitionChild
           :as="as"
-          :class="[
-            'relative flex flex-col w-full will-change-transform',
-            'overflow-hidden text-left bg-white dark:bg-gray-900',
-            'shadow-xl rounded-lg ring-1 ring-black/5',
+          class="relative flex flex-col w-full will-change-transform overflow-hidden text-left bg-white dark:bg-gray-900 shadow-xl rounded-lg ring-1 ring-black/5" :class="[
             dialogClass,
             { 'h-full': fullHeight, 'max-h-full': !fullHeight },
           ]"
@@ -95,15 +85,11 @@ export default { inheritAttrs: false }
           leave-to="opacity-0"
         >
           <div
-            :class="[
-              'relative overflow-hidden bg-gray-50 dark:bg-gray-900',
-              'shrink-0 px-4 md:px-6 py-4 md:py-5',
-              'border-b border-gray-200 dark:border-gray-700',
-            ]"
+            class="relative overflow-hidden bg-gray-50 dark:bg-gray-900 shrink-0 px-4 md:px-6 py-4 md:py-5 border-b border-gray-200 dark:border-gray-700"
           >
             <slot name="header">
               <div class="flex items-center">
-                <div class="flex-grow" v-if="title">
+                <div v-if="title" class="flex-grow">
                   <DialogTitle
                     class="text-xl font-medium font-display-safe leading-6"
                   >
@@ -130,9 +116,8 @@ export default { inheritAttrs: false }
             </slot>
           </div>
 
-          <div 
-            :class="[
-              'flex-grow overflow-y-auto',
+          <div
+            class="flex-grow overflow-y-auto" :class="[
               !bodyPaddingless ? 'p-4 md:p-6' : '',
             ]"
           >
@@ -141,10 +126,7 @@ export default { inheritAttrs: false }
 
           <div
             v-if="$slots.footer"
-            :class="[
-              'shrink-0 border-t border-gray-200 dark:border-gray-700',
-              'bg-gray-50 dark:bg-gray-900 px-4 md:px-6 py-3 md:py-4'
-            ]"
+            class="shrink-0 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 md:px-6 py-3 md:py-4"
           >
             <slot name="footer" />
           </div>

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import ContributorRoleForm from '@/components/contributor-roles/ContributorRoleForm.vue'
-import { ContributorRoleCreation } from '@/types/tankobon-contributor-role'
+import type { ContributorRoleCreation } from '@/types/tankobon-contributor-role'
 
 export interface ContributorRoleCreateDialogProps {
-  libraryId: string,
-  isOpen: boolean,
+  libraryId: string
+  isOpen: boolean
 }
 
-export type ContributorRoleCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', contributorRole: ContributorRoleCreation): void,
+export interface ContributorRoleCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', contributorRole: ContributorRoleCreation): void
 }
 
 const props = defineProps<ContributorRoleCreateDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await contributorRoleForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(contributorRole))

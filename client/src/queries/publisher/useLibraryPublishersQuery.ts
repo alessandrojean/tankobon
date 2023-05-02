@@ -1,8 +1,9 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
-import { PublisherEntity } from '@/types/tankobon-publisher'
-import { getAllPublishersByLibrary, GetAllPublishersByLibraryParameters } from '@/services/tankobon-publishers'
-import { MaybeRefDeep } from '@/types/reactivity'
+import type { PublisherEntity } from '@/types/tankobon-publisher'
+import type { GetAllPublishersByLibraryParameters } from '@/services/tankobon-publishers'
+import { getAllPublishersByLibrary } from '@/services/tankobon-publishers'
+import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryPublishersQueryOptions<S = PaginatedResponse<PublisherEntity>> =
   UseQueryOptions<PaginatedResponse<PublisherEntity>, ErrorResponse, S> &
@@ -11,7 +12,7 @@ type UseLibraryPublishersQueryOptions<S = PaginatedResponse<PublisherEntity>> =
 type ErrorResponse = TankobonApiError | Error
 
 export default function useLibraryPublishersQuery<S = PaginatedResponse<PublisherEntity>>(
-  options: UseLibraryPublishersQueryOptions<S>
+  options: UseLibraryPublishersQueryOptions<S>,
 ) {
   return useQuery<PaginatedResponse<PublisherEntity>, ErrorResponse, S>({
     queryKey: [
@@ -23,10 +24,10 @@ export default function useLibraryPublishersQuery<S = PaginatedResponse<Publishe
         sort: options.sort,
         size: options.size,
         includes: options.includes,
-      }
+      },
     ],
     queryFn: async () => {
-      return await getAllPublishersByLibrary({ 
+      return await getAllPublishersByLibrary({
         libraryId: unref(options.libraryId),
         search: unref(options.search),
         page: unref(options.page),

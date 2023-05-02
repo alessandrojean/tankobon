@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-import { BookEntity } from '@/types/tankobon-book'
 import {
-  BookmarkIcon as BookmarkSolidIcon,
   PencilIcon,
   TrashIcon,
 } from '@heroicons/vue/24/solid'
-import {
-  BookmarkIcon as BookmarkOutlineIcon,
-} from '@heroicons/vue/24/outline'
-import { breakpointsTailwind } from '@vueuse/core'
+
+import type { BookEntity } from '@/types/tankobon-book'
 
 export interface BookButtonsProps {
   book?: BookEntity | null
@@ -21,7 +17,7 @@ const props = withDefaults(defineProps<BookButtonsProps>(), {
   book: undefined,
   canEdit: true,
   editing: false,
-  loading: false
+  loading: false,
 })
 
 defineEmits<{
@@ -36,9 +32,6 @@ defineEmits<{
 const { editing, loading } = toRefs(props)
 
 const disabled = computed(() => loading.value || editing.value)
-
-const breakpoints = useBreakpoints(breakpointsTailwind)
-const iconOnly = breakpoints.smaller('2xl')
 </script>
 
 <template>
@@ -50,8 +43,8 @@ const iconOnly = breakpoints.smaller('2xl')
     <div class="skeleton w-12 h-12" />
   </div>
   <Toolbar
-    class="flex w-full justify-center sm:justify-start items-center gap-2"
     v-else-if="canEdit"
+    class="flex w-full justify-center sm:justify-start items-center gap-2"
   >
     <Button
       v-if="!loading"

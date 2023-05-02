@@ -4,13 +4,13 @@ import humanizeDuration from 'humanize-duration'
 import type { Metric } from '@/types/tankobon-metrics'
 
 export interface MetricCardProps {
-  metric: Metric,
-  unit?: string,
-  title: string,
+  metric: Metric
+  unit?: string
+  title: string
 }
 
 const props = withDefaults(defineProps<MetricCardProps>(), {
-  unit: undefined
+  unit: undefined,
 })
 const { metric, unit } = toRefs(props)
 
@@ -23,7 +23,7 @@ const intlFormatters = computed(() => ({
     style: 'percent',
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
-  })
+  }),
 }))
 
 const shortEnglishHumanizer = humanizeDuration.humanizer({
@@ -62,7 +62,7 @@ const formattedValue = computed(() => {
         round: true,
       })
       const [formatted, unit] = formattedString.split(' ')
-      
+
       return { formatted, unit }
     }
     default: return null
@@ -72,14 +72,12 @@ const formattedValue = computed(() => {
 
 <template>
   <div
-    :class="[
-      'bg-gray-100 dark:bg-block-dark rounded-lg p-4'
-    ]"
+    class="bg-gray-100 dark:bg-block-dark rounded-lg p-4"
   >
     <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
       {{ title }}
     </p>
-    <p  
+    <p
       v-if="formattedValue"
       class="text-3xl font-medium mt-2 text-primary-600 dark:text-primary-500"
     >

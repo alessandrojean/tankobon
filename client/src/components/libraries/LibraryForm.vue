@@ -3,15 +3,15 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
 export interface LibraryFormProps {
-  name: string,
-  description: string,
-  mode?: 'creation' | 'update',
+  name: string
+  description: string
+  mode?: 'creation' | 'update'
 }
 
-export type UserFormEmits = {
-  (e: 'update:name', name: string): void,
-  (e: 'update:description', description: string): void,
-  (e: 'validate', isValid: boolean): void,
+export interface UserFormEmits {
+  (e: 'update:name', name: string): void
+  (e: 'update:description', description: string): void
+  (e: 'validate', isValid: boolean): void
 }
 
 const props = withDefaults(defineProps<LibraryFormProps>(), {
@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<LibraryFormProps>(), {
 })
 const emit = defineEmits<UserFormEmits>()
 
-const { name, description, mode } = toRefs(props)
+const { name, description } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -27,13 +27,13 @@ const rules = computed(() => {
   const messageRequired = helpers.withMessage(t('validation.required'), required)
 
   return {
-    name: { messageRequired }
+    name: { messageRequired },
   }
 })
 
 const v$ = useVuelidate(rules, { name })
 
-watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
+watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
 defineExpose({ v$ })
 </script>
@@ -41,8 +41,8 @@ defineExpose({ v$ })
 <template>
   <div class="space-y-2">
     <TextInput
-      :model-value="name"
       id="name"
+      :model-value="name"
       required
       :label-text="$t('common-fields.name')"
       :placeholder="$t('common-placeholders.library-name')"
@@ -53,8 +53,8 @@ defineExpose({ v$ })
     />
 
     <TextAreaInput
-      :model-value="description"
       id="description"
+      :model-value="description"
       rows="5"
       :label-text="$t('common-fields.description')"
       :placeholder="$t('common-placeholders.library-description')"

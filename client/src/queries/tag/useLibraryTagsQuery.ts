@@ -1,8 +1,9 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
-import { TagEntity } from '@/types/tankobon-tag'
-import { getAllTagsByLibrary, GetAllTagsByLibraryParameters } from '@/services/tankobon-tags'
-import { MaybeRefDeep } from '@/types/reactivity'
+import type { TagEntity } from '@/types/tankobon-tag'
+import type { GetAllTagsByLibraryParameters } from '@/services/tankobon-tags'
+import { getAllTagsByLibrary } from '@/services/tankobon-tags'
+import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryTagsQueryOptions<S = PaginatedResponse<TagEntity>> =
   UseQueryOptions<PaginatedResponse<TagEntity>, ErrorResponse, S> &
@@ -11,7 +12,7 @@ type UseLibraryTagsQueryOptions<S = PaginatedResponse<TagEntity>> =
 type ErrorResponse = TankobonApiError | Error
 
 export default function useLibraryTagsQuery<S = PaginatedResponse<TagEntity>>(
-  options: UseLibraryTagsQueryOptions<S>
+  options: UseLibraryTagsQueryOptions<S>,
 ) {
   return useQuery<PaginatedResponse<TagEntity>, ErrorResponse, S>({
     queryKey: [
@@ -23,10 +24,10 @@ export default function useLibraryTagsQuery<S = PaginatedResponse<TagEntity>>(
         sort: options.sort,
         size: options.size,
         includes: options.includes,
-      }
+      },
     ],
     queryFn: async () => {
-      return await getAllTagsByLibrary({ 
+      return await getAllTagsByLibrary({
         libraryId: unref(options.libraryId),
         search: unref(options.search),
         page: unref(options.page),

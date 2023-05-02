@@ -1,55 +1,51 @@
-import { helpers, email } from '@vuelidate/validators'
+import { email, helpers } from '@vuelidate/validators'
 import { checkEmailAvailability } from '@/services/tankobon-users'
 
 export const positiveDecimal = helpers.regex(/^\d+([,.]\d+)?$/)
 
 export const emailIsAvailable = helpers.withAsync(async (value: string) => {
-  if (value.length === 0 || !email.$validator(value, null, null)) {
+  if (value.length === 0 || !email.$validator(value, null, null))
     return true
-  }
 
   return await checkEmailAvailability(value)
 })
 
-export const emailIsAvailableIfNotSame = (current: string) => helpers.withAsync(async (value: string) => {
-  if (value.length === 0 || !email.$validator(value, null, null)) {
-    return true
-  }
+export function emailIsAvailableIfNotSame(current: string) {
+  return helpers.withAsync(async (value: string) => {
+    if (value.length === 0 || !email.$validator(value, null, null))
+      return true
 
-  if (current === value) {
-    return true
-  }
+    if (current === value)
+      return true
 
-  return await checkEmailAvailability(value)
-})
+    return await checkEmailAvailability(value)
+  })
+}
 
-
-export const maxFileSize = (maxSize: number, sizeString: string) =>
-  helpers.withParams(
+export function maxFileSize(maxSize: number, sizeString: string) {
+  return helpers.withParams(
     { sizeString },
     (file: File | null) => {
-      if (!file) {
+      if (!file)
         return true
-      }
-    
-      return file.size <= maxSize
-    }
-  )
 
-export const isbn = (isbn: string) => {
+      return file.size <= maxSize
+    },
+  )
+}
+
+export function isbn(isbn: string) {
   return isbn13(isbn) || isbn10(isbn)
 }
 
-export const isbn13 = (isbn13: string) => {
-  if (isbn13.length === 0) {
+export function isbn13(isbn13: string) {
+  if (isbn13.length === 0)
     return true
-  }
 
   const digits = isbn13.replace(/[^\dX]/g, '')
 
-  if (digits.length !== 13) {
+  if (digits.length !== 13)
     return false
-  }
 
   const sum = digits.split('')
     .reduce((acm, crr, i) => acm + parseInt(crr, 10) * (i % 2 === 0 ? 1 : 3), 0)
@@ -57,16 +53,14 @@ export const isbn13 = (isbn13: string) => {
   return sum % 10 === 0
 }
 
-export const isbn10 = (isbn10: string) => {
-  if (isbn10.length === 0) {
+export function isbn10(isbn10: string) {
+  if (isbn10.length === 0)
     return true
-  }
 
   const digits = isbn10.replace(/[^\dX]/g, '')
 
-  if (digits.length !== 10) {
+  if (digits.length !== 10)
     return false
-  }
 
   const partialSum = digits
     .slice(0, -1)

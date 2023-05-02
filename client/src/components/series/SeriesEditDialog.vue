@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { SeriesEntity, SeriesUpdate } from '@/types/tankobon-series'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { SeriesEntity, SeriesUpdate } from '@/types/tankobon-series'
 import SeriesForm from '@/components/series/SeriesForm.vue'
 
 export interface SeriesEditDialogProps {
-  isOpen: boolean,
-  seriesEntity: SeriesEntity,
+  isOpen: boolean
+  seriesEntity: SeriesEntity
 }
 
-export type SeriesEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', series: SeriesUpdate): void,
+export interface SeriesEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', series: SeriesUpdate): void
 }
 
 const props = defineProps<SeriesEditDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await seriesForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(series))

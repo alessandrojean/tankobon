@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import type { LibraryEntity, LibraryUpdate } from '@/types/tankobon-library'
 import { CheckIcon } from '@heroicons/vue/20/solid'
+import type { LibraryEntity, LibraryUpdate } from '@/types/tankobon-library'
 import LibraryForm from '@/components/libraries/LibraryForm.vue'
 
 export interface LibraryEditDialogProps {
-  isOpen: boolean,
-  libraryEntity: LibraryEntity,
+  isOpen: boolean
+  libraryEntity: LibraryEntity
 }
 
-export type LibraryEditDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', library: LibraryUpdate): void,
+export interface LibraryEditDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', library: LibraryUpdate): void
 }
 
 const props = defineProps<LibraryEditDialogProps>()
@@ -33,8 +33,8 @@ whenever(isOpen, () => {
     name: libraryEntity.value.attributes.name,
     description: libraryEntity.value.attributes.description,
     sharedUsers: libraryEntity.value.relationships
-      ?.filter((r) => r.type === 'LIBRARY_SHARING')
-      ?.map((r) => r.id)
+      ?.filter(r => r.type === 'LIBRARY_SHARING')
+      ?.map(r => r.id),
   })
 
   libraryForm.value?.v$.$reset()
@@ -43,9 +43,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await libraryForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(library))

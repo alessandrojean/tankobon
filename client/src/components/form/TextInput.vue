@@ -4,16 +4,16 @@ import type { HTMLAttributes } from 'vue'
 import type { ErrorObject } from '@vuelidate/core'
 
 export interface TextInputProps {
-  errors?: ErrorObject[],
-  invalid?: boolean,
-  modelValue: string,
-  labelText: string,
-  autoComplete?: HTMLInputElement['autocomplete'],
-  type?: HTMLInputElement['type'],
-  inputMask?: InputMask.Options,
-  inputMode?: HTMLAttributes['inputmode'],
-  placeholder?: string,
-  required?: boolean,
+  errors?: ErrorObject[]
+  invalid?: boolean
+  modelValue: string
+  labelText: string
+  autoComplete?: HTMLInputElement['autocomplete']
+  type?: HTMLInputElement['type']
+  inputMask?: InputMask.Options
+  inputMode?: HTMLAttributes['inputmode']
+  placeholder?: string
+  required?: boolean
 }
 
 const props = withDefaults(defineProps<TextInputProps>(), {
@@ -39,7 +39,8 @@ watchEffect((onCleanup) => {
     inputMaskInstance.value = InputMask(inputMask.value).mask(input.value)
 
     onCleanup(() => inputMaskInstance.value?.remove())
-  } else {
+  }
+  else {
     inputMaskInstance.value?.remove()
   }
 })
@@ -54,15 +55,11 @@ export default { inheritAttrs: false }
     <div class="relative">
       <input
         ref="input"
-        :class="[
-          'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8',
-          'dark:text-gray-200',
-          'focus:ring focus:ring-opacity-50 motion-safe:transition-shadow',
-          'placeholder:text-gray-500',
+        class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500" :class="[
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
-          invalid 
-            ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30' 
-            : 'border-gray-300 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30'
+          invalid
+            ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
+            : 'border-gray-300 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
         ]"
         v-bind="$attrs"
         :type="type"
@@ -73,9 +70,7 @@ export default { inheritAttrs: false }
         @input="$emit('update:modelValue', ($event.target! as HTMLInputElement).value)"
       >
       <label
-        :class="[
-          'font-medium text-xs px-3 absolute top-3 inset-x-0',
-          'select-none cursor-text',
+        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text" :class="[
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
@@ -85,27 +80,23 @@ export default { inheritAttrs: false }
       </label>
       <div
         v-if="$slots['left-icon']"
-        :class="[
-          'absolute left-[1.125rem] inset-y-0 flex items-center justify-center',
-          'motion-safe:transition-colors',
-          invalid 
+        class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+          invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
         ]"
       >
-        <slot name="left-icon"></slot>
+        <slot name="left-icon" />
       </div>
       <div
         v-if="$slots['right-icon']"
-        :class="[
-          'absolute right-[1.125rem] inset-y-0 flex items-center justify-center',
-          'motion-safe:transition-colors',
-          invalid 
+        class="absolute right-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+          invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
         ]"
       >
-        <slot name="right-icon"></slot>
+        <slot name="right-icon" />
       </div>
     </div>
 

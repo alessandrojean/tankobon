@@ -3,12 +3,12 @@ import type { UseMarkdownOptions } from '@/composables/useMarkdown'
 import Block from '@/components/Block.vue'
 
 export interface BlockMarkdownProps {
-  blur?: boolean,
-  emptyMessage?: string,
-  loading?: boolean,
-  markdown?: string,
-  options?: UseMarkdownOptions,
-  title: string,
+  blur?: boolean
+  emptyMessage?: string
+  loading?: boolean
+  markdown?: string
+  options?: UseMarkdownOptions
+  title: string
 }
 
 const props = withDefaults(defineProps<BlockMarkdownProps>(), {
@@ -24,13 +24,11 @@ const { markdown, blur, loading, title, emptyMessage, options } = toRefs(props)
 const { renderMarkdown } = useMarkdown(options.value)
 
 const markdownRendered = computed(() => {
-  if (loading.value) {
+  if (loading.value)
     return ''
-  }
 
-  if (markdown.value!.length === 0) {
+  if (markdown.value!.length === 0)
     return emptyMessage.value ? `<em>${emptyMessage.value}</em>` : ''
-  }
 
   return renderMarkdown(markdown.value!)
 })
@@ -46,7 +44,8 @@ async function handleReadMore() {
   if (loading.value) {
     collapsed.value = true
     showReadMore.value = false
-  } else {
+  }
+  else {
     showReadMore.value = (content.value?.$el?.offsetHeight ?? 0) > breakpoint
     collapsed.value = showReadMore.value
   }
@@ -56,9 +55,8 @@ watch([markdownRendered, loading], handleReadMore)
 onMounted(handleReadMore)
 
 function toggleCollapsed() {
-  if (showReadMore.value) {
+  if (showReadMore.value)
     collapsed.value = !collapsed.value
-  }
 }
 
 function handleContainerClick(event: MouseEvent) {
@@ -72,50 +70,48 @@ function handleContainerClick(event: MouseEvent) {
 <template>
   <Block
     v-if="markdownRendered?.length || emptyMessage || loading"
+    ref="content" class="block-markdown relative motion-safe:transition overflow-hidden"
     :class="[
-      'block-markdown relative motion-safe:transition overflow-hidden',
       collapsed && showReadMore
         ? 'h-52 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 animate-hover'
-        : ''
+        : '',
     ]"
-    ref="content"
     :title="title"
     @click="handleContainerClick"
   >
     <div
       v-if="!loading"
-      v-html="markdownRendered"
       :class="{
         'spoiler-blur':
           blur && (collapsed || !showReadMore) && markdownRendered?.length,
-        'show-on-hover': blur && !showReadMore && markdownRendered?.length
+        'show-on-hover': blur && !showReadMore && markdownRendered?.length,
       }"
       class="mt-3 prose prose-sm sm:prose-base dark:prose-invert max-w-none motion-safe:transition"
       :inert="showReadMore && collapsed"
+      v-html="markdownRendered"
     />
     <div v-else class="flex flex-col space-y-2 mt-3" aria-hidden="true">
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-6/12 h-5"></div>
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-6/12 h-5" />
     </div>
 
     <FadeTransition>
       <div
         v-if="showReadMore"
-        :class="[
-          'inset-x-0 bottom-0 flex justify-center items-end motion-safe:transition-colors',
-          collapsed ? 'h-1/2 collapsed-gradient absolute p-2' : 'pt-2'
+        class="inset-x-0 bottom-0 flex justify-center items-end motion-safe:transition-colors" :class="[
+          collapsed ? 'h-1/2 collapsed-gradient absolute p-2' : 'pt-2',
         ]"
       >
         <Button
           kind="ghost"
           size="mini"
           rounded="full"
-          @click.stop="toggleCollapsed"
           :aria-expanded="collapsed"
+          @click.stop="toggleCollapsed"
         >
           {{
             collapsed

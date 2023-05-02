@@ -2,9 +2,9 @@
 import type { Component } from 'vue'
 
 export interface EmptyStateProps {
-  title?: string,
-  description?: string,
-  icon?: Component,
+  title?: string
+  description?: string
+  icon?: Component
 }
 
 defineProps<EmptyStateProps>()
@@ -13,9 +13,9 @@ defineProps<EmptyStateProps>()
 <template>
   <div class="flex flex-col items-center justify-center p-4 md:p-6 lg:p-10 gap-2">
     <slot name="icon">
-      <component
-        v-if="icon"
+      <Component
         :is="icon"
+        v-if="icon"
         class="w-12 h-12 text-gray-400 dark:text-gray-500 stroke-1"
       />
     </slot>

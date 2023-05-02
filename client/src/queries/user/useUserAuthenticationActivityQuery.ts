@@ -1,20 +1,22 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
-import { 
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import type {
+  GetAuthenticationActivityFromUserOptions,
+} from '@/services/tankobon-users'
+import {
   getAuthenticationActivityFromUser,
-  GetAuthenticationActivityFromUserOptions
 } from '@/services/tankobon-users'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
 import type { MaybeRefDeep } from '@/types/reactivity'
-import { AuthenticationActivityEntity } from '@/types/tankobon-authentication-activity'
+import type { AuthenticationActivityEntity } from '@/types/tankobon-authentication-activity'
 
 type UseUserAuthenticationActivityQueryOptions<S = PaginatedResponse<AuthenticationActivityEntity>> =
-  UseQueryOptions<PaginatedResponse<AuthenticationActivityEntity>, ErrorResponse, S> 
+  UseQueryOptions<PaginatedResponse<AuthenticationActivityEntity>, ErrorResponse, S>
   & MaybeRefDeep<GetAuthenticationActivityFromUserOptions>
 
 type ErrorResponse = TankobonApiError | Error
 
 export default function useUserAuthenticationActivityQuery<S = PaginatedResponse<AuthenticationActivityEntity>>(
-  options: UseUserAuthenticationActivityQueryOptions<S>
+  options: UseUserAuthenticationActivityQueryOptions<S>,
 ) {
   return useQuery<PaginatedResponse<AuthenticationActivityEntity>, ErrorResponse, S>({
     queryKey: [
@@ -25,10 +27,10 @@ export default function useUserAuthenticationActivityQuery<S = PaginatedResponse
         sort: options.sort,
         size: options.size,
         includes: options.includes,
-      }
+      },
     ],
     queryFn: async () => {
-      return await getAuthenticationActivityFromUser({ 
+      return await getAuthenticationActivityFromUser({
         userId: unref(options.userId),
         page: unref(options.page),
         sort: unref(options.sort),

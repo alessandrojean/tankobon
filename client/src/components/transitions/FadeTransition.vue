@@ -5,7 +5,7 @@ export interface FadeTransitionProps {
 }
 withDefaults(defineProps<FadeTransitionProps>(), {
   mode: 'out-in',
-  simultaneous: false
+  simultaneous: false,
 })
 </script>
 
@@ -19,6 +19,6 @@ withDefaults(defineProps<FadeTransitionProps>(), {
     enter-from-class="opacity-0"
     enter-to-class="opacity-100"
   >
-    <slot></slot>
+    <slot />
   </Transition>
 </template>

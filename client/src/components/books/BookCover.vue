@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { decode as decodeBlurHash } from 'blurhash'
-import { getFullImageUrl } from '@/modules/api'
-import { BookEntity } from '@/types/tankobon-book'
-import { getRelationship } from '@/utils/api'
-
 import {
   ExclamationCircleIcon,
-  EyeIcon,
   MagnifyingGlassPlusIcon,
-  PhotoIcon
+  PhotoIcon,
 } from '@heroicons/vue/24/outline'
+import { getFullImageUrl } from '@/modules/api'
+import type { BookEntity } from '@/types/tankobon-book'
+import { getRelationship } from '@/utils/api'
 
 export interface BookCoverProps {
   book: BookEntity | null | undefined
@@ -26,9 +24,8 @@ const { book, loading } = toRefs(props)
 const coverArt = computed(() => getRelationship(book.value, 'COVER_ART'))
 
 const coverUrl = computed(() => {
-  if (!book.value) {
+  if (!book.value)
     return ''
-  }
 
   return getFullImageUrl({
     collection: 'covers',
@@ -37,27 +34,25 @@ const coverUrl = computed(() => {
   }) ?? ''
 })
 
-const { imageHasError, imageLoading, loadImage } =
-  useImageLoader(coverUrl)
-
-const showBookCover = computed(() => {
-  return !imageHasError.value && !imageLoading.value && showBookInfo.value
-})
+const { imageHasError, imageLoading, loadImage }
+  = useImageLoader(coverUrl)
 
 const showBookInfo = computed(() => {
   return !loading.value && book.value !== null
 })
 
+const showBookCover = computed(() => {
+  return !imageHasError.value && !imageLoading.value && showBookInfo.value
+})
+
 watch(book, (newValue) => {
-  if (newValue !== null) {
+  if (newValue !== null)
     loadImage()
-  }
 })
 
 onMounted(() => {
-  if (book.value !== null) {
+  if (book.value !== null)
     loadImage()
-  }
 })
 
 const dialogOpen = ref(false)
@@ -80,16 +75,13 @@ const imageAspectRatio = computed(() => {
 })
 
 whenever(coverArt, async (coverArt) => {
-  if (!canvas.value || !figure.value) {
+  if (!canvas.value || !figure.value)
     return
-  }
 
   const { width, height, blurHash } = coverArt.attributes!
 
   const figureWidth = figure.value.clientWidth
   const figureHeight = Math.floor((figureWidth * height) / width)
-
-  console.log(figureWidth, figureHeight)
 
   const pixels = decodeBlurHash(blurHash, figureHeight, figureHeight)
   const context = canvas.value.getContext('2d')!
@@ -101,12 +93,9 @@ whenever(coverArt, async (coverArt) => {
 
 <template>
   <figure
-    :class="[
-      'group aspect-[--aspect] rounded-xl overflow-hidden',
-      'bg-gray-200 dark:bg-gray-800 relative shadow-md'
-    ]"
-    :style="{ '--aspect': imageAspectRatio }"
     ref="figure"
+    class="group aspect-[--aspect] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800 relative shadow-md"
+    :style="{ '--aspect': imageAspectRatio }"
   >
     <FadeTransition>
       <img
@@ -118,13 +107,12 @@ whenever(coverArt, async (coverArt) => {
             : undefined
         "
         class="w-full h-full"
-      />
+      >
       <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
         <PhotoIcon
           v-if="loading || coverUrl.length === 0"
-          :class="[
-            'w-10 h-10 text-gray-500 dark:text-gray-600',
-            loading ? 'motion-safe:animate-pulse' : ''
+          class="w-10 h-10 text-gray-500 dark:text-gray-600" :class="[
+            loading ? 'motion-safe:animate-pulse' : '',
           ]"
         />
         <ExclamationCircleIcon
@@ -135,12 +123,10 @@ whenever(coverArt, async (coverArt) => {
     </FadeTransition>
 
     <canvas
+      ref="canvas" class="w-full h-full motion-safe:transition-opacity motion-safe:duration-500 motion-safe:animate-pulse"
       :class="[
-        'w-full h-full motion-safe:transition-opacity motion-safe:duration-500',
-        'motion-safe:animate-pulse',
-        { 'opacity-0': showBookCover || loading || coverUrl.length === 0 }
+        { 'opacity-0': showBookCover || loading || coverUrl.length === 0 },
       ]"
-      ref="canvas"
     />
 
     <button

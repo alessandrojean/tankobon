@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { PublisherUpdate } from '@/types/tankobon-publisher'
-import { getRelationship } from '@/utils/api';
-import { isIsbnCode } from '@/types/tankobon-book';
-import { createFlagUrl } from '@/utils/flags';
+import { isIsbnCode } from '@/types/tankobon-book'
+import { createFlagUrl } from '@/utils/flags'
 
 const { t, locale } = useI18n()
-const router = useRouter()
 const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
@@ -25,29 +21,27 @@ const { data: book, isLoading } = useBookQuery({
     'library',
     'cover_art',
   ],
-  enabled: computed(() => !!bookId.value), //&& !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value), // && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('books.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 const { data: contributors, isLoading: isLoadingContributors } = useBookContributorsQuery({
   bookId: bookId as Ref<string>,
   includes: ['person_picture'],
-  select: (response) => response.data,
-  enabled: computed(() => !!bookId.value && !isLoading.value), //&& !isDeleting.value && !isDeleted.value),
+  select: response => response.data,
+  enabled: computed(() => !!bookId.value && !isLoading.value), // && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('book-contributors.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(book.value, 'LIBRARY'))
 
 const showBookInfo = computed(() => {
   return !isLoading.value && !!book.value
@@ -90,9 +84,8 @@ const regionCode = computed(() => {
 })
 
 const regionName = computed(() => {
-  if (regionCode.value === null) {
+  if (regionCode.value === null)
     return null
-  }
 
   const formatter = new Intl.DisplayNames(locale.value, { type: 'region' })
 
@@ -106,15 +99,12 @@ const flagUrl = computed(() => {
 
 <template>
   <div
-    :class="[
-      'bg-white dark:bg-gray-950 motion-safe:transition-colors',
-      'duration-300 ease-in-out -mt-16 relative'
-    ]"
+    class="bg-white dark:bg-gray-950 motion-safe:transition-colors duration-300 ease-in-out -mt-16 relative"
   >
     <div class="absolute inset-x-0 top-0">
       <BookBanner :loading="!showBookInfo" :book="book" />
     </div>
-  
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
       <div class="book-grid">
         <BookCover
@@ -126,11 +116,7 @@ const flagUrl = computed(() => {
             v-if="flagUrl"
             :src="flagUrl"
             :alt="$t('common.flag', [regionName])"
-            :class="[
-              'inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm',
-              'shadow absolute right-1.5 sm:right-3',
-              'bottom-1.5 sm:bottom-3 pointer-events-none',
-            ]"
+            class="inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3 pointer-events-none"
           >
         </BookCover>
 
@@ -175,9 +161,9 @@ const flagUrl = computed(() => {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
-    transparentNavbar: true
+meta:
+  layout: dashboard
+  transparentNavbar: true
 </route>
 
 <style lang="postcss">

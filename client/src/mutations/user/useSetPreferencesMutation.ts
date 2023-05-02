@@ -13,11 +13,11 @@ export default function useSetPreferencesMutation() {
       const persisted = await setMyPreferencesValuesByKeys(preferences)
 
       return Object.fromEntries(
-        persisted.map(({ attributes }) => [attributes.key, attributes.value])
+        persisted.map(({ attributes }) => [attributes.key, attributes.value]),
       )
     },
     onSuccess() {
       queryClient.invalidateQueries(['preferences'])
-    }
+    },
   })
 }

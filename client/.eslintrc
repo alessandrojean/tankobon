@@ -1,0 +1,7 @@
+{
+  "extends": ["@antfu"],
+  "rules": {
+    "vue/custom-event-name-casing": "off",
+    "curly": "off"
+  }
+}

@@ -15,25 +15,24 @@ import {
   ServerStackIcon,
   Square2StackIcon,
   TagIcon,
-  UserIcon,
-UsersIcon,
+  UsersIcon,
 } from '@heroicons/vue/24/outline'
 
 export interface Item {
-  key: string,
-  label: string,
-  icon?: FunctionalComponent,
-  to: RouteLocationRaw,
-  exact?: boolean,
-  external?: boolean,
-  active?: (() => boolean) | ComputedRef<boolean>,
-  isAdminOnly?: boolean,
+  key: string
+  label: string
+  icon?: FunctionalComponent
+  to: RouteLocationRaw
+  exact?: boolean
+  external?: boolean
+  active?: (() => boolean) | ComputedRef<boolean>
+  isAdminOnly?: boolean
 }
 
 export interface AsideMenuProps {
-  collapsible?: boolean,
-  dark?: boolean,
-  isAdmin?: boolean,
+  collapsible?: boolean
+  dark?: boolean
+  isAdmin?: boolean
 }
 
 const props = withDefaults(defineProps<AsideMenuProps>(), {
@@ -41,9 +40,9 @@ const props = withDefaults(defineProps<AsideMenuProps>(), {
   isAdmin: false,
 })
 
-const { isAdmin } = toRefs(props)
-
 const emit = defineEmits<{ (e: 'navigate', location: RouteLocation): void }>()
+
+const { isAdmin } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -54,7 +53,7 @@ const items = computed<Item[]>(() => [
     label: t('dashboard.title'),
     icon: HomeIcon,
     to: { name: 'index' },
-    exact: true
+    exact: true,
   },
   {
     key: 'libraries',
@@ -63,7 +62,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'libraries' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('libraries')
-    })
+    }),
   },
   {
     key: 'books',
@@ -73,7 +72,7 @@ const items = computed<Item[]>(() => [
     active: computed(() => {
       const routeName = String(router.currentRoute.value.name)
       return routeName.includes('books') || routeName.includes('import')
-    })
+    }),
   },
   {
     key: 'collections',
@@ -82,7 +81,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'collections' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('collections')
-    })
+    }),
   },
   {
     key: 'series',
@@ -91,7 +90,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'series' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('series')
-    })
+    }),
   },
   {
     key: 'publishers',
@@ -100,7 +99,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'publishers' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('publishers')
-    })
+    }),
   },
   {
     key: 'stores',
@@ -109,7 +108,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'stores' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('stores')
-    })
+    }),
   },
   {
     key: 'people',
@@ -118,7 +117,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'people' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('people')
-    })
+    }),
   },
   {
     key: 'contributor-roles',
@@ -127,7 +126,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'contributor-roles' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('contributor-roles')
-    })
+    }),
   },
   {
     key: 'tags',
@@ -136,7 +135,7 @@ const items = computed<Item[]>(() => [
     to: { name: 'tags' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('tags')
-    })
+    }),
   },
   {
     key: 'users',
@@ -146,7 +145,7 @@ const items = computed<Item[]>(() => [
     isAdminOnly: true,
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('users')
-    })
+    }),
   },
   {
     key: 'metrics',
@@ -161,10 +160,10 @@ function active(
   active: undefined | (() => boolean) | ComputedRef<boolean>,
   exact: boolean | undefined,
   isExactActive: boolean,
-  isActive: boolean
+  isActive: boolean,
 ): boolean {
-  const activeResult =
-    active && (typeof active === 'function' ? active() : active.value)
+  const activeResult
+    = active && (typeof active === 'function' ? active() : active.value)
 
   return activeResult ?? ((exact && isExactActive) || (!exact && isActive))
 }
@@ -178,26 +177,21 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
 const collapsed = useLocalStorage('aside-collapsed', false)
 
 const allowedItems = computed(() => {
-  return items.value.filter((item) => item.isAdminOnly ? isAdmin.value : true)
+  return items.value.filter(item => item.isAdminOnly ? isAdmin.value : true)
 })
 </script>
 
 <template>
   <aside
-    :class="[
-      'box-content bg-gray-50 dark:bg-gray-900 border-r',
-      'border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow',
-      'motion-safe:transition-all',
-      collapsed ? 'w-16' : 'w-72'
+    class="box-content bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow motion-safe:transition-all" :class="[
+      collapsed ? 'w-16' : 'w-72',
     ]"
   >
     <div class="flex flex-col min-h-0 h-full">
       <div class="flex-1 overflow-y-auto overflow-x-hidden fancy-scrollbar">
         <div
-          :class="[
-            'px-3.5 flex justify-between items-center h-16 w-[18rem] box-border',
-            'motion-safe:transition-transform origin-right',
-            collapsed ? '-translate-x-[13.85rem]' : ''
+          class="px-3.5 flex justify-between items-center h-16 w-[18rem] box-border motion-safe:transition-transform origin-right" :class="[
+            collapsed ? '-translate-x-[13.85rem]' : '',
           ]"
         >
           <slot name="logo">
@@ -218,24 +212,23 @@ const allowedItems = computed(() => {
             "
             @click="collapsed = !collapsed"
           >
-            <span></span>
+            <span />
             <ChevronDoubleLeftIcon
-              :class="['w-5 h-5 collapse-icon', { collapsed: collapsed }]"
+              class="w-5 h-5 collapse-icon" :class="[{ collapsed }]"
             />
           </Button>
         </div>
         <nav class="mt-6 px-3">
           <ul
-            :class="[
-              'space-y-1.5',
-              collapsed ? 'flex flex-col items-center' : ''
+            class="space-y-1.5" :class="[
+              collapsed ? 'flex flex-col items-center' : '',
             ]"
           >
             <li v-for="item in allowedItems" :key="item.key" class="w-full">
               <RouterLink
+                v-slot="{ href, isActive, isExactActive, navigate, route }"
                 custom
                 :to="item.to"
-                v-slot="{ href, isActive, isExactActive, navigate, route }"
               >
                 <AsideButton
                   :item="item"

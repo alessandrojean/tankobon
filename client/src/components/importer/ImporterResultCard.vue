@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { ExternalBookEntity } from '@/types/tankobon-external-book'
-import { getRelationship } from '@/utils/api';
 import { ArrowDownOnSquareIcon, ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
-import { BookOpenIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline';
+import { BookOpenIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
+import type { ExternalBookEntity } from '@/types/tankobon-external-book'
+import { getRelationship } from '@/utils/api'
 
 export interface ImporterResultCardProps {
-  disabled?: boolean,
-  importing?: boolean,
-  result: ExternalBookEntity,
+  disabled?: boolean
+  importing?: boolean
+  result: ExternalBookEntity
 }
 
-export type ImporterResultCardEmits = {
+export interface ImporterResultCardEmits {
   (e: 'click:import'): void
 }
 
@@ -26,13 +26,13 @@ const { locale } = useI18n()
 const listFormatter = computed(() => {
   return new Intl.ListFormat(locale.value, {
     style: 'long',
-    type: 'conjunction'
+    type: 'conjunction',
   })
 })
 
 const contributors = computed(() => {
   return listFormatter.value.format(
-    result.value.attributes.contributors.map((c) => c.name)
+    result.value.attributes.contributors.map(c => c.name),
   )
 })
 
@@ -40,28 +40,24 @@ const card = ref<HTMLDivElement>()
 const source = computed(() => getRelationship(result.value, 'IMPORTER_SOURCE')!)
 const coverUrl = computed(() => result.value.attributes.coverUrl)
 
-const { imageHasError, imageLoading, setupObserver, observerCreated } =
-  useImageLazyLoader(coverUrl, card)
+const { imageHasError, imageLoading, setupObserver }
+  = useImageLazyLoader(coverUrl, card)
 
 onMounted(() => setupObserver())
 </script>
 
 <template>
-  <div class="flex gap-4 sm:gap-6 group" ref="card">
+  <div ref="card" class="flex gap-4 sm:gap-6 group">
     <div class="shrink-0">
       <FadeTransition>
         <div
           v-if="imageLoading || imageHasError"
-          :class="[
-            'bg-gray-50 dark:bg-gray-800 rounded-md shadow-lg w-32',
-            'sm:w-36 lg:w-40 aspect-[2/3] flex items-center justify-center',
-          ]"
+          class="bg-gray-50 dark:bg-gray-800 rounded-md shadow-lg w-32 sm:w-36 lg:w-40 aspect-[2/3] flex items-center justify-center"
         >
           <BookOpenIcon
             v-if="imageLoading || coverUrl?.length === 0"
-            :class="[
+            class="w-10 h-10 text-gray-400 dark:text-gray-500" :class="[
               { 'motion-safe:animate-pulse': imageLoading },
-              'w-10 h-10 text-gray-400 dark:text-gray-500'
             ]"
             aria-hidden="true"
           />
@@ -88,13 +84,7 @@ onMounted(() => setupObserver())
       </p>
 
       <ul
-        :class="[
-          'mt-4 text-sm font-medium flex space-x-2',
-          `[&>:not(:first-child)]:before:content-['·']`,
-          '[&>:not(:first-child)]:before:mr-2',
-          '[&>:not(:first-child)]:before:text-gray-400',
-          '[&>:not(:first-child)]:before:font-normal'
-        ]"
+        class="mt-4 text-sm font-medium flex space-x-2 [&>:not(:first-child)]:before:content-['·'] [&>:not(:first-child)]:before:mr-2 [&>:not(:first-child)]:before:text-gray-400 [&>:not(:first-child)]:before:font-normal"
       >
         <li>{{ result.attributes.publisher }}</li>
         <li v-if="result.attributes.pageCount > 0">
@@ -119,7 +109,9 @@ onMounted(() => setupObserver())
       </ul>
 
       <div class="prose prose-sm mt-4 dark:prose-invert dark:prose-p:text-gray-300">
-        <p class="line-clamp-5">{{ result.attributes.synopsis }}</p>
+        <p class="line-clamp-5">
+          {{ result.attributes.synopsis }}
+        </p>
       </div>
 
       <div class="mt-4">

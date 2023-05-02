@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import {
-  createColumnHelper,
-  type SortingState,
   type ColumnSort,
   type PaginationState,
+  type SortingState,
+  createColumnHelper,
 } from '@tanstack/vue-table'
+import { IdentificationIcon } from '@heroicons/vue/24/outline'
 import type { Sort } from '@/types/tankobon-api'
 import Badge from '@/components/Badge.vue'
 import type {
   AuthenticationActivityEntity,
-  AuthenticationActivitySort
+  AuthenticationActivitySort,
 } from '@/types/tankobon-authentication-activity'
-import { IdentificationIcon } from '@heroicons/vue/24/outline'
 
 export interface UserAuthenticationActivityTableProps {
   userId: string
@@ -19,8 +19,8 @@ export interface UserAuthenticationActivityTableProps {
 
 const props = defineProps<UserAuthenticationActivityTableProps>()
 const { userId } = toRefs(props)
-
 const notificator = useToaster()
+const { t, locale } = useI18n()
 
 const defaultSorting: ColumnSort = { id: 'timestamp', desc: true }
 const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 10 })
@@ -32,7 +32,7 @@ const { data: authenticationActivity, isLoading } = useUserAuthenticationActivit
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
   sort: computed<Sort<AuthenticationActivitySort>[]>(() => {
-    return sorting.value.map((sort) => ({
+    return sorting.value.map(sort => ({
       property: sort.id as AuthenticationActivitySort,
       direction: sort.desc ? 'desc' : 'asc',
     }))
@@ -42,9 +42,9 @@ const { data: authenticationActivity, isLoading } = useUserAuthenticationActivit
       title: t('authentication-activity.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
-const { t, locale } = useI18n()
+
 const columnHelper = createColumnHelper<AuthenticationActivityEntity>()
 const dateFormatter = computed(() => {
   return new Intl.DateTimeFormat(locale.value, {
@@ -62,37 +62,37 @@ const columns = [
   columnHelper.accessor('attributes.ip', {
     id: 'ip',
     header: () => t('authentication-activity.ip'),
-    cell: (info) => info.getValue(),
+    cell: info => info.getValue(),
     meta: { tabular: true },
   }),
   columnHelper.accessor('attributes.success', {
     id: 'success',
     header: () => t('authentication-activity.success'),
-    cell: (info) => h(
+    cell: info => h(
       Badge,
       { color: info.getValue() ? 'green' : 'red', class: '!font-medium' },
-      { default: () => info.getValue() ? t('common-values.true-value') : t('common-values.false-value') }
+      { default: () => info.getValue() ? t('common-values.true-value') : t('common-values.false-value') },
     ),
     meta: {
       headerContainerClass: 'justify-center',
-      cellClass: 'text-center'
-    }
+      cellClass: 'text-center',
+    },
   }),
   columnHelper.accessor('attributes.source', {
     id: 'source',
     header: () => t('authentication-activity.source'),
-    cell: (info) => info.getValue()
+    cell: info => info.getValue(),
   }),
   columnHelper.accessor('attributes.error', {
     id: 'error',
     header: () => t('authentication-activity.error'),
-    cell: (info) => info.getValue(),
+    cell: info => info.getValue(),
     meta: { cellClass: 'font-mono text-xs' },
   }),
   columnHelper.accessor('attributes.timestamp', {
     id: 'timestamp',
     header: () => t('common-fields.timestamp'),
-    cell: (info) => dateFormatter.value.format(new Date(info.getValue())),
+    cell: info => dateFormatter.value.format(new Date(info.getValue())),
     meta: { tabular: true },
   }),
 ]
@@ -100,14 +100,14 @@ const columns = [
 
 <template>
   <Table
+    v-model:pagination="pagination"
+    v-model:row-selection="rowSelection"
+    v-model:sorting="sorting"
     :data="authenticationActivity?.data"
     :columns="columns"
     :page-count="authenticationActivity?.pagination?.totalPages"
     :items-count="authenticationActivity?.pagination?.totalElements"
     :loading="isLoading"
-    v-model:pagination="pagination"
-    v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
   >
     <template #empty>
       <EmptyState

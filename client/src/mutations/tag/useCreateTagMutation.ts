@@ -12,6 +12,6 @@ export default function useCreateTagMutation() {
     mutationFn: addOneTag,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['tags', { libraryId: creation.library }])
-    }
+    },
   })
 }

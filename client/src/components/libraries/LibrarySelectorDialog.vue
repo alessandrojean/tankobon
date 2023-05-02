@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { UserIcon } from '@heroicons/vue/20/solid'
 import { CheckIcon } from '@heroicons/vue/24/outline'
-import { getRelationship } from '@/utils/api';
+import { getRelationship } from '@/utils/api'
 
 export interface LibrarySelectorDialogProps {
-  isOpen: boolean,
+  isOpen: boolean
 }
 
-export type LibrarySelectorDialogEmits = {
-  (e: 'close'): void,
+export interface LibrarySelectorDialogEmits {
+  (e: 'close'): void
 }
 
 const props = defineProps<LibrarySelectorDialogProps>()
@@ -30,7 +30,7 @@ const { data: libraries } = useUserLibrariesByUserQuery({
       body: error.message,
     })
   },
-  initialData: []
+  initialData: [],
 })
 
 const library = computed(() => libraryStore.library!)
@@ -41,7 +41,7 @@ watch([isOpen, libraries, library], () => {
 })
 
 function handleSubmit() {
-  const selectedLibrary = libraries.value?.find((l) => l.id === selected.value)
+  const selectedLibrary = libraries.value?.find(l => l.id === selected.value)
   libraryStore.setLibrary(selectedLibrary ?? library.value)
   emit('close')
 }
@@ -69,8 +69,8 @@ function handleSubmit() {
           <RadioGroupOption
             v-for="libraryOption in libraries"
             :key="libraryOption.id"
-            :value="libraryOption.id"
             v-slot="{ checked }"
+            :value="libraryOption.id"
             as="template"
           >
             <div class="px-4 md:px-6 py-3 md:py-4 gap-4 md:gap-6 flex items-center cursor-pointer">

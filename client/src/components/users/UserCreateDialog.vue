@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import * as password from 'secure-random-password'
-import type { UserCreation } from '@/types/tankobon-user'
 import { CheckIcon } from '@heroicons/vue/20/solid'
-import UserForm from '@/components/users/UserForm.vue';
+import type { UserCreation } from '@/types/tankobon-user'
+import UserForm from '@/components/users/UserForm.vue'
 
 export interface UserCreateDialogProps {
-  isOpen: boolean,
+  isOpen: boolean
 }
 
-export type UserCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', user: UserCreation): void,
+export interface UserCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', user: UserCreation): void
 }
 
 const props = defineProps<UserCreateDialogProps>()
@@ -35,7 +35,7 @@ function generatePassword() {
       password.upper,
       password.digits,
       { characters: '#?!@$%^&*-' },
-    ]
+    ],
   })
 }
 
@@ -54,9 +54,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await userForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(user))

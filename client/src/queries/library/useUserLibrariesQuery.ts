@@ -1,26 +1,26 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import type { MaybeRef } from '@vueuse/core'
 import { getAllLibraries } from '@/services/tankobon-libraries'
 import type { LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { MaybeRef } from '@vueuse/core'
 
-interface UseUserLibrariesQueryOptions<S = LibraryEntity[]> 
+interface UseUserLibrariesQueryOptions<S = LibraryEntity[]>
   extends UseQueryOptions<LibraryEntity[], ErrorResponse, S> {
-  ownerId?: MaybeRef<string | undefined>,
-  includes?: MaybeRef<LibraryIncludes[]>,
+  ownerId?: MaybeRef<string | undefined>
+  includes?: MaybeRef<LibraryIncludes[]>
 }
 
 type ErrorResponse = TankobonApiError | Error
 
 export default function useUserLibrariesQuery<S = LibraryEntity[]>(
-  options?: UseUserLibrariesQueryOptions<S>
+  options?: UseUserLibrariesQueryOptions<S>,
 ) {
   const { ownerId, includes } = (options ?? {})
 
   return useQuery<LibraryEntity[], ErrorResponse, S>({
     queryKey: ['libraries', { ownerId, includes }],
     queryFn: async () => {
-      return await getAllLibraries({ 
+      return await getAllLibraries({
         ownerId: unref(ownerId),
         includes: unref(includes),
       })

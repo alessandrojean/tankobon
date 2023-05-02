@@ -3,14 +3,14 @@ import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
 import type { AsideMenuProps } from '@/components/AsideMenu.vue'
 
 export interface DashboardAsideDialogProps extends AsideMenuProps {
-  isOpen?: boolean,
-  isAdmin?: boolean,
+  isOpen?: boolean
+  isAdmin?: boolean
 }
 
 const props = withDefaults(defineProps<DashboardAsideDialogProps>(), {
   isAdmin: false,
   isOpen: false,
-  libraryGroups: () => []
+  libraryGroups: () => [],
 })
 
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -36,14 +36,10 @@ export default { inheritAttrs: false }
       >
         <slot name="overlay" :close="() => $emit('close')">
           <div
-            :class="[
-              'fixed inset-0',
-              'bg-gray-700/75 dark:bg-gray-950/90',
-              'motion-safe:transition-opacity',
-            ]"
+            class="fixed inset-0 bg-gray-700/75 dark:bg-gray-950/90 motion-safe:transition-opacity"
             @click="$emit('close')"
           />
-          </slot>
+        </slot>
       </TransitionChild>
 
       <TransitionChild
@@ -55,11 +51,8 @@ export default { inheritAttrs: false }
         leave-from="opacity-100 translate-x-0"
         leave-to="opacity-0 -translate-x-full"
       >
-        <div 
-          :class="[
-            'fixed inset-0 w-72 max-w-full rounded-r-2xl overflow-hidden',
-            'shadow-xl  ring-1 ring-black/5',
-          ]"
+        <div
+          class="fixed inset-0 w-72 max-w-full rounded-r-2xl overflow-hidden shadow-xl  ring-1 ring-black/5"
         >
           <DialogPanel class="w-full h-full overflow-y-auto overflow-x-hidden">
             <AsideMenu
@@ -73,7 +66,7 @@ export default { inheritAttrs: false }
                 </DialogTitle>
               </template>
 
-              <template #footer v-if="$slots.footer">
+              <template v-if="$slots.footer" #footer>
                 <slot name="footer" />
               </template>
             </AsideMenu>

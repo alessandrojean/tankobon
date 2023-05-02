@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { ContributorRoleUpdate } from '@/types/tankobon-contributor-role'
-import { getRelationship } from '@/utils/api';
+import type { ContributorRoleUpdate } from '@/types/tankobon-contributor-role'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -20,10 +19,8 @@ const { data: contributorRole, isLoading } = useContributorRoleQuery({
       title: t('contributor-roles.fetch-one-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
-const library = computed(() => getRelationship(contributorRole.value, 'LIBRARY'))
 
 function handleDelete() {
   deleteContributorRole(contributorRoleId.value!, {
@@ -36,7 +33,7 @@ function handleDelete() {
         title: t('contributor-roles.deleted-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 
@@ -52,7 +49,7 @@ function handleEditContributorRole(contributorRole: ContributorRoleUpdate) {
         title: t('contributor-roles.edited-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
@@ -110,6 +107,6 @@ function handleEditContributorRole(contributorRole: ContributorRoleUpdate) {
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>

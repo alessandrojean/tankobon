@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
-import LibraryForm from '@/components/libraries/LibraryForm.vue';
-import { LibraryCreation } from '@/types/tankobon-library';
+import LibraryForm from '@/components/libraries/LibraryForm.vue'
+import type { LibraryCreation } from '@/types/tankobon-library'
 
 export interface LibraryCreateDialogProps {
-  isOpen: boolean,
+  isOpen: boolean
 }
 
-export type UserCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', library: LibraryCreation): void,
+export interface UserCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', library: LibraryCreation): void
 }
 
 const props = defineProps<LibraryCreateDialogProps>()
@@ -36,9 +36,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await libraryForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(library))

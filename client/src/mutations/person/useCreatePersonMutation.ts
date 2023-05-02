@@ -12,6 +12,6 @@ export default function useCreatePersonMutation() {
     mutationFn: addOnePerson,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['people', { libraryId: creation.library }])
-    }
+    },
   })
 }

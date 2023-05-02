@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { CollectionEntity } from '@/types/tankobon-collection'
-import { LibraryEntity } from '@/types/tankobon-library'
+import type { CollectionEntity } from '@/types/tankobon-collection'
+import type { LibraryEntity } from '@/types/tankobon-library'
 
 export interface ImporterCollectionFormProps {
   collectionId?: string
 }
 
-export type PersonFormEmits = {
-  (e: 'update:collectionId', collectionId: string): void,
+export interface PersonFormEmits {
+  (e: 'update:collectionId', collectionId: string): void
 }
 
 const props = withDefaults(defineProps<ImporterCollectionFormProps>(), {
-  collectionId: undefined
+  collectionId: undefined,
 })
 const emit = defineEmits<PersonFormEmits>()
 
@@ -21,14 +21,6 @@ const { t } = useI18n()
 const notificator = useToaster()
 const userStore = useUserStore()
 const library = ref<LibraryEntity | undefined>()
-const collection = computed({
-  get: () => collections.value?.find((c) => c.id === collectionId.value),
-  set: (collection) => {
-    if (collection) {
-      emit('update:collectionId', collection.id)
-    }
-  }
-})
 
 const { data: libraries, isLoading: loadingLibraries } = useUserLibrariesByUserQuery({
   userId: computed(() => userStore.me!.id),
@@ -38,7 +30,7 @@ const { data: libraries, isLoading: loadingLibraries } = useUserLibrariesByUserQ
       body: error.message,
     })
   },
-  initialData: []
+  initialData: [],
 })
 
 const { data: collections, isLoading: loadingCollections } = useLibraryCollectionsUnpagedQuery({
@@ -49,7 +41,15 @@ const { data: collections, isLoading: loadingCollections } = useLibraryCollectio
       title: t('collections.fetch-failure'),
       body: error.message,
     })
-  }
+  },
+})
+
+const collection = computed({
+  get: () => collections.value?.find(c => c.id === collectionId.value),
+  set: (collection) => {
+    if (collection)
+      emit('update:collectionId', collection.id)
+  },
 })
 </script>
 

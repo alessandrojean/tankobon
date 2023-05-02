@@ -12,6 +12,6 @@ export default function useDeletePersonMutation() {
     onSuccess(_, personId) {
       queryClient.invalidateQueries(['people'])
       queryClient.invalidateQueries(['person', { id: personId }])
-    }
+    },
   })
 }

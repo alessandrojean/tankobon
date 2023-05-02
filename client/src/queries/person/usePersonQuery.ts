@@ -1,18 +1,18 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import type { MaybeRef } from '@vueuse/core'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { MaybeRef } from '@vueuse/core'
 import { getOnePerson } from '@/services/tankobon-people'
-import { PersonEntity, PersonIncludes } from '@/types/tankobon-person'
+import type { PersonEntity, PersonIncludes } from '@/types/tankobon-person'
 
 interface UsePersonQueryOptions<S = PersonEntity> extends UseQueryOptions<PersonEntity, ErrorResponse, S> {
-  personId: MaybeRef<string>,
-  includes?: MaybeRef<PersonIncludes[]>,
+  personId: MaybeRef<string>
+  includes?: MaybeRef<PersonIncludes[]>
 }
 
 type ErrorResponse = TankobonApiError | Error
 
 export default function usePersonQuery<S = PersonEntity>(
-  options: UsePersonQueryOptions<S>
+  options: UsePersonQueryOptions<S>,
 ) {
   return useQuery<PersonEntity, ErrorResponse, S>({
     queryKey: ['person', { id: options.personId }],

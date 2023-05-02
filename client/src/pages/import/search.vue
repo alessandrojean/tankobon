@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { isbn as isValidIsbn } from '@/utils/validation'
-import { ImporterSources, ImportOneBook } from '@/types/tankobon-importer-source'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import useVuelidate from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
-import { ExternalBookEntity } from '@/types/tankobon-external-book'
 import { FunnelIcon } from '@heroicons/vue/20/solid'
+import type { ExternalBookEntity } from '@/types/tankobon-external-book'
+import type { ImportOneBook, ImporterSources } from '@/types/tankobon-importer-source'
+import { isbn as isValidIsbn } from '@/utils/validation'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -14,11 +14,12 @@ const notificator = useToaster()
 const isbn = ref('')
 const isbnDebounced = refDebounced(isbn, 1_000)
 const sources = ref<ImporterSources[] | undefined>()
+const bookToImport = ref<ExternalBookEntity | undefined>()
 
 const rules = {
   isbn: {
     isbn: helpers.withMessage(t('validation.isbn'), isValidIsbn),
-  }
+  },
 }
 
 const v$ = useVuelidate(rules, { isbn })
@@ -27,7 +28,8 @@ watch(isbn, (value) => {
   if (value.length < 10) {
     v$.value.$reset()
     bookToImport.value = undefined
-  } else {
+  }
+  else {
     v$.value.$touch()
   }
 })
@@ -44,11 +46,10 @@ const { data: results, isFetching } = useImporterSearchQuery({
       title: t('importer.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 const showCollectionChooserDialog = ref(false)
-const bookToImport = ref<ExternalBookEntity | undefined>()
 
 const { mutate: importBook, isLoading: isImporting } = useImportBookMutation()
 
@@ -68,14 +69,14 @@ function handleImportBook(book: ImportOneBook) {
         title: t('importer.imported-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -89,11 +90,11 @@ function handleImportBook(book: ImportOneBook) {
             {{ $t('common-fields.isbn') }}
           </label>
           <BasicTextInput
-            class="text-lg tabular-nums"
+            id="isbn"
             v-model="isbn"
+            class="text-lg tabular-nums"
             type="search"
             input-mode="numeric"
-            id="isbn"
             :disabled="isFetching || isImporting"
             :placeholder="$t('common-placeholders.search-by-isbn')"
             :errors="v$.isbn.$errors"
@@ -103,7 +104,7 @@ function handleImportBook(book: ImportOneBook) {
               <MagnifyingGlassIcon class="w-5 h-5" />
             </template>
 
-            <template #right-icon v-if="isFetching">
+            <template v-if="isFetching" #right-icon>
               <LoadingSpinIcon class="w-5 h-5 text-primary-500 animate-spin" />
             </template>
           </BasicTextInput>

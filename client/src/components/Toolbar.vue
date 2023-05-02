@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { UseFocusZoneOptions } from '@/composables/useFocusZone'
 import { FocusKeys } from '@primer/behaviors'
+import type { UseFocusZoneOptions } from '@/composables/useFocusZone'
 
 export interface ToolbarProps {
-  as?: string,
-  bindKeys?: UseFocusZoneOptions['bindKeys'],
-  focusInStrategy?: UseFocusZoneOptions['focusInStrategy'],
-  focusOutBehavior?:  UseFocusZoneOptions['focusOutBehavior'],
+  as?: string
+  bindKeys?: UseFocusZoneOptions['bindKeys']
+  focusInStrategy?: UseFocusZoneOptions['focusInStrategy']
+  focusOutBehavior?: UseFocusZoneOptions['focusOutBehavior']
 }
 
 const props = withDefaults(defineProps<ToolbarProps>(), {
@@ -27,7 +27,7 @@ useFocusZone({
 </script>
 
 <template>
-  <component :is="as" role="toolbar" ref="toolbar">
+  <Component :is="as" ref="toolbar" role="toolbar">
     <slot />
   </component>
 </template>

@@ -1,31 +1,33 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import { 
-  type ErrorResponse,
-  type EntityResponse,
+import {
   TankobonApiError,
-PaginatedResponse,
+} from '@/types/tankobon-response'
+import type {
+  EntityResponse,
+  ErrorResponse,
+  PaginatedResponse,
 } from '@/types/tankobon-response'
 import type {
   BookEntity,
   BookIncludes,
   BookSort,
-BookUpdate,
+  BookUpdate,
 } from '@/types/tankobon-book'
-import { Paginated } from '@/types/tankobon-api'
+import type { Paginated } from '@/types/tankobon-api'
 
 type BookOnly = EntityResponse<BookEntity>
 type BookPaginated = PaginatedResponse<BookEntity>
 
 export interface GetAllBooksByLibraryParameters extends Paginated<BookSort> {
-  libraryId: string,
-  search?: string,
+  libraryId: string
+  search?: string
   includes?: BookIncludes[]
 }
 
 export async function getAllBooksByLibrary(options: GetAllBooksByLibraryParameters): Promise<BookPaginated> {
   const { libraryId, includes, page, size, sort, search } = options
-  const searchOrUndefined = search && search.length > 2 ? search : undefined
+  const searchOrUndefined = (search && search.length > 2) ? search : undefined
 
   try {
     const { data: books } = await api.get<BookPaginated>(`libraries/${libraryId}/books`, {
@@ -36,7 +38,7 @@ export async function getAllBooksByLibrary(options: GetAllBooksByLibraryParamete
         size,
         sort: sort?.map(({ property, direction }) => {
           return `${property},${direction}`
-        })
+        }),
       },
       paramsSerializer: {
         indexes: null,
@@ -44,17 +46,17 @@ export async function getAllBooksByLibrary(options: GetAllBooksByLibraryParamete
     })
 
     return books
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
 }
 
 export interface GetOneBookParameters {
-  bookId?: string,
+  bookId?: string
   includes?: BookIncludes[]
 }
 
@@ -63,14 +65,14 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
     const { data: book } = await api.get<BookOnly>(`books/${bookId}`, {
       params: {
         includes: includes?.join(','),
-      }
+      },
     })
 
     return book.data
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }
@@ -79,10 +81,10 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
 export async function updateOneBook(book: BookUpdate): Promise<void> {
   try {
     await api.put(`books/${book.id}`, book)
-  } catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
       throw new TankobonApiError(e.response.data)
-    }
 
     throw e
   }

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { getFullImageUrl } from '@/modules/api';
-import { ContributorEntity } from '@/types/tankobon-contributor';
-import { getRelationships, getRelationship } from '@/utils/api';
-import Toolbar from '../Toolbar.vue';
-import { FocusKeys } from '@primer/behaviors';
+import { FocusKeys } from '@primer/behaviors'
+import { getFullImageUrl } from '@/modules/api'
+import type { ContributorEntity } from '@/types/tankobon-contributor'
+import { getRelationship } from '@/utils/api'
 
 export interface BookAttributesProps {
-  contributors?: ContributorEntity[],
+  contributors?: ContributorEntity[]
   loading?: boolean
 }
 
@@ -18,7 +17,7 @@ const props = withDefaults(defineProps<BookAttributesProps>(), {
 const { contributors, loading } = toRefs(props)
 
 const pictures = computed(() => {
-  return contributors.value.map((c) => getRelationship(c, 'PERSON_PICTURE'))
+  return contributors.value.map(c => getRelationship(c, 'PERSON_PICTURE'))
 })
 
 const container = ref<HTMLUListElement>()
@@ -42,16 +41,16 @@ useFocusZone({
         <Avatar loading size="small" />
 
         <div class="grow">
-          <div class="skeleton w-3/4 h-5"></div>
-          <div class="mt-1 skeleton w-24 h-4"></div>
+          <div class="skeleton w-3/4 h-5" />
+          <div class="mt-1 skeleton w-24 h-4" />
         </div>
       </div>
     </div>
 
     <ul
       v-else
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6"
       ref="container"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6"
     >
       <li
         v-for="(contributor, idx) in contributors"
@@ -80,7 +79,7 @@ useFocusZone({
             :to="{ name: 'people-id', params: { id: contributor.attributes.person.id } }"
             :title="$t('common-actions.go-to-page', [contributor.attributes.person.name])"
           >
-            <span class="absolute -inset-2 z-20 rounded-xl"></span>
+            <span class="absolute -inset-2 z-20 rounded-xl" />
             <span class="relative z-10">{{ contributor.attributes.person.name }}</span>
           </RouterLink>
           <span class="relative z-10 block text-gray-800 dark:text-gray-400">
@@ -88,14 +87,7 @@ useFocusZone({
           </span>
         </div>
         <div
-          :class="[
-            'absolute -inset-2 scale-95 bg-gray-200/50 dark:bg-gray-800',
-            'motion-safe:transition opacity-0',
-            'group-hover:opacity-100 group-focus-within:opacity-100',
-            'group-hover:scale-100 group-focus-within:scale-100',
-            'rounded-lg group-focus-within:ring-2',
-            'group-focus-within:ring-black dark:group-focus-within:ring-white/90'
-          ]"
+          class="absolute -inset-2 scale-95 bg-gray-200/50 dark:bg-gray-800 motion-safe:transition opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 group-hover:scale-100 group-focus-within:scale-100 rounded-lg group-focus-within:ring-2 group-focus-within:ring-black dark:group-focus-within:ring-white/90"
         />
       </li>
     </ul>

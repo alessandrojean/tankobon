@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import TagForm from '@/components/tags/TagForm.vue'
-import { TagCreation } from '@/types/tankobon-tag'
+import type { TagCreation } from '@/types/tankobon-tag'
 
 export interface TagCreateDialogProps {
-  libraryId: string,
-  isOpen: boolean,
+  libraryId: string
+  isOpen: boolean
 }
 
-export type TagCreateDialogEmits = {
-  (e: 'close'): void,
-  (e: 'submit', tag: TagCreation): void,
+export interface TagCreateDialogEmits {
+  (e: 'close'): void
+  (e: 'submit', tag: TagCreation): void
 }
 
 const props = defineProps<TagCreateDialogProps>()
@@ -39,9 +39,8 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await tagForm.value!.v$.$validate()
 
-  if (!isValid) {
+  if (!isValid)
     return
-  }
 
   emit('close')
   emit('submit', toRaw(tag))

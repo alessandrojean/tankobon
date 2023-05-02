@@ -36,6 +36,8 @@ common-fields:
   number: Number
   barcode: Barcode
   page-count: Page count
+  amount: Amount
+  currency: Currency
 
 common-actions:
   sign-in: Sign in
@@ -101,6 +103,10 @@ common-placeholders:
   book-page-count: '582'
   book-width-cm: '16.5'
   book-height-cm: '20.9'
+  book-label-price-amount: '19.95'
+  book-label-price-currency: USD
+  book-paid-price-amount: '15.95'
+  book-paid-price-currency: USD
 
 validation:
   required: It can not be blank.
@@ -240,7 +246,7 @@ authentication-activity:
   empty-header: No authentication activity found
   empty-description: The user has never attempted to sign in
   fetch-failure: There was an error while fetching the authentication activity
-  
+
 upload:
   prompt: Upload a file
   drag-and-drop: or drag and drop
@@ -248,7 +254,7 @@ upload:
 
 preferences:
   theme-failure: There was an error while getting the theme
-  
+
 metrics:
   header: Metrics
   fetch-failure: There was an error while fetching the metrics
@@ -458,3 +464,6 @@ markdown-input:
   description: 'Markdown input: {0}'
   preview-mode: preview mode selected
   edit-mode: edit mode selected
+
+monetary-amount-input:
+  unknown-currency: Unknown

@@ -13,6 +13,6 @@ export default function useClaimServerMutation() {
     mutationFn: claimAdmin,
     onSuccess() {
       queryClient.setQueryData(['claim-status'], { isClaimed: true })
-    }
+    },
   })
 }

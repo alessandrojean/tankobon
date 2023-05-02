@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from '@/router'
 import { i18n } from '@/modules/i18n'
 
+import '@github/markdown-toolbar-element'
 import './index.pcss'
 
 createApp(App)

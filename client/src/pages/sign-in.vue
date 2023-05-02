@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import useVuelidate from '@vuelidate/core'
-import { email, required, helpers } from '@vuelidate/validators'
+import { email, helpers, required } from '@vuelidate/validators'
 
 import { EnvelopeIcon, KeyIcon } from '@heroicons/vue/24/outline'
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 
 const formState = reactive({
   email: '',
@@ -33,11 +33,11 @@ const { data: claimStatus, isFetched } = useServerClaimStatusQuery({
       title: t('claim-server.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
 const {
   data: userLibraries,
-  refetch: refetchUserLibraries
+  refetch: refetchUserLibraries,
 } = useUserLibrariesByUserQuery({
   userId: computed(() => userStore.me?.id ?? ''),
   enabled: computed(() => userStore.isAuthenticated),
@@ -46,13 +46,12 @@ const {
       title: t('libraries.fetch-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 watch([claimStatus, isFetched], () => {
-  if (claimStatus.value?.isClaimed === false) {
+  if (claimStatus.value?.isClaimed === false)
     router.replace({ name: 'claim-server' })
-  }
 })
 
 const isLoading = ref(false)
@@ -61,9 +60,8 @@ const error = ref<string>()
 async function handleSignIn() {
   const isFormValid = await v$.value.$validate()
 
-  if (!isFormValid) {
+  if (!isFormValid)
     return
-  }
 
   isLoading.value = true
   error.value = undefined
@@ -71,23 +69,24 @@ async function handleSignIn() {
   try {
     await userStore.signIn({
       email: formState.email,
-      password: formState.password
+      password: formState.password,
     })
 
     await refetchUserLibraries()
 
     if (userStore.isAuthenticated) {
-      if (userLibraries.value?.length === 0) {
+      if (userLibraries.value?.length === 0)
         await router.push({ name: 'welcome' })
-      } else if (route.query.redirect) {
+      else if (route.query.redirect)
         await router.push({ path: route.query.redirect.toString() })
-      } else {
+      else
         await router.push({ name: 'index' })
-      }
     }
-  } catch (e) {
+  }
+  catch (e) {
     error.value = (e as Error).message
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -116,35 +115,35 @@ async function handleSignIn() {
       >
         <p>{{ error }}</p>
       </Alert>
-      <form class="space-y-4" @submit.prevent="handleSignIn" novalidate>
+      <form class="space-y-4" novalidate @submit.prevent="handleSignIn">
         <div class="space-y-2">
           <TextInput
-            v-model="formState.email"
             id="email"
+            v-model="formState.email"
             type="email"
             :label-text="$t('common-fields.email')"
             auto-complete="email"
             :placeholder="$t('common-placeholders.email').replace('[at]', '@')"
             :invalid="v$.email.$error"
             :errors="v$.email.$errors"
-            @blur="v$.email.$touch()"
             required
+            @blur="v$.email.$touch()"
           >
             <template #left-icon>
               <EnvelopeIcon class="w-7 h-7 text-current" />
             </template>
           </TextInput>
           <TextInput
-            v-model="formState.password"
             id="password"
+            v-model="formState.password"
             type="password"
             :label-text="$t('common-fields.password')"
             auto-complete="current-password"
             :placeholder="$t('common-placeholders.password')"
             :invalid="v$.password.$error"
             :errors="v$.password.$errors"
-            @blur="v$.password.$touch()"
             required
+            @blur="v$.password.$touch()"
           >
             <template #left-icon>
               <KeyIcon class="w-7 h-7 text-current" />
@@ -152,8 +151,8 @@ async function handleSignIn() {
           </TextInput>
         </div>
         <CheckboxInput
-          v-model="formState.rememberMe"
           id="remember-me"
+          v-model="formState.rememberMe"
           :label-text="$t('common-fields.remember-me')"
         />
         <Button

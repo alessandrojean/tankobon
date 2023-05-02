@@ -12,6 +12,6 @@ export default function useCreateContributorRoleMutation() {
     mutationFn: addOneContributorRole,
     onSuccess(_, creation) {
       queryClient.invalidateQueries(['contributor-roles', { libraryId: creation.library }])
-    }
+    },
   })
 }

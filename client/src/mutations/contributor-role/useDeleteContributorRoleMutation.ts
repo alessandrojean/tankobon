@@ -12,6 +12,6 @@ export default function useDeleteContributorRoleMutation() {
     onSuccess(_, contributorRoleId) {
       queryClient.invalidateQueries(['contributor-roles'])
       queryClient.invalidateQueries(['contributor-role', { id: contributorRoleId }])
-    }
+    },
   })
 }

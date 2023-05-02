@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { StoreCreation } from '@/types/tankobon-store'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import { BuildingStorefrontIcon, MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import type { StoreCreation } from '@/types/tankobon-store'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -28,14 +27,14 @@ function handleCreateStore(store: StoreCreation) {
         title: t('stores.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -63,8 +62,8 @@ function handleCreateStore(store: StoreCreation) {
           </label>
           <BasicTextInput
             id="search-store"
-            class="w-48"
             v-model="search"
+            class="w-48"
             size="small"
             type="search"
             :placeholder="$t('common-placeholders.search')"
@@ -92,7 +91,7 @@ function handleCreateStore(store: StoreCreation) {
                 : $t('stores.empty-description')
             "
           >
-            <template #actions v-if="searchTerm.length === 0">
+            <template v-if="searchTerm.length === 0" #actions>
               <Button
                 kind="primary"
                 @click="showCreateDialog = true"

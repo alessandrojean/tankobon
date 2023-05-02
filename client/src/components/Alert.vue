@@ -2,7 +2,7 @@
 import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
-  XCircleIcon
+  XCircleIcon,
 } from '@heroicons/vue/20/solid'
 
 export interface AlertProps {
@@ -19,13 +19,13 @@ const { type, border } = toRefs(props)
 const classes: Record<AlertProps['type'], string> = {
   info: 'bg-blue-50 text-blue-700 border-blue-500',
   error: 'bg-red-50 text-red-700 border-red-500',
-  warning: 'bg-amber-50 text-amber-900 border-amber-400'
+  warning: 'bg-amber-50 text-amber-900 border-amber-400',
 }
 
 const titleClasses: Record<AlertProps['type'], string> = {
   info: 'text-blue-800',
   error: 'text-red-800',
-  warning: 'text-amber-800'
+  warning: 'text-amber-800',
 }
 </script>
 
@@ -35,13 +35,12 @@ const titleClasses: Record<AlertProps['type'], string> = {
       v-if="show"
       role="alert"
       :data-type="type"
-      :class="[
-        'dark:bg-gray-800 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3',
+      class="dark:bg-gray-800 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3" :class="[
         border ? 'border-l-4' : '',
-        classes[type]
+        classes[type],
       ]"
     >
-      <div :class="['shrink-0', title ? 'pt-1' : '']">
+      <div class="shrink-0" :class="[title ? 'pt-1' : '']">
         <XCircleIcon
           v-if="type === 'error'"
           class="h-5 w-5 text-red-500 dark:text-red-400"
@@ -63,19 +62,18 @@ const titleClasses: Record<AlertProps['type'], string> = {
       >
         <p
           v-if="title && title.length > 0"
-          :class="[
+          class="font-display-safe font-medium text-md sm:text-lg dark:text-gray-100" :class="[
             titleClasses[type],
-            'font-display-safe font-medium text-md sm:text-lg dark:text-gray-100'
           ]"
         >
           {{ title }}
         </p>
-        <slot></slot>
+        <slot />
         <div
           v-if="$slots.actions"
           class="flex pt-3 space-x-3 alert-actions -ml-2.5"
         >
-          <slot name="actions"></slot>
+          <slot name="actions" />
         </div>
       </div>
     </div>

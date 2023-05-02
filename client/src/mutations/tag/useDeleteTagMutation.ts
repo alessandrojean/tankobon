@@ -12,6 +12,6 @@ export default function useDeleteTagMutation() {
     onSuccess(_, tagId) {
       queryClient.invalidateQueries(['tags'])
       queryClient.invalidateQueries(['tag', { id: tagId }])
-    }
+    },
   })
 }

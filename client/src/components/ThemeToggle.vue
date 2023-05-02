@@ -2,10 +2,10 @@
 import { MoonIcon, SunIcon } from '@heroicons/vue/24/outline'
 
 import {
-  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
   ComputerDesktopIcon as ComputerDesktopIconSolid,
+  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
   MoonIcon as MoonIconSolid,
-  SunIcon as SunIconSolid
+  SunIcon as SunIconSolid,
 } from '@heroicons/vue/20/solid'
 
 import type { Theme } from '@/App.vue'
@@ -19,7 +19,7 @@ export interface ThemeToggleProps {
 const props = withDefaults(defineProps<ThemeToggleProps>(), {
   light: false,
   bottom: false,
-  transparent: false
+  transparent: false,
 })
 
 const { light, bottom, transparent } = toRefs(props)
@@ -37,9 +37,8 @@ const { data: theme } = useUserPreferencesQuery({
       title: t('preferences.theme-failure'),
       body: error.message,
     })
-  }
+  },
 })
-
 
 const options = computed(() => [
   { key: 'light', icon: SunIcon, menuIcon: SunIconSolid },
@@ -47,12 +46,12 @@ const options = computed(() => [
   {
     key: 'system',
     responsive: true,
-    menuIcon: [DevicePhoneMobileIconSolid, ComputerDesktopIconSolid]
-  }
+    menuIcon: [DevicePhoneMobileIconSolid, ComputerDesktopIconSolid],
+  },
 ])
 
 const currentOption = computed(() => {
-  return options.value.find((o) => o.key === theme.value)
+  return options.value.find(o => o.key === theme.value)
 })
 
 const { mutateAsync: setPreferences } = useSetPreferencesMutation()
@@ -66,12 +65,11 @@ async function setTheme(theme: Theme) {
 <template>
   <Listbox
     :model-value="theme"
-    @update:model-value="setTheme"
     as="div"
+    class="relative flex items-center justify-center"
     :class="[
-      'relative flex items-center justify-center',
-      { light: light, transparent: transparent }
-    ]"
+      { light, transparent },
+    ]" @update:model-value="setTheme"
   >
     <ListboxButton
       class="theme-chooser"
@@ -80,18 +78,18 @@ async function setTheme(theme: Theme) {
       <span aria-hidden="true">
         <template v-if="theme === 'system'">
           <!-- eslint-disable-next-line prettier/prettier -->
-          <component
+          <Component
             :is="options[0].icon"
             class="w-6 h-6 dark:hidden system"
           />
-          <component
+          <Component
             :is="options[1].icon"
             class="w-6 h-6 hidden dark:block system"
           />
         </template>
-        <component
-          v-else
+        <Component
           :is="currentOption!.icon"
+          v-else
           class="w-6 h-6 not-system"
         />
       </span>
@@ -104,24 +102,24 @@ async function setTheme(theme: Theme) {
         <ListboxOption
           v-for="option in options"
           :key="option.key"
-          :value="option.key"
           v-slot="{ active }"
+          :value="option.key"
           as="template"
         >
           <li :class="active ? 'active' : ''" class="theme">
             <span aria-hidden="true">
-              <component
-                v-if="!option.responsive"
+              <Component
                 :is="option.menuIcon"
+                v-if="!option.responsive"
                 class="w-5 h-5 mr-3"
               />
               <template v-else>
-                <component
+                <Component
                   :is="option.menuIcon[0]"
                   :class="theme === 'system' ? 'system' : 'not-system'"
                   class="w-5 h-5 mr-3 lg:hidden"
                 />
-                <component
+                <Component
                   :is="option.menuIcon[1]"
                   :class="theme === 'system' ? 'system' : 'not-system'"
                   class="w-5 h-5 mr-3 hidden lg:inline-block"
@@ -129,7 +127,7 @@ async function setTheme(theme: Theme) {
               </template>
             </span>
             <span>
-              {{ t('theme-toggle.' + option.key) }}
+              {{ t(`theme-toggle.${option.key}`) }}
             </span>
           </li>
         </ListboxOption>
@@ -191,10 +189,10 @@ async function setTheme(theme: Theme) {
 }
 
 .theme-options {
-  @apply absolute top-full right-0 space-y-1
+  @apply absolute top-full right-0 space-y-1 overflow-hidden
     bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700
-    rounded-md shadow-lg overflow-hidden
-    min-w-[8rem] p-1.5 mt-2 origin-top-right
+    rounded-xl shadow-primer-overlay dark:shadow-primer-overlay-dark
+    min-w-[9rem] p-2 mt-2 origin-top-right
     ring-1 ring-black ring-opacity-5;
 }
 
@@ -207,8 +205,8 @@ async function setTheme(theme: Theme) {
 }
 
 .theme {
-  @apply flex items-center select-none rounded
-    w-full px-3 py-2 text-sm cursor-pointer
+  @apply flex items-center select-none rounded-lg
+    w-full px-2 py-1.5 text-sm cursor-pointer
     text-gray-700 dark:text-gray-300;
 }
 
@@ -232,7 +230,7 @@ async function setTheme(theme: Theme) {
 .theme.active svg {
   @apply text-primary-600 dark:text-primary-200;
 }
-/* 
+/*
 .theme[aria-selected='true'] {
   @apply text-primary-500 dark:text-primary-300 font-semibold;
 }

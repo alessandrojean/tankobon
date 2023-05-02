@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { ContributorRoleCreation } from '@/types/tankobon-contributor-role'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { QueueListIcon } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon as MagnifyingGlassIconOutline, QueueListIcon } from '@heroicons/vue/24/outline'
+import type { ContributorRoleCreation } from '@/types/tankobon-contributor-role'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -28,14 +27,14 @@ function handleCreateContributorRole(contributorRole: ContributorRoleCreation) {
         title: t('contributor-roles.created-with-failure'),
         body: error.message,
       })
-    }
+    },
   })
 }
 </script>
 
 <route lang="yaml">
-  meta:
-    layout: dashboard
+meta:
+  layout: dashboard
 </route>
 
 <template>
@@ -63,8 +62,8 @@ function handleCreateContributorRole(contributorRole: ContributorRoleCreation) {
           </label>
           <BasicTextInput
             id="search-contributor-role"
-            class="w-48"
             v-model="search"
+            class="w-48"
             size="small"
             type="search"
             :placeholder="$t('common-placeholders.search')"
@@ -92,7 +91,7 @@ function handleCreateContributorRole(contributorRole: ContributorRoleCreation) {
                 : $t('contributor-roles.empty-description')
             "
           >
-            <template #actions v-if="searchTerm.length === 0">
+            <template v-if="searchTerm.length === 0" #actions>
               <Button
                 kind="primary"
                 @click="showCreateDialog = true"

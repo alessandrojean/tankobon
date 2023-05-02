@@ -8,12 +8,12 @@ export const useUserStore = defineStore('user', {
     me: null as UserEntity | null,
   }),
   getters: {
-    isAdmin: (state) => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,
-    isAuthenticated: (state) => typeof state.me?.id === 'string',
-    avatar: (state) => getRelationship(state.me, 'AVATAR')
+    isAdmin: state => state.me?.attributes?.roles?.includes('ROLE_ADMIN') === true,
+    isAuthenticated: state => typeof state.me?.id === 'string',
+    avatar: state => getRelationship(state.me, 'AVATAR'),
   },
   actions: {
-    async signIn({ email, password }: { email: string, password: string }) {
+    async signIn({ email, password }: { email: string; password: string }) {
       const me = await getMeWithAuth(email, password)
       this.$patch({ me })
 
@@ -24,7 +24,8 @@ export const useUserStore = defineStore('user', {
     async signOut() {
       try {
         await signOut()
-      } catch (_) {}
+      }
+      catch (_) {}
 
       this.$patch({ me: null })
 
@@ -69,13 +70,13 @@ export const useUserStore = defineStore('user', {
         }
 
         return true
-      } catch (_) {
+      }
+      catch (_) {
         return false
       }
-    }
+    },
   },
 })
 
-if (import.meta.hot) {
+if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot))
-}
