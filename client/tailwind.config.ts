@@ -42,6 +42,9 @@ export default {
         'slide-in': 'slide-in .3s ease',
         'toast': 'fade-in .3s ease, fade-out 3s ease 3s, slide-in .3s ease',
       },
+      transitionTimingFunction: {
+        'in-out-primer': 'cubic-bezier(0.33, 1, 0.68, 1)',
+      },
       keyframes: {
         'fade-in': {
           from: { opacity: '0' }
@@ -51,7 +54,7 @@ export default {
         },
         'slide-in': {
           from: { transform: 'translateX(100%)' },
-        }
+        },
       },
     },
   },

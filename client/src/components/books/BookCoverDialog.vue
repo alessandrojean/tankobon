@@ -42,7 +42,6 @@ onBeforeRouteLeave(() => {
                 'hidden sm:block fixed inset-0',
                 'bg-gray-700/75 dark:bg-gray-900/90',
                 'motion-safe:transition-opacity',
-                'backdrop-filter backdrop-blur-sm',
               ]"
               @click="$emit('close')"
             />

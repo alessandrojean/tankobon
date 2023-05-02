@@ -99,7 +99,7 @@ async function setTheme(theme: Theme) {
         {{ t('theme-toggle.label') }}
       </span>
     </ListboxButton>
-    <ScaleTransition>
+    <MenuTransition>
       <ListboxOptions :class="bottom ? 'is-bottom' : ''" class="theme-options">
         <ListboxOption
           v-for="option in options"
@@ -134,7 +134,7 @@ async function setTheme(theme: Theme) {
           </li>
         </ListboxOption>
       </ListboxOptions>
-    </ScaleTransition>
+    </MenuTransition>
   </Listbox>
 </template>
 

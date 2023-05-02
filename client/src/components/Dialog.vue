@@ -58,10 +58,10 @@ export default { inheritAttrs: false }
       >
         <TransitionChild
           as="template"
-          enter="motion-safe:transition-opacity duration-150 ease-out"
+          enter="motion-safe:transition-opacity duration-200 ease-in-out-primer"
           enter-from="opacity-0"
           enter-to="opacity-100"
-          leave="motion-safe:transition-opacity duration-100 ease-in"
+          leave="motion-safe:transition-opacity duration-50 ease-in"
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
@@ -69,9 +69,8 @@ export default { inheritAttrs: false }
             <div
               :class="[
                 'fixed inset-0',
-                'bg-gray-700/75 dark:bg-gray-950/90',
+                'bg-gray-700/75 dark:bg-gray-950/80',
                 'motion-safe:transition-opacity',
-                'backdrop-filter backdrop-blur-sm',
               ]"
               @click="$emit('close')"
             />
@@ -81,19 +80,19 @@ export default { inheritAttrs: false }
         <TransitionChild
           :as="as"
           :class="[
-            'relative flex flex-col w-full',
+            'relative flex flex-col w-full will-change-transform',
             'overflow-hidden text-left bg-white dark:bg-gray-900',
             'shadow-xl rounded-lg ring-1 ring-black/5',
             dialogClass,
             { 'h-full': fullHeight, 'max-h-full': !fullHeight },
           ]"
           v-bind="$attrs"
-          enter="motion-reduce:transition-none duration-150 ease-out"
-          enter-from="opacity-0 scale-95"
+          enter="motion-reduce:transition-none duration-200 ease-in-out-primer"
+          enter-from="opacity-0 scale-75"
           enter-to="opacity-100 scale-100"
-          leave="motion-reduce:transition-none duration-100 ease-in"
-          leave-from="opacity-100 scale-100"
-          leave-to="opacity-0 scale-95"
+          leave="motion-reduce:transition-none duration-50 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
         >
           <div
             :class="[

@@ -93,7 +93,7 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
         </span>
       </MenuButton>
     </div>
-    <ScaleTransition>
+    <MenuTransition>
       <MenuItems
         as="ul"
         class="absolute right-6 md:right-0 z-40 min-w-[15rem] mt-2 p-1.5 flex flex-col gap-1 origin-top-right bg-white dark:bg-gray-800 dark:ring-1 dark:ring-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -168,6 +168,6 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
           </component>
         </MenuItem>
       </MenuItems>
-    </ScaleTransition>
+    </MenuTransition>
   </Menu>
 </template>

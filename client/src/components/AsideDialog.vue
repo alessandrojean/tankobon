@@ -40,7 +40,6 @@ export default { inheritAttrs: false }
               'fixed inset-0',
               'bg-gray-700/75 dark:bg-gray-950/90',
               'motion-safe:transition-opacity',
-              'backdrop-filter backdrop-blur-sm',
             ]"
             @click="$emit('close')"
           />
