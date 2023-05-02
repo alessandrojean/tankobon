@@ -98,6 +98,7 @@ class ImporterLifecycle(
         code = import.isbn,
         barcode = import.isbn,
         title = import.title,
+        subtitle = import.subtitle,
         labelPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         paidPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         dimensions = DimensionsDto(

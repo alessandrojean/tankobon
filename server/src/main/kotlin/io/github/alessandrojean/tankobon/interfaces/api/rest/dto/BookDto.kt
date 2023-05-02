@@ -28,6 +28,7 @@ data class BookAttributesDto(
   val code: CodeDto,
   val barcode: String?,
   val title: String,
+  val subtitle: String,
   val paidPrice: MonetaryAmount,
   val labelPrice: MonetaryAmount,
   val dimensions: DimensionsDto,
@@ -80,6 +81,7 @@ fun Book.toAttributesDto() = BookAttributesDto(
   code = code.toCodeDto(),
   barcode = barcode,
   title = title,
+  subtitle = subtitle,
   paidPrice = paidPrice,
   labelPrice = labelPrice,
   dimensions = DimensionsDto(
@@ -123,6 +125,7 @@ data class BookCreationDto(
   @get:Schema(description = "The barcode printed in the book cover")
   val barcode: String? = null,
   @get:NotBlank val title: String,
+  val subtitle: String,
   @get:NotNull
   val paidPrice: MonetaryAmount,
   @get:NotNull

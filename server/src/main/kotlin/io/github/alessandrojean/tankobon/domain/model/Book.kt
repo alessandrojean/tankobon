@@ -28,6 +28,8 @@ data class Book(
   val source: ImporterSource? = null,
   val sourceBookId: String? = null,
 
+  val subtitle: String,
+
   /**
    * Assumed to be in the UTC timezone.
    */

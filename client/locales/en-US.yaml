@@ -17,6 +17,7 @@ common-fields:
   library: Library
   collection: Collection
   title: Title
+  subtitle: Subtitle
   book: Book
   code: Code
   publisher: Publisher
@@ -92,6 +93,7 @@ common-placeholders:
   search-by-isbn: Search by ISBN…
   book-code: '9781934287729'
   book-title: MW
+  book-subtitle: Embrace me, Father, for I have sinned
   book-synopsis: A secret U.S. chemical weapon called "MW" accidentally leaks…
   book-notes: The manga inner cover is signed by Tezuka.
   book-number: '1'

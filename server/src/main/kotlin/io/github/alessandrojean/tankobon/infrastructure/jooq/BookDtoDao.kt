@@ -16,6 +16,7 @@ import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import io.github.alessandrojean.tankobon.infrastructure.importer.removeDashes
 import io.github.alessandrojean.tankobon.infrastructure.importer.toIsbn10
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
@@ -333,6 +334,7 @@ class BookDtoDao(
   private fun BookCreationDto.toDomain() = Book(
     code = code,
     title = title,
+    subtitle = subtitle,
     paidPrice = paidPrice,
     labelPrice = labelPrice,
     dimensions = Dimensions(dimensions.widthCm, dimensions.heightCm),
@@ -509,6 +511,9 @@ class BookDtoDao(
     pageCount = pageCount,
     synopsis = synopsis,
     notes = notes,
+    source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
+    sourceBookId = sourceBookId,
+    subtitle = subtitle,
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

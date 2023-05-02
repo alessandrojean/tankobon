@@ -72,6 +72,7 @@ const updatedBook = reactive<CustomBookUpdate>({
   publishers: [],
   series: null,
   store: null,
+  subtitle: '',
   synopsis: '',
   tags: [],
   title: '',
@@ -84,6 +85,7 @@ whenever(book, (loadedBook) => {
     number: loadedBook.attributes.number,
     barcode: loadedBook.attributes.barcode,
     title: loadedBook.attributes.title,
+    subtitle: loadedBook.attributes.subtitle,
     synopsis: loadedBook.attributes.synopsis,
     pageCount: String(loadedBook.attributes.pageCount),
     notes: loadedBook.attributes.notes,
@@ -165,6 +167,7 @@ const activeTab = ref(tabs[0])
               v-model:barcode="updatedBook.barcode"
               v-model:number="updatedBook.number"
               v-model:title="updatedBook.title"
+              v-model:subtitle="updatedBook.subtitle"
               v-model:synopsis="updatedBook.synopsis"
               v-model:page-count="updatedBook.pageCount"
               v-model:notes="updatedBook.notes"
@@ -176,7 +179,14 @@ const activeTab = ref(tabs[0])
           </TabPanel>
           <TabPanel>Relationships</TabPanel>
           <TabPanel>Cover art</TabPanel>
-          <TabPanel>Organization</TabPanel>
+          <TabPanel>
+            <BookOrganizationForm
+              v-model:notes="updatedBook.notes"
+              v-model:bought-at="updatedBook.boughtAt"
+              v-model:billed-at="updatedBook.billedAt"
+              v-model:arrived-at="updatedBook.arrivedAt"
+            />
+          </TabPanel>
         </TabPanels>
       </div>
     </TabGroup>

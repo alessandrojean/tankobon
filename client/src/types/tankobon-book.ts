@@ -21,6 +21,7 @@ export interface BookAttributes {
   number: string,
   pageCount: number,
   paidPrice: MonetaryAmount,
+  subtitle: string,
   synopsis: string,
   title: string
 }
@@ -71,6 +72,7 @@ export interface BookUpdate {
   publishers: string[],
   series?: string | null,
   store?: string | null,
+  subtitle: string,
   synopsis: string,
   tags?: string[] | null,
   title: string,

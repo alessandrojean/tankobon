@@ -10,6 +10,7 @@ data class ImporterBookResult(
   val title: String,
   val contributors: List<ImporterBookContributor>,
   val publisher: String,
+  val subtitle: String = "",
   val synopsis: String = "",
   val dimensions: Dimensions? = null,
   val labelPrice: MonetaryAmount? = null,

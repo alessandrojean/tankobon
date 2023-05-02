@@ -198,6 +198,7 @@ class BookDao(
     notes = notes,
     source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
     sourceBookId = sourceBookId,
+    subtitle = subtitle,
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

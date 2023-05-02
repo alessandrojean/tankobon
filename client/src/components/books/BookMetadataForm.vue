@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { DimensionsString } from '@/types/tankobon-dimensions'
-import { convertLocalTimeZoneToUtc, convertUtcToLocalTimeZone } from '@/utils/date'
 import { positiveDecimal } from '@/utils/validation'
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, required, integer, minValue } from '@vuelidate/validators'
@@ -10,12 +9,9 @@ export interface BookMetadataFormProps {
   barcode: string | null | undefined,
   number: string,
   title: string,
+  subtitle: string,
   synopsis: string,
-  notes: string,
   pageCount: string,
-  billedAt: string | null | undefined,
-  boughtAt: string | null | undefined,
-  arrivedAt: string | null | undefined,
   dimensions: DimensionsString,
   mode?: 'creation' | 'update',
 }
@@ -25,11 +21,8 @@ export type BookMetadataFormEmits = {
   (e: 'update:barcode', barcode: string): void,
   (e: 'update:number', number: string): void,
   (e: 'update:title', title: string): void,
+  (e: 'update:subtitle', subtitle: string): void,
   (e: 'update:synopsis', synopsis: string): void,
-  (e: 'update:notes', notes: string): void,
-  (e: 'update:billedAt', billedAt: string): void,
-  (e: 'update:arrivedAt', arrivedAt: string): void,
-  (e: 'update:boughtAt', boughtAt: string): void,
   (e: 'update:pageCount', pageCount: string): void,
   (e: 'update:dimensions', dimensions: DimensionsString): void,
   (e: 'validate', isValid: boolean): void,
@@ -66,20 +59,6 @@ const v$ = useVuelidate(rules, { code, title, pageCount, dimensions })
 watch(() => v$.value.$error, (isValid) => emit('validate', isValid))
 
 defineExpose({ v$ })
-
-function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt' | 'arrivedAt') {
-  const input = event.target as HTMLInputElement
-  console.log(input.value)
-  const value = convertLocalTimeZoneToUtc(input.value)
-
-  if (field === 'boughtAt') {
-    emit('update:boughtAt', value)
-  } else if (field === 'billedAt') {
-    emit('update:billedAt', value)
-  } else {
-    emit('update:arrivedAt', value)
-  }
-}
 </script>
 
 <template>
@@ -95,6 +74,28 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
       @blur="v$.title.$touch()"
       @input="$emit('update:title', $event.target.value)"
     />
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+      <div class="lg:col-span-3">
+        <TextInput
+          :model-value="subtitle ?? ''"
+          id="subtitle"
+          :label-text="$t('common-fields.subtitle')"
+          :placeholder="$t('common-placeholders.book-subtitle')"
+          @input="$emit('update:subtitle', $event.target.value)"
+        />
+      </div>
+
+      <TextInput
+        :model-value="number ?? ''"
+        id="number"
+        required
+        inputmode="decimal"
+        :label-text="$t('common-fields.number')"
+        :placeholder="$t('common-placeholders.book-number')"
+        @input="$emit('update:number', $event.target.value)"
+      />
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
@@ -118,16 +119,6 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
         :placeholder="$t('common-placeholders.book-barcode')"
         @input="$emit('update:barcode', $event.target.value)"
       />
-
-      <TextInput
-        :model-value="number ?? ''"
-        id="number"
-        required
-        inputmode="decimal"
-        :label-text="$t('common-fields.number')"
-        :placeholder="$t('common-placeholders.book-number')"
-        @input="$emit('update:number', $event.target.value)"
-      />
     </div>
 
     <MarkdownInput
@@ -138,32 +129,6 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
       :placeholder="$t('common-placeholders.book-synopsis')"
       @input="$emit('update:synopsis', $event.target.value)"
     />
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-      <TextInput
-        :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
-        id="bought-at"
-        type="datetime-local"
-        :label-text="$t('common-fields.bought-at')"
-        @input="handleDateTimeInput($event, 'boughtAt')"
-      />
-
-      <TextInput
-        :model-value="billedAt ? convertUtcToLocalTimeZone(billedAt) : ''"
-        id="billed-at"
-        type="datetime-local"
-        :label-text="$t('common-fields.billed-at')"
-        @input="handleDateTimeInput($event, 'billedAt')"
-      />
-
-      <TextInput
-        :model-value="arrivedAt ? convertUtcToLocalTimeZone(arrivedAt) : ''"
-        id="arrived-at"
-        type="datetime-local"
-        :label-text="$t('common-fields.arrived-at')"
-        @input="handleDateTimeInput($event, 'arrivedAt')"
-      />
-    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
@@ -199,14 +164,5 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
         @update:model-value="$emit('update:dimensions', $event)"
       />
     </div>
-
-    <MarkdownInput
-      :model-value="notes ?? ''"
-      id="notes"
-      rows="5"
-      :label-text="$t('common-fields.notes')"
-      :placeholder="$t('common-placeholders.book-notes')"
-      @input="$emit('update:notes', $event.target.value)"
-    />
   </div>
 </template>

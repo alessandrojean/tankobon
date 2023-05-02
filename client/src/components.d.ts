@@ -28,6 +28,7 @@ declare module '@vue/runtime-core' {
     BookCover: typeof import('./components/books/BookCover.vue')['default']
     BookCoverDialog: typeof import('./components/books/BookCoverDialog.vue')['default']
     BookMetadataForm: typeof import('./components/books/BookMetadataForm.vue')['default']
+    BookOrganizationForm: typeof import('./components/books/BookOrganizationForm.vue')['default']
     BooksTable: typeof import('./components/books/BooksTable.vue')['default']
     BookTitle: typeof import('./components/books/BookTitle.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
