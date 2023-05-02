@@ -199,7 +199,7 @@ export default { inheritAttrs: false, components: { LinkIcon, EyeIcon, PencilIco
         <div class="px-3" v-if="!showPreview">
           <textarea
             :class="[
-              'bg-white dark:bg-gray-950',
+              'bg-white dark:bg-gray-950 min-h-[9rem]',
               'border-0 rounded-md focus:outline-none',
               'placeholder:text-gray-500 w-full font-mono text-sm/6',
               invalid 

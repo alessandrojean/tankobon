@@ -43,7 +43,7 @@ const removeExisting = ref(false)
 const rules = {
   file: {
     maxFileSize: helpers.withMessage(
-      ({ $params }) => t('validation.maxSize', [$params.sizeString]),
+      ({ $params }) => t('validation.max-size', [$params.sizeString]),
       maxFileSize(5 * 1_024 * 1_024, '5MB')
     )
   }

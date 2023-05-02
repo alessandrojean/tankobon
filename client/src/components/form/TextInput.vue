@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import InputMask from 'inputmask'
 import type { HTMLAttributes } from 'vue'
 import type { ErrorObject } from '@vuelidate/core'
 
@@ -9,6 +10,7 @@ export interface TextInputProps {
   labelText: string,
   autoComplete?: HTMLInputElement['autocomplete'],
   type?: HTMLInputElement['type'],
+  inputMask?: InputMask.Options,
   inputMode?: HTMLAttributes['inputmode'],
   placeholder?: string,
   required?: boolean,
@@ -16,6 +18,7 @@ export interface TextInputProps {
 
 const props = withDefaults(defineProps<TextInputProps>(), {
   errors: undefined,
+  inputMask: undefined,
   invalid: false,
   type: 'text',
   required: false,
@@ -25,9 +28,21 @@ defineEmits<{
   (e: 'update:modelValue', modelValue: string): void
 }>()
 
-const { errors } = toRefs(props)
+const { errors, inputMask } = toRefs(props)
 
 const errorMessage = computed(() => errors.value?.[0]?.$message)
+const input = ref<HTMLInputElement>()
+const inputMaskInstance = ref<InputMask.Instance>()
+
+watchEffect((onCleanup) => {
+  if (inputMask.value && input.value) {
+    inputMaskInstance.value = InputMask(inputMask.value).mask(input.value)
+
+    onCleanup(() => inputMaskInstance.value?.remove())
+  } else {
+    inputMaskInstance.value?.remove()
+  }
+})
 </script>
 
 <script lang="ts">
@@ -38,6 +53,7 @@ export default { inheritAttrs: false }
   <div>
     <div class="relative">
       <input
+        ref="input"
         :class="[
           'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8',
           'dark:text-gray-200',

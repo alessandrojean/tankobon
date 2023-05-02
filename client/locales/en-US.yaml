@@ -25,9 +25,14 @@ common-fields:
   paid-price: Paid price
   store: Store
   bought-at: Bought at
+  billed-at: Billed at
+  arrived-at: Arrived at
   language: Language
   synopsis: Synopsis
   notes: Notes
+  number: Number
+  barcode: Barcode
+  page-count: Page count
 
 common-actions:
   sign-in: Sign in
@@ -87,15 +92,20 @@ common-placeholders:
   book-title: MW
   book-synopsis: A secret U.S. chemical weapon called "MW" accidentally leaks…
   book-notes: The manga inner cover is signed by Tezuka.
+  book-number: '1'
+  book-barcode: '9781934287729'
+  book-page-count: '582'
 
 validation:
   required: It can not be blank.
   email: It should be a valid e-mail.
   min: It should have at least {n} characters.
+  min-value: It should be greater or equal to {0}.
   available: It should be an available e-mail.
-  maxSize: It should have a size lower than {0}.
+  max-size: It should have a size lower than {0}.
   max: It should have at most {0} characters.
   isbn: It should be a valid ISBN.
+  integer: It should be a valid integer.
 
 entities:
   users: Users

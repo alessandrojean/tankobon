@@ -75,9 +75,15 @@ whenever(book, (loadedBook) => {
   Object.assign(updatedBook, <Partial<BookUpdate>> {
     id: loadedBook.id,
     code: loadedBook.attributes.code.code,
+    number: loadedBook.attributes.number,
+    barcode: loadedBook.attributes.barcode,
     title: loadedBook.attributes.title,
     synopsis: loadedBook.attributes.synopsis,
+    pageCount: loadedBook.attributes.pageCount,
     notes: loadedBook.attributes.notes,
+    boughtAt: loadedBook.attributes.boughtAt,
+    billedAt: loadedBook.attributes.billedAt,
+    arrivedAt: loadedBook.attributes.arrivedAt,
   })
 }, { immediate: true })
 
@@ -146,9 +152,15 @@ const activeTab = ref(tabs[0])
           <TabPanel>
             <BookMetadataForm
               v-model:code="updatedBook.code"
+              v-model:barcode="updatedBook.barcode"
+              v-model:number="updatedBook.number"
               v-model:title="updatedBook.title"
               v-model:synopsis="updatedBook.synopsis"
+              v-model:page-count="updatedBook.pageCount"
               v-model:notes="updatedBook.notes"
+              v-model:bought-at="updatedBook.boughtAt"
+              v-model:billed-at="updatedBook.billedAt"
+              v-model:arrived-at="updatedBook.arrivedAt"
             />
           </TabPanel>
           <TabPanel>Relationships</TabPanel>

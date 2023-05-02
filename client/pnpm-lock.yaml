@@ -46,6 +46,9 @@ dependencies:
   humanize-duration:
     specifier: 3.28.0
     version: 3.28.0
+  inputmask:
+    specifier: ^5.0.8
+    version: 5.0.8
   markdown-it:
     specifier: 13.0.1
     version: 13.0.1
@@ -93,6 +96,9 @@ devDependencies:
   '@types/humanize-duration':
     specifier: 3.27.1
     version: 3.27.1
+  '@types/inputmask':
+    specifier: ^5.0.3
+    version: 5.0.3
   '@types/markdown-it':
     specifier: ^12.2.3
     version: 12.2.3
@@ -733,6 +739,10 @@ packages:
 
   /@types/humanize-duration@3.27.1:
     resolution: {integrity: sha512-K3e+NZlpCKd6Bd/EIdqjFJRFHbrq5TzPPLwREk5Iv/YoIjQrs6ljdAUCo+Lb2xFlGNOjGSE0dqsVD19cZL137w==}
+    dev: true
+
+  /@types/inputmask@5.0.3:
+    resolution: {integrity: sha512-9aTXacRhf9D3+porVydLR28ll8/y3TQIrXEXv7ZWY0c3Lzl/1r4nHoaesZeh2Fd+UIefpWZrg2tkSnDn/dKUsw==}
     dev: true
 
   /@types/json5@0.0.29:
@@ -2139,6 +2149,10 @@ packages:
   /inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: true
+
+  /inputmask@5.0.8:
+    resolution: {integrity: sha512-1WcbyudPTXP1B28ozWWyFa6QRIUG4KiLoyR6LFHlpT4OfTzRqFfWgHFadNvRuMN1S9XNVz9CdNvCGjJi+uAMqQ==}
+    dev: false
 
   /internal-slot@1.0.5:
     resolution: {integrity: sha512-Y+R5hJrzs52QCG2laLn4udYVnxsfny9CpOhNhUvk/SSSVyF6T27FzRbF0sroPidSu3X8oEAkOn2K804mjpt6UQ==}
