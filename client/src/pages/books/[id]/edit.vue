@@ -31,12 +31,12 @@ const { data: book, isLoading } = useBookQuery({
   }
 })
 
-const tabs = computed(() => [
-  { key: 'metadata', text: t('books.metadata') },
-  { key: 'relationships', text: t('books.relationships') },
-  { key: 'cover-art', text: t('books.cover-art') },
-  { key: 'organization', text: t('books.organization') },
-])
+const tabs = [
+  { key: '0', text: 'books.metadata' },
+  { key: '1', text: 'books.relationships' },
+  { key: '2', text: 'books.cover-art' },
+  { key: '3', text: 'books.organization' },
+]
 
 const updatedBook = reactive<BookUpdate>({
   id: '',
@@ -80,11 +80,13 @@ whenever(book, (loadedBook) => {
     notes: loadedBook.attributes.notes,
   })
 }, { immediate: true })
+
+const activeTab = ref(tabs[0])
 </script>
 
 <template>
   <div>
-    <TabGroup>
+    <TabGroup :selected-index="Number(activeTab.key)" @change="activeTab = tabs[$event]">
       <Header
         :title="book?.attributes.title ?? ''"
         :loading="isLoading"
@@ -113,7 +115,7 @@ whenever(book, (loadedBook) => {
           </Button>
         </template>
         <template #tabs>
-          <TabList class="flex gap-3 -mb-px">
+          <TabList class="hidden md:flex gap-3 -mb-px">
             <Tab
               v-for="tab in tabs"
               :key="tab"
@@ -126,10 +128,17 @@ whenever(book, (loadedBook) => {
                 rounded="none"
                 :data-headlessui-state="selected ? 'selected' : undefined"
               >
-                {{ tab.text }}
+                {{ $t(tab.text) }}
               </Button>
             </Tab>
           </TabList>
+          <BasicSelect
+            class="md:hidden mb-4"
+            v-model="activeTab"
+            :options="tabs"
+            :option-text="(tab: any) => $t(tab.text)"
+            :option-value="(tab: any) => tab.key"
+          />
         </template>
       </Header>
       <div class="max-w-7xl mx-auto p-4 sm:p-6">
