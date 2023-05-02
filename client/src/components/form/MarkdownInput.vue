@@ -73,7 +73,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
     class="border bg-white dark:bg-gray-950 shadow-sm rounded-md overflow-hidden border-gray-300 dark:border-gray-700"
   >
     <fieldset
-      class="flex flex-col"
+      class="flex flex-col group"
       :aria-disabled="attributes.disabled"
       :aria-describedby="`${attributes.id}-description`"
     >
@@ -194,7 +194,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             :class="[
               invalid
                 ? 'ring-1 ring-red-500 dark:ring-red-500/95'
-                : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
+                : 'group-hover:ring-1 group-hover:ring-gray-300 dark:group-hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
             ]"
             :value="modelValue"
             :placeholder="placeholder"
