@@ -436,6 +436,7 @@ books:
   cover-art: Cover art
   organization: Organization
   relationships: Relationships
+  untitled: Untitled
 
 book-contributors:
   fetch-failure: There was an error while fetching the book contributors

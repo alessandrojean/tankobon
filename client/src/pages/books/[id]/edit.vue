@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { CheckIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
-import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import type { BookUpdate } from '@/types/tankobon-book'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
@@ -111,13 +110,21 @@ whenever(book, (loadedBook) => {
 }, { immediate: true })
 
 const activeTab = ref(tabs[0])
+
+const headerTitle = computed(() => {
+  if (isLoading.value || !book.value) {
+    return ''
+  }
+
+  return updatedBook.title.length > 0 ? updatedBook.title : book.value.attributes.title
+})
 </script>
 
 <template>
   <div>
     <TabGroup :selected-index="Number(activeTab.key)" @change="activeTab = tabs[$event]">
       <Header
-        :title="book?.attributes.title ?? ''"
+        :title="headerTitle"
         :loading="isLoading"
       >
         <template #avatar>

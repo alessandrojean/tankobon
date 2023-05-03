@@ -2,6 +2,7 @@
   "extends": ["@antfu"],
   "rules": {
     "vue/custom-event-name-casing": "off",
+    "vue/prefer-separate-static-class": "off",
     "curly": "off"
   }
 }

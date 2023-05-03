@@ -178,7 +178,7 @@ function handleCurrency(newCurrency: string) {
       <div class="flex flex-row-reverse gap-2 items-center w-full px-3 pb-2 pt-1">
         <input
           ref="amountInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring  motion-safe:transition-shadow placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
             invalidAmount
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
@@ -200,7 +200,7 @@ function handleCurrency(newCurrency: string) {
         >
           <ComboboxInput
             ref="currencyInput"
-            class="w-12 shrink-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring motion-safe:transition-shadow placeholder:text-gray-500 h-6 px-1.5 motion-safe:transition tabular-nums [font-feature-settings:'cv08']" :class="[
+            class="w-12 shrink-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 motion-safe:transition tabular-nums [font-feature-settings:'cv08']" :class="[
               invalidCurrency
                 ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
                 : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
@@ -216,19 +216,34 @@ function handleCurrency(newCurrency: string) {
           <MenuTransition>
             <ComboboxOptions
               v-if="filteredCurrencies.length > 0"
-              class="absolute top-full left-0 min-w-[14rem] z-10 p-2 space-y-1 bg-white shadow-primer-overlay dark:shadow-primer-overlay-dark rounded-xl mt-0.5 origin-top-right ring-1 ring-black/5 dark:ring-gray-700"
+              :class="[
+                'absolute top-full left-0 min-w-[14rem] z-10 p-2',
+                'space-y-1 bg-white dark:bg-gray-800',
+                'shadow-primer-overlay dark:shadow-primer-overlay-dark',
+                'rounded-xl mt-0.5 origin-top-right ring-1',
+                'ring-black/5 dark:ring-gray-700',
+              ]"
             >
               <ComboboxOption
                 v-for="currencyOption of filteredCurrencies"
                 :key="currencyOption"
                 :value="currencyOption"
-                class="select-none px-2 py-1.5 cursor-pointer text-sm rounded-lg flex gap-1 items-center ui-active:bg-primary-100 ui-active:text-primary-700"
+                :class="[
+                  'select-none px-2 py-1.5 cursor-pointer text-sm',
+                  'rounded-lg flex gap-1 items-center',
+                  'ui-active:bg-primary-100 dark:ui-active:bg-primary-600',
+                  'dark:text-gray-300 ui-active:text-primary-700 dark:ui-active:dark:text-primary-100',
+                ]"
               >
                 <span class="block grow">
                   {{ getCurrencyName(currencyOption) ?? $t('monetary-amount-input.unknown-currency') }}
                 </span>
                 <span
-                  class="block shrink-0 font-mono text-xs h-3.5 text-gray-600 ui-active:text-primary-600"
+                  :class="[
+                    'block shrink-0 font-mono text-xs h-3.5',
+                    'text-gray-600 ui-active:text-primary-600',
+                    'dark:text-gray-500 dark:ui-active:text-primary-200',
+                  ]"
                 >
                   {{ currencyOption }}
                 </span>

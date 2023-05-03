@@ -50,12 +50,12 @@ const peopleMap = computed(() => {
       class="mt-3 skeleton w-44 sm:w-72 h-8 mb-2 bg-white/50 dark:bg-white/30"
     />
 
-    <!-- <p
-      v-if="!loading && book!.titleParts.subtitle"
+    <p
+      v-if="!loading && book!.attributes.subtitle.length > 0"
       class="font-display-safe text-md sm:text-lg sm:text-white/80 dark:text-white/80 md:text-xl -mt-1 mb-2"
     >
-      {{ book!.titleParts.subtitle }}
-    </p> -->
+      {{ book!.attributes.subtitle }}
+    </p>
 
     <div class="flex-grow hidden sm:block" aria-hidden="true" />
 

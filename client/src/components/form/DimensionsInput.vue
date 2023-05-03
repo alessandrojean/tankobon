@@ -141,7 +141,7 @@ function handleFocus({ event, type }: EventHandler) {
         <input
           :id="`${$attrs.id}-width`"
           ref="widthInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring  motion-safe:transition-shadow placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
             invalidWidth
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
@@ -166,7 +166,7 @@ function handleFocus({ event, type }: EventHandler) {
         <input
           :id="`${$attrs.id}-height`"
           ref="heightInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring  motion-safe:transition-shadow placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
             invalidHeight
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
