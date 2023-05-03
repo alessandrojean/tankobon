@@ -279,6 +279,7 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
             'focus-visible:ring-black dark:focus-visible:ring-white/90',
           ]"
           :title="isDev ? $t('aside-menu.commit-link') : $t('aside-menu.release-link')"
+          :tabindex="collapsed ? '-1' : undefined"
         >
           <span>{{ versionString }}</span>
           <ArrowTopRightOnSquareIcon class="w-3 h-3" />
