@@ -307,6 +307,7 @@ declare global {
   const useToaster: typeof import('./composables/useToaster')['useToaster']
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
+  const useUpdateBookMutation: typeof import('./mutations/book/useUpdateBookMutation')['default']
   const useUpdateCollectionMutation: typeof import('./mutations/collection/useUpdateCollectionMutation')['default']
   const useUpdateContributorRoleMutation: typeof import('./mutations/contributor-role/useUpdateContributorRoleMutation')['default']
   const useUpdateLibraryMutation: typeof import('./mutations/library/useUpdateLibraryMutation')['default']
@@ -672,6 +673,7 @@ declare module 'vue' {
     readonly useToaster: UnwrapRef<typeof import('./composables/useToaster')['useToaster']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
+    readonly useUpdateBookMutation: UnwrapRef<typeof import('./mutations/book/useUpdateBookMutation')['default']>
     readonly useUpdateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useUpdateCollectionMutation')['default']>
     readonly useUpdateContributorRoleMutation: UnwrapRef<typeof import('./mutations/contributor-role/useUpdateContributorRoleMutation')['default']>
     readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useUpdateLibraryMutation')['default']>

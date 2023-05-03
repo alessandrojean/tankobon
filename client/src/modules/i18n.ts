@@ -28,6 +28,12 @@ const numberFormats = {
     maximumFractionDigits: 1,
     useGrouping: false,
   },
+  percent: {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    useGrouping: false,
+  },
 } satisfies DefaultNumberFormatSchema
 
 const dateTimeFormats = {

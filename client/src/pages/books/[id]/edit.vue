@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { CheckIcon } from '@heroicons/vue/20/solid'
+import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import type { BookUpdate } from '@/types/tankobon-book'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
+import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
+import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
+import { getRelationship, getRelationships } from '@/utils/api'
 
 const { t, n } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const notificator = useToaster()
 const bookId = computed(() => route.params.id as string)
+
+const { mutate: editBook, isLoading: isEditing } = useUpdateBookMutation()
 
 const { data: book, isLoading } = useBookQuery({
   bookId,
@@ -32,12 +37,25 @@ const { data: book, isLoading } = useBookQuery({
   },
 })
 
+const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
+const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
+
+const metadataInvalid = computed(() => metadataForm.value?.v$.$invalid ?? false)
+const organizationInvalid = computed(() => organizationForm.value?.v$.$invalid ?? false)
+
 const tabs = [
   { key: '0', text: 'books.metadata' },
   { key: '1', text: 'books.relationships' },
   { key: '2', text: 'books.cover-art' },
   { key: '3', text: 'books.organization' },
 ]
+
+const invalidTabs = computed(() => [
+  metadataInvalid.value,
+  false,
+  false,
+  organizationInvalid.value,
+])
 
 interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice'> {
   dimensions: DimensionsString
@@ -106,7 +124,18 @@ whenever(book, (loadedBook) => {
       amount: String(loadedBook.attributes.paidPrice.amount),
       currency: loadedBook.attributes.paidPrice.currency,
     },
-  } satisfies Partial<CustomBookUpdate>)
+    collection: getRelationship(loadedBook, 'COLLECTION')!.id,
+    contributors: (getRelationships(loadedBook, 'CONTRIBUTOR') ?? [])
+      .map(c => ({
+        person: c.attributes!.person.id,
+        role: c.attributes!.role.id,
+      })),
+    isInLibrary: loadedBook.attributes.isInLibrary,
+    publishers: (getRelationships(loadedBook, 'PUBLISHER') ?? []).map(p => p.id),
+    tags: (getRelationships(loadedBook, 'TAG') ?? []).map(t => t.id),
+    series: getRelationship(loadedBook, 'SERIES')?.id ?? null,
+    store: getRelationship(loadedBook, 'STORE')?.id ?? null,
+  } satisfies CustomBookUpdate)
 }, { immediate: true })
 
 const activeTab = ref(tabs[0])
@@ -118,10 +147,62 @@ const headerTitle = computed(() => {
 
   return updatedBook.title.length > 0 ? updatedBook.title : book.value.attributes.title
 })
+
+function nullOrNotBlank(value: string | null | undefined): string | null {
+  return (value && value.length > 0) ? value : null
+}
+
+function validNumber(valueStr: string): number {
+  const value = Number(valueStr.replace(',', '.'))
+  return isNaN(value) ? 0 : value
+}
+
+async function handleSubmit() {
+  const isValidMetadata = await metadataForm.value!.v$.$validate()
+  const isValidOrganization = await organizationForm.value!.v$.$validate()
+
+  if (!isValidMetadata || !isValidOrganization) {
+    return
+  }
+
+  const editedBook: BookUpdate = {
+    ...toRaw(updatedBook),
+    barcode: nullOrNotBlank(updatedBook.barcode),
+    boughtAt: nullOrNotBlank(updatedBook.boughtAt),
+    billedAt: nullOrNotBlank(updatedBook.billedAt),
+    arrivedAt: nullOrNotBlank(updatedBook.arrivedAt),
+    pageCount: validNumber(updatedBook.pageCount),
+    labelPrice: {
+      amount: validNumber(updatedBook.labelPrice.amount),
+      currency: updatedBook.labelPrice.currency,
+    },
+    paidPrice: {
+      amount: validNumber(updatedBook.paidPrice.amount),
+      currency: updatedBook.paidPrice.currency,
+    },
+    dimensions: {
+      widthCm: validNumber(updatedBook.dimensions.widthCm),
+      heightCm: validNumber(updatedBook.dimensions.heightCm),
+    },
+  }
+
+  editBook(editedBook, {
+    onSuccess: async () => {
+      await router.replace({ name: 'books-id', params: { id: updatedBook.id } })
+      await notificator.success({ title: t('books.edited-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('books.edited-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
 </script>
 
 <template>
-  <div>
+  <form autocomplete="off" novalidate @submit.prevent="handleSubmit">
     <TabGroup :selected-index="Number(activeTab.key)" @change="activeTab = tabs[$event]">
       <Header
         :title="headerTitle"
@@ -134,6 +215,7 @@ const headerTitle = computed(() => {
             kind="ghost"
             rounded="full"
             :title="$t('common-actions.back')"
+            :disabled="isEditing"
             @click="router.back"
           >
             <span class="sr-only">
@@ -145,6 +227,9 @@ const headerTitle = computed(() => {
         <template #actions>
           <Button
             kind="primary"
+            type="submit"
+            :disabled="isLoading || isEditing"
+            :loading="isEditing"
           >
             <CheckIcon class="w-5 h-5" />
             <span>{{ $t('common-actions.save') }}</span>
@@ -164,7 +249,16 @@ const headerTitle = computed(() => {
                 rounded="none"
                 :data-headlessui-state="selected ? 'selected' : undefined"
               >
-                {{ $t(tab.text) }}
+                <span>{{ $t(tab.text) }}</span>
+                <div
+                  v-if="invalidTabs[Number(tab.key)]"
+                  class="ml-2 relative"
+                >
+                  <span class="absolute inset-1 rounded-full bg-white" />
+                  <ExclamationCircleIcon
+                    class="relative w-5 h-5 text-red-600 dark:text-red-500"
+                  />
+                </div>
               </Button>
             </Tab>
           </TabList>
@@ -179,8 +273,9 @@ const headerTitle = computed(() => {
       </Header>
       <div class="max-w-7xl mx-auto p-4 sm:p-6">
         <TabPanels>
-          <TabPanel>
+          <TabPanel :unmount="false">
             <BookMetadataForm
+              ref="metadataForm"
               v-model:code="updatedBook.code"
               v-model:barcode="updatedBook.barcode"
               v-model:number="updatedBook.number"
@@ -193,24 +288,27 @@ const headerTitle = computed(() => {
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:dimensions="updatedBook.dimensions"
+              :disabled="isLoading || isEditing"
             />
           </TabPanel>
           <TabPanel>Relationships</TabPanel>
           <TabPanel>Cover art</TabPanel>
-          <TabPanel>
+          <TabPanel :unmount="false">
             <BookOrganizationForm
+              ref="organizationForm"
               v-model:notes="updatedBook.notes"
               v-model:bought-at="updatedBook.boughtAt"
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:label-price="updatedBook.labelPrice"
               v-model:paid-price="updatedBook.paidPrice"
+              :disabled="isLoading || isEditing"
             />
           </TabPanel>
         </TabPanels>
       </div>
     </TabGroup>
-  </div>
+  </form>
 </template>
 
 <route lang="yaml">

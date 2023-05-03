@@ -312,6 +312,7 @@
     "useToaster": true,
     "useToggle": true,
     "useTransition": true,
+    "useUpdateBookMutation": true,
     "useUpdateCollectionMutation": true,
     "useUpdateContributorRoleMutation": true,
     "useUpdateLibraryMutation": true,

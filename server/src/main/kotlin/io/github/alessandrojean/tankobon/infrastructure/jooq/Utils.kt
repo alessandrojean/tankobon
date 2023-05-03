@@ -17,6 +17,19 @@ fun LocalDateTime.toCurrentTimeZone(): LocalDateTime =
     .withZoneSameInstant(ZoneId.systemDefault())
     .toLocalDateTime()
 
+/**
+ * Converts a [LocalDateTime] in the current system time zone
+ * to a UTC date, casting it back to [LocalDateTime].
+ *
+ * Example:
+ *
+ * ```
+ * // Now is by default at the system time zone (ZoneId.systemDefault()).
+ * val now = LocalDateTime.now()
+ * // Utc is now at ZoneId.UTC.
+ * val utc = now.toUtc()
+ * ```
+ */
 fun LocalDateTime.toUtcTimeZone(): LocalDateTime =
   this.atZone(ZoneId.systemDefault())
     .withZoneSameInstant(ZoneId.of("Z"))

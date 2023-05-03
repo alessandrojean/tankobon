@@ -164,8 +164,8 @@ function handleCurrency(newCurrency: string) {
 </script>
 
 <template>
-  <div class="w-full">
-    <fieldset
+  <fieldset class="w-full min-w-0 disabled:opacity-60 motion-safe:transition">
+    <div
       class="min-w-0 block border bg-white dark:bg-gray-950 shadow-sm rounded-md border-gray-300 dark:border-gray-700"
     >
       <label
@@ -181,13 +181,13 @@ function handleCurrency(newCurrency: string) {
           class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
             invalidAmount
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
-              : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
+              : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
           ]"
           type="text"
           inputmode="decimal"
           :required="required"
           :value="modelValue.amount"
-          :placeholder="placeholderCurrency"
+          :placeholder="placeholderAmount"
           @input="handleInput({ event: $event, type: 'amount' })"
           @focus="handleFocus({ event: $event, type: 'amount' })"
           @blur="handleBlur({ event: $event, type: 'amount' })"
@@ -203,12 +203,12 @@ function handleCurrency(newCurrency: string) {
             class="w-12 shrink-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 motion-safe:transition tabular-nums [font-feature-settings:'cv08']" :class="[
               invalidCurrency
                 ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
-                : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
+                : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
             ]"
             type="text"
             inputmode="decimal"
             :required="required"
-            :placeholder="placeholderAmount"
+            :placeholder="placeholderCurrency"
             @focus="handleFocus({ event: $event, type: 'currency' })"
             @blur="handleBlur({ event: $event, type: 'currency' })"
             @change="query = $event.target.value"
@@ -252,7 +252,7 @@ function handleCurrency(newCurrency: string) {
           </MenuTransition>
         </Combobox>
       </div>
-    </fieldset>
+    </div>
 
     <slot name="footer" />
 
@@ -262,5 +262,5 @@ function handleCurrency(newCurrency: string) {
     >
       {{ errorMessage }}
     </p>
-  </div>
+  </fieldset>
 </template>

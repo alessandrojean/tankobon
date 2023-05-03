@@ -40,28 +40,13 @@ function togglePreview() {
     markdownContent.value = renderMarkdown(modelValue.value)
 }
 
-const mdBold = ref<HTMLElement>()
-const mdItalic = ref<HTMLElement>()
-const mdStrikethrough = ref<HTMLElement>()
-const mdUnorderedList = ref<HTMLElement>()
-const mdLink = ref<HTMLElement>()
+const mdBoldRef = ref<HTMLElement>()
+const mdItalicRef = ref<HTMLElement>()
+const mdStrikethroughRef = ref<HTMLElement>()
+const mdUnorderedListRef = ref<HTMLElement>()
+const mdLinkRef = ref<HTMLElement>()
 
 const characterCount = computed(() => modelValue.value.length)
-/**
- * We create a wrapper around the custom element as Vue's
- * TypeScript with Volar doesn't seem to work well with it
- * and doesn't provide a way to extend the <template> types.
- */
-// const MarkdownToolbar = defineComponent({
-//   props: { for: String },
-//   template: '<markdown-toolbar :for="$props.for"><slot/></markdown-toolbar>'
-// })
-
-// const MdBold = defineComponent({ template: '<md-bold />' })
-// const MdItalic = defineComponent({ template: '<md-italic />' })
-// const MdLink = defineComponent({ template: '<md-link />' })
-// const MdStrikethrough = defineComponent({ template: '<md-strikethrough />' })
-// const MdUnorderedList = defineComponent({ template: '<md-unordered-list />' })
 </script>
 
 <script lang="ts">
@@ -69,10 +54,10 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
 </script>
 
 <template>
-  <div
-    class="border bg-white dark:bg-gray-950 shadow-sm rounded-md overflow-hidden border-gray-300 dark:border-gray-700"
+  <fieldset
+    class="border bg-white dark:bg-gray-950 shadow-sm rounded-md overflow-hidden border-gray-300 dark:border-gray-700 disabled:opacity-60 motion-safe:transition"
   >
-    <fieldset
+    <div
       class="flex flex-col group"
       :aria-disabled="attributes.disabled"
       :aria-describedby="`${attributes.id}-description`"
@@ -123,7 +108,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             size="mini"
             class="w-8 h-8"
             :title="$t('markdown-input.bold')"
-            @click="mdBold?.click()"
+            @click="mdBoldRef?.click()"
           >
             <span class="sr-only">{{ $t('markdown-input.bold') }}</span>
             <span
@@ -138,7 +123,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             size="small"
             class="w-8 h-8"
             :title="$t('markdown-input.italic')"
-            @click="mdItalic?.click()"
+            @click="mdItalicRef?.click()"
           >
             <span class="sr-only">{{ $t('markdown-input.italic') }}</span>
             <span
@@ -153,7 +138,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             size="small"
             class="w-8 h-8"
             :title="$t('markdown-input.striketrough')"
-            @click="mdStrikethrough?.click()"
+            @click="mdStrikethroughRef?.click()"
           >
             <span class="sr-only">{{ $t('markdown-input.striketrough') }}</span>
             <span
@@ -168,7 +153,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             size="small"
             class="w-8 h-8"
             :title="$t('markdown-input.unordered-list')"
-            @click="mdUnorderedList?.click()"
+            @click="mdUnorderedListRef?.click()"
           >
             <span class="sr-only">{{ $t('markdown-input.unordered-list') }}</span>
             <ListBulletIcon class="w-5 h-5" />
@@ -178,7 +163,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             size="small"
             class="w-8 h-8"
             :title="$t('markdown-input.link')"
-            @click="mdLink?.click()"
+            @click="mdLinkRef?.click()"
           >
             <span class="sr-only">{{ $t('markdown-input.link') }}</span>
             <LinkIcon class="w-5 h-5" />
@@ -193,8 +178,8 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             class="bg-white dark:bg-gray-950 min-h-[9rem] border-0 rounded-md focus:outline-none placeholder:text-gray-500 w-full font-mono text-sm/6 motion-safe:transition"
             :class="[
               invalid
-                ? 'ring-1 ring-red-500 dark:ring-red-500/95'
-                : 'group-hover:ring-1 group-hover:ring-gray-300 dark:group-hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
+                ? 'ring-1 !ring-red-500 dark:!ring-red-500/95'
+                : 'enabled:group-hover:ring-1 enabled:group-hover:ring-gray-300 enabled:dark:group-hover:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
             ]"
             :value="modelValue"
             :placeholder="placeholder"
@@ -238,7 +223,7 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
           />
         </div>
       </div>
-    </fieldset>
+    </div>
 
     <p
       v-if="invalid && errorMessage"
@@ -248,11 +233,11 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
     </p>
 
     <markdown-toolbar :for="String($attrs.id)" class="hidden">
-      <md-bold ref="mdBold" />
-      <md-italic ref="mdItalic" />
-      <md-link ref="mdLink" />
-      <md-strikethrough ref="mdStrikethrough" />
-      <md-unordered-list ref="mdUnorderedList" />
+      <md-bold ref="mdBoldRef" />
+      <md-italic ref="mdItalicRef" />
+      <md-link ref="mdLinkRef" />
+      <md-strikethrough ref="mdStrikethroughRef" />
+      <md-unordered-list ref="mdUnorderedListRef" />
     </markdown-toolbar>
-  </div>
+  </fieldset>
 </template>

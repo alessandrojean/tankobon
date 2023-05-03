@@ -71,10 +71,12 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+  <fieldset class="space-y-6">
+    <fieldset class="grid grid-cols-1 lg:grid-cols-4 gap-2">
       <MonetaryAmountInput
         id="label-price"
+        :placeholder-amount="$t('common-placeholders.book-label-price-amount')"
+        :placeholder-currency="$t('common-placeholders.book-label-price-currency')"
         :model-value="labelPrice"
         :label-text="$t('common-fields.label-price')"
         :invalid-amount="v$.labelPrice.amount.$error"
@@ -88,6 +90,8 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
 
       <MonetaryAmountInput
         id="paid-price"
+        :placeholder-amount="$t('common-placeholders.book-paid-price-amount')"
+        :placeholder-currency="$t('common-placeholders.book-paid-price-currency')"
         :model-value="paidPrice"
         :label-text="$t('common-fields.paid-price')"
         :invalid-amount="v$.paidPrice.amount.$error"
@@ -98,9 +102,9 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
         @blur:currency="v$.paidPrice.currency.$touch()"
         @update:model-value="$emit('update:paidPrice', $event)"
       />
-    </div>
+    </fieldset>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+    <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
         id="bought-at"
         :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
@@ -124,7 +128,7 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
         :label-text="$t('common-fields.arrived-at')"
         @input="handleDateTimeInput($event, 'arrivedAt')"
       />
-    </div>
+    </fieldset>
 
     <MarkdownInput
       id="notes"
@@ -134,5 +138,5 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
       :placeholder="$t('common-placeholders.book-notes')"
       @input="$emit('update:notes', $event.target.value)"
     />
-  </div>
+  </fieldset>
 </template>

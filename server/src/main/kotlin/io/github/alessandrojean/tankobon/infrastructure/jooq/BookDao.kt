@@ -134,6 +134,7 @@ class BookDao(
       .set(TableBook.ARRIVED_AT, book.arrivedAt)
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
+      .set(TableBook.SUBTITLE, book.subtitle)
       .execute()
   }
 
@@ -162,7 +163,8 @@ class BookDao(
       .set(TableBook.ARRIVED_AT, book.arrivedAt)
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
-      .set(TableBook.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
+      .set(TableBook.SUBTITLE, book.subtitle)
+      .set(TableBook.MODIFIED_AT, LocalDateTime.now(ZoneId.of("UTC")))
       .where(TableBook.ID.eq(book.id))
       .execute()
   }

@@ -23,16 +23,21 @@ const props = withDefaults(defineProps<BookCoverProps>(), {
 const { book, loading } = toRefs(props)
 const coverArt = computed(() => getRelationship(book.value, 'COVER_ART'))
 
-const coverUrl = computed(() => {
+function getBookCoverUrl(version: string) {
   if (!book.value)
     return ''
 
   return getFullImageUrl({
     collection: 'covers',
-    fileName: coverArt.value?.attributes?.versions?.['256'],
+    fileName: version === 'original'
+      ? coverArt.value?.attributes?.fileName
+      : coverArt.value?.attributes?.versions?.[version],
     timeHex: coverArt.value?.attributes?.timeHex,
   }) ?? ''
-})
+}
+
+const coverUrl = computed(() => getBookCoverUrl('256'))
+const coverOriginalUrl = computed(() => getBookCoverUrl('original'))
 
 const { imageHasError, imageLoading, loadImage }
   = useImageLoader(coverUrl)
@@ -143,7 +148,7 @@ whenever(coverArt, async (coverArt) => {
 
     <BookCoverDialog
       v-if="showBookCover && showBookInfo"
-      :cover-url="coverUrl"
+      :cover-url="coverOriginalUrl"
       :open="dialogOpen"
       @close="closeDialog"
     />

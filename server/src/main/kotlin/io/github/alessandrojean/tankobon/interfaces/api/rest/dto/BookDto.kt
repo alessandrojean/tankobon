@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Book
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.parser.CodeType
 import io.github.alessandrojean.tankobon.infrastructure.parser.guessCodeType
 import io.github.alessandrojean.tankobon.infrastructure.parser.toIsbnInformation
@@ -93,11 +94,11 @@ fun Book.toAttributesDto() = BookAttributesDto(
   pageCount = pageCount,
   synopsis = synopsis,
   notes = notes,
-  boughtAt = boughtAt,
-  billedAt = billedAt,
-  arrivedAt = arrivedAt,
-  createdAt = createdAt,
-  modifiedAt = modifiedAt,
+  boughtAt = boughtAt?.toUtcTimeZone(),
+  billedAt = billedAt?.toUtcTimeZone(),
+  arrivedAt = arrivedAt?.toUtcTimeZone(),
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 data class BookCreationDto(

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 withDefaults(defineProps<BadgeProps>(), {
   color: undefined,
+  rounded: false,
 })
 
 const badge = cva(
   [
-    'px-2.5 py-0.5 inline-flex text-xs leading-5',
-    'font-medium rounded dark:border font-sans-safe',
+    'px-2 py-0.5 inline-flex items-center gap-1 text-xs leading-5',
+    'font-medium dark:border font-sans-safe',
   ],
   {
     variants: {
@@ -28,9 +29,14 @@ const badge = cva(
           'text-blue-700 dark:text-blue-300 dark:border-blue-400/40',
         ],
       },
+      rounded: {
+        true: 'rounded-full',
+        false: 'rounded',
+      },
     },
     defaultVariants: {
       color: 'gray',
+      rounded: false,
     },
   },
 )
@@ -39,11 +45,12 @@ type BadgeCvaProps = Required<VariantProps<typeof badge>>
 
 interface BadgeProps {
   color?: BadgeCvaProps['color']
+  rounded?: boolean
 }
 </script>
 
 <template>
-  <span :class="badge({ color })">
+  <span :class="badge({ color, rounded })">
     <slot />
   </span>
 </template>

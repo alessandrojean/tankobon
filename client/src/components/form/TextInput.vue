@@ -51,11 +51,12 @@ export default { inheritAttrs: false }
 </script>
 
 <template>
-  <div>
+  <fieldset class="motion-safe:transition disabled:opacity-60">
     <div class="relative">
       <input
         ref="input"
-        class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500" :class="[
+        class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500"
+        :class="[
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid
             ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
@@ -108,5 +109,5 @@ export default { inheritAttrs: false }
     >
       {{ errorMessage }}
     </p>
-  </div>
+  </fieldset>
 </template>

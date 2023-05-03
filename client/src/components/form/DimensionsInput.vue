@@ -123,8 +123,8 @@ function handleFocus({ event, type }: EventHandler) {
 </script>
 
 <template>
-  <div class="w-full">
-    <fieldset
+  <fieldset class="min-w-0 w-full disabled:opacity-60 motion-safe:transition">
+    <div
       class="min-w-0 block border bg-white dark:bg-gray-950 shadow-sm rounded-md overflow-hidden border-gray-300 dark:border-gray-700"
     >
       <label
@@ -186,7 +186,7 @@ function handleFocus({ event, type }: EventHandler) {
           cm
         </span>
       </div>
-    </fieldset>
+    </div>
 
     <slot name="footer" />
 
@@ -196,5 +196,5 @@ function handleFocus({ event, type }: EventHandler) {
     >
       {{ errorMessage }}
     </p>
-  </div>
+  </fieldset>
 </template>

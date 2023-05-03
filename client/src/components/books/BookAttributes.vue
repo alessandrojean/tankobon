@@ -16,7 +16,6 @@ export interface BookAttributesProps {
 const props = withDefaults(defineProps<BookAttributesProps>(), {
   book: undefined,
   loading: false,
-  timeZone: undefined,
 })
 
 defineEmits<{
@@ -38,13 +37,11 @@ function formatPrice(price: MonetaryAmount | null | undefined) {
   return n(amount, 'currency', { currency })
 }
 
-function formatDate(date: string | null | undefined, format = 'short') {
+function formatDate(date: string | null | undefined, format = 'dateTime') {
   if (typeof date === 'string' && date.length > 0) {
     return d(
       new Date(date),
       format,
-      // @ts-expect-error wrong type from lib
-      { timeZone: timeZone.value.name },
     )
   }
 
@@ -149,6 +146,16 @@ const metadata = computed(() => {
       value: attributes?.boughtAt,
       time: true,
     },
+    {
+      title: t('common-fields.billed-at'),
+      value: attributes?.billedAt,
+      time: true,
+    },
+    {
+      title: t('common-fields.arrived-at'),
+      value: attributes?.arrivedAt,
+      time: true,
+    },
     // {
     //   title: t('book.properties.readAt'),
     //   value: book.value?.readAt,
@@ -207,12 +214,12 @@ const metadata = computed(() => {
 
             <Badge
               v-if="mt.badge && !mt.samePrice"
+              class="ml-2"
+              rounded
               :color="mt.badge <= 1 ? 'green' : 'red'"
             >
-              <span aria-hidden="true">
-                <ArrowTrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
-                <ArrowTrendingUpIcon v-else class="w-4 h-4" />
-              </span>
+              <ArrowTrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
+              <ArrowTrendingUpIcon v-else class="w-4 h-4" />
               <span>{{ n(mt.badge, 'percent') }}</span>
             </Badge>
           </dd>

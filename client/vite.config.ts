@@ -25,7 +25,7 @@ export default defineConfig({
     Vue({
       template: {
         compilerOptions: {
-          isCustomElement: tag => tag.includes('-'),
+          isCustomElement: tag => tag !== 'i18n-t' && tag.includes('-'),
         },
       },
     }),

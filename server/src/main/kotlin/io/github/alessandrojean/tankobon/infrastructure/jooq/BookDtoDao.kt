@@ -236,7 +236,7 @@ class BookDtoDao(
       throw UserDoesNotHaveAccessException("The user does not have access to the library")
     }
 
-    val bookDomain = book.toDomain()
+    val bookDomain = book.toDomain().copy(id = bookId)
 
     bookDao.update(bookDomain)
     insertBookPublishers(bookId, relations.filterIsInstance<Publisher>())
@@ -247,6 +247,7 @@ class BookDtoDao(
   private fun insertBookPublishers(bookId: String, publishers: List<Publisher>) {
     dsl.deleteFrom(TableBookPublisher)
       .where(TableBookPublisher.BOOK_ID.eq(bookId))
+      .execute()
 
     dsl.insertInto(TableBookPublisher)
       .columns(TableBookPublisher.BOOK_ID, TableBookPublisher.PUBLISHER_ID)
@@ -257,6 +258,7 @@ class BookDtoDao(
   private fun insertBookTags(bookId: String, tags: List<Tag>) {
     dsl.deleteFrom(TableBookTag)
       .where(TableBookTag.BOOK_ID.eq(bookId))
+      .execute()
 
     dsl.insertInto(TableBookTag)
       .columns(TableBookTag.BOOK_ID, TableBookTag.TAG_ID)

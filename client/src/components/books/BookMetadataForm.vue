@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { code, title, pageCount, dimensions } = toRefs(props)
+const { code, title, number, pageCount, dimensions } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -46,6 +46,7 @@ const rules = computed(() => {
   return {
     code: { messageRequired },
     title: { messageRequired },
+    number: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
     dimensions: {
       widthCm: { messageDecimal },
@@ -54,7 +55,7 @@ const rules = computed(() => {
   }
 })
 
-const v$ = useVuelidate(rules, { code, title, pageCount, dimensions })
+const v$ = useVuelidate(rules, { code, title, number, pageCount, dimensions })
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
@@ -62,8 +63,8 @@ defineExpose({ v$ })
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="space-y-2">
+  <fieldset class="space-y-6">
+    <fieldset class="space-y-2">
       <TextInput
         id="title"
         :model-value="title ?? ''"
@@ -92,12 +93,15 @@ defineExpose({ v$ })
           inputmode="decimal"
           :label-text="$t('common-fields.number')"
           :placeholder="$t('common-placeholders.book-number')"
+          :invalid="v$.number.$error"
+          :errors="v$.number.$errors"
+          @blur="v$.number.$touch()"
           @input="$emit('update:number', $event.target.value)"
         />
       </div>
-    </div>
+    </fieldset>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+    <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
         id="code"
         :model-value="code ?? ''"
@@ -119,7 +123,7 @@ defineExpose({ v$ })
         :placeholder="$t('common-placeholders.book-barcode')"
         @input="$emit('update:barcode', $event.target.value)"
       />
-    </div>
+    </fieldset>
 
     <MarkdownInput
       id="synopsis"
@@ -130,7 +134,7 @@ defineExpose({ v$ })
       @input="$emit('update:synopsis', $event.target.value)"
     />
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+    <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <TextInput
         id="page-count"
         :model-value="pageCount ?? ''"
@@ -163,6 +167,6 @@ defineExpose({ v$ })
         @blur:height="v$.dimensions.heightCm.$touch()"
         @update:model-value="$emit('update:dimensions', $event)"
       />
-    </div>
-  </div>
+    </fieldset>
+  </fieldset>
 </template>
