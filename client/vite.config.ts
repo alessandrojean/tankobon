@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
+import childProcess from 'node:child_process'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
@@ -12,12 +13,23 @@ import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const commitHash = childProcess
+  .execSync('git rev-parse HEAD')
+  .toString()
+  .trim()
+
 export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
       '~~': resolve(__dirname, '.'),
     },
+  },
+
+  define: {
+    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+    'import.meta.env.GIT_SHORT_HASH': JSON.stringify(commitHash.slice(0, 7)),
+    'import.meta.env.GIT_HASH': JSON.stringify(commitHash),
   },
 
   plugins: [

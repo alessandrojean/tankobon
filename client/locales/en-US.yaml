@@ -468,3 +468,8 @@ markdown-input:
 
 monetary-amount-input:
   unknown-currency: Unknown
+
+aside-menu:
+  release-link: Release on GitHub
+  commit-link: Commit on GitHub
+  mit-licensed: MIT licensed

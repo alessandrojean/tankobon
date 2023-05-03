@@ -17,6 +17,7 @@ import {
   TagIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
 
 export interface Item {
   key: string
@@ -179,11 +180,20 @@ const collapsed = useLocalStorage('aside-collapsed', false)
 const allowedItems = computed(() => {
   return items.value.filter(item => item.isAdminOnly ? isAdmin.value : true)
 })
+
+const appVersion = import.meta.env.APP_VERSION
+const gitShortHash = import.meta.env.GIT_SHORT_HASH
+const isDev = import.meta.env.DEV
+
+const versionString = isDev ? gitShortHash : `v${appVersion}`
+const commitLink = `https://github.com/alessandrojean/tankobon/commit/${gitShortHash}`
+const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${appVersion}`
 </script>
 
 <template>
   <aside
-    class="box-content bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow motion-safe:transition-all" :class="[
+    class="box-content bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow motion-safe:transition-all"
+    :class="[
       collapsed ? 'w-16' : 'w-72',
     ]"
   >
@@ -252,6 +262,30 @@ const allowedItems = computed(() => {
       <div v-if="$slots.footer" class="shrink-0">
         <slot name="footer" :collapsed="collapsed" :collapsible="collapsible" />
       </div>
+
+      <FadeTransition>
+        <div
+          v-if="!collapsed"
+          class="p-5 text-xs flex flex-col gap-1 w-72 text-gray-700 dark:text-gray-400"
+        >
+          <a
+            :href="isDev ? commitLink : releaseLink"
+            target="_blank"
+            :class="[
+              'flex items-center gap-1.5 w-fit rounded',
+              'focus:outline-none focus-visible:ring-2',
+              'motion-safe:transition',
+              'hocus:text-primary-600 dark:hocus:text-primary-500 hocus:underline',
+              'focus-visible:ring-black dark:focus-visible:ring-white/90',
+            ]"
+            :title="isDev ? $t('aside-menu.commit-link') : $t('aside-menu.release-link')"
+          >
+            <span>{{ versionString }}</span>
+            <ArrowTopRightOnSquareIcon class="w-3 h-3" />
+          </a>
+          <p>&copy; 2023 Alessandro Jean</p>
+        </div>
+      </FadeTransition>
     </div>
   </aside>
 </template>
