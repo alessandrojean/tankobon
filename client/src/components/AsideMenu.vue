@@ -200,7 +200,8 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
     <div class="flex flex-col min-h-0 h-full">
       <div class="flex-1 overflow-y-auto overflow-x-hidden fancy-scrollbar">
         <div
-          class="px-3.5 flex justify-between items-center h-16 w-[18rem] box-border motion-safe:transition-transform origin-right" :class="[
+          class="px-3.5 flex justify-between items-center h-16 w-[18rem] box-border motion-safe:transition-transform origin-right"
+          :class="[
             collapsed ? '-translate-x-[13.85rem]' : '',
           ]"
         >
@@ -263,29 +264,27 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
         <slot name="footer" :collapsed="collapsed" :collapsible="collapsible" />
       </div>
 
-      <FadeTransition>
-        <div
-          v-if="!collapsed"
-          class="p-5 text-xs flex flex-col gap-1 w-72 text-gray-700 dark:text-gray-400"
+      <div
+        class="p-3.5 text-xs flex flex-col gap-1 w-44 box-border text-gray-700 dark:text-gray-400 motion-safe:transition-transform origin-right"
+        :class="[collapsed ? '-translate-x-44' : '']"
+      >
+        <a
+          :href="isDev ? commitLink : releaseLink"
+          target="_blank"
+          :class="[
+            'flex items-center gap-1.5 w-fit rounded',
+            'focus:outline-none focus-visible:ring-2',
+            'motion-safe:transition',
+            'hocus:text-primary-600 dark:hocus:text-primary-500 hocus:underline',
+            'focus-visible:ring-black dark:focus-visible:ring-white/90',
+          ]"
+          :title="isDev ? $t('aside-menu.commit-link') : $t('aside-menu.release-link')"
         >
-          <a
-            :href="isDev ? commitLink : releaseLink"
-            target="_blank"
-            :class="[
-              'flex items-center gap-1.5 w-fit rounded',
-              'focus:outline-none focus-visible:ring-2',
-              'motion-safe:transition',
-              'hocus:text-primary-600 dark:hocus:text-primary-500 hocus:underline',
-              'focus-visible:ring-black dark:focus-visible:ring-white/90',
-            ]"
-            :title="isDev ? $t('aside-menu.commit-link') : $t('aside-menu.release-link')"
-          >
-            <span>{{ versionString }}</span>
-            <ArrowTopRightOnSquareIcon class="w-3 h-3" />
-          </a>
-          <p>&copy; 2023 Alessandro Jean</p>
-        </div>
-      </FadeTransition>
+          <span>{{ versionString }}</span>
+          <ArrowTopRightOnSquareIcon class="w-3 h-3" />
+        </a>
+        <p>&copy; 2023 Alessandro Jean</p>
+      </div>
     </div>
   </aside>
 </template>
