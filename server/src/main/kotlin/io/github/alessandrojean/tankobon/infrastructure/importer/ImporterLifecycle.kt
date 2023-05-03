@@ -99,6 +99,7 @@ class ImporterLifecycle(
         barcode = import.isbn,
         title = import.title,
         subtitle = import.subtitle,
+        number = import.number,
         labelPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         paidPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         dimensions = DimensionsDto(
@@ -106,7 +107,6 @@ class ImporterLifecycle(
           heightCm = import.dimensions?.heightCm ?: 0f,
         ),
         isInLibrary = true,
-        number = "",
         pageCount = import.pageCount,
         synopsis = import.synopsis,
         notes = "",
