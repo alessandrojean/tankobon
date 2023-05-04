@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { BuildingOffice2Icon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { PhotoIcon } from '@heroicons/vue/20/solid'
 import type { PublisherUpdate } from '@/types/tankobon-publisher'
+import { getFullImageUrl } from '@/modules/api'
+import { getRelationship } from '@/utils/api'
+import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -9,10 +13,12 @@ const notificator = useToaster()
 
 const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
 const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
+const { mutate: uploadPicture, isLoading: isUploading } = useUploadPublisherPictureMutation()
+const { mutate: deletePicture, isLoading: isDeletingPicture } = useDeletePublisherPictureMutation()
 
 const { data: publisher, isLoading } = usePublisherQuery({
   publisherId: publisherId as Ref<string>,
-  includes: ['library'],
+  includes: ['library', 'publisher_picture'],
   enabled: computed(() => !!publisherId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
@@ -21,6 +27,8 @@ const { data: publisher, isLoading } = usePublisherQuery({
     })
   },
 })
+
+const picture = computed(() => getRelationship(publisher.value, 'PUBLISHER_PICTURE'))
 
 function handleDelete() {
   deletePublisher(publisherId.value!, {
@@ -52,6 +60,37 @@ function handleEditPublisher(publisher: PublisherUpdate) {
     },
   })
 }
+
+const showImageDialog = ref(false)
+
+function handleImage(image: ImageResult) {
+  if (image.file) {
+    uploadPicture({ publisherId: publisherId.value!, picture: image.file }, {
+      onSuccess: async () => {
+        await notificator.success({ title: t('picture-upload.uploaded-with-success') })
+      },
+      onError: async (error) => {
+        await notificator.failure({
+          title: t('picture-upload.uploaded-with-failure'),
+          body: error.message,
+        })
+      },
+    })
+  }
+  else if (image.removeExisting) {
+    deletePicture(publisherId.value!, {
+      onSuccess: async () => {
+        await notificator.success({ title: t('picture-upload.removed-with-success') })
+      },
+      onError: async (error) => {
+        await notificator.failure({
+          title: t('picture-upload.uploaded-with-failure'),
+          body: error.message,
+        })
+      },
+    })
+  }
+}
 </script>
 
 <template>
@@ -61,12 +100,37 @@ function handleEditPublisher(publisher: PublisherUpdate) {
       :loading="isLoading"
       class="mb-3 md:mb-0"
     >
+      <template #avatar>
+        <Avatar
+          square
+          :empty-icon="BuildingOffice2Icon"
+          :loading="isLoading"
+          :picture-url="
+            getFullImageUrl({
+              collection: 'publishers',
+              fileName: picture?.attributes?.versions['128'],
+              timeHex: picture?.attributes?.timeHex,
+            })
+          "
+        />
+      </template>
       <template #actions>
         <Toolbar class="flex space-x-2">
           <Button
             class="w-11 h-11"
+            :loading="isUploading || isDeletingPicture"
+            :disabled="isDeleting || isEditing"
+            :title="$t('common-actions.edit-picture')"
+            @click="showImageDialog = true"
+          >
+            <span class="sr-only">{{ $t('common-actions.edit-picture') }}</span>
+            <PhotoIcon class="w-6 h-6" />
+          </Button>
+
+          <Button
+            class="w-11 h-11"
             :loading="isEditing"
-            :disabled="isDeleting"
+            :disabled="isDeleting || isUploading || isDeletingPicture"
             :title="$t('common-actions.edit')"
             @click="showEditDialog = true"
           >
@@ -77,7 +141,7 @@ function handleEditPublisher(publisher: PublisherUpdate) {
           <Button
             class="w-11 h-11"
             kind="danger"
-            :disabled="isEditing"
+            :disabled="isEditing || isUploading || isDeletingPicture"
             :loading="isDeleting"
             :title="$t('common-actions.delete')"
             @click="handleDelete"
@@ -103,6 +167,30 @@ function handleEditPublisher(publisher: PublisherUpdate) {
       @submit="handleEditPublisher"
       @close="showEditDialog = false"
     />
+
+    <EntityImageDialog
+      v-if="publisher"
+      :title="$t('picture-upload.header')"
+      :description="$t('picture-upload.description')"
+      :is-open="showImageDialog"
+      :current-image-url="
+        getFullImageUrl({
+          collection: 'publishers',
+          fileName: picture?.attributes?.versions['128'],
+          timeHex: picture?.attributes?.timeHex,
+        })
+      "
+      @submit="handleImage"
+      @close="showImageDialog = false"
+    >
+      <template #preview="{ pictureUrl }">
+        <Avatar
+          square
+          :picture-url="pictureUrl"
+          :empty-icon="BuildingOffice2Icon"
+        />
+      </template>
+    </EntityImageDialog>
   </div>
 </template>
 

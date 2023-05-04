@@ -9,16 +9,18 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.service.PublisherLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
+import io.github.alessandrojean.tankobon.infrastructure.image.PublisherPictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @Validated
 @RestController
@@ -52,6 +55,7 @@ class PublisherController(
   private val publisherRepository: PublisherRepository,
   private val publisherLifecycle: PublisherLifecycle,
   private val referenceExpansion: ReferenceExpansion,
+  private val publisherPictureLifecycle: PublisherPictureLifecycle,
 ) {
 
   @GetMapping("v1/publishers")
@@ -75,7 +79,7 @@ class PublisherController(
     )
 
     val publishers = referenceExpansion.expand(
-      entities = publishersPage.content.map { it.toDto() },
+      entities = publishersPage.content.map { it.toDto().withPictureIfExists() },
       relationsToExpand = includes,
     )
 
@@ -88,6 +92,7 @@ class PublisherController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PublisherEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -97,7 +102,7 @@ class PublisherController(
       throw UserDoesNotHaveAccessException()
     }
 
-    val publishers = publisherRepository.findAll(
+    val publishersPage = publisherRepository.findAll(
       search = PublisherSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
@@ -106,7 +111,12 @@ class PublisherController(
       pageable = page,
     )
 
-    return publishers.toSuccessCollectionResponseDto { it.toDto() }
+    val publishers = referenceExpansion.expand(
+      entities = publishersPage.content.map { it.toDto().withPictureIfExists() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(publishers, publishersPage.toPaginationDto())
   }
 
   @GetMapping("v1/publishers/{publisherId}")
@@ -126,7 +136,7 @@ class PublisherController(
     }
 
     val expanded = referenceExpansion.expand(
-      entity = publisher.toDto(),
+      entity = publisher.toDto().withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -158,6 +168,25 @@ class PublisherController(
     return SuccessEntityResponseDto(created.toDto())
   }
 
+  @PostMapping("v1/publishers/{publisherId}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Upload a picture to a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun uploadPersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
+    @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
+  ) {
+    val libraryId = publisherRepository.getLibraryIdOrNull(publisherId)
+      ?: throw IdDoesNotExistException("Person not found")
+    val library = libraryRepository.findById(libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    publisherPictureLifecycle.createImage(publisherId, pictureFile.bytes)
+  }
+
   @DeleteMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
@@ -176,6 +205,26 @@ class PublisherController(
 
     publisherLifecycle.deletePublisher(existing)
   }
+
+  @DeleteMapping("v1/publishers/{publisherId}/picture")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Delete a publisher picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun deletePersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String
+  ) {
+    val existing = publisherRepository.findByIdOrNull(publisherId)
+      ?: throw IdDoesNotExistException("Publisher not found")
+
+    val library = libraryRepository.findById(publisherRepository.getLibraryIdOrNull(existing.id)!!)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    publisherPictureLifecycle.deleteImage(publisherId)
+  }
+
 
   @PutMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -201,5 +250,15 @@ class PublisherController(
     )
 
     publisherLifecycle.updatePublisher(toUpdate)
+  }
+
+  private fun PublisherEntityDto.withPictureIfExists(): PublisherEntityDto {
+    if (!publisherPictureLifecycle.hasImage(id)) {
+      return this
+    }
+
+    return copy(
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.PUBLISHER_PICTURE))
+    )
   }
 }

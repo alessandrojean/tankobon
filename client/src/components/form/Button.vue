@@ -139,8 +139,9 @@ interface ButtonProps {
     :disabled="disabled || loading"
   >
     <div
-      class="flex items-center justify-center [&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2 transition-colors" :class="[
-        { 'text-transparent': loading },
+      class="flex items-center justify-center [&>svg:first-child]:-ml-1 [&>svg:first-child]:mr-2 transition-colors"
+      :class="[
+        { 'text-transparent [&_svg]:!text-transparent': loading },
       ]"
     >
       <slot />
@@ -152,7 +153,8 @@ interface ButtonProps {
         aria-hidden="true"
       >
         <LoadingSpinIcon
-          class="animate-spin" :class="[
+          class="animate-spin"
+          :class="[
             size === 'large' ? 'w-7 h-7' : 'w-6 h-6',
           ]"
         />

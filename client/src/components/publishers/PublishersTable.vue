@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import type { ColumnSort, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { BuildingOffice2Icon, EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import Avatar from '../Avatar.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { PublisherEntity, PublisherSort } from '@/types/tankobon-publisher'
 import type { Sort } from '@/types/tankobon-api'
+import { getRelationship } from '@/utils/api'
+import { getFullImageUrl } from '@/modules/api'
 
 export interface PublishersTableProps {
   libraryId: string
@@ -27,6 +30,7 @@ const rowSelection = ref<Record<string, boolean>>({})
 const { data: publishers, isLoading } = useLibraryPublishersQuery({
   libraryId,
   search,
+  includes: ['publisher_picture'],
   page: computed(() => pagination.value.pageIndex),
   size: computed(() => pagination.value.pageSize),
   sort: computed<Sort<PublisherSort>[]>(() => {
@@ -68,11 +72,37 @@ const columns = [
       cellClass: 'align-middle',
     },
   }),
-  columnHelper.accessor('attributes.name', {
-    id: 'name',
-    header: () => t('common-fields.name'),
-    cell: info => info.getValue(),
-  }),
+  columnHelper.accessor(
+    publisher => ({
+      name: publisher.attributes.name,
+      picture: getRelationship(publisher, 'PUBLISHER_PICTURE'),
+    }),
+    {
+      id: 'name',
+      header: () => t('common-fields.name'),
+      cell: (info) => {
+        const { name, picture } = info.getValue()
+
+        return h('div', { class: 'flex items-center space-x-3' }, [
+          h(Avatar, {
+            square: true,
+            emptyIcon: BuildingOffice2Icon,
+            pictureUrl: getFullImageUrl({
+              collection: 'publishers',
+              fileName: picture?.attributes?.versions?.['64'],
+              timeHex: picture?.attributes?.timeHex,
+            }),
+            size: 'mini',
+          }),
+          h('span', { innerText: name }),
+        ])
+      },
+      meta: {
+        headerClass: 'pl-0',
+        cellClass: 'pl-0',
+      },
+    },
+  ),
   columnHelper.accessor('attributes.description', {
     id: 'description',
     enableSorting: false,

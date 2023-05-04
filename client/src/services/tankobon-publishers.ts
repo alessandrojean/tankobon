@@ -93,6 +93,25 @@ export async function getOnePublisher({ publisherId, includes }: GetOnePublisher
   }
 }
 
+export interface UploadPublisherPictureOptions {
+  publisherId: string
+  picture: File
+}
+
+export async function uploadPublisherPicture(options: UploadPublisherPictureOptions): Promise<void> {
+  try {
+    await api.postForm(`publishers/${options.publisherId}/picture`, {
+      picture: options.picture,
+    })
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+      throw new TankobonApiError(e.response.data)
+
+    throw e
+  }
+}
+
 export async function updateOnePublisher(publisher: PublisherUpdate): Promise<void> {
   try {
     await api.put(`publishers/${publisher.id}`, publisher)
@@ -108,6 +127,18 @@ export async function updateOnePublisher(publisher: PublisherUpdate): Promise<vo
 export async function deleteOnePublisher(publisherId: string): Promise<void> {
   try {
     await api.delete(`publishers/${publisherId}`)
+  }
+  catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+      throw new TankobonApiError(e.response.data)
+
+    throw e
+  }
+}
+
+export async function deletePublisherPicture(publisherId: string): Promise<void> {
+  try {
+    await api.delete(`publishers/${publisherId}/picture`)
   }
   catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data)

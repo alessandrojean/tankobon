@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import type { VariantProps } from 'cva'
+import type { Component } from 'vue'
 
 const props = withDefaults(defineProps<AvatarProps>(), {
   alt: undefined,
   dark: false,
+  emptyIcon: undefined,
   emptyStyle: 'icon',
   kind: 'primary',
   letter: undefined,
@@ -11,11 +13,12 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   loading: false,
   pictureUrl: undefined,
   size: 'normal',
+  square: false,
 })
 
 const avatar = cva(
   [
-    'rounded-full relative shrink-0 ring-1 ring-black/5',
+    'relative shrink-0 ring-1 ring-black/5 overflow-hidden',
     'motion-safe:transition-colors',
   ],
   {
@@ -33,6 +36,10 @@ const avatar = cva(
         small: ['w-10 h-10'],
         normal: ['w-12 h-12'],
       },
+      square: {
+        true: 'rounded-lg',
+        false: 'rounded-full',
+      },
     },
   },
 )
@@ -41,6 +48,7 @@ type AvatarCvaProps = VariantProps<typeof avatar>
 
 export interface AvatarProps {
   alt?: string
+  emptyIcon?: Component
   emptyStyle?: 'icon' | 'letter'
   kind?: AvatarCvaProps['kind']
   letter?: string
@@ -48,6 +56,7 @@ export interface AvatarProps {
   loading?: boolean
   pictureUrl?: string | null | undefined
   size?: AvatarCvaProps['size']
+  square?: boolean
 }
 
 const { alt, pictureUrl, letterId, loading } = toRefs(props)
@@ -89,22 +98,29 @@ const colorIsLight = computed(() => {
 </script>
 
 <template>
-  <div v-if="loading" :class="avatar({ size, class: 'skeleton' })" />
-  <div v-else :class="avatar({ kind, size })">
+  <div v-if="loading" :class="avatar({ size, square, class: 'skeleton' })" />
+  <div v-else :class="avatar({ kind, size, square })">
     <div
       v-if="isEmpty"
-      class="w-full h-full overflow-hidden rounded-full motion-safe:transition-colors" :class="[
-        { 'motion-safe:animate-pulse': imageLoading },
-      ]"
+      class="w-full h-full overflow-hidden motion-safe:transition-colors"
+      :class="{
+        'motion-safe:animate-pulse': imageLoading,
+        'p-2': emptyStyle === 'icon' && emptyIcon,
+      }"
     >
       <svg
-        v-if="emptyStyle === 'icon'"
+        v-if="emptyStyle === 'icon' && !emptyIcon"
         class="h-full w-full motion-safe:transition-colors"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
+      <component
+        :is="emptyIcon"
+        v-else-if="emptyStyle === 'icon'"
+        class="w-full h-full motion-safe:transition-colors"
+      />
       <div
         v-else
         class="w-full h-full flex items-center justify-center select-none font-semibold bg-[--letter-bg-color] dark:opacity-80"
@@ -124,7 +140,7 @@ const colorIsLight = computed(() => {
     </div>
     <img
       v-else
-      class="w-full h-full rounded-full object-contain"
+      class="w-full h-full object-contain"
       :alt="alt"
       :src="pictureUrl ?? undefined"
     >

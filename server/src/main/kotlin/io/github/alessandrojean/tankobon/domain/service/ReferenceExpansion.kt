@@ -12,6 +12,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.PublisherPictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityDto
@@ -37,6 +38,7 @@ class ReferenceExpansion(
   private val bookCoverLifecycle: BookCoverLifecycle,
   private val userAvatarLifecycle: UserAvatarLifecycle,
   private val personPictureLifecycle: PersonPictureLifecycle,
+  private val publisherPictureLifecycle: PublisherPictureLifecycle,
 ) {
 
   private val expansionMap: Map<RelationshipType, IdsToAttributesFn> = mapOf(
@@ -87,7 +89,10 @@ class ReferenceExpansion(
     },
     RelationshipType.PERSON_PICTURE to { ids ->
       ids.associateWith { personPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
-    }
+    },
+    RelationshipType.PUBLISHER_PICTURE to { ids ->
+      ids.associateWith { publisherPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
+    },
   )
 
   fun <T : EntityDto> expand(entity: T, relationsToExpand: Set<RelationshipType>): T {

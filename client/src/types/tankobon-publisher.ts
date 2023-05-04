@@ -22,4 +22,4 @@ export interface PublisherUpdate {
 }
 
 export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt'
-export type PublisherIncludes = 'library'
+export type PublisherIncludes = 'library' | 'publisher_picture'
