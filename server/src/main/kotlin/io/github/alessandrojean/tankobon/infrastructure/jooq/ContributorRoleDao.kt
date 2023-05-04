@@ -101,10 +101,15 @@ class ContributorRoleDao(
       .map { it.toDomain() }
 
     val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+    val pageRequest = if (pageable.isPaged) {
+      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+    } else {
+      PageRequest.of(0, maxOf(count, 20), pageSort)
+    }
 
     return PageImpl(
       contributorRoles,
-      PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort),
+      pageRequest,
       count.toLong(),
     )
   }
