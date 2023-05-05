@@ -55,13 +55,13 @@ useFocusZone({
       <li
         v-for="(contributor, idx) in contributors"
         :key="contributor.id"
-        class="group relative flex gap-4 items-center"
+        class="group relative flex gap-4 items-center w-full"
       >
         <Avatar
           size="small"
           kind="gray"
           empty-style="letter"
-          class="relative z-10"
+          class="relative z-10 shrink-0"
           :picture-url="
             getFullImageUrl({
               collection: 'people',
@@ -73,16 +73,16 @@ useFocusZone({
           :letter="contributor.attributes!.person.name.charAt(0)"
           :letter-id="contributor.id"
         />
-        <div class="text-sm">
+        <div class="text-sm grow min-w-0">
           <RouterLink
-            class="block font-medium dark:text-gray-200 focus:outline-none"
+            class="block font-medium dark:text-gray-200 focus:outline-none truncate"
             :to="{ name: 'people-id', params: { id: contributor.attributes.person.id } }"
             :title="$t('common-actions.go-to-page', [contributor.attributes.person.name])"
           >
             <span class="absolute -inset-2 z-20 rounded-xl" />
             <span class="relative z-10">{{ contributor.attributes.person.name }}</span>
           </RouterLink>
-          <span class="relative z-10 block text-gray-800 dark:text-gray-400">
+          <span class="relative z-10 block text-gray-800 dark:text-gray-400 truncate">
             {{ contributor.attributes.role.name }}
           </span>
         </div>
