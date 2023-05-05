@@ -29,7 +29,10 @@ export function useAnchoredPosition(options?: UseAnchoredPositionOptions) {
     }
   }
 
-  useResizeObserver([floatingElementRef, anchorElementRef], updatePosition)
+  useResizeObserver(
+    [floatingElementRef, anchorElementRef, document.documentElement],
+    updatePosition,
+  )
   watchEffect(updatePosition)
 
   return {
