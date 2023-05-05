@@ -24,11 +24,13 @@ const { markdown, blur, loading, title, emptyMessage, options } = toRefs(props)
 const { renderMarkdown } = useMarkdown(options.value)
 
 const markdownRendered = computed(() => {
-  if (loading.value)
+  if (loading.value) {
     return ''
+  }
 
-  if (markdown.value!.length === 0)
+  if (markdown.value!.length === 0) {
     return emptyMessage.value ? `<em>${emptyMessage.value}</em>` : ''
+  }
 
   return renderMarkdown(markdown.value!)
 })
@@ -44,8 +46,7 @@ async function handleReadMore() {
   if (loading.value) {
     collapsed.value = true
     showReadMore.value = false
-  }
-  else {
+  } else {
     showReadMore.value = (content.value?.$el?.offsetHeight ?? 0) > breakpoint
     collapsed.value = showReadMore.value
   }
@@ -55,8 +56,9 @@ watch([markdownRendered, loading], handleReadMore)
 onMounted(handleReadMore)
 
 function toggleCollapsed() {
-  if (showReadMore.value)
+  if (showReadMore.value) {
     collapsed.value = !collapsed.value
+  }
 }
 
 function handleContainerClick(event: MouseEvent) {
@@ -102,7 +104,8 @@ function handleContainerClick(event: MouseEvent) {
     <FadeTransition>
       <div
         v-if="showReadMore"
-        class="inset-x-0 bottom-0 flex justify-center items-end motion-safe:transition-colors" :class="[
+        class="inset-x-0 bottom-0 flex justify-center items-end motion-safe:transition-colors"
+        :class="[
           collapsed ? 'h-1/2 collapsed-gradient absolute p-2' : 'pt-2',
         ]"
       >

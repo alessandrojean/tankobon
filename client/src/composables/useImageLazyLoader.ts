@@ -18,10 +18,11 @@ export default function useImageLazyLoader(
   const image = new Image()
 
   image.onload = () => {
-    if (image.naturalWidth === 1 && image.naturalHeight === 1)
+    if (image.naturalWidth === 1 && image.naturalHeight === 1) {
       imageHasError.value = true
-    else
+    } else {
       imageHasError.value = false
+    }
 
     imageLoading.value = false
   }
@@ -34,16 +35,16 @@ export default function useImageLazyLoader(
   function loadImage() {
     if (imageUrl.value && imageUrl.value.length > 0) {
       image.src = imageUrl.value
-    }
-    else {
+    } else {
       imageLoading.value = false
       imageHasError.value = true
     }
   }
 
   function setupObserver() {
-    if (!elRef.value)
+    if (!elRef.value) {
       return
+    }
 
     observer.value = new IntersectionObserver((entries) => {
       const el = entries[0]
@@ -56,8 +57,9 @@ export default function useImageLazyLoader(
     const element: Element
       = '$el' in elRef.value ? elRef.value.$el : elRef.value
 
-    if (element.tagName)
+    if (element.tagName) {
       observer.value.observe(element)
+    }
   }
 
   function disconnectObserver() {
@@ -65,13 +67,15 @@ export default function useImageLazyLoader(
   }
 
   onUnmounted(() => {
-    if (observerCreated.value)
+    if (observerCreated.value) {
       disconnectObserver()
+    }
   })
 
   watch(intersected, (newValue) => {
-    if (newValue)
+    if (newValue) {
       loadImage()
+    }
   })
 
   return {

@@ -24,8 +24,7 @@ export const useUserStore = defineStore('user', {
     async signOut() {
       try {
         await signOut()
-      }
-      catch (_) {}
+      } catch (_) {}
 
       this.$patch({ me: null })
 
@@ -70,13 +69,13 @@ export const useUserStore = defineStore('user', {
         }
 
         return true
-      }
-      catch (_) {
+      } catch (_) {
         return false
       }
     },
   },
 })
 
-if (import.meta.hot)
+if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot))
+}

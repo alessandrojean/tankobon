@@ -39,8 +39,7 @@ watchEffect((onCleanup) => {
     inputMaskInstance.value = InputMask(inputMask.value).mask(input.value)
 
     onCleanup(() => inputMaskInstance.value?.remove())
-  }
-  else {
+  } else {
     inputMaskInstance.value?.remove()
   }
 })
@@ -71,7 +70,8 @@ export default { inheritAttrs: false }
         @input="$emit('update:modelValue', ($event.target! as HTMLInputElement).value)"
       >
       <label
-        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text" :class="[
+        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text"
+        :class="[
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
@@ -81,7 +81,8 @@ export default { inheritAttrs: false }
       </label>
       <div
         v-if="$slots['left-icon']"
-        class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+        class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+        :class="[
           invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
@@ -91,7 +92,8 @@ export default { inheritAttrs: false }
       </div>
       <div
         v-if="$slots['right-icon']"
-        class="absolute right-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+        class="absolute right-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+        :class="[
           invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',

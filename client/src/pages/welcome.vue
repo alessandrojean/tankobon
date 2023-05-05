@@ -27,15 +27,17 @@ const hasNoLibraries = computed(() => {
 })
 
 watch(hasNoLibraries, (hasNoLibraries) => {
-  if (!hasNoLibraries)
+  if (!hasNoLibraries) {
     router.replace({ name: 'index' })
+  }
 })
 
 onBeforeMount(async () => {
   await refetchLibraries()
 
-  if (!hasNoLibraries.value)
+  if (!hasNoLibraries.value) {
     router.replace({ name: 'index' })
+  }
 })
 
 const formState = reactive<LibraryCreation>({
@@ -53,8 +55,9 @@ const v$ = useVuelidate(rules, formState)
 async function handleCreateLibrary() {
   const isFormValid = await v$.value.$validate()
 
-  if (!isFormValid)
+  if (!isFormValid) {
     return
+  }
 
   const library = toRaw<LibraryCreation>(formState)
 

@@ -27,7 +27,8 @@ withDefaults(defineProps<LoadingIndicatorProps>(), {
       :style="{ '--z': zIndex }"
     >
       <LoadingSpinIcon
-        class="motion-safe:animate-spin mx-auto text-primary-500" :class="[
+        class="motion-safe:animate-spin mx-auto text-primary-500"
+        :class="[
           small ? 'h-8 w-8' : 'h-10 w-18',
         ]"
       />

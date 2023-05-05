@@ -54,8 +54,9 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await userForm.value!.v$.$validate()
 
-  if (!isValid)
+  if (!isValid) {
     return
+  }
 
   emit('close')
   emit('submit', toRaw(user))

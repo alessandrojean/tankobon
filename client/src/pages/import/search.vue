@@ -28,8 +28,7 @@ watch(isbn, (value) => {
   if (value.length < 10) {
     v$.value.$reset()
     bookToImport.value = undefined
-  }
-  else {
+  } else {
     v$.value.$touch()
   }
 })

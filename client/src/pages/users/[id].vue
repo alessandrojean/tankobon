@@ -87,8 +87,7 @@ function handleAvatar(avatar: ImageResult) {
         })
       },
     })
-  }
-  else if (avatar.removeExisting) {
+  } else if (avatar.removeExisting) {
     deleteAvatar(userId.value!, {
       onSuccess: async () => {
         await notificator.success({ title: t('users.avatar-removed-with-success') })

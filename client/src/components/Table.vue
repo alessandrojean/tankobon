@@ -118,7 +118,8 @@ watch(data, () => emit('update:row-selection', {}))
             v-for="header in headerGroup.headers"
             :key="header.id"
             :colspan="header.colSpan"
-            class="bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300 text-left" :class="[
+            class="bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300 text-left"
+            :class="[
               header.column.getCanSort() ? 'cursor-pointer select-none' : '',
               header.column.columnDef.meta?.headerClass,
             ]"
@@ -126,7 +127,8 @@ watch(data, () => emit('update:row-selection', {}))
           >
             <div
               v-if="!header.isPlaceholder"
-              class="flex items-center" :class="[
+              class="flex items-center"
+              :class="[
                 header.column.columnDef.meta?.headerContainerClass,
               ]"
             >
@@ -154,7 +156,8 @@ watch(data, () => emit('update:row-selection', {}))
             <td
               v-for="cell in row.getVisibleCells()"
               :key="cell.id"
-              class="px-4 py-2 text-sm" :class="[
+              class="px-4 py-2 text-sm"
+              :class="[
                 cell.column.columnDef.meta?.tabular ? 'tabular-nums' : '',
                 cell.column.columnDef.meta?.cellClass,
                 row.getIsSelected()

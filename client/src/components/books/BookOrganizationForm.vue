@@ -61,12 +61,13 @@ function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt
   const input = event.target as HTMLInputElement
   const value = convertLocalTimeZoneToUtc(input.value)
 
-  if (field === 'boughtAt')
+  if (field === 'boughtAt') {
     emit('update:boughtAt', value)
-  else if (field === 'billedAt')
+  } else if (field === 'billedAt') {
     emit('update:billedAt', value)
-  else
+  } else {
     emit('update:arrivedAt', value)
+  }
 }
 </script>
 

@@ -14,8 +14,9 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { open } = toRefs(props)
 
 onBeforeRouteLeave(() => {
-  if (!open.value)
+  if (!open.value) {
     return true
+  }
 
   emit('close')
   return false

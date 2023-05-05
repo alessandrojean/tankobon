@@ -12,10 +12,10 @@ export async function getMyPreferences(): Promise<PreferenceEntity[]> {
     const { data: me } = await api.get<PreferenceCollectionResponse>('users/me/preferences')
 
     return me.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -29,10 +29,10 @@ export async function setMyPreferencesValuesByKeys(preferences: Preferences) {
     )
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

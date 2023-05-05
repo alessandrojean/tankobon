@@ -24,8 +24,9 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { dialogClass, fullHeight, isOpen } = toRefs(props)
 
 onBeforeRouteLeave(() => {
-  if (!isOpen.value)
+  if (!isOpen.value) {
     return true
+  }
 
   emit('close')
   return false
@@ -49,7 +50,8 @@ export default { inheritAttrs: false }
       @close="$emit('close')"
     >
       <div
-        class="fixed z-30 inset-0 flex flex-col items-center px-4 sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16" :class="[
+        class="fixed z-30 inset-0 flex flex-col items-center px-4 sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16"
+        :class="[
           { 'justify-center': !fullHeight },
         ]"
       >
@@ -72,7 +74,8 @@ export default { inheritAttrs: false }
 
         <TransitionChild
           :as="as"
-          class="relative flex flex-col w-full will-change-transform overflow-hidden text-left bg-white dark:bg-gray-900 shadow-xl rounded-lg ring-1 ring-black/5" :class="[
+          class="relative flex flex-col w-full will-change-transform overflow-hidden text-left bg-white dark:bg-gray-900 shadow-xl rounded-lg ring-1 ring-black/5"
+          :class="[
             dialogClass,
             { 'h-full': fullHeight, 'max-h-full': !fullHeight },
           ]"
@@ -117,7 +120,8 @@ export default { inheritAttrs: false }
           </div>
 
           <div
-            class="flex-grow overflow-y-auto" :class="[
+            class="flex-grow overflow-y-auto"
+            :class="[
               !bodyPaddingless ? 'p-4 md:p-6' : '',
             ]"
           >

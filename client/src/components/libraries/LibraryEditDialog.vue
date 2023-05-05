@@ -43,8 +43,9 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await libraryForm.value!.v$.$validate()
 
-  if (!isValid)
+  if (!isValid) {
     return
+  }
 
   emit('close')
   emit('submit', toRaw(library))

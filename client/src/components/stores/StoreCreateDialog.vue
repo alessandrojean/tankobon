@@ -39,8 +39,9 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await storeForm.value!.v$.$validate()
 
-  if (!isValid)
+  if (!isValid) {
     return
+  }
 
   emit('close')
   emit('submit', toRaw(store))

@@ -47,10 +47,10 @@ export async function getAllTagsByLibrary(options: GetAllTagsByLibraryParameters
     })
 
     return tags
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -61,10 +61,10 @@ export async function addOneTag(tag: TagCreation): Promise<TagEntity> {
     const { data } = await api.post<TagOnly>('tags', tag)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -84,10 +84,10 @@ export async function getOneTag({ tagId, includes }: GetOneTagParameters): Promi
     })
 
     return tag.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -96,10 +96,10 @@ export async function getOneTag({ tagId, includes }: GetOneTagParameters): Promi
 export async function updateOneTag(tag: TagUpdate): Promise<void> {
   try {
     await api.put(`tags/${tag.id}`, tag)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -108,10 +108,10 @@ export async function updateOneTag(tag: TagUpdate): Promise<void> {
 export async function deleteOneTag(tagId: string): Promise<void> {
   try {
     await api.delete(`tags/${tagId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

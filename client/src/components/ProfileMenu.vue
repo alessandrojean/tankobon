@@ -66,7 +66,8 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
   <Menu v-slot="{ open }" as="div" class="ml-3 relative inline-block">
     <div>
       <MenuButton
-        class="max-w-xs flex items-center text-sm group rounded-md focus:outline-none focus-visible:ring-2" :class="[
+        class="max-w-xs flex items-center text-sm group rounded-md focus:outline-none focus-visible:ring-2"
+        :class="[
           light ? 'focus-visible:ring-black' : 'focus-visible:ring-white/90',
         ]"
       >
@@ -74,7 +75,8 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
         <Avatar :picture-url="avatarUrl" size="mini" kind="gray" />
         <span aria-hidden="true">
           <ChevronDownIcon
-            class="w-5 h-5 ml-1 motion-safe:transition-transform" :class="[
+            class="w-5 h-5 ml-1 motion-safe:transition-transform"
+            :class="[
               open ? '-scale-y-100' : '',
               light && !transparent
                 ? 'text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100 group-focus-visible:text-gray-500 dark:group-focus-visible:text-gray-100'

@@ -225,13 +225,15 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
           >
             <span />
             <ChevronDoubleLeftIcon
-              class="w-5 h-5 collapse-icon" :class="[{ collapsed }]"
+              class="w-5 h-5 collapse-icon"
+              :class="[{ collapsed }]"
             />
           </Button>
         </div>
         <nav class="mt-6 px-3">
           <ul
-            class="space-y-1.5" :class="[
+            class="space-y-1.5"
+            :class="[
               collapsed ? 'flex flex-col items-center' : '',
             ]"
           >

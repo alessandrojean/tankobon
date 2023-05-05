@@ -47,8 +47,9 @@ const { data: collections, isLoading: loadingCollections } = useLibraryCollectio
 const collection = computed({
   get: () => collections.value?.find(c => c.id === collectionId.value),
   set: (collection) => {
-    if (collection)
+    if (collection) {
       emit('update:collectionId', collection.id)
+    }
   },
 })
 </script>

@@ -47,10 +47,10 @@ export async function getAllPublishersByLibrary(options: GetAllPublishersByLibra
     })
 
     return publishers
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -61,10 +61,10 @@ export async function addOnePublisher(publisher: PublisherCreation): Promise<Pub
     const { data } = await api.post<PublisherOnly>('publishers', publisher)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -84,10 +84,10 @@ export async function getOnePublisher({ publisherId, includes }: GetOnePublisher
     })
 
     return publisher.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -103,10 +103,10 @@ export async function uploadPublisherPicture(options: UploadPublisherPictureOpti
     await api.postForm(`publishers/${options.publisherId}/picture`, {
       picture: options.picture,
     })
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -115,10 +115,10 @@ export async function uploadPublisherPicture(options: UploadPublisherPictureOpti
 export async function updateOnePublisher(publisher: PublisherUpdate): Promise<void> {
   try {
     await api.put(`publishers/${publisher.id}`, publisher)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -127,10 +127,10 @@ export async function updateOnePublisher(publisher: PublisherUpdate): Promise<vo
 export async function deleteOnePublisher(publisherId: string): Promise<void> {
   try {
     await api.delete(`publishers/${publisherId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -139,10 +139,10 @@ export async function deleteOnePublisher(publisherId: string): Promise<void> {
 export async function deletePublisherPicture(publisherId: string): Promise<void> {
   try {
     await api.delete(`publishers/${publisherId}/picture`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

@@ -47,10 +47,10 @@ export async function getAllSeriesByLibrary(options: GetAllSeriesByLibraryParame
     })
 
     return seriess
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -61,10 +61,10 @@ export async function addOneSeries(series: SeriesCreation): Promise<SeriesEntity
     const { data } = await api.post<SeriesOnly>('series', series)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -84,10 +84,10 @@ export async function getOneSeries({ seriesId, includes }: GetOneSeriesParameter
     })
 
     return series.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -96,10 +96,10 @@ export async function getOneSeries({ seriesId, includes }: GetOneSeriesParameter
 export async function updateOneSeries(series: SeriesUpdate): Promise<void> {
   try {
     await api.put(`series/${series.id}`, series)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -108,10 +108,10 @@ export async function updateOneSeries(series: SeriesUpdate): Promise<void> {
 export async function deleteOneSeries(seriesId: string): Promise<void> {
   try {
     await api.delete(`series/${seriesId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

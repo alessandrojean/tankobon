@@ -74,8 +74,9 @@ const isEmpty = computed(() => {
 const letterBackgroundColor = computed(() => {
   let hash = 0
 
-  for (let i = 0; i < letterId.value.length; i++)
+  for (let i = 0; i < letterId.value.length; i++) {
     hash = letterId.value.charCodeAt(i) + ((hash << 5) - hash)
+  }
 
   let color = '#'
 

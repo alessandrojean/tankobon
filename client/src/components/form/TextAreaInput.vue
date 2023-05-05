@@ -33,14 +33,16 @@ export default { inheritAttrs: false }
 <template>
   <div>
     <div
-      class="w-full border bg-white dark:bg-gray-950 shadow-sm rounded-md focus-within:ring focus-within:ring-opacity-50 motion-safe:transition-shadow" :class="[
+      class="w-full border bg-white dark:bg-gray-950 shadow-sm rounded-md focus-within:ring focus-within:ring-opacity-50 motion-safe:transition-shadow"
+      :class="[
         invalid
           ? 'border-red-500 dark:border-red-500/95 focus-within:border-red-500 dark:focus-within:border-red-500/95 focus-within:ring-red-200 dark:focus-within:ring-red-200/30'
           : 'border-gray-300 dark:border-gray-700 focus-within:border-primary-500 dark:focus-within:border-primary-400 focus-within:ring-primary-200 dark:focus-within:ring-primary-200/30',
       ]"
     >
       <label
-        class="font-medium text-xs px-3 pt-3 pb-1 select-none block" :class="[
+        class="font-medium text-xs px-3 pt-3 pb-1 select-none block"
+        :class="[
           invalid
             ? 'text-red-800 dark:text-red-600'
             : 'text-gray-700 dark:text-gray-300',

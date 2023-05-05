@@ -41,15 +41,17 @@ const rules = {
 const v$ = useVuelidate(rules, formState)
 
 watch([claimStatus, isFetched], () => {
-  if (claimStatus.value?.isClaimed && !userStore.isAuthenticated && !isLoading.value)
+  if (claimStatus.value?.isClaimed && !userStore.isAuthenticated && !isLoading.value) {
     router.replace({ name: 'sign-in' })
+  }
 })
 
 async function handleSignIn() {
   const isFormValid = await v$.value.$validate()
 
-  if (!isFormValid)
+  if (!isFormValid) {
     return
+  }
 
   isLoading.value = true
   error.value = null
@@ -59,11 +61,9 @@ async function handleSignIn() {
     await claimServer(admin)
     await userStore.signIn({ email: admin.email, password: admin.password })
     await router.replace({ name: 'welcome' })
-  }
-  catch (e) {
+  } catch (e) {
     error.value = (e instanceof Error) ? e : error.value
-  }
-  finally {
+  } finally {
     isLoading.value = false
   }
 }

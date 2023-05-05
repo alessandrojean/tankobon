@@ -15,10 +15,10 @@ export async function getClaimStatus(): Promise<ClaimStatus> {
     const { data } = await api.get<ClaimStatus>('claim')
 
     return data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -29,10 +29,10 @@ export async function claimAdmin(admin: ClaimAdmin): Promise<UserEntity> {
     const { data } = await api.post<ClaimResponse>('claim', admin)
 
     return data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

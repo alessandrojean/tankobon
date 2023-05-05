@@ -17,8 +17,9 @@ const { book, loading } = toRefs(props)
 const coverArt = computed(() => getRelationship(book.value, 'COVER_ART'))
 
 const coverUrl = computed(() => {
-  if (!book.value)
+  if (!book.value) {
     return ''
+  }
 
   return getFullImageUrl({
     collection: 'covers',
@@ -38,13 +39,15 @@ const showBookCover = computed(() => {
 })
 
 watch(book, (newValue) => {
-  if (newValue !== null)
+  if (newValue !== null) {
     loadImage()
+  }
 })
 
 onMounted(() => {
-  if (book.value !== null)
+  if (book.value !== null) {
     loadImage()
+  }
 })
 </script>
 

@@ -4,19 +4,22 @@ import { checkEmailAvailability } from '@/services/tankobon-users'
 export const positiveDecimal = helpers.regex(/^\d+([,.]\d+)?$/)
 
 export const emailIsAvailable = helpers.withAsync(async (value: string) => {
-  if (value.length === 0 || !email.$validator(value, null, null))
+  if (value.length === 0 || !email.$validator(value, null, null)) {
     return true
+  }
 
   return await checkEmailAvailability(value)
 })
 
 export function emailIsAvailableIfNotSame(current: string) {
   return helpers.withAsync(async (value: string) => {
-    if (value.length === 0 || !email.$validator(value, null, null))
+    if (value.length === 0 || !email.$validator(value, null, null)) {
       return true
+    }
 
-    if (current === value)
+    if (current === value) {
       return true
+    }
 
     return await checkEmailAvailability(value)
   })
@@ -26,8 +29,9 @@ export function maxFileSize(maxSize: number, sizeString: string) {
   return helpers.withParams(
     { sizeString },
     (file: File | null) => {
-      if (!file)
+      if (!file) {
         return true
+      }
 
       return file.size <= maxSize
     },
@@ -39,13 +43,15 @@ export function isbn(isbn: string) {
 }
 
 export function isbn13(isbn13: string) {
-  if (isbn13.length === 0)
+  if (isbn13.length === 0) {
     return true
+  }
 
   const digits = isbn13.replace(/[^\dX]/g, '')
 
-  if (digits.length !== 13)
+  if (digits.length !== 13) {
     return false
+  }
 
   const sum = digits.split('')
     .reduce((acm, crr, i) => acm + parseInt(crr, 10) * (i % 2 === 0 ? 1 : 3), 0)
@@ -54,13 +60,15 @@ export function isbn13(isbn13: string) {
 }
 
 export function isbn10(isbn10: string) {
-  if (isbn10.length === 0)
+  if (isbn10.length === 0) {
     return true
+  }
 
   const digits = isbn10.replace(/[^\dX]/g, '')
 
-  if (digits.length !== 10)
+  if (digits.length !== 10) {
     return false
+  }
 
   const partialSum = digits
     .slice(0, -1)

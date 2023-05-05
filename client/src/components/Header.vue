@@ -14,7 +14,8 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
   <header>
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div
-        class="border-b dark:border-gray-800" :class="[
+        class="border-b dark:border-gray-800"
+        :class="[
           $slots.tabs ? 'pt-6' : 'py-6',
         ]"
       >

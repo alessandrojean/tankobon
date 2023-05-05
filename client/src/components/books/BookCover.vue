@@ -24,8 +24,9 @@ const { book, loading } = toRefs(props)
 const coverArt = computed(() => getRelationship(book.value, 'COVER_ART'))
 
 function getBookCoverUrl(version: string) {
-  if (!book.value)
+  if (!book.value) {
     return ''
+  }
 
   return getFullImageUrl({
     collection: 'covers',
@@ -51,13 +52,15 @@ const showBookCover = computed(() => {
 })
 
 watch(book, (newValue) => {
-  if (newValue !== null)
+  if (newValue !== null) {
     loadImage()
+  }
 })
 
 onMounted(() => {
-  if (book.value !== null)
+  if (book.value !== null) {
     loadImage()
+  }
 })
 
 const dialogOpen = ref(false)
@@ -80,8 +83,9 @@ const imageAspectRatio = computed(() => {
 })
 
 whenever(coverArt, async (coverArt) => {
-  if (!canvas.value || !figure.value)
+  if (!canvas.value || !figure.value) {
     return
+  }
 
   const { width, height, blurHash } = coverArt.attributes!
 
@@ -116,7 +120,8 @@ whenever(coverArt, async (coverArt) => {
       <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
         <PhotoIcon
           v-if="loading || coverUrl.length === 0"
-          class="w-10 h-10 text-gray-500 dark:text-gray-600" :class="[
+          class="w-10 h-10 text-gray-500 dark:text-gray-600"
+          :class="[
             loading ? 'motion-safe:animate-pulse' : '',
           ]"
         />

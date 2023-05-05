@@ -37,8 +37,9 @@ const extensions = computed(() => {
 })
 
 function handleDrop(e: DragEvent) {
-  if (!fileInput.value || !e.dataTransfer?.files)
+  if (!fileInput.value || !e.dataTransfer?.files) {
     return
+  }
 
   fileInput.value.files = e.dataTransfer.files
   isDragging.value = false
@@ -58,7 +59,8 @@ export default { inheritAttrs: false }
 
 <template>
   <div
-    class="flex flex-col items-center rounded-md border-2 border-dashed px-6 pt-5 pb-6 motion-safe:transition-colors" :class="[
+    class="flex flex-col items-center rounded-md border-2 border-dashed px-6 pt-5 pb-6 motion-safe:transition-colors"
+    :class="[
       {
         'border-primary-400 bg-primary-100': isDragging,
         'border-red-400 bg-red-100': invalid && !isDragging,
@@ -71,7 +73,8 @@ export default { inheritAttrs: false }
   >
     <slot name="icon">
       <svg
-        class="mx-auto h-12 w-12" :class="[
+        class="mx-auto h-12 w-12"
+        :class="[
           {
             'text-primary-500': isDragging,
             'text-red-500': invalid && !isDragging,
@@ -89,7 +92,8 @@ export default { inheritAttrs: false }
     <div class="flex text-sm text-gray-600">
       <label
         :for="String($attrs.id)"
-        class="relative cursor-pointer rounded-md font-medium focus-within:outline-none focus-within:ring-2  focus-within:ring-offset-2" :class="[
+        class="relative cursor-pointer rounded-md font-medium focus-within:outline-none focus-within:ring-2  focus-within:ring-offset-2"
+        :class="[
           {
             'text-primary-600 focus-within:ring-primary-500 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400': !invalid || isDragging,
             'text-red-600 focus-within:ring-red-500 hover:text-red-500': invalid && !isDragging,
@@ -107,7 +111,8 @@ export default { inheritAttrs: false }
         @change="handleChange"
       >
       <p
-        class="pl-1" :class="[
+        class="pl-1"
+        :class="[
           {
             'text-primary-600': isDragging,
             'text-red-600': invalid && !isDragging,
@@ -119,7 +124,8 @@ export default { inheritAttrs: false }
       </p>
     </div>
     <p
-      class="text-xs" :class="[
+      class="text-xs"
+      :class="[
         {
           'text-primary-600': isDragging,
           'text-red-600': invalid && !isDragging,

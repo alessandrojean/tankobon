@@ -46,10 +46,10 @@ export async function getAllBooksByLibrary(options: GetAllBooksByLibraryParamete
     })
 
     return books
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -69,10 +69,10 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
     })
 
     return book.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -81,10 +81,10 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
 export async function updateOneBook(book: BookUpdate): Promise<void> {
   try {
     await api.put(`books/${book.id}`, book)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

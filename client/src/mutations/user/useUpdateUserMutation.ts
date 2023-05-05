@@ -15,8 +15,9 @@ export default function useUpdateUserMutation() {
       queryClient.invalidateQueries(['users'])
       queryClient.invalidateQueries(['user', { id }])
 
-      if (id === userStore.me?.id)
+      if (id === userStore.me?.id) {
         await userStore.checkSession()
+      }
     },
   })
 }

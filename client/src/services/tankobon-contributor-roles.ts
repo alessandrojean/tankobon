@@ -49,10 +49,10 @@ export async function getAllContributorRolesByLibrary(options: GetAllContributor
     })
 
     return contributorRoles
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -63,10 +63,10 @@ export async function addOneContributorRole(contributorRole: ContributorRoleCrea
     const { data } = await api.post<ContributorRoleOnly>('contributor-roles', contributorRole)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -86,10 +86,10 @@ export async function getOneContributorRole({ contributorRoleId, includes }: Get
     })
 
     return contributorRole.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -98,10 +98,10 @@ export async function getOneContributorRole({ contributorRoleId, includes }: Get
 export async function updateOneContributorRole(contributorRole: ContributorRoleUpdate): Promise<void> {
   try {
     await api.put(`contributor-roles/${contributorRole.id}`, contributorRole)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -110,10 +110,10 @@ export async function updateOneContributorRole(contributorRole: ContributorRoleU
 export async function deleteOneContributorRole(contributorRoleId: string): Promise<void> {
   try {
     await api.delete(`contributor-roles/${contributorRoleId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

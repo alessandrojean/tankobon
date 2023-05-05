@@ -40,7 +40,8 @@ export default { components: { ChevronUpDownIcon, CheckIcon }, inheritAttrs: fal
     :class="[$attrs.class]" @update:model-value="emit('update:modelValue', $event)"
   >
     <ListboxButton
-      class="relative w-full cursor-default rounded-md bg-white dark:bg-gray-800 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring ui-open:ring border border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30 ui-open:border-primary-500 dark:ui-open:border-primary-400 ui-open:ring-primary-200 dark:ui-open:ring-primary-200/30" :class="[
+      class="relative w-full cursor-default rounded-md bg-white dark:bg-gray-800 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring ui-open:ring border border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30 ui-open:border-primary-500 dark:ui-open:border-primary-400 ui-open:ring-primary-200 dark:ui-open:ring-primary-200/30"
+      :class="[
         size === 'small' ? 'text-sm py-1.5' : 'py-2',
       ]"
     >
@@ -53,7 +54,8 @@ export default { components: { ChevronUpDownIcon, CheckIcon }, inheritAttrs: fal
         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
       >
         <ChevronUpDownIcon
-          class="text-gray-400" :class="[size === 'small' ? 'w-4 h-4' : 'w-5 h-5']"
+          class="text-gray-400"
+          :class="[size === 'small' ? 'w-4 h-4' : 'w-5 h-5']"
           aria-hidden="true"
         />
       </span>
@@ -75,7 +77,8 @@ export default { components: { ChevronUpDownIcon, CheckIcon }, inheritAttrs: fal
           as="template"
         >
           <li
-            class="relative cursor-default select-none py-2 pl-12 pr-4" :class="[
+            class="relative cursor-default select-none py-2 pl-12 pr-4"
+            :class="[
               {
                 'bg-primary-100 text-primary-800': active,
                 'dark:bg-primary-600 dark:text-primary-100': active,
@@ -90,7 +93,8 @@ export default { components: { ChevronUpDownIcon, CheckIcon }, inheritAttrs: fal
               :option="option"
             >
               <span
-                class="block truncate" :class="[
+                class="block truncate"
+                :class="[
                   selected ? 'font-medium' : 'font-normal',
                 ]"
               >
@@ -99,7 +103,8 @@ export default { components: { ChevronUpDownIcon, CheckIcon }, inheritAttrs: fal
             </slot>
             <span
               v-if="selected"
-              class="absolute inset-y-0 left-0.5 flex items-center pl-3 text-primary-600" :class="[
+              class="absolute inset-y-0 left-0.5 flex items-center pl-3 text-primary-600"
+              :class="[
                 active ? 'dark:text-primary-200' : 'dark:text-primary-400',
               ]"
             >

@@ -56,7 +56,8 @@ onMounted(() => setupObserver())
         >
           <BookOpenIcon
             v-if="imageLoading || coverUrl?.length === 0"
-            class="w-10 h-10 text-gray-400 dark:text-gray-500" :class="[
+            class="w-10 h-10 text-gray-400 dark:text-gray-500"
+            :class="[
               { 'motion-safe:animate-pulse': imageLoading },
             ]"
             aria-hidden="true"

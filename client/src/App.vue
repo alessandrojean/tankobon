@@ -31,15 +31,17 @@ const { data: theme } = useUserPreferencesQuery({
 })
 
 watch([theme, isPreferredDark], ([theme, isPreferredDark]) => {
-  if ((theme === THEME_SYSTEM && isPreferredDark) || theme === THEME_DARK)
+  if ((theme === THEME_SYSTEM && isPreferredDark) || theme === THEME_DARK) {
     document.documentElement.classList.add(THEME_DARK)
-  else if ((theme === THEME_SYSTEM && !isPreferredDark) || theme === THEME_LIGHT)
+  } else if ((theme === THEME_SYSTEM && !isPreferredDark) || theme === THEME_LIGHT) {
     document.documentElement.classList.remove(THEME_DARK)
+  }
 })
 
 watch(isAuthenticated, async (current, previous) => {
-  if (!current && previous)
+  if (!current && previous) {
     await router.push({ name: 'sign-in' })
+  }
 })
 
 const route = useRoute()
@@ -55,8 +57,7 @@ const motionOk = useMediaQuery('(prefers-reduced-motion: no-preference)')
 async function addToast(toast: Toast) {
   if (motionOk.value) {
     return await flipToast(toast)
-  }
-  else {
+  } else {
     const id = new Date().getTime().toString(16)
 
     toasts.value.push({ ...toast, id })
@@ -96,8 +97,9 @@ async function flipToast(toast: Toast) {
 async function showToast(toast: Toast): Promise<void> {
   const toastElement = await addToast(toast)
 
-  if (!toastElement)
+  if (!toastElement) {
     return
+  }
 
   const id = toastElement.dataset.id
 

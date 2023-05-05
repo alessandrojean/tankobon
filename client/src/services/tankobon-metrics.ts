@@ -24,10 +24,10 @@ export async function getMetric({ metric, tags }: GetMetricParams): Promise<Metr
     })
 
     return data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

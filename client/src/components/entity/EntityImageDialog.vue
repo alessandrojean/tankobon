@@ -56,8 +56,9 @@ const v$ = useVuelidate(rules, formState)
 whenever(isOpen, () => v$.value.$reset())
 
 const uploadingBlobUrl = computed(() => {
-  if (!formState.file || v$.value.file.$error)
+  if (!formState.file || v$.value.file.$error) {
     return null
+  }
 
   return URL.createObjectURL(formState.file)
 })
@@ -65,8 +66,9 @@ const uploadingBlobUrl = computed(() => {
 async function handleSubmit() {
   const isValid = await v$.value.$validate()
 
-  if (!isValid)
+  if (!isValid) {
     return
+  }
 
   emit('submit', {
     removeExisting: removeExisting.value,
@@ -76,10 +78,11 @@ async function handleSubmit() {
 }
 
 function handleRemove() {
-  if (uploadingBlobUrl.value)
+  if (uploadingBlobUrl.value) {
     formState.file = null
-  else if (currentImageUrl.value)
+  } else if (currentImageUrl.value) {
     removeExisting.value = true
+  }
 }
 
 function handleUpload(files: FileList) {

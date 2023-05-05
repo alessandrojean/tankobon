@@ -49,10 +49,10 @@ export async function getAllPeopleByLibrary(options: GetAllPeopleByLibraryParame
     })
 
     return people
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -63,10 +63,10 @@ export async function addOnePerson(person: PersonCreation): Promise<PersonEntity
     const { data } = await api.post<PersonOnly>('people', person)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -86,10 +86,10 @@ export async function getOnePerson({ personId, includes }: GetOnePersonParameter
     })
 
     return person.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -98,10 +98,10 @@ export async function getOnePerson({ personId, includes }: GetOnePersonParameter
 export async function deletePersonPicture(personId: string): Promise<void> {
   try {
     await api.delete(`people/${personId}/picture`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -117,10 +117,10 @@ export async function uploadPersonPicture(options: UploadPersonPictureOptions): 
     await api.postForm(`people/${options.personId}/picture`, {
       picture: options.picture,
     })
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -129,10 +129,10 @@ export async function uploadPersonPicture(options: UploadPersonPictureOptions): 
 export async function updateOnePerson(person: PersonUpdate): Promise<void> {
   try {
     await api.put(`people/${person.id}`, person)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -141,10 +141,10 @@ export async function updateOnePerson(person: PersonUpdate): Promise<void> {
 export async function deleteOnePerson(personId: string): Promise<void> {
   try {
     await api.delete(`people/${personId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

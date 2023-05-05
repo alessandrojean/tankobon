@@ -20,12 +20,14 @@ withDefaults(defineProps<NotificationProps>(), {
 <template>
   <output
     role="status"
-    class="bg-white dark:bg-gray-700 rounded-md shadow-xl ring-1 ring-black/10 max-w-xl flex overflow-hidden" :class="[
+    class="bg-white dark:bg-gray-700 rounded-md shadow-xl ring-1 ring-black/10 max-w-xl flex overflow-hidden"
+    :class="[
       { 'items-center': (body ?? '').length === 0 },
     ]"
   >
     <div
-      class="h-full w-12 flex items-center justify-center shrink-0 [&>svg]:w-5 [&>svg]:h-5" :class="[
+      class="h-full w-12 flex items-center justify-center shrink-0 [&>svg]:w-5 [&>svg]:h-5"
+      :class="[
         {
           'bg-green-500 dark:bg-green-600': type === 'success',
           'bg-amber-600': type === 'warning',

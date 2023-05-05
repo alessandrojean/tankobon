@@ -39,14 +39,15 @@ const errorMessage = computed(() => {
   const errorAmount = unref(errorsAmount.value?.[0]?.$message)
   const errorCurrency = unref(errorsCurrency.value?.[0]?.$message)
 
-  if (errorAmount === errorCurrency)
+  if (errorAmount === errorCurrency) {
     return errorAmount
-  else if (errorAmount && errorAmount.length > 0)
+  } else if (errorAmount && errorAmount.length > 0) {
     return errorAmount
-  else if (errorCurrency && errorCurrency.length > 0)
+  } else if (errorCurrency && errorCurrency.length > 0) {
     return errorCurrency
-  else
+  } else {
     return null
+  }
 })
 
 type Focused = 'amount' | 'currency'
@@ -74,22 +75,25 @@ watchEffect((onCleanup) => {
     onCleanup(() => {
       inputMaskAmount.value?.remove()
     })
-  }
-  else {
+  } else {
     inputMaskAmount.value?.remove()
   }
 })
 
-interface EventHandler { event: Event; type: Focused }
+interface EventHandler {
+  event: Event
+  type: Focused
+}
 
 function handleInput({ event, type }: EventHandler) {
   const newDimensions: MonetaryAmountString = { ...modelValue.value }
   const input = event.target as HTMLInputElement
 
-  if (type === 'currency')
+  if (type === 'currency') {
     newDimensions.currency = input.value
-  else
+  } else {
     newDimensions.amount = input.value
+  }
 
   emit('update:modelValue', newDimensions)
 }
@@ -97,19 +101,21 @@ function handleInput({ event, type }: EventHandler) {
 function handleBlur({ event, type }: EventHandler) {
   focused.value = null
 
-  if (type === 'currency')
+  if (type === 'currency') {
     emit('blur:currency', event)
-  else
+  } else {
     emit('blur:amount', event)
+  }
 }
 
 function handleFocus({ event, type }: EventHandler) {
   focused.value = type
 
-  if (type === 'currency')
+  if (type === 'currency') {
     emit('focus:currency', event)
-  else
+  } else {
     emit('focus:amount', event)
+  }
 }
 
 // TODO: Show all currencies.
@@ -125,8 +131,7 @@ function getCurrencyName(currency: string) {
     const currencyName = currencyNames.value.of(currency) ?? null
 
     return currencyName === currency ? null : currencyName
-  }
-  catch (_) {
+  } catch (_) {
     return null
   }
 }
@@ -147,8 +152,9 @@ const filteredCurrencies = computed(() => {
     .map(([cc]) => cc)
     .sort((a, b) => a.localeCompare(b, locale.value))
 
-  if (filtered.length === 0 && queryCurrency.value && queryCurrency.value.length === 3)
+  if (filtered.length === 0 && queryCurrency.value && queryCurrency.value.length === 3) {
     filtered = [queryCurrency.value]
+  }
 
   return filtered
 })
@@ -178,7 +184,8 @@ function handleCurrency(newCurrency: string) {
       <div class="flex flex-row-reverse gap-2 items-center w-full px-3 pb-2 pt-1">
         <input
           ref="amountInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums"
+          :class="[
             invalidAmount
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
@@ -200,7 +207,8 @@ function handleCurrency(newCurrency: string) {
         >
           <ComboboxInput
             ref="currencyInput"
-            class="w-12 shrink-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 motion-safe:transition tabular-nums [font-feature-settings:'cv08']" :class="[
+            class="w-12 shrink-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 motion-safe:transition tabular-nums [font-feature-settings:'cv08']"
+            :class="[
               invalidCurrency
                 ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
                 : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',

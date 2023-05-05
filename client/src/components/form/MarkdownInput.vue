@@ -36,8 +36,9 @@ const textarea = ref<HTMLTextAreaElement>()
 function togglePreview() {
   showPreview.value = !showPreview.value
 
-  if (showPreview)
+  if (showPreview) {
     markdownContent.value = renderMarkdown(modelValue.value)
+  }
 }
 
 const mdBoldRef = ref<HTMLElement>()
@@ -63,7 +64,8 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
       :aria-describedby="`${attributes.id}-description`"
     >
       <label
-        class="font-medium text-xs px-3 pt-3 select-none" :class="[
+        class="font-medium text-xs px-3 pt-3 select-none"
+        :class="[
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
         :for="($attrs.id as string | undefined)"

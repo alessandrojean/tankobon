@@ -45,7 +45,8 @@ export default { inheritAttrs: false }
 <template>
   <div class="relative">
     <select
-      class="w-full bg-white dark:bg-gray-800 shadow-sm rounded-md dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500" :class="[
+      class="w-full bg-white dark:bg-gray-800 shadow-sm rounded-md dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500"
+      :class="[
         $slots['left-icon'] ? 'pl-16' : '',
         size === 'small' ? 'text-sm py-1.5' : '',
         invalid
@@ -69,7 +70,8 @@ export default { inheritAttrs: false }
     </select>
     <div
       v-if="$slots['left-icon']"
-      class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+      class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+      :class="[
         invalid
           ? 'text-red-600 peer-focus:text-red-600'
           : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',

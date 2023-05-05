@@ -17,8 +17,7 @@ export default function useUserPreferencesQuery<Select = Preferences>(
         return Object.fromEntries(
           preferences.map(({ attributes }) => [attributes.key, attributes.value]),
         )
-      }
-      catch (_) {
+      } catch (_) {
         return {}
       }
     },

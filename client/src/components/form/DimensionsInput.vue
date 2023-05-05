@@ -38,17 +38,15 @@ const errorMessage = computed(() => {
   const errorWidth = unref(errorsWidth.value?.[0]?.$message)
   const errorHeight = unref(errorsHeight.value?.[0]?.$message)
 
-  if (errorWidth === errorHeight)
+  if (errorWidth === errorHeight) {
     return errorWidth
-
-  else if (errorWidth && errorWidth.length > 0)
+  } else if (errorWidth && errorWidth.length > 0) {
     return errorWidth
-
-  else if (errorHeight && errorHeight.length > 0)
+  } else if (errorHeight && errorHeight.length > 0) {
     return errorHeight
-
-  else
+  } else {
     return null
+  }
 })
 
 type Focused = 'width' | 'height'
@@ -79,24 +77,26 @@ watchEffect((onCleanup) => {
       inputMaskWidth.value?.remove()
       inputMaskHeight.value?.remove()
     })
-  }
-  else {
+  } else {
     inputMaskWidth.value?.remove()
     inputMaskHeight.value?.remove()
   }
 })
 
-interface EventHandler { event: Event; type: Focused }
+interface EventHandler {
+  event: Event
+  type: Focused
+}
 
 function handleInput({ event, type }: EventHandler) {
   const newDimensions: DimensionsString = { ...modelValue.value }
   const input = event.target as HTMLInputElement
 
-  if (type === 'width')
+  if (type === 'width') {
     newDimensions.widthCm = input.value
-
-  else
+  } else {
     newDimensions.heightCm = input.value
+  }
 
   emit('update:modelValue', newDimensions)
 }
@@ -104,21 +104,21 @@ function handleInput({ event, type }: EventHandler) {
 function handleBlur({ event, type }: EventHandler) {
   focused.value = null
 
-  if (type === 'width')
+  if (type === 'width') {
     emit('blur:width', event)
-
-  else
+  } else {
     emit('blur:height', event)
+  }
 }
 
 function handleFocus({ event, type }: EventHandler) {
   focused.value = type
 
-  if (type === 'width')
+  if (type === 'width') {
     emit('focus:width', event)
-
-  else
+  } else {
     emit('focus:height', event)
+  }
 }
 </script>
 
@@ -141,7 +141,8 @@ function handleFocus({ event, type }: EventHandler) {
         <input
           :id="`${$attrs.id}-width`"
           ref="widthInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums"
+          :class="[
             invalidWidth
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',
@@ -166,7 +167,8 @@ function handleFocus({ event, type }: EventHandler) {
         <input
           :id="`${$attrs.id}-height`"
           ref="heightInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums" :class="[
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums"
+          :class="[
             invalidHeight
               ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
               : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-700 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-500',

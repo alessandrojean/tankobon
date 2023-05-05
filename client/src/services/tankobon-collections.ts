@@ -46,10 +46,10 @@ export async function getAllCollectionsByLibrary<T extends GetAllCollectionsByLi
     })
 
     return collections
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -60,10 +60,10 @@ export async function addOneCollection(collection: CollectionCreation): Promise<
     const { data } = await api.post<CollectionOnly>('collections', collection)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -83,10 +83,10 @@ export async function getOneCollection({ collectionId, includes }: GetOneCollect
     })
 
     return collection.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -95,10 +95,10 @@ export async function getOneCollection({ collectionId, includes }: GetOneCollect
 export async function updateOneCollection(collection: CollectionUpdate): Promise<void> {
   try {
     await api.put(`collections/${collection.id}`, collection)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -107,10 +107,10 @@ export async function updateOneCollection(collection: CollectionUpdate): Promise
 export async function deleteOneCollection(collectionId: string): Promise<void> {
   try {
     await api.delete(`collections/${collectionId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

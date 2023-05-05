@@ -29,8 +29,9 @@ const hasShared = computed(() => {
 })
 
 function sharedText(library: LibraryEntity) {
-  if (!hasShared.value)
+  if (!hasShared.value) {
     return null
+  }
 
   const owner = getRelationship(library, 'OWNER')!
 
@@ -42,8 +43,9 @@ function sharedText(library: LibraryEntity) {
 function handleUpdate(libraryId: string) {
   const library = libraries.value.find(l => l.id === libraryId)
 
-  if (library)
+  if (library) {
     emit('update:model-value', library)
+  }
 }
 </script>
 
@@ -73,7 +75,8 @@ function handleUpdate(libraryId: string) {
     <template #option="{ option, selected }">
       <div>
         <span
-          class="block truncate text-sm" :class="[
+          class="block truncate text-sm"
+          :class="[
             selected ? 'font-medium' : 'font-normal',
           ]"
         >

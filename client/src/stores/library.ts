@@ -22,5 +22,6 @@ export const useLibraryStore = defineStore('library', {
   },
 })
 
-if (import.meta.hot)
+if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useLibraryStore, import.meta.hot))
+}

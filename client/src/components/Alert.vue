@@ -35,7 +35,8 @@ const titleClasses: Record<AlertProps['type'], string> = {
       v-if="show"
       role="alert"
       :data-type="type"
-      class="dark:bg-gray-800 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3" :class="[
+      class="dark:bg-gray-800 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3"
+      :class="[
         border ? 'border-l-4' : '',
         classes[type],
       ]"
@@ -62,7 +63,8 @@ const titleClasses: Record<AlertProps['type'], string> = {
       >
         <p
           v-if="title && title.length > 0"
-          class="font-display-safe font-medium text-md sm:text-lg dark:text-gray-100" :class="[
+          class="font-display-safe font-medium text-md sm:text-lg dark:text-gray-100"
+          :class="[
             titleClasses[type],
           ]"
         >

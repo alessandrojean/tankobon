@@ -28,8 +28,9 @@ const { book, loading } = toRefs(props)
 const { t, d, n, locale } = useI18n()
 
 function formatPrice(price: MonetaryAmount | null | undefined) {
-  if (!price)
+  if (!price) {
     return null
+  }
 
   const { amount, currency } = price
 
@@ -55,8 +56,9 @@ const isbnCode = computed(() => {
 })
 
 const language = computed(() => {
-  if (!isbnCode.value || !isbnCode.value.language)
+  if (!isbnCode.value || !isbnCode.value.language) {
     return null
+  }
 
   const languageNames = new Intl.DisplayNames([locale.value], {
     type: 'language',

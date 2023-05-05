@@ -43,7 +43,8 @@ const infoTable = [
       <div
         v-for="criterium in 5"
         :key="criterium"
-        class="motion-safe:transition-colors" :class="[
+        class="motion-safe:transition-colors"
+        :class="[
           criteriumMeetCount >= criterium
             ? infoTable[criteriumMeetCount].bg
             : 'bg-gray-200 dark:bg-gray-600',
@@ -51,7 +52,8 @@ const infoTable = [
       />
     </div>
     <p
-      class="text-right mt-1 text-xs font-medium" :class="[
+      class="text-right mt-1 text-xs font-medium"
+      :class="[
         infoTable[criteriumMeetCount].tc,
       ]"
     >

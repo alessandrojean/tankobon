@@ -45,7 +45,8 @@ export default { inheritAttrs: false }
   <div>
     <div class="relative">
       <select
-        class="peer w-full bg-white dark:bg-gray-800 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500" :class="[
+        class="peer w-full bg-white dark:bg-gray-800 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500"
+        :class="[
           { 'pl-16': $slots['left-icon'] },
           invalid
             ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
@@ -74,7 +75,8 @@ export default { inheritAttrs: false }
         </option>
       </select>
       <label
-        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none" :class="[
+        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none"
+        :class="[
           { 'pl-16': $slots['left-icon'] },
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"
@@ -84,7 +86,8 @@ export default { inheritAttrs: false }
       </label>
       <div
         v-if="$slots['left-icon']"
-        class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+        class="absolute left-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+        :class="[
           invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',

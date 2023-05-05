@@ -26,10 +26,10 @@ export async function getAllLibraries(options: GetAllLibrariesParameters): Promi
     })
 
     return libraries.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -53,10 +53,10 @@ export async function getAllLibrariesByUser(options: GetAllLibrariesByUserParame
     })
 
     return libraries.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -67,10 +67,10 @@ export async function addOneLibrary(library: LibraryCreation): Promise<LibraryEn
     const { data } = await api.post<LibraryOnly>('libraries', library)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -90,10 +90,10 @@ export async function getOneLibrary({ libraryId, includes }: GetOneLibraryParame
     })
 
     return library.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -102,10 +102,10 @@ export async function getOneLibrary({ libraryId, includes }: GetOneLibraryParame
 export async function updateOneLibrary(library: LibraryUpdate): Promise<void> {
   try {
     await api.put(`libraries/${library.id}`, library)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -114,10 +114,10 @@ export async function updateOneLibrary(library: LibraryUpdate): Promise<void> {
 export async function deleteOneLibrary(libraryId: string): Promise<void> {
   try {
     await api.delete(`libraries/${libraryId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

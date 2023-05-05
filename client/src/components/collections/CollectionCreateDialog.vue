@@ -39,8 +39,9 @@ whenever(isOpen, () => {
 async function handleSubmit() {
   const isValid = await collectionForm.value!.v$.$validate()
 
-  if (!isValid)
+  if (!isValid) {
     return
+  }
 
   emit('close')
   emit('submit', toRaw(collection))

@@ -84,8 +84,9 @@ const regionCode = computed(() => {
 })
 
 const regionName = computed(() => {
-  if (regionCode.value === null)
+  if (regionCode.value === null) {
     return null
+  }
 
   const formatter = new Intl.DisplayNames(locale.value, { type: 'region' })
 

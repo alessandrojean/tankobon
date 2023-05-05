@@ -76,8 +76,7 @@ function handleImage(image: ImageResult) {
         })
       },
     })
-  }
-  else if (image.removeExisting) {
+  } else if (image.removeExisting) {
     deletePicture(personId.value!, {
       onSuccess: async () => {
         await notificator.success({ title: t('picture-upload.removed-with-success') })

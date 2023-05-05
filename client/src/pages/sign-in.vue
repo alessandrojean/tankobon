@@ -50,8 +50,9 @@ const {
 })
 
 watch([claimStatus, isFetched], () => {
-  if (claimStatus.value?.isClaimed === false)
+  if (claimStatus.value?.isClaimed === false) {
     router.replace({ name: 'claim-server' })
+  }
 })
 
 const isLoading = ref(false)
@@ -60,8 +61,9 @@ const error = ref<string>()
 async function handleSignIn() {
   const isFormValid = await v$.value.$validate()
 
-  if (!isFormValid)
+  if (!isFormValid) {
     return
+  }
 
   isLoading.value = true
   error.value = undefined
@@ -75,18 +77,17 @@ async function handleSignIn() {
     await refetchUserLibraries()
 
     if (userStore.isAuthenticated) {
-      if (userLibraries.value?.length === 0)
+      if (userLibraries.value?.length === 0) {
         await router.push({ name: 'welcome' })
-      else if (route.query.redirect)
+      } else if (route.query.redirect) {
         await router.push({ path: route.query.redirect.toString() })
-      else
+      } else {
         await router.push({ name: 'index' })
+      }
     }
-  }
-  catch (e) {
+  } catch (e) {
     error.value = (e as Error).message
-  }
-  finally {
+  } finally {
     isLoading.value = false
   }
 }

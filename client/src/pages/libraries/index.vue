@@ -19,8 +19,9 @@ function handleCreateLibrary(library: LibraryCreation) {
       notificator.success({ title: t('libraries.created-with-success') })
       await router.push({ name: 'libraries-id', params: { id } })
 
-      if (libraryStore.library === null)
+      if (libraryStore.library === null) {
         await libraryStore.fetchAndSelectFirstStore(userId.value)
+      }
     },
     onError: async (error) => {
       await notificator.failure({

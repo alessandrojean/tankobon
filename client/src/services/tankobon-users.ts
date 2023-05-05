@@ -17,10 +17,10 @@ export async function getMeWithAuth(email: string, password: string): Promise<Us
     })
 
     return me.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -33,10 +33,10 @@ export async function getMe(): Promise<UserEntity> {
     })
 
     return me.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -45,10 +45,10 @@ export async function getMe(): Promise<UserEntity> {
 export async function signOut() {
   try {
     await api.post('sign-out')
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -73,10 +73,10 @@ export async function getAllUsers(options?: GetAllUsersOptions): Promise<Paginat
     })
 
     return data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -89,10 +89,10 @@ export async function getOneUser(userId: string): Promise<UserEntity> {
     })
 
     return user.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -122,10 +122,10 @@ export async function getAuthenticationActivityFromUser(options: GetAuthenticati
     )
 
     return data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -136,10 +136,10 @@ export async function checkEmailAvailability(email: string): Promise<boolean> {
     const { data } = await api.get<EmailAvailability>(`users/availability/${email}`)
 
     return data.isAvailable
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -150,10 +150,10 @@ export async function addOneUser(user: UserCreation): Promise<UserEntity> {
     const { data: createdUser } = await api.post<EntityResponse<UserEntity>>('users', user)
 
     return createdUser.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -162,10 +162,10 @@ export async function addOneUser(user: UserCreation): Promise<UserEntity> {
 export async function deleteUserAvatar(userId: string): Promise<void> {
   try {
     await api.delete(`users/${userId}/avatar`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -181,10 +181,10 @@ export async function uploadUserAvatar(options: UploadUserAvatarOptions): Promis
     await api.postForm(`users/${options.userId}/avatar`, {
       avatar: options.avatar,
     })
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -193,10 +193,10 @@ export async function uploadUserAvatar(options: UploadUserAvatarOptions): Promis
 export async function updateUser(user: UserUpdate): Promise<void> {
   try {
     await api.put(`users/${user.id}`, user)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -205,10 +205,10 @@ export async function updateUser(user: UserUpdate): Promise<void> {
 export async function deleteOneUser(userId: string): Promise<void> {
   try {
     await api.delete(`users/${userId}`)
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }

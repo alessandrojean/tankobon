@@ -15,10 +15,10 @@ export async function getAllSources(): Promise<ImporterSourceEntity[]> {
     const { data: sources } = await api.get<ImporterColletion>('importer/sources')
 
     return sources.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -42,10 +42,10 @@ export async function searchByIsbn(options: SearchByIsbnOptions): Promise<Extern
     })
 
     return results.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
@@ -56,10 +56,10 @@ export async function importOneBook(book: ImportOneBook): Promise<BookEntity> {
     const { data } = await api.post<BookSingle>('importer/import', book)
 
     return data.data
-  }
-  catch (e) {
-    if (isAxiosError<ErrorResponse>(e) && e.response?.data)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
+    }
 
     throw e
   }
