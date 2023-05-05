@@ -109,6 +109,7 @@
     "unrefElement": true,
     "until": true,
     "useActiveElement": true,
+    "useAnchoredPosition": true,
     "useAnimate": true,
     "useArrayDifference": true,
     "useArrayEvery": true,

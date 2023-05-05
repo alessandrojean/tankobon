@@ -56,9 +56,11 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
     return []
   }
 
+  const currentRoleIndex = roles.value.findIndex(r => r.id === role.value?.id)
+
   return (personRoleMap.value[person.id] ?? [])
     .map(id => roles.value.findIndex(r => r.id === id))
-    .filter(i => i >= 0)
+    .filter(i => i >= 0 && i !== currentRoleIndex)
 }
 </script>
 

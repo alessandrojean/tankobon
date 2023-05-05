@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import type { ErrorObject } from '@vuelidate/core'
+import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import Button from './Button.vue'
 
 export interface BasicListboxProps {
@@ -55,6 +56,17 @@ const filteredOptions = computed(() => {
 })
 
 const errorMessage = computed(() => errors.value?.[0]?.$message)
+
+const comboboxInput = ref<InstanceType<typeof ComboboxInput>>()
+const comboboxOptions = ref<InstanceType<typeof ComboboxOptions>>()
+
+const { position } = useAnchoredPosition({
+  anchorElementRef: computed(() => comboboxInput.value?.$el),
+  floatingElementRef: computed(() => comboboxOptions.value?.$el),
+  side: 'outside-bottom',
+  align: 'start',
+  allowOutOfBounds: false,
+})
 </script>
 
 <template>
@@ -84,6 +96,7 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
         <slot name="left-icon" />
         <ComboboxInput
           :id="String($attrs.id)"
+          ref="comboboxInput"
           :class="[
             'w-full bg-white dark:bg-gray-950 shadow-sm rounded-md',
             'dark:text-gray-200 focus:ring focus:ring-opacity-50',
@@ -114,14 +127,19 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
       </div>
       <MenuTransition>
         <ComboboxOptions
+          ref="comboboxOptions"
           as="div"
           :class="[
-            'absolute top-full left-0 min-w-[20rem] max-w-[25rem] z-10 p-2',
+            'absolute top-[--top] left-[--left] min-w-[20rem] max-w-[25rem] z-10 p-2',
             'space-y-1 bg-white dark:bg-gray-800',
             'shadow-primer-overlay dark:shadow-primer-overlay-dark',
             'rounded-xl mt-0.5 origin-top-right ring-1',
             'ring-black/5 dark:ring-gray-700',
           ]"
+          :style="{
+            '--top': position?.top !== undefined ? `${position.top}px` : '100%',
+            '--left': position?.left !== undefined ? `${position.left}px` : '0px',
+          }"
         >
           <div
             v-if="filteredOptions.length === 0"
