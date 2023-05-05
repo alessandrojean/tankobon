@@ -128,6 +128,7 @@
     "useAttrs": true,
     "useBase64": true,
     "useBattery": true,
+    "useBeforeUnload": true,
     "useBluetooth": true,
     "useBookContributorsQuery": true,
     "useBookQuery": true,

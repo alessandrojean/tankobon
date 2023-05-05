@@ -36,8 +36,7 @@ export function useFocusZone(options: UseFocusZoneOptions = {}) {
         onCleanup(() => {
           abortController.value?.abort()
         })
-      }
-      else {
+      } else {
         abortController.value?.abort()
       }
     }

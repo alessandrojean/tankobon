@@ -102,6 +102,8 @@ const updatedBook = reactive<CustomBookUpdate>({
   title: '',
 })
 
+const initialBookToEdit = ref('')
+
 whenever(book, (loadedBook) => {
   Object.assign(updatedBook, {
     id: loadedBook.id,
@@ -140,6 +142,8 @@ whenever(book, (loadedBook) => {
     series: getRelationship(loadedBook, 'SERIES')?.id ?? null,
     store: getRelationship(loadedBook, 'STORE')?.id ?? null,
   } satisfies CustomBookUpdate)
+
+  initialBookToEdit.value = JSON.stringify(toRaw(updatedBook))
 }, { immediate: true })
 
 const activeTab = ref(tabs[0])
@@ -204,6 +208,14 @@ async function handleSubmit() {
     },
   })
 }
+
+const bookWasModified = ref(false)
+
+watch(updatedBook, (newUpdatedBook) => {
+  bookWasModified.value = initialBookToEdit.value !== JSON.stringify(toRaw(newUpdatedBook))
+})
+
+useBeforeUnload({ enabled: bookWasModified })
 </script>
 
 <template>

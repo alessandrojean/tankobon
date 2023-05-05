@@ -123,6 +123,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
+  const useBeforeUnload: typeof import('./composables/useBeforeUnload')['default']
   const useBluetooth: typeof import('@vueuse/core')['useBluetooth']
   const useBookContributorsQuery: typeof import('./queries/book/useBookContributorsQuery')['default']
   const useBookQuery: typeof import('./queries/book/useBookQuery')['default']
@@ -492,6 +493,7 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
+    readonly useBeforeUnload: UnwrapRef<typeof import('./composables/useBeforeUnload')['default']>
     readonly useBluetooth: UnwrapRef<typeof import('@vueuse/core')['useBluetooth']>
     readonly useBookContributorsQuery: UnwrapRef<typeof import('./queries/book/useBookContributorsQuery')['default']>
     readonly useBookQuery: UnwrapRef<typeof import('./queries/book/useBookQuery')['default']>
