@@ -101,7 +101,7 @@ defineExpose({ v$ })
       </div>
     </fieldset>
 
-    <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+    <fieldset class="grid grid-cols-1 lg:grid-cols-4 gap-2">
       <TextInput
         id="code"
         :model-value="code ?? ''"
@@ -134,27 +134,30 @@ defineExpose({ v$ })
       @input="$emit('update:synopsis', $event.target.value)"
     />
 
-    <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-      <TextInput
-        id="page-count"
-        :model-value="pageCount ?? ''"
-        required
-        inputmode="numeric"
-        :input-mask="{
-          regex: '\\d+',
-          showMaskOnHover: false,
-          showMaskOnFocus: false,
-        }"
-        :placeholder="$t('common-placeholders.book-page-count')"
-        :label-text="$t('common-fields.page-count')"
-        :invalid="v$.pageCount.$error"
-        :errors="v$.pageCount.$errors"
-        @blur="v$.pageCount.$touch()"
-        @input="$emit('update:pageCount', $event.target.value)"
-      />
+    <fieldset class="grid grid-cols-1 lg:grid-cols-10 gap-2">
+      <div class="lg:col-span-2">
+        <TextInput
+          id="page-count"
+          :model-value="pageCount ?? ''"
+          required
+          inputmode="numeric"
+          :input-mask="{
+            regex: '\\d+',
+            showMaskOnHover: false,
+            showMaskOnFocus: false,
+          }"
+          :placeholder="$t('common-placeholders.book-page-count')"
+          :label-text="$t('common-fields.page-count')"
+          :invalid="v$.pageCount.$error"
+          :errors="v$.pageCount.$errors"
+          @blur="v$.pageCount.$touch()"
+          @input="$emit('update:pageCount', $event.target.value)"
+        />
+      </div>
 
       <DimensionsInput
         id="dimensions"
+        class="lg:col-span-3"
         :model-value="dimensions"
         required
         :placeholder-width="$t('common-placeholders.book-width-cm')"

@@ -212,13 +212,17 @@ export default { components: { LinkIcon, EyeIcon, PencilIcon, ListBulletIcon }, 
             </span>
           </div>
         </div>
+
         <div v-else class="pb-3" aria-live="polite">
-          <em v-if="modelValue.length === 0" class="text-sm px-3">
-            {{ $t('markdown-input.no-preview') }}
-          </em>
+          <div
+            v-if="modelValue.length === 0"
+            class="prose px-6 py-1 prose-sm lg:prose-base max-w-none lg:max-w-none dark:prose-invert"
+          >
+            <em>{{ $t('markdown-input.no-preview') }}</em>
+          </div>
           <div
             v-else
-            class="prose prose- px-6 py-1 prose-sm lg:prose-base max-w-none lg:max-w-none dark:prose-invert"
+            class="prose px-6 py-1 prose-sm lg:prose-base max-w-none lg:max-w-none dark:prose-invert"
             v-html="markdownContent"
           />
         </div>
