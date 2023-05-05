@@ -136,7 +136,14 @@ whenever(coverArt, async (coverArt) => {
 
     <button
       v-if="showBookCover"
-      class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none motion-safe:transition-opacity"
+      :class="[
+        'z-10 bg-gray-900/60 flex items-center justify-center',
+        'absolute inset-0 w-full h-full opacity-0 rounded-xl',
+        'group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none',
+        'motion-safe:transition-opacity cursor-zoom-in',
+        'focus-visible:ring-2 focus-visible:ring-inset',
+        'focus-visible:ring-white/90',
+      ]"
       type="button"
       :title="$t('common-actions.zoom')"
       @click="openDialog"
