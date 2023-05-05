@@ -24,6 +24,7 @@ export default function useLibraryPeopleQuery<S = PaginatedResponse<PersonEntity
         sort: options.sort,
         size: options.size,
         includes: options.includes,
+        unpaged: options.unpaged,
       },
     ],
     queryFn: async () => {
@@ -34,6 +35,7 @@ export default function useLibraryPeopleQuery<S = PaginatedResponse<PersonEntity
         sort: unref(options.sort),
         size: unref(options.size),
         includes: unref(options.includes),
+        unpaged: unref(options.unpaged),
       })
     },
     ...options,

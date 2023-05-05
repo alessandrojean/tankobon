@@ -39,7 +39,7 @@ const { data: contributorRoles, isLoading } = useLibraryContributorRolesQuery({
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('contributorRoles.fetch-failure'),
+      title: t('contributor-roles.fetch-failure'),
       body: error.message,
     })
   },

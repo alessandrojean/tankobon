@@ -24,10 +24,11 @@ export interface GetAllPeopleByLibraryParameters extends Paginated<PersonSort> {
   libraryId: string
   search?: string
   includes?: PersonIncludes[]
+  unpaged?: boolean
 }
 
 export async function getAllPeopleByLibrary(options: GetAllPeopleByLibraryParameters): Promise<PersonPaginated> {
-  const { libraryId, includes, page, size, sort, search } = options
+  const { libraryId, includes, page, size, sort, search, unpaged } = options
   const searchOrUndefined = (search && search.length > 2) ? search : undefined
 
   try {
@@ -35,6 +36,7 @@ export async function getAllPeopleByLibrary(options: GetAllPeopleByLibraryParame
       params: {
         search: searchOrUndefined,
         includes: includes?.join(','),
+        unpaged: unpaged ?? false,
         page,
         size,
         sort: sort?.map(({ property, direction }) => {

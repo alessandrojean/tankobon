@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<AvatarProps>(), {
 const avatar = cva(
   [
     'relative shrink-0 ring-1 ring-black/5 overflow-hidden',
-    'motion-safe:transition-colors',
+    'motion-safe:transition-colors select-none',
   ],
   {
     variants: {
@@ -32,9 +32,10 @@ const avatar = cva(
         ],
       },
       size: {
-        mini: ['w-8 h-8'],
-        small: ['w-10 h-10'],
-        normal: ['w-12 h-12'],
+        'extra-mini': ['w-7 h-7'],
+        'mini': ['w-8 h-8'],
+        'small': ['w-10 h-10'],
+        'normal': ['w-12 h-12'],
       },
       square: {
         true: 'rounded-lg',

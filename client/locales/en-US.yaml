@@ -38,6 +38,7 @@ common-fields:
   page-count: Page count
   amount: Amount
   currency: Currency
+  person: Person
 
 common-actions:
   sign-in: Sign in
@@ -65,6 +66,8 @@ common-actions:
   edit-picture: Edit picture
   search-collection: Search the collection…
   back: Go back
+  add: Add
+  show-options: Show options
 
 common-values:
   true-value: 'True'
@@ -107,6 +110,8 @@ common-placeholders:
   book-label-price-currency: USD
   book-paid-price-amount: '15.95'
   book-paid-price-currency: USD
+  book-contributor-person: Osamu Tezuka
+  book-contributor-role: Artist
 
 validation:
   required: It can not be blank.
@@ -119,6 +124,8 @@ validation:
   isbn: It should be a valid ISBN.
   integer: It should be a valid integer.
   decimal: It should be a valid decimal.
+  unique: It can not contains repeated values.
+  repeated-positions: 'Repeated positions: {0}'
 
 entities:
   users: Users
@@ -340,6 +347,7 @@ people:
   empty-description: You haven't created any person yet
   empty-search-description: Matches not found for “{0}”
   search: Search into people
+  role-as: as
 
 tags:
   fetch-failure: There was an error while fetching the tags
@@ -473,3 +481,6 @@ aside-menu:
   release-link: Release on GitHub
   commit-link: Commit on GitHub
   mit-licensed: MIT licensed
+
+searchable-combobox:
+  no-results-found: No results found

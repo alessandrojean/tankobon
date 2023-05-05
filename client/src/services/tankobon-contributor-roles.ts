@@ -24,10 +24,11 @@ export interface GetAllContributorRolesByLibraryParameters extends Paginated<Con
   libraryId: string
   search?: string
   includes?: ContributorRoleIncludes[]
+  unpaged?: boolean
 }
 
 export async function getAllContributorRolesByLibrary(options: GetAllContributorRolesByLibraryParameters): Promise<ContributorRolePaginated> {
-  const { libraryId, includes, page, size, sort, search } = options
+  const { libraryId, includes, page, size, sort, search, unpaged } = options
   const searchOrUndefined = (search && search.length > 2) ? search : undefined
 
   try {
@@ -35,6 +36,7 @@ export async function getAllContributorRolesByLibrary(options: GetAllContributor
       params: {
         search: searchOrUndefined,
         includes: includes?.join(','),
+        unpaged: unpaged ?? false,
         page,
         size,
         sort: sort?.map(({ property, direction }) => {

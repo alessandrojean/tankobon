@@ -34,7 +34,8 @@ export default { inheritAttrs: false }
 <template>
   <div class="relative">
     <input
-      class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500 disabled:opacity-50" :class="[
+      class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500 disabled:opacity-50"
+      :class="[
         {
           'pl-10': $slots['left-icon'] && size === 'normal',
           'pl-9': $slots['left-icon'] && size === 'small',
@@ -56,7 +57,8 @@ export default { inheritAttrs: false }
     >
     <div
       v-if="$slots['left-icon']"
-      class="absolute inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+      class="absolute inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+      :class="[
         size === 'small' ? 'left-2.5' : 'left-3',
         invalid
           ? 'text-red-600 peer-focus:text-red-600'
@@ -67,7 +69,8 @@ export default { inheritAttrs: false }
     </div>
     <div
       v-if="$slots['right-icon']"
-      class="absolute inset-y-0 flex items-center justify-center motion-safe:transition-colors" :class="[
+      class="absolute inset-y-0 flex items-center justify-center motion-safe:transition-colors"
+      :class="[
         size === 'small' ? 'right-2.5' : 'right-3',
         invalid
           ? 'text-red-600 peer-focus:text-red-600'

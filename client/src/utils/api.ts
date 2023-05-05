@@ -8,6 +8,7 @@ import type { ImporterSourceAttributes } from '@/types/tankobon-importer-source'
 import type { LibraryAttributes, LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
 import type { PersonEntity, PersonIncludes } from '@/types/tankobon-person'
 import type { PublisherAttributes, PublisherEntity, PublisherIncludes } from '@/types/tankobon-publisher'
+import type { PaginatedResponse } from '@/types/tankobon-response'
 import type { SeriesAttributes } from '@/types/tankobon-series'
 import type { StoreAttributes } from '@/types/tankobon-store'
 import type { UserAttributes, UserEntity, UserIncludes } from '@/types/tankobon-user'
@@ -54,4 +55,17 @@ export function getRelationships<A extends object, E extends Entity<A>, T extend
   type: T,
 ): Relationship<AttributeType<E, T>>[] | undefined {
   return entity?.relationships?.filter(r => r.type === type)
+}
+
+export function createEmptyPaginatedResponse<T>(): PaginatedResponse<T> {
+  return {
+    result: 'OK',
+    response: 'COLLECTION',
+    data: [],
+    pagination: {
+      currentPage: 1,
+      totalElements: 20,
+      totalPages: 1,
+    },
+  }
 }

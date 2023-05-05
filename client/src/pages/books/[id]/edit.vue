@@ -7,6 +7,7 @@ import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import { getRelationship, getRelationships } from '@/utils/api'
+import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -38,21 +39,24 @@ const { data: book, isLoading } = useBookQuery({
 })
 
 const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
+const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
 
-const metadataInvalid = computed(() => metadataForm.value?.v$.$invalid ?? false)
-const organizationInvalid = computed(() => organizationForm.value?.v$.$invalid ?? false)
+const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
+const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
+const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'books.metadata' },
-  { key: '1', text: 'books.relationships' },
-  { key: '2', text: 'books.cover-art' },
-  { key: '3', text: 'books.organization' },
+  { key: '1', text: 'entities.book-contributors' },
+  { key: '2', text: 'books.relationships' },
+  { key: '3', text: 'books.cover-art' },
+  { key: '4', text: 'books.organization' },
 ]
 
 const invalidTabs = computed(() => [
   metadataInvalid.value,
-  false,
+  contributorsInvalid.value,
   false,
   organizationInvalid.value,
 ])
@@ -159,9 +163,10 @@ function validNumber(valueStr: string): number {
 
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
+  const isValidContributors = await contributorsForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidOrganization) {
+  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
     return
   }
 
@@ -239,7 +244,7 @@ async function handleSubmit() {
           <TabList class="hidden md:flex gap-3 -mb-px">
             <Tab
               v-for="tab in tabs"
-              :key="tab"
+              :key="tab.key"
               v-slot="{ selected }"
               as="template"
             >
@@ -252,11 +257,11 @@ async function handleSubmit() {
                 <span>{{ $t(tab.text) }}</span>
                 <div
                   v-if="invalidTabs[Number(tab.key)]"
-                  class="ml-2 relative"
+                  class="ml-2 mt-0.5 relative"
                 >
                   <span class="absolute inset-1 rounded-full bg-white" />
                   <ExclamationCircleIcon
-                    class="relative w-5 h-5 text-red-600 dark:text-red-500"
+                    class="relative w-4 h-4 text-red-600 dark:text-red-500"
                   />
                 </div>
               </Button>
@@ -288,6 +293,14 @@ async function handleSubmit() {
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:dimensions="updatedBook.dimensions"
+              :disabled="isLoading || isEditing"
+            />
+          </TabPanel>
+          <TabPanel :unmount="false">
+            <BookContributorsForm
+              ref="contributorsForm"
+              v-model:contributors="updatedBook.contributors"
+              :loading="isLoading"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
