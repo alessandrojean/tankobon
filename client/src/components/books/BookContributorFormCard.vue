@@ -9,17 +9,19 @@ import type { PersonEntity } from '@/types/tankobon-person'
 import { getRelationship } from '@/utils/api'
 
 export interface BookContributorFormCardProps {
+  personRoleMap?: Record<string, string[]>
   draggable: boolean
   index: number
   invalid?: boolean
   people: PersonEntity[]
-  person: PersonEntity
+  person: PersonEntity | undefined
   personPicture: ImageDetailsAttributes | undefined
-  role: ContributorRoleEntity
+  role: ContributorRoleEntity | undefined
   roles: ContributorRoleEntity[]
 }
 
 const props = withDefaults(defineProps<BookContributorFormCardProps>(), {
+  personRoleMap: () => ({}),
   invalid: false,
 })
 
@@ -29,7 +31,7 @@ defineEmits<{
   (e: 'click:remove'): void
 }>()
 
-const { role, person } = toRefs(props)
+const { role, roles, person, personRoleMap } = toRefs(props)
 const { t } = useI18n()
 
 const rules = computed(() => {
@@ -47,6 +49,16 @@ defineExpose({ v$ })
 
 function getPersonPicture(person: PersonEntity) {
   return getRelationship(person, 'PERSON_PICTURE')
+}
+
+function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
+  if (person === undefined) {
+    return []
+  }
+
+  return (personRoleMap.value[person.id] ?? [])
+    .map(id => roles.value.findIndex(r => r.id === id))
+    .filter(i => i >= 0)
 }
 </script>
 
@@ -151,6 +163,7 @@ function getPersonPicture(person: PersonEntity) {
         :option-value-select="(r: ContributorRoleEntity) => r?.id"
         :invalid="v$.role.$error"
         :errors="v$.role.$errors"
+        :disabled-options="getDisabledRolesIndexes(person)"
         @blur="v$.role.$touch()"
         @update:model-value="$emit('update:role', $event.id)"
         @update:model-value-select="$emit('update:role', $event)"

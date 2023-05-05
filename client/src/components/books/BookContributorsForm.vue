@@ -170,6 +170,20 @@ function handleDragAndDrop(newOrder: BookContributorCreateUpdate[]) {
 }
 
 onMounted(() => v$.value.$touch())
+
+const personRoleMap = computed(() => {
+  return contributors.value.reduce((map, contributor) => {
+    if (contributor.person.length > 0 && contributor.role.length > 0) {
+      if (map[contributor.person] !== undefined) {
+        map[contributor.person].push(contributor.role)
+      } else {
+        map[contributor.person] = [contributor.role]
+      }
+    }
+
+    return map
+  }, {} as Record<string, string[]>)
+})
 </script>
 
 <template>
@@ -216,6 +230,7 @@ onMounted(() => v$.value.$touch())
             :person-picture="getPersonPicture(peopleMap[contributor.person])?.attributes"
             :roles="contributorRoles ?? []"
             :people="people ?? []"
+            :person-role-map="personRoleMap"
             :invalid="duplicateIndexes.includes(i)"
             @update:person="handlePersonPicked($event, i)"
             @update:role="handleRolePicked($event, i)"

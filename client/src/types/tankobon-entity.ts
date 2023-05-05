@@ -8,7 +8,7 @@ export interface Entity<Attributes> {
 export type EntityType = 'USER' | 'LIBRARY' | 'PREFERENCE'
 | 'AUTHENTICATION_ACTIVITY' | 'COLLECTION' | 'SERIES' | 'PUBLISHER'
 | 'TAG' | 'STORE' | 'CONTRIBUTOR_ROLE' | 'IMPORTER_SOURCE'
-| 'EXTERNAL_BOOK' | 'BOOK' | 'CONTRIBUTOR'
+| 'EXTERNAL_BOOK' | 'BOOK' | 'CONTRIBUTOR' | 'PERSON'
 
 export interface Relationship<Attributes> {
   id: string

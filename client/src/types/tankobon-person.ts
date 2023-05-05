@@ -1,7 +1,7 @@
 import type { Entity } from './tankobon-entity'
 
 export type PersonEntity = Entity<PersonAttributes> & {
-  type: 'COLLECTION'
+  type: 'PERSON'
 }
 
 export interface PersonAttributes {

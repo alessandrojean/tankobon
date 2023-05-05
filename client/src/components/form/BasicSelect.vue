@@ -2,6 +2,7 @@
 import type { ErrorObject } from '@vuelidate/core'
 
 export interface BasicSelectProps {
+  disabledOptions?: number[]
   errors?: ErrorObject[]
   invalid?: boolean
   modelValue: any
@@ -14,6 +15,7 @@ export interface BasicSelectProps {
 }
 
 const props = withDefaults(defineProps<BasicSelectProps>(), {
+  disabledOptions: () => [],
   errors: undefined,
   invalid: false,
   required: false,
@@ -56,10 +58,11 @@ export default { inheritAttrs: false }
       @change="handleChange"
     >
       <option
-        v-for="option of options"
+        v-for="(option, i) of options"
         :key="optionValue ? optionValue(option) : option"
         :value="optionValue ? optionValue(option) : option"
         :selected="optionValue(modelValue) === optionValue(option)"
+        :disabled="disabledOptions.includes(i)"
       >
         {{ optionText(option) }}
       </option>

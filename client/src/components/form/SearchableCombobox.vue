@@ -4,6 +4,7 @@ import type { ErrorObject } from '@vuelidate/core'
 import Button from './Button.vue'
 
 export interface BasicListboxProps {
+  disabledOptions?: number[]
   errors?: ErrorObject[]
   filter?: (query: string, option: any) => boolean
   invalid?: boolean
@@ -17,6 +18,7 @@ export interface BasicListboxProps {
 }
 
 const props = withDefaults(defineProps<BasicListboxProps>(), {
+  disabledOptions: () => [],
   errors: undefined,
   filter: undefined,
   invalid: false,
@@ -66,6 +68,7 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
       :option-text="optionText"
       :option-value="optionValueSelect"
       :placeholder="placeholder"
+      :disabled-options="disabledOptions"
       @update:model-value="$emit('update:model-value-select', $event)"
     />
     <Combobox
@@ -128,13 +131,15 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
           </div>
           <ul v-else class="max-h-[18rem] overflow-y-auto rounded-lg">
             <ComboboxOption
-              v-for="option of filteredOptions"
+              v-for="(option, i) of filteredOptions"
               v-slot="{ active, selected }"
               :key="optionValue ? optionValue(option) : option"
               :value="optionValue ? optionValue(option) : option"
+              :disabled="disabledOptions.includes(i)"
               :class="[
                 'select-none px-2 py-1.5 cursor-pointer text-sm',
                 'rounded-lg flex gap-1 items-center',
+                'ui-disabled:opacity-50 ui-disabled:cursor-not-allowed',
                 'ui-active:bg-primary-100 dark:ui-active:bg-primary-600',
                 'dark:text-gray-300 ui-active:text-primary-700 dark:ui-active:dark:text-primary-100',
               ]"
