@@ -147,7 +147,7 @@ function handleRemoveContributor(i: number) {
   v$.value.contributors.$touch()
 }
 
-const container = ref<HTMLDivElement>()
+const container = ref<HTMLFieldSetElement>()
 
 async function addContributor() {
   const copy = structuredClone(toRaw(contributors.value))
@@ -187,7 +187,7 @@ const personRoleMap = computed(() => {
 </script>
 
 <template>
-  <div ref="container">
+  <fieldset ref="container" :disabled="disabled || loading">
     <div
       v-if="contributors.length > 0 && people!.length > 0 && contributorRoles!.length > 0"
       class="flex flex-col gap-6"
@@ -239,5 +239,5 @@ const personRoleMap = computed(() => {
         </template>
       </Draggable>
     </div>
-  </div>
+  </fieldset>
 </template>

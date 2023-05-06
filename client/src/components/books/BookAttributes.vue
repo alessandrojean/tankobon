@@ -77,6 +77,7 @@ const metadata = computed(() => {
     = book.value?.attributes?.paidPrice?.currency === book.value?.attributes?.labelPrice?.currency
   const publishers = getRelationships(book.value, 'PUBLISHER')
   const collection = getRelationship(book.value, 'COLLECTION')
+  const store = getRelationship(book.value, 'STORE')
 
   return [
     {
@@ -140,8 +141,11 @@ const metadata = computed(() => {
     {
       title: t('common-fields.store'),
       key: 'store',
-      value: getRelationship(book.value, 'STORE')?.attributes?.name,
-      searchable: true,
+      value: store?.attributes?.name,
+      link: {
+        name: 'stores-id',
+        params: { id: store?.id },
+      },
     },
     {
       title: t('common-fields.bought-at'),

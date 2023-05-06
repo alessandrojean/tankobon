@@ -2,9 +2,10 @@
  * Adapted from @primer/react package.
  */
 import { getAnchoredPosition } from '@primer/behaviors'
-import type { AnchorPosition, PositionSettings } from '@primer/behaviors'
+import type { AnchorAlignment, AnchorPosition, PositionSettings } from '@primer/behaviors'
 
-export interface UseAnchoredPositionOptions extends Partial<PositionSettings> {
+export interface UseAnchoredPositionOptions extends Partial<Omit<PositionSettings, 'align'>> {
+  align?: MaybeRef<AnchorAlignment>
   floatingElementRef?: Ref<HTMLElement>
   anchorElementRef?: Ref<HTMLElement>
 }
@@ -19,10 +20,15 @@ export function useAnchoredPosition(options?: UseAnchoredPositionOptions) {
       floatingElementRef.value instanceof Element
       && anchorElementRef.value instanceof Element
     ) {
+      const finalOptions: Partial<PositionSettings> = {
+        ...options,
+        align: unref(options?.align),
+      }
+
       position.value = getAnchoredPosition(
         floatingElementRef.value,
         anchorElementRef.value,
-        options,
+        finalOptions,
       )
     } else {
       position.value = undefined

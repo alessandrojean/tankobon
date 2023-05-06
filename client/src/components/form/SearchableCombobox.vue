@@ -2,9 +2,11 @@
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import type { ErrorObject } from '@vuelidate/core'
 import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
+import type { AnchorAlignment } from '@primer/behaviors'
 import Button from './Button.vue'
 
 export interface BasicListboxProps {
+  align?: AnchorAlignment
   disabledOptions?: number[]
   errors?: ErrorObject[]
   filter?: (query: string, option: any) => boolean
@@ -20,6 +22,7 @@ export interface BasicListboxProps {
 }
 
 const props = withDefaults(defineProps<BasicListboxProps>(), {
+  align: 'start',
   disabledOptions: () => [],
   errors: undefined,
   filter: undefined,
@@ -37,7 +40,7 @@ const emit = defineEmits<{
   (e: 'update:model-value-select', modelValue: any): void
 }>()
 
-const { optionValue, optionText, options, filter, errors } = toRefs(props)
+const { optionValue, optionText, options, filter, errors, align } = toRefs(props)
 
 const query = ref('')
 
@@ -66,7 +69,7 @@ const { position } = useAnchoredPosition({
   anchorElementRef: computed(() => comboboxInput.value?.$el),
   floatingElementRef: computed(() => comboboxOptions.value?.$el),
   side: 'outside-bottom',
-  align: 'start',
+  align,
   allowOutOfBounds: false,
 })
 </script>

@@ -39,6 +39,7 @@ common-fields:
   amount: Amount
   currency: Currency
   person: Person
+  series: Series
 
 common-actions:
   sign-in: Sign in
@@ -112,6 +113,9 @@ common-placeholders:
   book-paid-price-currency: USD
   book-contributor-person: Osamu Tezuka
   book-contributor-role: Artist
+  book-series: MW
+  book-collection: Manga
+  book-store: Amazon
 
 validation:
   required: It can not be blank.
@@ -308,6 +312,7 @@ series:
   empty-description: You haven't created any series yet
   empty-search-description: Matches not found for “{0}”
   search: Search into series
+  none: None
 
 publishers:
   fetch-failure: There was an error while fetching the publisher
@@ -406,6 +411,7 @@ stores:
   empty-description: You haven't created any stores yet
   empty-search-description: Matches not found for “{0}”
   search: Search into stores
+  unknown: Unknown
 
 importer:
   header: Import by ISBN

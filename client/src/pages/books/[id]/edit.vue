@@ -316,7 +316,15 @@ useBeforeUnload({ enabled: bookWasModified })
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
-          <TabPanel>Relationships</TabPanel>
+          <TabPanel :unmount="false">
+            <BookRelationshipsForm
+              v-model:series="updatedBook.series"
+              v-model:collection="updatedBook.collection"
+              v-model:store="updatedBook.store"
+              :loading="isLoading"
+              :disabled="isLoading || isEditing"
+            />
+          </TabPanel>
           <TabPanel>Cover art</TabPanel>
           <TabPanel :unmount="false">
             <BookOrganizationForm
