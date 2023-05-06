@@ -56,6 +56,7 @@ export default defineConfig({
         'vue-i18n',
         '@vueuse/head',
         '@vueuse/core',
+        '@vueuse/math',
         { '@vueuse/router': ['useRouteHash', 'useRouteParams', 'useRouteQuery'] },
         {
           from: '@vueuse/core',

@@ -14,14 +14,8 @@ const props = withDefaults(defineProps<NavbarProps>(), {
 
 const { transparent } = toRefs(props)
 
-const isScrolling = ref(false)
-
-function handleScroll() {
-  isScrolling.value = window.scrollY > 0
-}
-
-onMounted(() => window.addEventListener('scroll', handleScroll))
-onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+const { y: scrollY } = useScroll(window)
+const isScrolling = computed(() => scrollY.value > 0)
 
 const showAsideDialog = injectStrict(ShowAsideDialogKey)
 

@@ -23,6 +23,7 @@
     "@vuelidate/core": "2.0.2",
     "@vuelidate/validators": "2.0.2",
     "@vueuse/core": "10.1.2",
+    "@vueuse/math": "^10.1.2",
     "@vueuse/router": "10.1.2",
     "axios": "1.4.0",
     "blurhash": "2.0.5",
