@@ -9,6 +9,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
+import { unheadVueComposablesImports } from '@unhead/vue'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -54,9 +55,9 @@ export default defineConfig({
         'vue',
         'vue-router',
         'vue-i18n',
-        '@vueuse/head',
         '@vueuse/core',
         '@vueuse/math',
+        unheadVueComposablesImports,
         { '@vueuse/router': ['useRouteHash', 'useRouteParams', 'useRouteQuery'] },
         {
           from: '@vueuse/core',

@@ -96,6 +96,8 @@ const regionName = computed(() => {
 const flagUrl = computed(() => {
   return regionCode.value ? createFlagUrl(regionCode.value, 'rectangle') : null
 })
+
+useHead({ title: () => book.value?.attributes?.title ?? '' })
 </script>
 
 <template>

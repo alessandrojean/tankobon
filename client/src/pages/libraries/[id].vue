@@ -60,6 +60,8 @@ function handleEditLibrary(library: LibraryUpdate) {
     },
   })
 }
+
+useHead({ title: () => library.value?.attributes?.name ?? '' })
 </script>
 
 <template>

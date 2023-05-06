@@ -7,6 +7,10 @@ const library = computed(() => libraryStore.library!)
 
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
+
+const { t } = useI18n()
+
+useHead({ title: () => t('entities.books') })
 </script>
 
 <route lang="yaml">

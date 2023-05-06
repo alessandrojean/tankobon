@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
+import { createHead } from '@unhead/vue'
 
 import App from './App.vue'
 import router from '@/router'
@@ -11,6 +12,7 @@ import './index.pcss'
 
 createApp(App)
   .use(createPinia())
+  .use(createHead())
   .use(VueQueryPlugin)
   .use(i18n)
   .use(router)

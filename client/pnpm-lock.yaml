@@ -19,6 +19,9 @@ dependencies:
   '@tanstack/vue-table':
     specifier: 8.9.0
     version: 8.9.0(vue@3.2.47)
+  '@unhead/vue':
+    specifier: ^1.1.26
+    version: 1.1.26(vue@3.2.47)
   '@vuelidate/core':
     specifier: 2.0.2
     version: 2.0.2(vue@3.2.47)
@@ -1072,6 +1075,38 @@ packages:
       '@typescript-eslint/types': 5.59.2
       eslint-visitor-keys: 3.4.0
     dev: true
+
+  /@unhead/dom@1.1.26:
+    resolution: {integrity: sha512-6I8z170OAO19h/AslASN4Xw0hqItQFMKhRJQtplQs1BZ62LsDmNKuqJiYueX39U+IfIvIV3j/q1mQwt9lgMwTw==}
+    dependencies:
+      '@unhead/schema': 1.1.26
+      '@unhead/shared': 1.1.26
+    dev: false
+
+  /@unhead/schema@1.1.26:
+    resolution: {integrity: sha512-l93zaizm+pu36uMssdtzSC2Y61ncZaBBouZn0pB8rVI14V0hPxeXuSNIuPh2WjAm8wfb8EnCSE3LNguoqTar7g==}
+    dependencies:
+      hookable: 5.5.3
+      zhead: 2.0.4
+    dev: false
+
+  /@unhead/shared@1.1.26:
+    resolution: {integrity: sha512-gnUfNrl8w7hQHke9P0au7klcG9bHVOXqbDvya2uARA/8TyxNz87i0uakraO+P6/+zf484dw3b3MYkXq0thK2eg==}
+    dependencies:
+      '@unhead/schema': 1.1.26
+    dev: false
+
+  /@unhead/vue@1.1.26(vue@3.2.47):
+    resolution: {integrity: sha512-UpxQ0KGmOoiN+Dg19zto5KTcnGV5chBmgiVJTDqUF4BPfr24vRrR65sZGdMoNV7weuD3AD/K0osk2ru+vXxRrA==}
+    peerDependencies:
+      vue: '>=2.7 || >=3'
+    dependencies:
+      '@unhead/schema': 1.1.26
+      '@unhead/shared': 1.1.26
+      hookable: 5.5.3
+      unhead: 1.1.26
+      vue: 3.2.47
+    dev: false
 
   /@vitejs/plugin-vue@4.0.0(vite@4.3.4)(vue@3.2.47):
     resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
@@ -2813,6 +2848,10 @@ packages:
     hasBin: true
     dev: true
 
+  /hookable@5.5.3:
+    resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
+    dev: false
+
   /hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
     dev: true
@@ -4415,6 +4454,15 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
+  /unhead@1.1.26:
+    resolution: {integrity: sha512-MshcPoPLXSGRgYtczddGvMgLUISTbt2pxihqD5kZVXKmY2FZLj1OQIY111aX45Xq47XJxjvYavvoyeUFroKQcg==}
+    dependencies:
+      '@unhead/dom': 1.1.26
+      '@unhead/schema': 1.1.26
+      '@unhead/shared': 1.1.26
+      hookable: 5.5.3
+    dev: false
+
   /unimport@3.0.6:
     resolution: {integrity: sha512-GYxGJ1Bri1oqx8VFDjdgooGzeK7jBk3bvhXmamTIpu3nONOcUMGwZbX7X0L5RA7OWMXpR4vzpSQP7pXUzJg1/Q==}
     dependencies:
@@ -4821,3 +4869,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zhead@2.0.4:
+    resolution: {integrity: sha512-V4R94t3ifk9AURym6OskbKcnowzgp5Z88tkoL/NF67vyryNxC62u6mx5F1Ux4oh4+YN7FFmKYEyWy6m5kfPH6g==}
+    dev: false

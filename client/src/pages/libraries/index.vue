@@ -31,6 +31,8 @@ function handleCreateLibrary(library: LibraryCreation) {
     },
   })
 }
+
+useHead({ title: () => t('entities.libraries') })
 </script>
 
 <route lang="yaml">
