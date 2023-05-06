@@ -9,6 +9,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.TagLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -26,7 +27,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -88,6 +91,7 @@ class TagController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<TagEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -97,13 +101,25 @@ class TagController(
       throw UserDoesNotHaveAccessException()
     }
 
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
+      else -> Sort.unsorted()
+    }
+
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
+    }
+
     val tags = tagRepository.findAll(
       search = TagSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
         userId = principal.user.id,
       ),
-      pageable = page,
+      pageable = pageRequest,
     )
 
     return tags.toSuccessCollectionResponseDto { it.toDto() }

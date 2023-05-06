@@ -35,7 +35,7 @@ export async function getAllCollectionsByLibrary<T extends GetAllCollectionsByLi
         includes: includes?.join(','),
         page,
         size,
-        unpaged,
+        unpaged: unpaged ?? false,
         sort: sort?.map(({ property, direction }) => {
           return `${property},${direction}`
         }),

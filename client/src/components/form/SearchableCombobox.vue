@@ -9,6 +9,7 @@ export interface BasicListboxProps {
   errors?: ErrorObject[]
   filter?: (query: string, option: any) => boolean
   invalid?: boolean
+  kind?: 'basic' | 'fancy'
   labelText?: string
   modelValue: any
   options: any[]
@@ -23,6 +24,7 @@ const props = withDefaults(defineProps<BasicListboxProps>(), {
   errors: undefined,
   filter: undefined,
   invalid: false,
+  kind: 'basic',
   size: 'normal',
   optionText: (value: any) => String(value),
   optionValue: (value: any) => String(value),
@@ -89,10 +91,19 @@ const { position } = useAnchoredPosition({
       :model-value="optionValue ? optionValue(modelValue) : modelValue"
       @update:model-value="emit('update:model-value', $event)"
     >
-      <ComboboxLabel v-if="labelText" :for="$attrs.id" class="sr-only">
-        {{ labelText }}
-      </ComboboxLabel>
       <div class="relative">
+        <ComboboxLabel
+          v-if="labelText"
+          :for="$attrs.id"
+          :class="[
+            'font-medium text-xs px-3 absolute top-3 inset-x-0',
+            'select-none cursor-text',
+            invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
+            { 'sr-only': kind === 'basic' },
+          ]"
+        >
+          {{ labelText }}
+        </ComboboxLabel>
         <slot name="left-icon" />
         <ComboboxInput
           :id="String($attrs.id)"
@@ -102,7 +113,7 @@ const { position } = useAnchoredPosition({
             'dark:text-gray-200 focus:ring focus:ring-opacity-50',
             'motion-safe:transition-shadow pr-10',
             'placeholder:text-gray-500 disabled:opacity-50',
-            { 'pl-11': $slots['left-icon'] },
+            { 'pl-11': $slots['left-icon'], 'pt-8': kind === 'fancy' },
             invalid
               ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
               : 'border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
@@ -115,7 +126,7 @@ const { position } = useAnchoredPosition({
         <div class="absolute right-0.5 top-1/2 -translate-y-1/2">
           <ComboboxButton
             :as="Button"
-            class="w-8 h-8"
+            :class="['w-8 h-8', { 'mt-6': kind === 'fancy' }]"
             size="small"
             kind="ghost-alt"
             :title="$t('common-actions.show-options')"

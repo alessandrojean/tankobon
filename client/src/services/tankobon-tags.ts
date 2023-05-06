@@ -27,7 +27,7 @@ export interface GetAllTagsByLibraryParameters extends Paginated<TagSort> {
 }
 
 export async function getAllTagsByLibrary(options: GetAllTagsByLibraryParameters): Promise<TagPaginated> {
-  const { libraryId, includes, page, size, sort, search } = options
+  const { libraryId, includes, page, size, sort, search, unpaged } = options
   const searchOrUndefined = (search && search.length > 2) ? search : undefined
 
   try {
@@ -37,6 +37,7 @@ export async function getAllTagsByLibrary(options: GetAllTagsByLibraryParameters
         includes: includes?.join(','),
         page,
         size,
+        unpaged: unpaged ?? false,
         sort: sort?.map(({ property, direction }) => {
           return `${property},${direction}`
         }),

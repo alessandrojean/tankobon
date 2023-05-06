@@ -7,7 +7,7 @@ import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UseLibraryCollectionsQueryOptions<S = PaginatedResponse<CollectionEntity>> =
   UseQueryOptions<PaginatedResponse<CollectionEntity>, ErrorResponse, S> &
-  MaybeRefDeep<Omit<GetAllCollectionsByLibraryParameters, 'unpaged'>>
+  MaybeRefDeep<GetAllCollectionsByLibraryParameters>
 
 type ErrorResponse = TankobonApiError | Error
 
@@ -24,7 +24,7 @@ export default function useLibraryCollectionsQuery<S = PaginatedResponse<Collect
         sort: options.sort,
         size: options.size,
         includes: options.includes,
-        unpaged: false,
+        unpaged: options.unpaged,
       },
     ],
     queryFn: async () => {
@@ -35,6 +35,7 @@ export default function useLibraryCollectionsQuery<S = PaginatedResponse<Collect
         sort: unref(options.sort),
         size: unref(options.size),
         includes: unref(options.includes),
+        unpaged: unref(options.unpaged),
       })
     },
     ...options,

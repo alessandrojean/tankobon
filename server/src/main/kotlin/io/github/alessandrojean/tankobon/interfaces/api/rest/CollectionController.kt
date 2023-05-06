@@ -132,11 +132,7 @@ class CollectionController(
     val pageRequest = if (unpaged) {
       UnpagedSorted(sort)
     } else {
-      PageRequest.of(
-        page.pageNumber,
-        page.pageSize,
-        sort,
-      )
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
     }
 
     val collections = collectionRepository.findAll(

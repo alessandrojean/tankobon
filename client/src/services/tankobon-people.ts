@@ -24,7 +24,6 @@ export interface GetAllPeopleByLibraryParameters extends Paginated<PersonSort> {
   libraryId: string
   search?: string
   includes?: PersonIncludes[]
-  unpaged?: boolean
 }
 
 export async function getAllPeopleByLibrary(options: GetAllPeopleByLibraryParameters): Promise<PersonPaginated> {

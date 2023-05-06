@@ -24,6 +24,7 @@ export default function useLibrarySeriesQuery<S = PaginatedResponse<SeriesEntity
         sort: options.sort,
         size: options.size,
         includes: options.includes,
+        unpaged: options.unpaged,
       },
     ],
     queryFn: async () => {
@@ -34,6 +35,7 @@ export default function useLibrarySeriesQuery<S = PaginatedResponse<SeriesEntity
         sort: unref(options.sort),
         size: unref(options.size),
         includes: unref(options.includes),
+        unpaged: unref(options.unpaged),
       })
     },
     ...options,

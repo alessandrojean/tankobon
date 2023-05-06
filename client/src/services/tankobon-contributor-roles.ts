@@ -24,7 +24,6 @@ export interface GetAllContributorRolesByLibraryParameters extends Paginated<Con
   libraryId: string
   search?: string
   includes?: ContributorRoleIncludes[]
-  unpaged?: boolean
 }
 
 export async function getAllContributorRolesByLibrary(options: GetAllContributorRolesByLibraryParameters): Promise<ContributorRolePaginated> {
