@@ -32,7 +32,7 @@ useFocusZone({
 
 <template>
   <Block as="section" :title="$t('entities.book-contributors')">
-    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6">
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 gap-6">
       <div
         v-for="i in 5"
         :key="i"
@@ -50,7 +50,7 @@ useFocusZone({
     <ul
       v-else
       ref="container"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-6"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 gap-6"
     >
       <li
         v-for="(contributor, idx) in contributors"
