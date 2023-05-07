@@ -42,6 +42,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK as TableBook
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_CONTRIBUTOR as TableBookContributor
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_PUBLISHER as TableBookPublisher
@@ -250,8 +252,8 @@ class BookDtoDao(
       .execute()
 
     dsl.insertInto(TableBookPublisher)
-      .columns(TableBookPublisher.BOOK_ID, TableBookPublisher.PUBLISHER_ID)
-      .apply { publishers.forEach { publisher -> values(bookId, publisher.id) } }
+      .columns(TableBookPublisher.BOOK_ID, TableBookPublisher.PUBLISHER_ID, TableBookPublisher.CREATED_AT)
+      .apply { publishers.forEach { publisher -> values(bookId, publisher.id, LocalDateTime.now(ZoneId.of("Z"))) } }
       .execute()
   }
 
@@ -261,8 +263,8 @@ class BookDtoDao(
       .execute()
 
     dsl.insertInto(TableBookTag)
-      .columns(TableBookTag.BOOK_ID, TableBookTag.TAG_ID)
-      .apply { tags.forEach { tag -> values(bookId, tag.id) } }
+      .columns(TableBookTag.BOOK_ID, TableBookTag.TAG_ID, TableBookTag.CREATED_AT)
+      .apply { tags.forEach { tag -> values(bookId, tag.id, LocalDateTime.now(ZoneId.of("Z"))) } }
       .execute()
   }
 
@@ -358,17 +360,20 @@ class BookDtoDao(
     val publishers = dsl.select(TableBookPublisher.PUBLISHER_ID)
       .from(TableBookPublisher)
       .where(TableBookPublisher.BOOK_ID.eq(id))
+      .orderBy(TableBookPublisher.CREATED_AT.asc())
       .fetch { RelationDto(it.get(TableBookPublisher.PUBLISHER_ID), RelationshipType.PUBLISHER) }
 
     val tags = dsl.select(TableBookTag.TAG_ID)
       .from(TableBookTag)
       .where(TableBookTag.BOOK_ID.eq(id))
+      .orderBy(TableBookTag.CREATED_AT.asc())
       .fetch { RelationDto(it.get(TableBookTag.TAG_ID), RelationshipType.TAG) }
 
     val contributors = dsl
       .select(TableBookContributor.ID)
       .from(TableBookContributor)
       .where(TableBookContributor.BOOK_ID.eq(id))
+      .orderBy(TableBookContributor.CREATED_AT.asc())
       .fetch { RelationDto(it.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR) }
 
     val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, RelationshipType.LIBRARY)

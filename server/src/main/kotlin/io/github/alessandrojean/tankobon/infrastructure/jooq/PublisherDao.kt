@@ -106,6 +106,7 @@ class PublisherDao(
   override fun findAllByIds(publisherIds: Collection<String>): Collection<Publisher> =
     dsl.selectFrom(TablePublisher)
       .where(TablePublisher.ID.`in`(publisherIds))
+      .orderBy(TablePublisher.ID.sortByValues(publisherIds.toList(), true))
       .fetchInto(TablePublisher)
       .map { it.toDomain() }
 

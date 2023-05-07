@@ -98,6 +98,7 @@ class CollectionDao(
   override fun findAllByIds(collectionIds: Collection<String>): Collection<DomainCollection> =
     dsl.selectFrom(TableCollection)
       .where(TableCollection.ID.`in`(collectionIds))
+      .orderBy(TableCollection.ID.sortByValues(collectionIds.toList(), true))
       .fetchInto(TableCollection)
       .map { it.toDomain() }
 

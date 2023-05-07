@@ -116,6 +116,7 @@ class PersonDao(
   override fun findAllByIds(personIds: Collection<String>): Collection<Person> =
     dsl.selectFrom(TablePerson)
       .where(TablePerson.ID.`in`(personIds))
+      .orderBy(TablePerson.ID.sortByValues(personIds.toList(), true))
       .fetchInto(TablePerson)
       .map { it.toDomain() }
 

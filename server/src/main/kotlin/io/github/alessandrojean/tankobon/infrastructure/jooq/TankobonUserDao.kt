@@ -67,6 +67,7 @@ class TankobonUserDao(
   override fun findAllByIds(userIds: Collection<String>): Collection<TankobonUser> =
     dsl.selectFrom(TableUser)
       .where(TableUser.ID.`in`(userIds))
+      .orderBy(TableUser.ID.sortByValues(userIds.toList(), true))
       .fetchInto(TableUser)
       .map { it.toDomain() }
 

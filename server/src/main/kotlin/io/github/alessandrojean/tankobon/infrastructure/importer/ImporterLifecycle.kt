@@ -94,7 +94,7 @@ class ImporterLifecycle(
       val book = BookCreationDto(
         collection = collectionId,
         contributors = contributors,
-        publishers = setOf(publisher.id),
+        publishers = listOf(publisher.id),
         code = import.isbn,
         barcode = import.isbn,
         title = import.title,

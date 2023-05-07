@@ -12,6 +12,8 @@ import io.github.alessandrojean.tankobon.jooq.tables.records.BookContributorReco
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.time.ZoneId
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_CONTRIBUTOR as TableBookContributor
 import io.github.alessandrojean.tankobon.jooq.Tables.CONTRIBUTOR_ROLE as TableContributorRole
 import io.github.alessandrojean.tankobon.jooq.Tables.PERSON as TablePerson
@@ -52,6 +54,7 @@ class BookContributorDao(
   override fun findAllByIds(bookContributorIds: Collection<String>): Collection<BookContributor> =
     dsl.selectFrom(TableBookContributor)
       .where(TableBookContributor.ID.`in`(bookContributorIds))
+      .orderBy(TableBookContributor.ID.sortByValues(bookContributorIds.toList(), true))
       .fetchInto(TableBookContributor)
       .map { it.toDomain() }
 
@@ -63,6 +66,7 @@ class BookContributorDao(
       .leftJoin(TablePerson)
       .on(TablePerson.ID.eq(TableBookContributor.PERSON_ID))
       .where(TableBookContributor.ID.`in`(bookContributorIds))
+      .orderBy(TableBookContributor.ID.sortByValues(bookContributorIds.toList(), true))
       .fetch { record ->
         val domain = record.into(TableBookContributor).toDomain()
 
@@ -79,6 +83,7 @@ class BookContributorDao(
   override fun findAllByBookId(bookId: String): Collection<BookContributor> =
     dsl.selectFrom(TableBookContributor)
       .where(TableBookContributor.BOOK_ID.eq(bookId))
+      .orderBy(TableBookContributor.CREATED_AT.asc())
       .fetchInto(TableBookContributor)
       .map { it.toDomain() }
 
@@ -90,6 +95,7 @@ class BookContributorDao(
       .leftJoin(TablePerson)
       .on(TablePerson.ID.eq(TableBookContributor.PERSON_ID))
       .where(TableBookContributor.BOOK_ID.eq(bookId))
+      .orderBy(TableBookContributor.CREATED_AT.asc())
       .fetch { record ->
         val domain = record.into(TableBookContributor).toDomain()
 
@@ -110,6 +116,7 @@ class BookContributorDao(
       .set(TableBookContributor.BOOK_ID, bookContributor.bookId)
       .set(TableBookContributor.ROLE_ID, bookContributor.roleId)
       .set(TableBookContributor.PERSON_ID, bookContributor.personId)
+      .set(TableBookContributor.CREATED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .execute()
   }
 
@@ -119,11 +126,18 @@ class BookContributorDao(
         TableBookContributor.ID,
         TableBookContributor.BOOK_ID,
         TableBookContributor.ROLE_ID,
-        TableBookContributor.PERSON_ID
+        TableBookContributor.PERSON_ID,
+        TableBookContributor.CREATED_AT,
       )
       .apply {
         bookContributors.forEach { contributor ->
-          values(contributor.id, contributor.bookId, contributor.roleId, contributor.personId)
+          values(
+            contributor.id,
+            contributor.bookId,
+            contributor.roleId,
+            contributor.personId,
+            LocalDateTime.now(ZoneId.of("Z"))
+          )
         }
       }
       .execute()

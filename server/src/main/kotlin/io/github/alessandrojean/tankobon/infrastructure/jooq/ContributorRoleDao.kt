@@ -117,6 +117,7 @@ class ContributorRoleDao(
   override fun findAllByIds(contributorRoleIds: Collection<String>): Collection<ContributorRole> =
     dsl.selectFrom(TableContributorRole)
       .where(TableContributorRole.ID.`in`(contributorRoleIds))
+      .orderBy(TableContributorRole.ID.sortByValues(contributorRoleIds.toList(), true))
       .fetchInto(TableContributorRole)
       .map { it.toDomain() }
 

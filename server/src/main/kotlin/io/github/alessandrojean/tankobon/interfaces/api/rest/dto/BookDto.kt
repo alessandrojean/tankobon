@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.UUID
+import org.hibernate.validator.constraints.UniqueElements
 import java.time.LocalDateTime
 import javax.money.MonetaryAmount
 
@@ -113,12 +114,15 @@ data class BookCreationDto(
   @get:Schema(format = "uuid")
   val series: String? = null,
   @get:NotEmpty
+  @get:UniqueElements
   val contributors: List<@NotNull BookContributorCreationDto>,
   @get:NotEmpty
+  @get:UniqueElements
   @get:Schema(type = "array", format = "uuid")
-  val publishers: Set<@UUID(version = [4]) String>,
+  val publishers: List<@UUID(version = [4]) String>,
+  @get:UniqueElements
   @get:Schema(type = "array", format = "uuid")
-  val tags: Set<@UUID(version = [4]) String>? = null,
+  val tags: List<@UUID(version = [4]) String>? = null,
   @get:NotBlank
   @get:Schema(description = "An unique code identifier to the book, such as its ISBN-13")
   val code: String,

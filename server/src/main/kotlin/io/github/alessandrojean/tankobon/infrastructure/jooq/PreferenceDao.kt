@@ -30,6 +30,7 @@ class PreferenceDao(
     dsl.selectFrom(TableUserPreference)
       .where(TableUserPreference.USER_ID.eq(userId))
       .and(TableUserPreference.KEY.`in`(keys))
+      .orderBy(TableUserPreference.KEY.sortByValues(keys.toList(), true))
       .fetchInto(TableUserPreference)
       .map { it.toDomain() }
 

@@ -99,6 +99,7 @@ class TagDao(
   override fun findAllByIds(tagIds: Collection<String>): Collection<Tag> =
     dsl.selectFrom(TableTag)
       .where(TableTag.ID.`in`(tagIds))
+      .orderBy(TableTag.ID.sortByValues(tagIds.toList(), true))
       .fetchInto(TableTag)
       .map { it.toDomain() }
 

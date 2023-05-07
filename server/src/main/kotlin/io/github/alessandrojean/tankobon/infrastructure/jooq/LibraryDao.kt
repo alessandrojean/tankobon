@@ -58,6 +58,7 @@ class LibraryDao(
   override fun findAllByIds(libraryIds: Collection<String>): Collection<Library> =
     selectBase()
       .where(TableLibrary.ID.`in`(libraryIds))
+      .orderBy(TableLibrary.ID.sortByValues(libraryIds.toList(), true))
       .fetchAndMap()
 
   override fun getAllowedToViewLibrariesIds(userId: String): Collection<String> =

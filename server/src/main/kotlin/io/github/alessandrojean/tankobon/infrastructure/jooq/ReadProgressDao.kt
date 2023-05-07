@@ -98,6 +98,7 @@ class ReadProgressDao(
   override fun findAllByIds(readProgressIds: Collection<String>): Collection<ReadProgress> =
     dsl.selectFrom(TableReadProgress)
       .where(TableReadProgress.ID.`in`(readProgressIds))
+      .orderBy(TableReadProgress.ID.sortByValues(readProgressIds.toList(), true))
       .fetchInto(TableReadProgress)
       .map { it.toDomain() }
 

@@ -105,6 +105,7 @@ class SeriesDao(
   override fun findAllByIds(seriesIds: Collection<String>): Collection<Series> =
     dsl.selectFrom(TableSeries)
       .where(TableSeries.ID.`in`(seriesIds))
+      .orderBy(TableSeries.ID.sortByValues(seriesIds.toList(), true))
       .fetchInto(TableSeries)
       .map { it.toDomain() }
 

@@ -99,6 +99,7 @@ class StoreDao(
   override fun findAllByIds(storeIds: Collection<String>): Collection<Store> =
     dsl.selectFrom(TableStore)
       .where(TableStore.ID.`in`(storeIds))
+      .orderBy(TableStore.ID.sortByValues(storeIds.toList(), true))
       .fetchInto(TableStore)
       .map { it.toDomain() }
 

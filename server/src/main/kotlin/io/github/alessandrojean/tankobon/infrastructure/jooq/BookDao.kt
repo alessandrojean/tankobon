@@ -39,6 +39,7 @@ class BookDao(
   override fun findAllByIds(bookIds: Collection<String>): Collection<Book> =
     dsl.selectFrom(TableBook)
       .where(TableBook.ID.`in`(bookIds))
+      .orderBy(TableBook.ID.sortByValues(bookIds.toList(), true))
       .fetchInto(TableBook)
       .map { it.toDomain() }
 
