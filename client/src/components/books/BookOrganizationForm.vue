@@ -8,6 +8,7 @@ import { positiveDecimal } from '@/utils/validation'
 import type { StoreEntity } from '@/types/tankobon-store'
 import { createEmptyPaginatedResponse } from '@/utils/api'
 import type { CollectionEntity } from '@/types/tankobon-collection'
+import type { TagEntity } from '@/types/tankobon-tag'
 
 export interface BookMetadataFormProps {
   collection: string
@@ -19,6 +20,7 @@ export interface BookMetadataFormProps {
   paidPrice: MonetaryAmountString
   mode?: 'creation' | 'update'
   store: string | null | undefined
+  tags: string[] | null | undefined
 }
 
 export interface BookMetadataFormEmits {
@@ -30,6 +32,7 @@ export interface BookMetadataFormEmits {
   (e: 'update:labelPrice', labelPrice: MonetaryAmountString): void
   (e: 'update:paidPrice', paidPrice: MonetaryAmountString): void
   (e: 'update:store', store: string | null): void
+  (e: 'update:tags', tags: string[] | null | undefined): void
   (e: 'validate', isValid: boolean): void
 }
 
@@ -38,7 +41,7 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { paidPrice, labelPrice, store, collection } = toRefs(props)
+const { paidPrice, labelPrice, store, collection, tags } = toRefs(props)
 
 const { t } = useI18n()
 const notificator = useToaster()
@@ -108,6 +111,20 @@ const { data: collections } = useLibraryCollectionsQuery({
   },
 })
 
+const { data: libraryTags } = useLibraryTagsQuery({
+  libraryId,
+  sort: [{ property: 'name', direction: 'asc' }],
+  unpaged: true,
+  select: response => response.data,
+  initialData: () => createEmptyPaginatedResponse(),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('tags.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
 const nullStore = computed<StoreEntity>(() => ({
   type: 'STORE',
   id: 'null',
@@ -128,6 +145,12 @@ const collectionValue = computed(() => {
 
 const storeOptions = computed(() => {
   return [nullStore.value, ...stores.value!]
+})
+
+const tagMap = computed(() => {
+  return Object.fromEntries(
+    libraryTags.value!.map(p => [p.id, p]),
+  )
 })
 </script>
 
@@ -225,6 +248,17 @@ const storeOptions = computed(() => {
         </div>
       </div>
     </fieldset>
+
+    <ChipInput
+      :placeholder="$t('common-placeholders.book-tag')"
+      :label-text="$t('entities.tags')"
+      :model-value="tags ?? []"
+      :model-text="(p: string) => tagMap[p]?.attributes.name"
+      :options="libraryTags ?? []"
+      :option-text="(p: TagEntity) => p.attributes?.name"
+      :option-value="(p: TagEntity) => p.id"
+      @update:model-value="$emit('update:tags', $event)"
+    />
 
     <MarkdownInput
       id="notes"

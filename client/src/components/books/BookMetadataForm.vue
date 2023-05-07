@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, integer, minValue, required } from '@vuelidate/validators'
+import { BuildingOffice2Icon, XMarkIcon } from '@heroicons/vue/20/solid'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import { positiveDecimal } from '@/utils/validation'
-import { createEmptyPaginatedResponse } from '@/utils/api'
+import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
 import type { SeriesEntity } from '@/types/tankobon-series'
+import type { PublisherEntity } from '@/types/tankobon-publisher'
+import { getFullImageUrl } from '@/modules/api'
 
 export interface BookMetadataFormProps {
   code: string
@@ -15,6 +18,7 @@ export interface BookMetadataFormProps {
   synopsis: string
   pageCount: string
   dimensions: DimensionsString
+  publishers: string[]
   series: string | null | undefined
   mode?: 'creation' | 'update'
 }
@@ -29,6 +33,7 @@ export interface BookMetadataFormEmits {
   (e: 'update:pageCount', pageCount: string): void
   (e: 'update:dimensions', dimensions: DimensionsString): void
   (e: 'update:series', series: string | null): void
+  (e: 'update:publishers', publishers: string[]): void
   (e: 'validate', isValid: boolean): void
 }
 
@@ -37,12 +42,13 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { code, title, number, pageCount, dimensions, series } = toRefs(props)
+const { code, title, number, pageCount, dimensions, series, publishers } = toRefs(props)
 
 const { t } = useI18n()
 
 const rules = computed(() => {
   const messageRequired = helpers.withMessage(t('validation.required'), required)
+  const messageNotEmpty = helpers.withMessage(t('validation.not-empty'), required)
   const messageInteger = helpers.withMessage(t('validation.integer'), integer)
   const messageMinValue = helpers.withMessage(({ $params }) => t('validation.min-value', [$params.min]), minValue(0))
   const messageDecimal = helpers.withMessage(t('validation.decimal'), positiveDecimal)
@@ -52,6 +58,7 @@ const rules = computed(() => {
     title: { messageRequired },
     number: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
+    publishers: { messageNotEmpty },
     dimensions: {
       widthCm: { messageDecimal },
       heightCm: { messageDecimal },
@@ -59,9 +66,10 @@ const rules = computed(() => {
   }
 })
 
-const v$ = useVuelidate(rules, { code, title, number, pageCount, dimensions })
+const v$ = useVuelidate(rules, { code, title, number, pageCount, dimensions, publishers })
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
+watch(publishers, () => v$.value.publishers.$touch())
 
 defineExpose({ v$ })
 
@@ -83,6 +91,21 @@ const { data: librarySeries } = useLibrarySeriesQuery({
   },
 })
 
+const { data: libraryPublishers, isLoading: isLoadingPublishers } = useLibraryPublishersQuery({
+  libraryId,
+  sort: [{ property: 'name', direction: 'asc' }],
+  includes: ['publisher_picture'],
+  unpaged: true,
+  select: response => response.data,
+  initialData: () => createEmptyPaginatedResponse(),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('publishers.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
 const nullSeries = computed<SeriesEntity>(() => ({
   type: 'SERIES',
   id: 'null',
@@ -93,6 +116,12 @@ const nullSeries = computed<SeriesEntity>(() => ({
   relationships: [],
 }))
 
+const publisherMap = computed(() => {
+  return Object.fromEntries(
+    libraryPublishers.value!.map(p => [p.id, p]),
+  )
+})
+
 const seriesValue = computed(() => {
   return librarySeries.value!.find(s => s.id === series.value) ?? nullSeries.value
 })
@@ -100,6 +129,10 @@ const seriesValue = computed(() => {
 const seriesOptions = computed(() => {
   return [nullSeries.value, ...librarySeries.value!]
 })
+
+function getPublisherPicture(publisher: PublisherEntity) {
+  return getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes
+}
 </script>
 
 <template>
@@ -178,6 +211,85 @@ const seriesOptions = computed(() => {
         @update:model-value-select="$emit('update:series', $event === 'null' ? null : $event)"
       />
     </fieldset>
+
+    <ChipInput
+      input-class="h-10"
+      :placeholder="$t('common-placeholders.book-publisher')"
+      :label-text="$t('entities.publishers')"
+      :model-value="publishers"
+      :model-text="(p: string) => publisherMap[p]?.attributes.name"
+      :options="libraryPublishers ?? []"
+      :option-text="(p: PublisherEntity) => p.attributes?.name"
+      :option-value="(p: PublisherEntity) => p.id"
+      :invalid="v$.publishers.$error"
+      :errors="v$.publishers.$errors"
+      @blur="v$.publishers.$touch()"
+      @update:model-value="$emit('update:publishers', $event)"
+    >
+      <template #chip="{ option, remove }: { option: string, remove: () => void }">
+        <li
+          v-if="isLoadingPublishers || !publisherMap[option]"
+          class="skeleton w-32 h-10 rounded-xl"
+        />
+        <li
+          v-else
+          :class="[
+            'flex items-center gap-2 select-none',
+            'pl-1.5 pr-2 py-1.5 rounded-xl',
+            'bg-primary-100 text-primary-700',
+          ]"
+        >
+          <Avatar
+            square
+            size="extra-mini"
+            :empty-icon="BuildingOffice2Icon"
+            :picture-url="
+              getFullImageUrl({
+                collection: 'publishers',
+                fileName: getPublisherPicture(publisherMap[option])?.versions['128'],
+                timeHex: getPublisherPicture(publisherMap[option])?.timeHex,
+              })
+            "
+          />
+          <span>
+            {{ publisherMap[option]?.attributes.name }}
+          </span>
+          <Button
+            class="w-6 h-6 -mr-1.5"
+            size="small"
+            kind="ghost-alt"
+            rounded="full"
+            tabindex="-1"
+            :title="$t('common-actions.remove')"
+            @click="remove"
+          >
+            <span class="sr-only">{{ $t('common-actions.remove') }}</span>
+            <XMarkIcon class="w-4 h-4 text-primary-600 group-hover/button:text-primary-700" />
+          </Button>
+        </li>
+      </template>
+
+      <template #option="{ option }: { option: PublisherEntity }">
+        <div class="flex items-center gap-3 w-full">
+          <Avatar
+            square
+            class="-ml-0.5 shrink-0"
+            size="extra-mini"
+            :empty-icon="BuildingOffice2Icon"
+            :picture-url="
+              getFullImageUrl({
+                collection: 'publishers',
+                fileName: getPublisherPicture(option)?.versions['128'],
+                timeHex: getPublisherPicture(option)?.timeHex,
+              })
+            "
+          />
+          <div class="grow">
+            {{ option?.attributes.name }}
+          </div>
+        </div>
+      </template>
+    </ChipInput>
 
     <MarkdownInput
       id="synopsis"

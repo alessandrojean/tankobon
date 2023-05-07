@@ -39,6 +39,7 @@ declare module '@vue/runtime-core' {
     BookTitle: typeof import('./components/books/BookTitle.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
     CheckboxInput: typeof import('./components/form/CheckboxInput.vue')['default']
+    ChipInput: typeof import('./components/form/ChipInput.vue')['default']
     CollectionCreateDialog: typeof import('./components/collections/CollectionCreateDialog.vue')['default']
     CollectionEditDialog: typeof import('./components/collections/CollectionEditDialog.vue')['default']
     CollectionForm: typeof import('./components/collections/CollectionForm.vue')['default']

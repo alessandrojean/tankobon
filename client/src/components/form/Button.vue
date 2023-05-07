@@ -16,7 +16,7 @@ withDefaults(defineProps<ButtonProps>(), {
 
 const button = cva(
   [
-    'font-medium motion-safe:transition-colors',
+    'font-medium motion-safe:transition-colors group/button',
     'border border-inset flex items-center justify-center relative',
     'focus:outline-none focus-visible:ring-2',
   ],

@@ -117,11 +117,12 @@ common-placeholders:
   book-series: MW
   book-collection: Manga
   book-store: Amazon
-  book-publisher: Vertical Inc
-  book-tag: Softcover
+  book-publisher: Add a publisher…
+  book-tag: Add a tag…
 
 validation:
   required: It can not be blank.
+  not-empty: It can not be empty.
   email: It should be a valid e-mail.
   min: It should have at least {n} characters.
   min-value: It should be greater or equal to {0}.

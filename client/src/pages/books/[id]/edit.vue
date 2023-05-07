@@ -8,7 +8,6 @@ import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import { getRelationship, getRelationships } from '@/utils/api'
 import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
-import BookRelationshipsForm from '@/components/books/BookRelationshipsForm.vue'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -41,26 +40,22 @@ const { data: book, isLoading } = useBookQuery({
 
 const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
 const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
-const relationshipsForm = ref<InstanceType<typeof BookRelationshipsForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
-const relationshipsInvalid = computed(() => relationshipsForm.value?.v$.$error ?? false)
 const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'books.metadata' },
   { key: '1', text: 'entities.book-contributors' },
-  { key: '2', text: 'books.relationships' },
-  { key: '3', text: 'books.cover-art' },
-  { key: '4', text: 'books.organization' },
+  { key: '2', text: 'books.cover-art' },
+  { key: '3', text: 'books.organization' },
 ]
 
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   contributorsInvalid.value,
-  relationshipsInvalid.value,
   false,
   organizationInvalid.value,
 ])
@@ -172,15 +167,9 @@ function validNumber(valueStr: string): number {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidContributors = await contributorsForm.value!.v$.$validate()
-  const isValidRelationships = await relationshipsForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
 
-  if (
-    !isValidMetadata
-    || !isValidContributors
-    || !isValidRelationships
-    || !isValidOrganization
-  ) {
+  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
     return
   }
 
@@ -316,6 +305,7 @@ useBeforeUnload({ enabled: bookWasModified })
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:dimensions="updatedBook.dimensions"
               v-model:series="updatedBook.series"
+              v-model:publishers="updatedBook.publishers"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
@@ -323,15 +313,6 @@ useBeforeUnload({ enabled: bookWasModified })
             <BookContributorsForm
               ref="contributorsForm"
               v-model:contributors="updatedBook.contributors"
-              :loading="isLoading"
-              :disabled="isLoading || isEditing"
-            />
-          </TabPanel>
-          <TabPanel :unmount="false">
-            <BookRelationshipsForm
-              ref="relationshipsForm"
-              v-model:publishers="updatedBook.publishers"
-              v-model:tags="updatedBook.tags"
               :loading="isLoading"
               :disabled="isLoading || isEditing"
             />
@@ -348,6 +329,7 @@ useBeforeUnload({ enabled: bookWasModified })
               v-model:paid-price="updatedBook.paidPrice"
               v-model:store="updatedBook.store"
               v-model:collection="updatedBook.collection"
+              v-model:tags="updatedBook.tags"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
