@@ -449,6 +449,7 @@ books:
   mark-as-read: Mark as read
   mark-as-unread: Mark as unread
   empty-synopsis: The book doesn't have a synopsis.
+  empty-tags: The book doesn't have tags.
   metadata: Metadata
   cover-art: Cover art
   organization: Organization

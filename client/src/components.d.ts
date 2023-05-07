@@ -35,6 +35,7 @@ declare module '@vue/runtime-core' {
     BookRelationshipsForm: typeof import('./components/books/BookRelationshipsForm.vue')['default']
     BooksTable: typeof import('./components/books/BooksTable.vue')['default']
     BookTagFormCard: typeof import('./components/books/BookTagFormCard.vue')['default']
+    BookTags: typeof import('./components/books/BookTags.vue')['default']
     BookTitle: typeof import('./components/books/BookTitle.vue')['default']
     Button: typeof import('./components/form/Button.vue')['default']
     CheckboxInput: typeof import('./components/form/CheckboxInput.vue')['default']

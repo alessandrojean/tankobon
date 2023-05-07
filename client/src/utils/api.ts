@@ -11,6 +11,7 @@ import type { PublisherAttributes, PublisherEntity, PublisherIncludes } from '@/
 import type { PaginatedResponse } from '@/types/tankobon-response'
 import type { SeriesAttributes } from '@/types/tankobon-series'
 import type { StoreAttributes } from '@/types/tankobon-store'
+import type { TagAttributes } from '@/types/tankobon-tag'
 import type { UserAttributes, UserEntity, UserIncludes } from '@/types/tankobon-user'
 
 /* eslint-disable @typescript-eslint/indent */
@@ -30,6 +31,7 @@ type AttributeType<E extends object, T extends EntityAttributes<E>> =
   T extends 'COLLECTION' ? CollectionAttributes :
   T extends 'STORE' ? StoreAttributes :
   T extends 'CONTRIBUTOR' ? ContributorAttributes :
+  T extends 'TAG' ? TagAttributes :
   unknown
 
 type EntityAttributes<T> =

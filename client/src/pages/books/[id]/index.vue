@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { isIsbnCode } from '@/types/tankobon-book'
+import { getRelationships } from '@/utils/api'
 import { createFlagUrl } from '@/utils/flags'
 
 const { t, locale } = useI18n()
@@ -149,6 +150,19 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
             :loading="isLoadingContributors"
             :contributors="contributors"
           />
+
+          <BookTags
+            class="2xl:hidden"
+            :tags="getRelationships(book, 'TAG')"
+            :loading="!showBookInfo"
+          />
+
+          <BlockMarkdown
+            :title="$t('common-fields.notes')"
+            :loading="!showBookInfo"
+            :markdown="book?.attributes?.notes ?? undefined"
+            :blur="false"
+          />
         </div>
 
         <div class="book-attributes">
@@ -158,6 +172,16 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
             :book="book"
           />
         </div>
+
+        <aside class="book-right hidden 2xl:block">
+          <div class="sticky top-24 flex flex-col gap-6">
+            <BookTags
+              group
+              :tags="getRelationships(book, 'TAG')"
+              :loading="!showBookInfo"
+            />
+          </div>
+        </aside>
       </div>
     </div>
   </div>
