@@ -103,11 +103,7 @@ export default {
     }),
 
     /** Custom variants */
-    plugin(({ addVariant }) => {
-      addVariant(
-        'supports-backdrop-blur',
-        '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))',
-      )
+    plugin(({ addVariant, matchVariant }) => {
       addVariant('hocus', ['&:hover', '&:focus-visible'])
       addVariant(
         'group-hocus',
@@ -115,11 +111,6 @@ export default {
       )
       addVariant('not-disabled', '&:not(:disabled)')
       addVariant('group-not-disabled', ':merge(.group):not(:disabled) &')
-      addVariant(
-        'supports-var-font',
-        '@supports (font-variation-settings: normal)',
-      )
-      addVariant('aria-selected', '&[aria-selected="true"]')
     }),
 
     /** Skeleton loading. */

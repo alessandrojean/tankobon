@@ -22,6 +22,11 @@ declare module 'tailwindcss/lib/util/flattenColorPalette' {
   export default flattenColorPalette
 }
 
+declare module 'tailwindcss/lib/util/escapeClassName' {
+  const escapeClassName: (className: string) => string
+  export default escapeClassName
+}
+
 // WICG Spec: https://wicg.github.io/ua-client-hints
 
 declare interface Navigator extends NavigatorUA {}
