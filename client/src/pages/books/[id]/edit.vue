@@ -315,6 +315,7 @@ useBeforeUnload({ enabled: bookWasModified })
               v-model:billed-at="updatedBook.billedAt"
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:dimensions="updatedBook.dimensions"
+              v-model:series="updatedBook.series"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
@@ -329,7 +330,6 @@ useBeforeUnload({ enabled: bookWasModified })
           <TabPanel :unmount="false">
             <BookRelationshipsForm
               ref="relationshipsForm"
-              v-model:series="updatedBook.series"
               v-model:publishers="updatedBook.publishers"
               v-model:tags="updatedBook.tags"
               :loading="isLoading"

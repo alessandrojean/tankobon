@@ -149,9 +149,10 @@ const storeOptions = computed(() => {
     </fieldset>
 
     <fieldset class="flex flex-col gap-2">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+      <div class="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-12 gap-2">
         <MonetaryAmountInput
           id="label-price"
+          class="xl:col-span-2"
           :placeholder-amount="$t('common-placeholders.book-label-price-amount')"
           :placeholder-currency="$t('common-placeholders.book-label-price-currency')"
           :model-value="labelPrice"
@@ -166,6 +167,7 @@ const storeOptions = computed(() => {
         />
         <MonetaryAmountInput
           id="paid-price"
+          class="xl:col-span-2"
           :placeholder-amount="$t('common-placeholders.book-paid-price-amount')"
           :placeholder-currency="$t('common-placeholders.book-paid-price-currency')"
           :model-value="paidPrice"
@@ -180,7 +182,7 @@ const storeOptions = computed(() => {
         />
         <SearchableCombobox
           kind="fancy"
-          class="lg:col-span-2"
+          class="lg:col-span-2 xl:col-span-4"
           :placeholder="$t('common-placeholders.book-store')"
           :label-text="$t('common-fields.store')"
           :model-value="storeValue"
@@ -193,28 +195,34 @@ const storeOptions = computed(() => {
         />
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-        <TextInput
-          id="bought-at"
-          :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
-          type="datetime-local"
-          :label-text="$t('common-fields.bought-at')"
-          @input="handleDateTimeInput($event, 'boughtAt')"
-        />
-        <TextInput
-          id="billed-at"
-          :model-value="billedAt ? convertUtcToLocalTimeZone(billedAt) : ''"
-          type="datetime-local"
-          :label-text="$t('common-fields.billed-at')"
-          @input="handleDateTimeInput($event, 'billedAt')"
-        />
-        <TextInput
-          id="arrived-at"
-          :model-value="arrivedAt ? convertUtcToLocalTimeZone(arrivedAt) : ''"
-          type="datetime-local"
-          :label-text="$t('common-fields.arrived-at')"
-          @input="handleDateTimeInput($event, 'arrivedAt')"
-        />
+      <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-8 gap-2">
+        <div class="xl:col-span-2">
+          <TextInput
+            id="bought-at"
+            :model-value="boughtAt ? convertUtcToLocalTimeZone(boughtAt) : ''"
+            type="datetime-local"
+            :label-text="$t('common-fields.bought-at')"
+            @input="handleDateTimeInput($event, 'boughtAt')"
+          />
+        </div>
+        <div class="xl:col-span-2">
+          <TextInput
+            id="billed-at"
+            :model-value="billedAt ? convertUtcToLocalTimeZone(billedAt) : ''"
+            type="datetime-local"
+            :label-text="$t('common-fields.billed-at')"
+            @input="handleDateTimeInput($event, 'billedAt')"
+          />
+        </div>
+        <div class="xl:col-span-2">
+          <TextInput
+            id="arrived-at"
+            :model-value="arrivedAt ? convertUtcToLocalTimeZone(arrivedAt) : ''"
+            type="datetime-local"
+            :label-text="$t('common-fields.arrived-at')"
+            @input="handleDateTimeInput($event, 'arrivedAt')"
+          />
+        </div>
       </div>
     </fieldset>
 

@@ -3,6 +3,8 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, integer, minValue, required } from '@vuelidate/validators'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import { positiveDecimal } from '@/utils/validation'
+import { createEmptyPaginatedResponse } from '@/utils/api'
+import type { SeriesEntity } from '@/types/tankobon-series'
 
 export interface BookMetadataFormProps {
   code: string
@@ -13,6 +15,7 @@ export interface BookMetadataFormProps {
   synopsis: string
   pageCount: string
   dimensions: DimensionsString
+  series: string | null | undefined
   mode?: 'creation' | 'update'
 }
 
@@ -25,6 +28,7 @@ export interface BookMetadataFormEmits {
   (e: 'update:synopsis', synopsis: string): void
   (e: 'update:pageCount', pageCount: string): void
   (e: 'update:dimensions', dimensions: DimensionsString): void
+  (e: 'update:series', series: string | null): void
   (e: 'validate', isValid: boolean): void
 }
 
@@ -33,7 +37,7 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { code, title, number, pageCount, dimensions } = toRefs(props)
+const { code, title, number, pageCount, dimensions, series } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -60,6 +64,42 @@ const v$ = useVuelidate(rules, { code, title, number, pageCount, dimensions })
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
 defineExpose({ v$ })
+
+const notificator = useToaster()
+const libraryStore = useLibraryStore()
+const libraryId = computed(() => libraryStore.library!.id)
+
+const { data: librarySeries } = useLibrarySeriesQuery({
+  libraryId,
+  sort: [{ property: 'name', direction: 'asc' }],
+  unpaged: true,
+  select: response => response.data,
+  initialData: () => createEmptyPaginatedResponse(),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('series.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
+const nullSeries = computed<SeriesEntity>(() => ({
+  type: 'SERIES',
+  id: 'null',
+  attributes: {
+    name: t('series.none'),
+    description: '',
+  },
+  relationships: [],
+}))
+
+const seriesValue = computed(() => {
+  return librarySeries.value!.find(s => s.id === series.value) ?? nullSeries.value
+})
+
+const seriesOptions = computed(() => {
+  return [nullSeries.value, ...librarySeries.value!]
+})
 </script>
 
 <template>
@@ -76,8 +116,8 @@ defineExpose({ v$ })
         @blur="v$.title.$touch()"
         @input="$emit('update:title', $event.target.value)"
       />
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
-        <div class="lg:col-span-3">
+      <div class="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+        <div class="lg:col-span-3 xl:col-span-4">
           <TextInput
             id="subtitle"
             :model-value="subtitle ?? ''"
@@ -123,6 +163,20 @@ defineExpose({ v$ })
         :placeholder="$t('common-placeholders.book-barcode')"
         @input="$emit('update:barcode', $event.target.value)"
       />
+
+      <SearchableCombobox
+        kind="fancy"
+        class="lg:col-span-2"
+        :placeholder="$t('common-placeholders.book-series')"
+        :label-text="$t('common-fields.series')"
+        :model-value="seriesValue"
+        :options="seriesOptions ?? []"
+        :option-text="(r: SeriesEntity) => r?.attributes?.name"
+        :option-value="(r: SeriesEntity) => r"
+        :option-value-select="(r: SeriesEntity) => r?.id"
+        @update:model-value="$emit('update:series', $event?.id === 'null' ? null : $event?.id)"
+        @update:model-value-select="$emit('update:series', $event === 'null' ? null : $event)"
+      />
     </fieldset>
 
     <MarkdownInput
@@ -157,7 +211,7 @@ defineExpose({ v$ })
 
       <DimensionsInput
         id="dimensions"
-        class="lg:col-span-3"
+        class="lg:col-span-3 xl:col-span-2"
         :model-value="dimensions"
         required
         :placeholder-width="$t('common-placeholders.book-width-cm')"

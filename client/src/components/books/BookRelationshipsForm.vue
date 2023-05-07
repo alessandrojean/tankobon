@@ -3,13 +3,11 @@ import Draggable from 'vuedraggable'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import { helpers } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import type { SeriesEntity } from '@/types/tankobon-series'
 import { createEmptyPaginatedResponse } from '@/utils/api'
 
 export interface BookRelationshipsFormProps {
   disabled?: boolean
   loading?: boolean
-  series: string | null | undefined
   publishers: string[]
   tags: string[] | null | undefined
 }
@@ -20,31 +18,16 @@ const props = withDefaults(defineProps<BookRelationshipsFormProps>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'update:series', series: string | null): void
   (e: 'update:publishers', publishers: string[]): void
   (e: 'update:tags', tags: string[] | null | undefined): void
 }>()
 
-const { series, publishers, tags } = toRefs(props)
+const { publishers, tags } = toRefs(props)
 
 const { t } = useI18n()
 const notificator = useToaster()
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library!.id)
-
-const { data: librarySeries } = useLibrarySeriesQuery({
-  libraryId,
-  sort: [{ property: 'name', direction: 'asc' }],
-  unpaged: true,
-  select: response => response.data,
-  initialData: () => createEmptyPaginatedResponse(),
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('series.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
 
 const { data: libraryPublishers } = useLibraryPublishersQuery({
   libraryId,
@@ -73,24 +56,6 @@ const { data: libraryTags } = useLibraryTagsQuery({
       body: error.message,
     })
   },
-})
-
-const nullSeries = computed<SeriesEntity>(() => ({
-  type: 'SERIES',
-  id: 'null',
-  attributes: {
-    name: t('series.none'),
-    description: '',
-  },
-  relationships: [],
-}))
-
-const seriesValue = computed(() => {
-  return librarySeries.value!.find(s => s.id === series.value) ?? nullSeries.value
-})
-
-const seriesOptions = computed(() => {
-  return [nullSeries.value, ...librarySeries.value!]
 })
 
 const publisherMap = computed(() => {
@@ -195,21 +160,6 @@ async function addTag() {
 
 <template>
   <fieldset ref="container" :disabled="disabled || loading" class="space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-      <SearchableCombobox
-        kind="fancy"
-        :placeholder="$t('common-placeholders.book-series')"
-        :label-text="$t('common-fields.series')"
-        :model-value="seriesValue"
-        :options="seriesOptions ?? []"
-        :option-text="(r: SeriesEntity) => r?.attributes?.name"
-        :option-value="(r: SeriesEntity) => r"
-        :option-value-select="(r: SeriesEntity) => r?.id"
-        @update:model-value="$emit('update:series', $event?.id === 'null' ? null : $event?.id)"
-        @update:model-value-select="$emit('update:series', $event === 'null' ? null : $event)"
-      />
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <fieldset class="flex flex-col gap-6">
         <div class="flex flex-row justify-between items-center">
