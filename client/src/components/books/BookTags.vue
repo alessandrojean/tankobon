@@ -68,10 +68,30 @@ useFocusZone({
       <li v-for="tag in tags" :key="tag.id" class="block">
         <RouterLink
           :to="{ name: 'tags-id', params: { id: tag.id } }"
-          class="tag has-ring-focus block"
+          :class="[
+            'block group/tag text-xs font-medium tracking-wide',
+            'bg-primary-100 dark:bg-gray-700 rounded-md',
+            'text-primary-700 dark:text-gray-300',
+            'px-2.5 py-1 inline-flex items-center',
+            'motion-safe:transition-colors',
+            'hocus:bg-primary-200 dark:hocus:bg-gray-600',
+            'hocus:text-primary-800 dark:hocus:text-gray-200',
+            'focus:outline-none focus-visible:ring-2',
+            'focus-visible:ring-black dark:focus-visible:ring-white/90',
+          ]"
           :title="$t('common-actions.go-to-page', [tag.attributes!.name])"
         >
-          <span aria-hidden="true" class="bullet" />
+          <span
+            aria-hidden="true"
+            :class="[
+              'bg-primary-200 dark:bg-gray-500',
+              'w-1.5 h-1.5 mr-2 -ml-0.5',
+              'inline-block rounded',
+              'motion-safe:transition-colors',
+              'group-hover/tag:bg-primary-300 dark:group-hover/tag:bg-gray-400',
+              'group-focus/tag:bg-primary-300 dark:group-focus/tag:bg-gray-400',
+            ]"
+          />
           <span>{{ tag.attributes!.name }}</span>
         </RouterLink>
       </li>
@@ -92,10 +112,30 @@ useFocusZone({
           <li v-for="tag in tagsFromGroup" :key="tag.id" class="block">
             <RouterLink
               :to="{ name: 'tags-id', params: { id: tag.id } }"
-              class="tag has-ring-focus block"
+              :class="[
+                'block group/tag text-xs font-medium tracking-wide',
+                'bg-primary-100 dark:bg-gray-700 rounded-md',
+                'text-primary-700 dark:text-gray-300',
+                'px-2.5 py-1 inline-flex items-center',
+                'motion-safe:transition-colors',
+                'hocus:bg-primary-200 dark:hocus:bg-gray-600',
+                'hocus:text-primary-800 dark:hocus:text-gray-200',
+                'focus:outline-none focus-visible:ring-2',
+                'focus-visible:ring-black dark:focus-visible:ring-white/90',
+              ]"
               :title="$t('common-actions.go-to-page', [tag.attributes!.name])"
             >
-              <span aria-hidden="true" class="bullet" />
+              <span
+                aria-hidden="true"
+                :class="[
+                  'bg-primary-200 dark:bg-gray-500',
+                  'w-1.5 h-1.5 mr-2 -ml-0.5',
+                  'inline-block rounded',
+                  'motion-safe:transition-colors',
+                  'group-hover/tag:bg-primary-300 dark:group-hover/tag:bg-gray-400',
+                  'group-focus/tag:bg-primary-300 dark:group-focus/tag:bg-gray-400',
+                ]"
+              />
               <span>{{ tag.attributes!.name.substring(tag.attributes!.name.indexOf(': ')) }}</span>
             </RouterLink>
           </li>
@@ -119,28 +159,3 @@ useFocusZone({
     </div>
   </Block>
 </template>
-
-<style scoped lang="postcss">
-.tag {
-  @apply text-xs font-medium tracking-wide
-    bg-primary-100 dark:bg-gray-700 rounded-md
-    text-primary-700 dark:text-gray-300
-    px-2.5 py-1 inline-flex items-center
-    motion-safe:transition-colors
-    hocus:bg-primary-200 dark:hocus:bg-gray-600
-    hocus:text-primary-800 dark:hocus:text-gray-200
-    focus:outline-none focus-visible:ring-2
-    focus-visible:ring-black dark:focus-visible:ring-white/90;
-
-  .bullet {
-    @apply bg-primary-200 dark:bg-gray-500
-      w-1.5 h-1.5 mr-2 -ml-0.5
-      inline-block rounded
-      motion-safe:transition-colors;
-  }
-
-  &:where(:hover, :focus-visible) .bullet {
-    @apply bg-primary-300 dark:bg-gray-400;
-  }
-}
-</style>
