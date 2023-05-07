@@ -40,6 +40,7 @@ common-fields:
   currency: Currency
   person: Person
   series: Series
+  tag: Tag
 
 common-actions:
   sign-in: Sign in
@@ -117,6 +118,7 @@ common-placeholders:
   book-collection: Manga
   book-store: Amazon
   book-publisher: Vertical Inc
+  book-tag: Softcover
 
 validation:
   required: It can not be blank.

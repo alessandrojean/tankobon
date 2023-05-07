@@ -11,6 +11,7 @@ export interface BookRelationshipsFormProps {
   loading?: boolean
   series: string | null | undefined
   publishers: string[]
+  tags: string[] | null | undefined
 }
 
 const props = withDefaults(defineProps<BookRelationshipsFormProps>(), {
@@ -21,9 +22,10 @@ const props = withDefaults(defineProps<BookRelationshipsFormProps>(), {
 const emit = defineEmits<{
   (e: 'update:series', series: string | null): void
   (e: 'update:publishers', publishers: string[]): void
+  (e: 'update:tags', tags: string[] | null | undefined): void
 }>()
 
-const { series, publishers } = toRefs(props)
+const { series, publishers, tags } = toRefs(props)
 
 const { t } = useI18n()
 const notificator = useToaster()
@@ -59,6 +61,20 @@ const { data: libraryPublishers } = useLibraryPublishersQuery({
   },
 })
 
+const { data: libraryTags } = useLibraryTagsQuery({
+  libraryId,
+  sort: [{ property: 'name', direction: 'asc' }],
+  unpaged: true,
+  select: response => response.data,
+  initialData: () => createEmptyPaginatedResponse(),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('tags.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
 const nullSeries = computed<SeriesEntity>(() => ({
   type: 'SERIES',
   id: 'null',
@@ -80,6 +96,12 @@ const seriesOptions = computed(() => {
 const publisherMap = computed(() => {
   return Object.fromEntries(
     libraryPublishers.value!.map(p => [p.id, p]),
+  )
+})
+
+const tagMap = computed(() => {
+  return Object.fromEntries(
+    libraryTags.value!.map(p => [p.id, p]),
   )
 })
 
@@ -107,10 +129,22 @@ function handlePublisherPicked(publisherId: string, i: number) {
   v$.value.publishers.$touch()
 }
 
-function handleDragAndDrop(newOrder: string[]) {
+function handleTagPicked(tagId: string, i: number) {
+  const copy = structuredClone(toRaw(tags.value!))
+  copy[i] = tagId
+
+  emit('update:tags', copy)
+}
+
+function handlePublishersDragAndDrop(newOrder: string[]) {
   const copy: string[] = JSON.parse(JSON.stringify(newOrder))
   emit('update:publishers', copy)
   v$.value.publishers.$touch()
+}
+
+function handleTagsDragAndDrop(newOrder: string[]) {
+  const copy: string[] = JSON.parse(JSON.stringify(newOrder))
+  emit('update:tags', copy)
 }
 
 function handleRemovePublisher(i: number) {
@@ -119,6 +153,13 @@ function handleRemovePublisher(i: number) {
 
   emit('update:publishers', copy)
   v$.value.publishers.$touch()
+}
+
+function handleRemoveTag(i: number) {
+  const copy = structuredClone(toRaw(tags.value!))
+  copy.splice(i, 1)
+
+  emit('update:tags', copy.length === 0 ? null : copy)
 }
 
 const container = ref<HTMLFieldSetElement>()
@@ -133,6 +174,20 @@ async function addPublisher() {
   const publisherIndex = copy.length - 1
   const inputToFocus = container.value
     ?.querySelector<HTMLInputElement>(`#publisher-input-${publisherIndex} input`)
+
+  inputToFocus?.focus()
+}
+
+async function addTag() {
+  const copy = tags.value ? structuredClone(toRaw(tags.value)) : []
+  copy.push('')
+
+  emit('update:tags', copy)
+  await nextTick()
+
+  const tagIndex = copy.length - 1
+  const inputToFocus = container.value
+    ?.querySelector<HTMLInputElement>(`#tag-input-${tagIndex} input`)
 
   inputToFocus?.focus()
 }
@@ -155,47 +210,92 @@ async function addPublisher() {
       />
     </div>
 
-    <fieldset class="flex flex-col gap-6">
-      <div class="flex flex-row justify-between items-center">
-        <legend class="block text-lg font-medium font-display-safe">
-          {{ $t('entities.publishers') }}
-        </legend>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <fieldset class="flex flex-col gap-6">
+        <div class="flex flex-row justify-between items-center">
+          <legend class="block text-lg font-medium font-display-safe">
+            {{ $t('entities.publishers') }}
+          </legend>
 
-        <div>
-          <Button
-            size="small"
-            :disabled="loading"
-            @click="addPublisher"
-          >
-            <PlusIcon class="w-5 h-5" />
-            <span>{{ $t('common-actions.add') }}</span>
-          </Button>
+          <div>
+            <Button
+              size="small"
+              :disabled="loading"
+              @click="addPublisher"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('common-actions.add') }}</span>
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <Draggable
-        v-if="!loading && libraryPublishers!.length > 0"
-        class="flex flex-col gap-4"
-        ghost-class="opacity-50"
-        drag-class="cursor-grabbing"
-        handle=".grabber"
-        :model-value="publishers"
-        :item-key="(p: string) => p"
-        :disabled="libraryPublishers!.length === 1"
-        @update:model-value="handleDragAndDrop"
-      >
-        <template #item="{ element: publisher, index: i }">
-          <BookPublisherFormCard
-            :draggable="libraryPublishers!.length > 1"
-            :index="i"
-            :publisher="publisherMap[publisher]"
-            :publishers="libraryPublishers ?? []"
-            :book-publishers="publishers"
-            @update:publisher="handlePublisherPicked($event, i)"
-            @click:remove="handleRemovePublisher(i)"
-          />
-        </template>
-      </Draggable>
-    </fieldset>
+        <Draggable
+          v-if="!loading && libraryPublishers!.length > 0"
+          class="flex flex-col gap-4"
+          ghost-class="opacity-50"
+          drag-class="cursor-grabbing"
+          handle=".grabber"
+          :model-value="publishers"
+          :item-key="(p: string) => p"
+          :disabled="libraryPublishers!.length === 1"
+          @update:model-value="handlePublishersDragAndDrop"
+        >
+          <template #item="{ element: publisher, index: i }">
+            <BookPublisherFormCard
+              :draggable="libraryPublishers!.length > 1"
+              :index="i"
+              :publisher="publisherMap[publisher]"
+              :publishers="libraryPublishers ?? []"
+              :book-publishers="publishers"
+              @update:publisher="handlePublisherPicked($event, i)"
+              @click:remove="handleRemovePublisher(i)"
+            />
+          </template>
+        </Draggable>
+      </fieldset>
+
+      <fieldset class="flex flex-col gap-6">
+        <div class="flex flex-row justify-between items-center">
+          <legend class="block text-lg font-medium font-display-safe">
+            {{ $t('entities.tags') }}
+          </legend>
+
+          <div>
+            <Button
+              size="small"
+              :disabled="loading"
+              @click="addTag"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('common-actions.add') }}</span>
+            </Button>
+          </div>
+        </div>
+
+        <Draggable
+          v-if="!loading && libraryTags!.length > 0"
+          class="flex flex-col gap-4"
+          ghost-class="opacity-50"
+          drag-class="cursor-grabbing"
+          handle=".grabber"
+          :model-value="tags ?? []"
+          :item-key="(p: string) => p"
+          :disabled="libraryTags!.length === 1"
+          @update:model-value="handleTagsDragAndDrop"
+        >
+          <template #item="{ element: tag, index: i }">
+            <BookTagFormCard
+              :draggable="libraryTags!.length > 1"
+              :index="i"
+              :tag="tagMap[tag]"
+              :tags="libraryTags ?? []"
+              :book-tags="tags ?? []"
+              @update:tag="handleTagPicked($event, i)"
+              @click:remove="handleRemoveTag(i)"
+            />
+          </template>
+        </Draggable>
+      </fieldset>
+    </div>
   </fieldset>
 </template>

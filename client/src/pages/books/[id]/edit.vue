@@ -331,6 +331,7 @@ useBeforeUnload({ enabled: bookWasModified })
               ref="relationshipsForm"
               v-model:series="updatedBook.series"
               v-model:publishers="updatedBook.publishers"
+              v-model:tags="updatedBook.tags"
               :loading="isLoading"
               :disabled="isLoading || isEditing"
             />
