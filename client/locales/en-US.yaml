@@ -116,6 +116,7 @@ common-placeholders:
   book-series: MW
   book-collection: Manga
   book-store: Amazon
+  book-publisher: Vertical Inc
 
 validation:
   required: It can not be blank.

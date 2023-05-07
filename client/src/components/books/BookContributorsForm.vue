@@ -194,6 +194,7 @@ const personRoleMap = computed(() => {
     >
       <div>
         <Button
+          size="small"
           :disabled="loading"
           @click="addContributor"
         >

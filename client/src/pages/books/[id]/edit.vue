@@ -8,6 +8,7 @@ import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import { getRelationship, getRelationships } from '@/utils/api'
 import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
+import BookRelationshipsForm from '@/components/books/BookRelationshipsForm.vue'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -40,10 +41,12 @@ const { data: book, isLoading } = useBookQuery({
 
 const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
 const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
+const relationshipsForm = ref<InstanceType<typeof BookRelationshipsForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
+const relationshipsInvalid = computed(() => relationshipsForm.value?.v$.$error ?? false)
 const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
 
 const tabs = [
@@ -57,6 +60,7 @@ const tabs = [
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   contributorsInvalid.value,
+  relationshipsInvalid.value,
   false,
   organizationInvalid.value,
 ])
@@ -168,9 +172,15 @@ function validNumber(valueStr: string): number {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidContributors = await contributorsForm.value!.v$.$validate()
+  const isValidRelationships = await relationshipsForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
+  if (
+    !isValidMetadata
+    || !isValidContributors
+    || !isValidRelationships
+    || !isValidOrganization
+  ) {
     return
   }
 
@@ -318,9 +328,9 @@ useBeforeUnload({ enabled: bookWasModified })
           </TabPanel>
           <TabPanel :unmount="false">
             <BookRelationshipsForm
+              ref="relationshipsForm"
               v-model:series="updatedBook.series"
-              v-model:collection="updatedBook.collection"
-              v-model:store="updatedBook.store"
+              v-model:publishers="updatedBook.publishers"
               :loading="isLoading"
               :disabled="isLoading || isEditing"
             />
@@ -335,6 +345,8 @@ useBeforeUnload({ enabled: bookWasModified })
               v-model:arrived-at="updatedBook.arrivedAt"
               v-model:label-price="updatedBook.labelPrice"
               v-model:paid-price="updatedBook.paidPrice"
+              v-model:store="updatedBook.store"
+              v-model:collection="updatedBook.collection"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

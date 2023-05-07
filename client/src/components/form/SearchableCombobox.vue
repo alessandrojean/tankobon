@@ -187,7 +187,7 @@ const { position } = useAnchoredPosition({
 
     <p
       v-if="invalid && errorMessage"
-      class="text-red-700 dark:text-red-500/95 text-sm font-medium ml-2 mt-1 mb-4"
+      class="text-red-700 dark:text-red-500/95 text-sm font-medium ml-2 mt-1"
     >
       {{ errorMessage }}
     </p>
