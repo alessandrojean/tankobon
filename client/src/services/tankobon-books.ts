@@ -78,6 +78,20 @@ export async function getOneBook({ bookId, includes }: GetOneBookParameters): Pr
   }
 }
 
+export async function addOneBook(book: BookUpdate): Promise<BookEntity> {
+  try {
+    const { data } = await api.post<BookOnly>('books', book)
+
+    return data.data
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export async function updateOneBook(book: BookUpdate): Promise<void> {
   try {
     await api.put(`books/${book.id}`, book)

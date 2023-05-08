@@ -189,7 +189,7 @@ const personRoleMap = computed(() => {
 <template>
   <fieldset ref="container" :disabled="disabled || loading">
     <div
-      v-if="contributors.length > 0 && people!.length > 0 && contributorRoles!.length > 0"
+      v-if="people!.length > 0 && contributorRoles!.length > 0"
       class="flex flex-col gap-6"
     >
       <div>

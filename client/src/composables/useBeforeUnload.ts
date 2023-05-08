@@ -13,7 +13,7 @@ export default function useBeforeUnload(options?: UseBeforeUnloadOptions) {
   const cleanup = ref<Fn>()
   const enabled = (options?.enabled !== undefined && isRef(options.enabled))
     ? options.enabled
-    : ref(true)
+    : ref(options?.enabled ?? true)
 
   watchEffect((onCleanup) => {
     if (enabled.value) {

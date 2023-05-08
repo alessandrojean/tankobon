@@ -155,6 +155,7 @@
     "useConfirmDialog": true,
     "useContributorRoleQuery": true,
     "useCounter": true,
+    "useCreateBookMutation": true,
     "useCreateCollectionMutation": true,
     "useCreateContributorRoleMutation": true,
     "useCreateLibraryMutation": true,

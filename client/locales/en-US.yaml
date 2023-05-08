@@ -438,11 +438,11 @@ books:
   update-header: Modify a book
   update-description: Modifying {0}
   new: New book
-  created-with-success: Store created with success
+  created-with-success: Book created with success
   created-with-failure: There was an error while creating the book
   edited-with-success: Book edited with success
   edited-with-failure: There was an error while editing the book
-  deleted-with-success: Store deleted with success
+  deleted-with-success: Book deleted with success
   deleted-with-failure: There was an error while deleting the book
   empty-header: No books found
   empty-description: You haven't created any books yet

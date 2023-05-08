@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ArrowDownOnSquareIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
+import { ArrowDownOnSquareIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { BookOpenIcon, MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
 
 const libraryStore = useLibraryStore()
@@ -22,14 +22,26 @@ meta:
   <div>
     <Header :title="$t('entities.books')">
       <template #actions>
-        <Button
-          kind="primary"
-          is-router-link
-          :to="{ name: 'import-search' }"
-        >
-          <ArrowDownOnSquareIcon class="w-5 h-5" />
-          <span>{{ $t('common-actions.import') }}</span>
-        </Button>
+        <Toolbar class="flex gap-2">
+          <Button
+            class="w-11 h-11"
+            is-router-link
+            size="small"
+            :to="{ name: 'import-search' }"
+            :title="$t('common-actions.import')"
+          >
+            <span class="sr-only">{{ $t('common-actions.import') }}</span>
+            <ArrowDownOnSquareIcon class="w-5 h-5" />
+          </Button>
+          <Button
+            kind="primary"
+            is-router-link
+            :to="{ name: 'books-new' }"
+          >
+            <PlusIcon class="w-5 h-5" />
+            <span>{{ $t('books.new') }}</span>
+          </Button>
+        </Toolbar>
       </template>
     </Header>
 

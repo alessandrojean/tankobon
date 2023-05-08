@@ -1,0 +1,266 @@
+<script setup lang="ts">
+import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
+import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import type { BookUpdate } from '@/types/tankobon-book'
+import type { DimensionsString } from '@/types/tankobon-dimensions'
+import type { MonetaryAmountString } from '@/types/tankobon-monetary'
+import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
+import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
+import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
+
+const { t } = useI18n()
+const router = useRouter()
+const route = useRoute()
+const notificator = useToaster()
+
+const { mutate: createBook, isLoading: isCreating } = useCreateBookMutation()
+
+const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
+const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
+const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
+
+const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
+const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
+const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
+
+const tabs = [
+  { key: '0', text: 'books.metadata' },
+  { key: '1', text: 'entities.book-contributors' },
+  { key: '2', text: 'books.cover-art' },
+  { key: '3', text: 'books.organization' },
+]
+
+const invalidTabs = computed(() => [
+  metadataInvalid.value,
+  contributorsInvalid.value,
+  false,
+  organizationInvalid.value,
+])
+
+interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice'> {
+  dimensions: DimensionsString
+  labelPrice: MonetaryAmountString
+  paidPrice: MonetaryAmountString
+  pageCount: string
+}
+
+const newBook = reactive<CustomBookUpdate>({
+  id: '',
+  arrivedAt: null,
+  barcode: null,
+  billedAt: null,
+  boughtAt: null,
+  code: '',
+  collection: '',
+  contributors: [],
+  isInLibrary: true,
+  dimensions: {
+    widthCm: '0',
+    heightCm: '0',
+  },
+  labelPrice: {
+    amount: '0',
+    currency: 'USD',
+  },
+  notes: '',
+  number: '',
+  pageCount: '0',
+  paidPrice: {
+    amount: '0',
+    currency: 'USD',
+  },
+  publishers: [],
+  series: null,
+  store: null,
+  subtitle: '',
+  synopsis: '',
+  tags: [],
+  title: '',
+})
+
+const activeTab = ref(tabs[0])
+
+const headerTitle = computed(() => {
+  return newBook.title.length > 0 ? newBook.title : t('books.new')
+})
+
+function nullOrNotBlank(value: string | null | undefined): string | null {
+  return (value && value.length > 0) ? value : null
+}
+
+function validNumber(valueStr: string): number {
+  const value = Number(valueStr.replace(',', '.'))
+  return isNaN(value) ? 0 : value
+}
+
+async function handleSubmit() {
+  const isValidMetadata = await metadataForm.value!.v$.$validate()
+  const isValidContributors = await contributorsForm.value!.v$.$validate()
+  const isValidOrganization = await organizationForm.value!.v$.$validate()
+
+  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
+    return
+  }
+
+  const bookToCreate: BookUpdate = {
+    ...toRaw(newBook),
+    barcode: nullOrNotBlank(newBook.barcode),
+    boughtAt: nullOrNotBlank(newBook.boughtAt),
+    billedAt: nullOrNotBlank(newBook.billedAt),
+    arrivedAt: nullOrNotBlank(newBook.arrivedAt),
+    pageCount: validNumber(newBook.pageCount),
+    labelPrice: {
+      amount: validNumber(newBook.labelPrice.amount),
+      currency: newBook.labelPrice.currency,
+    },
+    paidPrice: {
+      amount: validNumber(newBook.paidPrice.amount),
+      currency: newBook.paidPrice.currency,
+    },
+    dimensions: {
+      widthCm: validNumber(newBook.dimensions.widthCm),
+      heightCm: validNumber(newBook.dimensions.heightCm),
+    },
+  }
+
+  createBook(bookToCreate, {
+    onSuccess: async ({ id }) => {
+      notificator.success({ title: t('books.created-with-success') })
+      await router.push({ name: 'books-id', params: { id } })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('books.created-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
+
+useBeforeUnload({
+  enabled: computed(() => route.name === 'books-new'),
+})
+</script>
+
+<template>
+  <form autocomplete="off" novalidate @submit.prevent="handleSubmit">
+    <TabGroup :selected-index="Number(activeTab.key)" @change="activeTab = tabs[$event]">
+      <Header :title="headerTitle">
+        <template #avatar>
+          <Button
+            class="aspect-1 w-10 h-10 -ml-2"
+            size="mini"
+            kind="ghost"
+            rounded="full"
+            :title="$t('common-actions.back')"
+            :disabled="isCreating"
+            @click="router.back"
+          >
+            <span class="sr-only">
+              {{ $t('common-actions.back') }}
+            </span>
+            <ArrowLeftIcon class="w-5 h-5" />
+          </Button>
+        </template>
+        <template #actions>
+          <Button
+            kind="primary"
+            type="submit"
+            :disabled="isCreating"
+            :loading="isCreating"
+          >
+            <CheckIcon class="w-5 h-5" />
+            <span>{{ $t('common-actions.create') }}</span>
+          </Button>
+        </template>
+        <template #tabs>
+          <TabList class="hidden md:flex gap-3 -mb-px">
+            <Tab
+              v-for="tab in tabs"
+              :key="tab.key"
+              v-slot="{ selected }"
+              as="template"
+            >
+              <Button
+                kind="underline-tab"
+                size="underline-tab"
+                rounded="none"
+                :data-headlessui-state="selected ? 'selected' : undefined"
+              >
+                <span>{{ $t(tab.text) }}</span>
+                <div
+                  v-if="invalidTabs[Number(tab.key)]"
+                  class="ml-2 mt-0.5 relative"
+                >
+                  <span class="absolute inset-1 rounded-full bg-white" />
+                  <ExclamationCircleIcon
+                    class="relative w-4 h-4 text-red-600 dark:text-red-500"
+                  />
+                </div>
+              </Button>
+            </Tab>
+          </TabList>
+          <BasicSelect
+            v-model="activeTab"
+            class="md:hidden mb-4"
+            :options="tabs"
+            :option-text="(tab: any) => $t(tab.text)"
+            :option-value="(tab: any) => tab.key"
+          />
+        </template>
+      </Header>
+      <div class="max-w-7xl mx-auto p-4 sm:p-6">
+        <TabPanels>
+          <TabPanel :unmount="false">
+            <BookMetadataForm
+              ref="metadataForm"
+              v-model:code="newBook.code"
+              v-model:barcode="newBook.barcode"
+              v-model:number="newBook.number"
+              v-model:title="newBook.title"
+              v-model:subtitle="newBook.subtitle"
+              v-model:synopsis="newBook.synopsis"
+              v-model:page-count="newBook.pageCount"
+              v-model:notes="newBook.notes"
+              v-model:bought-at="newBook.boughtAt"
+              v-model:billed-at="newBook.billedAt"
+              v-model:arrived-at="newBook.arrivedAt"
+              v-model:dimensions="newBook.dimensions"
+              v-model:series="newBook.series"
+              v-model:publishers="newBook.publishers"
+              :disabled="isCreating"
+            />
+          </TabPanel>
+          <TabPanel :unmount="false">
+            <BookContributorsForm
+              ref="contributorsForm"
+              v-model:contributors="newBook.contributors"
+              :disabled="isCreating"
+            />
+          </TabPanel>
+          <TabPanel>Cover art</TabPanel>
+          <TabPanel :unmount="false">
+            <BookOrganizationForm
+              ref="organizationForm"
+              v-model:notes="newBook.notes"
+              v-model:bought-at="newBook.boughtAt"
+              v-model:billed-at="newBook.billedAt"
+              v-model:arrived-at="newBook.arrivedAt"
+              v-model:label-price="newBook.labelPrice"
+              v-model:paid-price="newBook.paidPrice"
+              v-model:store="newBook.store"
+              v-model:collection="newBook.collection"
+              v-model:tags="newBook.tags"
+              :disabled="isCreating"
+            />
+          </TabPanel>
+        </TabPanels>
+      </div>
+    </TabGroup>
+  </form>
+</template>
+
+<route lang="yaml">
+meta:
+  layout: dashboard
+</route>

@@ -150,6 +150,7 @@ declare global {
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useContributorRoleQuery: typeof import('./queries/contributor-role/useContributorRoleQuery')['default']
   const useCounter: typeof import('@vueuse/core')['useCounter']
+  const useCreateBookMutation: typeof import('./mutations/book/useCreateBookMutation')['default']
   const useCreateCollectionMutation: typeof import('./mutations/collection/useCreateCollectionMutation')['default']
   const useCreateContributorRoleMutation: typeof import('./mutations/contributor-role/useCreateContributorRoleMutation')['default']
   const useCreateLibraryMutation: typeof import('./mutations/library/useCreateLibraryMutation')['default']
@@ -565,6 +566,7 @@ declare module 'vue' {
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
     readonly useContributorRoleQuery: UnwrapRef<typeof import('./queries/contributor-role/useContributorRoleQuery')['default']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
+    readonly useCreateBookMutation: UnwrapRef<typeof import('./mutations/book/useCreateBookMutation')['default']>
     readonly useCreateCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useCreateCollectionMutation')['default']>
     readonly useCreateContributorRoleMutation: UnwrapRef<typeof import('./mutations/contributor-role/useCreateContributorRoleMutation')['default']>
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useCreateLibraryMutation')['default']>

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { decode as decodeBlurHash } from 'blurhash'
 import {
+  BookOpenIcon,
   ExclamationCircleIcon,
   MagnifyingGlassPlusIcon,
-  PhotoIcon,
 } from '@heroicons/vue/24/outline'
 import { getFullImageUrl } from '@/modules/api'
 import type { BookEntity } from '@/types/tankobon-book'
@@ -118,7 +118,7 @@ whenever(coverArt, async (coverArt) => {
         class="w-full h-full"
       >
       <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
-        <PhotoIcon
+        <BookOpenIcon
           v-if="loading || coverUrl.length === 0"
           class="w-10 h-10 text-gray-500 dark:text-gray-600"
           :class="[

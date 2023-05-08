@@ -53,6 +53,7 @@ const rules = computed(() => {
   const messageDecimal = helpers.withMessage(t('validation.decimal'), positiveDecimal)
 
   return {
+    collection: { messageRequired },
     labelPrice: {
       amount: { messageRequired, messageDecimal },
       currency: { messageRequired },
@@ -64,7 +65,7 @@ const rules = computed(() => {
   }
 })
 
-const v$ = useVuelidate(rules, { paidPrice, labelPrice })
+const v$ = useVuelidate(rules, { paidPrice, labelPrice, collection })
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
@@ -166,6 +167,9 @@ const tagMap = computed(() => {
         :option-text="(r: CollectionEntity) => r?.attributes?.name"
         :option-value="(r: CollectionEntity) => r"
         :option-value-select="(r: CollectionEntity) => r?.id"
+        :invalid="v$.collection.$error"
+        :errors="v$.collection.$errors"
+        @blur="v$.collection.$touch()"
         @update:model-value="$emit('update:collection', $event?.id)"
         @update:model-value-select="$emit('update:collection', $event)"
       />
