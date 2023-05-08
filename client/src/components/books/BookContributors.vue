@@ -70,7 +70,7 @@ useFocusZone({
           "
           :alt="contributor.attributes!.person.name"
           :letter="contributor.attributes!.person.name.charAt(0)"
-          :letter-id="contributor.id"
+          :letter-id="contributor.attributes!.person.id"
         />
         <div class="text-sm grow min-w-0">
           <RouterLink
