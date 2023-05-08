@@ -15,7 +15,7 @@ export default function useBookQuery<S = BookEntity>(
   options: UseBookQueryOptions<S>,
 ) {
   return useQuery<BookEntity, ErrorResponse, S>({
-    queryKey: ['book', { id: options.bookId }],
+    queryKey: ['book', { id: options.bookId, includes: options.includes }],
     queryFn: async () => {
       return await getOneBook({
         bookId: unref(options.bookId),

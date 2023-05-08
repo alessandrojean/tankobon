@@ -13,9 +13,9 @@ withDefaults(defineProps<BookNavigatorProps>(), { loading: false })
 </script>
 
 <template>
-  <nav v-if="!loading && (previous || next)">
+  <nav v-if="!loading && (previous?.attributes || next?.attributes)">
     <ul class="flex flex-col sm:flex-row gap-2">
-      <li v-if="previous" class="flex-1 shrink-0 min-w-0">
+      <li v-if="previous?.attributes" class="flex-1 shrink-0 min-w-0">
         <RouterLink
           :class="[
             'flex gap-2 items-center p-4 border rounded-xl group/previous',
@@ -26,7 +26,7 @@ withDefaults(defineProps<BookNavigatorProps>(), { loading: false })
             'focus-visible:ring-black dark:focus-visible:ring-white/90',
           ]"
           :to="{ name: 'books-id', params: { id: previous.id } }"
-          :title="$t('common-actions.go-to-page', [previous.attributes!.title])"
+          :title="$t('common-actions.go-to-page', [previous.attributes.title])"
         >
           <ArrowLeftIcon
             :class="[
@@ -52,12 +52,12 @@ withDefaults(defineProps<BookNavigatorProps>(), { loading: false })
                 'motion-safe:transition-colors',
               ]"
             >
-              {{ $t('books.volume', [previous.attributes!.number]) }}
+              {{ $t('books.volume', [previous.attributes.number]) }}
             </span>
           </div>
         </RouterLink>
       </li>
-      <li v-if="next" class="flex-1 shrink-0 min-w-0">
+      <li v-if="next?.attributes" class="flex-1 shrink-0 min-w-0">
         <RouterLink
           :class="[
             'flex gap-2 items-center p-4 border rounded-xl group/next',
@@ -68,7 +68,7 @@ withDefaults(defineProps<BookNavigatorProps>(), { loading: false })
             'focus-visible:ring-black dark:focus-visible:ring-white/90',
           ]"
           :to="{ name: 'books-id', params: { id: next.id } }"
-          :title="$t('common-actions.go-to-page', [next.attributes!.title])"
+          :title="$t('common-actions.go-to-page', [next.attributes.title])"
         >
           <div class="flex-1 shrink-0 min-w-0">
             <span
@@ -87,7 +87,7 @@ withDefaults(defineProps<BookNavigatorProps>(), { loading: false })
                 'motion-safe:transition-colors',
               ]"
             >
-              {{ $t('books.volume', [next.attributes!.number]) }}
+              {{ $t('books.volume', [next.attributes.number]) }}
             </span>
           </div>
           <ArrowRightIcon
