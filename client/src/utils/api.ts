@@ -1,4 +1,4 @@
-import type { BookEntity, BookIncludes } from '@/types/tankobon-book'
+import type { BookAttributes, BookEntity, BookIncludes } from '@/types/tankobon-book'
 import type { CollectionAttributes } from '@/types/tankobon-collection'
 import type { ContributorAttributes, ContributorEntity, ContributorIncludes } from '@/types/tankobon-contributor'
 import type { Entity, Relationship } from '@/types/tankobon-entity'
@@ -32,6 +32,8 @@ type AttributeType<E extends object, T extends EntityAttributes<E>> =
   T extends 'STORE' ? StoreAttributes :
   T extends 'CONTRIBUTOR' ? ContributorAttributes :
   T extends 'TAG' ? TagAttributes :
+  T extends 'PREVIOUS_BOOK' ? BookAttributes :
+  T extends 'NEXT_BOOK' ? BookAttributes :
   unknown
 
 type EntityAttributes<T> =

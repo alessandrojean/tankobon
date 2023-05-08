@@ -46,6 +46,7 @@ class BookDao(
   override fun findAllBySeriesId(seriesId: String): Collection<Book> =
     dsl.selectFrom(TableBook)
       .where(TableBook.SERIES_ID.eq(seriesId))
+      .orderBy(TableBook.NUMBER.asc())
       .fetchInto(TableBook)
       .map { it.toDomain() }
 

@@ -18,5 +18,6 @@ export interface Relationship<Attributes> {
 
 export type RelationshipType = 'AVATAR' | 'OWNER' | 'USER' | 'LIBRARY_SHARING'
 | 'LIBRARY' | 'IMPORTER_SOURCE' | 'COVER_ART' | 'SERIES' | 'CONTRIBUTOR'
+| 'PREVIOUS_BOOK' | 'NEXT_BOOK'
 
 export type Includes = Lowercase<RelationshipType>[]

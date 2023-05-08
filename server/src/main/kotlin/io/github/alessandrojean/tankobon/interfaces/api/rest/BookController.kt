@@ -8,6 +8,7 @@ import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessExcep
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
+import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.service.BookLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
@@ -62,6 +63,7 @@ class BookController(
   private val bookDtoRepository: BookDtoRepository,
   private val libraryRepository: LibraryRepository,
   private val collectionRepository: CollectionRepository,
+  private val seriesRepository: SeriesRepository,
   private val bookCoverLifecycle: BookCoverLifecycle,
   private val referenceExpansion: ReferenceExpansion,
 ) {

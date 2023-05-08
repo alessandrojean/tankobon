@@ -50,6 +50,7 @@ export function isIsbnCode(code: BookCode | BookCodeIsbn | undefined): code is B
 
 export type BookIncludes = 'contributor' | 'collection' | 'publisher'
 | 'series' | 'store' | 'tag' | 'library' | 'cover_art'
+| 'previous_book' | 'next_book'
 export type BookSort = 'title' | 'createdAt' | 'modifiedAt' |
 'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount'
 

@@ -251,6 +251,8 @@ pagination:
   previous-page: Go to previous page
   next-page: Go to next page
   last-page: Go to last page
+  previous: Previous
+  next: Next
 
 authentication-activity:
   header: Authentication activity
@@ -456,6 +458,7 @@ books:
   organization: Organization
   relationships: Relationships
   untitled: Untitled
+  volume: 'Volume #{0}'
 
 book-contributors:
   fetch-failure: There was an error while fetching the book contributors

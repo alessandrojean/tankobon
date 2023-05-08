@@ -72,6 +72,12 @@ class ReferenceExpansion(
     RelationshipType.BOOK to { ids ->
       bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
+    RelationshipType.PREVIOUS_BOOK to { ids ->
+      bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
+    },
+    RelationshipType.NEXT_BOOK to { ids ->
+      bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
+    },
     RelationshipType.CONTRIBUTOR_ROLE to { ids ->
       contributorRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },

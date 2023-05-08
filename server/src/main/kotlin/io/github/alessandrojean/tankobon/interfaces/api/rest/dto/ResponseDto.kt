@@ -118,6 +118,8 @@ enum class RelationshipType {
   AVATAR,
   PERSON_PICTURE,
   PUBLISHER_PICTURE,
+  PREVIOUS_BOOK,
+  NEXT_BOOK,
 }
 
 fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =

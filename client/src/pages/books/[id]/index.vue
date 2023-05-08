@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { isIsbnCode } from '@/types/tankobon-book'
-import { getRelationships } from '@/utils/api'
+import { getRelationship, getRelationships } from '@/utils/api'
 import { createFlagUrl } from '@/utils/flags'
 
 const { t, locale } = useI18n()
@@ -21,6 +21,8 @@ const { data: book, isLoading } = useBookQuery({
     'tag',
     'library',
     'cover_art',
+    'previous_book',
+    'next_book',
   ],
   enabled: computed(() => !!bookId.value), // && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
@@ -138,6 +140,12 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
         />
 
         <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
+          <BookNavigator
+            :loading="!showBookInfo"
+            :previous="getRelationship(book, 'PREVIOUS_BOOK')"
+            :next="getRelationship(book, 'NEXT_BOOK')"
+          />
+
           <BlockMarkdown
             :title="$t('common-fields.synopsis')"
             :empty-message="$t('books.empty-synopsis')"

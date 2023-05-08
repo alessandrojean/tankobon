@@ -376,6 +376,14 @@ class BookDtoDao(
       .orderBy(TableBookContributor.CREATED_AT.asc())
       .fetch { RelationDto(it.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR) }
 
+    val neighbors = seriesId?.let { bookDao.findAllBySeriesId(it).toList() } ?: emptyList()
+    val currentBookIndex = neighbors.indexOfFirst { it.id == id }
+
+    val previousBook = neighbors.getOrNull(currentBookIndex - 1)
+      ?.let { RelationDto(it.id, RelationshipType.PREVIOUS_BOOK) }
+    val nextBook = neighbors.getOrNull(currentBookIndex + 1)
+      ?.let { RelationDto(it.id, RelationshipType.NEXT_BOOK) }
+
     val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, RelationshipType.LIBRARY)
 
     val cover = RelationDto(id, RelationshipType.COVER_ART)
@@ -387,6 +395,8 @@ class BookDtoDao(
       publishers = publishers.toTypedArray(),
       tags = tags.toTypedArray(),
       contributors = contributors.toTypedArray(),
+      previousBook = previousBook,
+      nextBook = nextBook,
     )
   }
 
@@ -484,6 +494,8 @@ class BookDtoDao(
     publishers: Array<RelationDto>,
     tags: Array<RelationDto>,
     contributors: Array<RelationDto>,
+    previousBook: RelationDto? = null,
+    nextBook: RelationDto? = null,
   ) = BookEntityDto(
     id = id,
     attributes = toAttributesDto(),
@@ -491,6 +503,8 @@ class BookDtoDao(
       RelationDto(collectionId, RelationshipType.COLLECTION),
       seriesId?.let { RelationDto(it, RelationshipType.SERIES) },
       storeId?.let { RelationDto(it, RelationshipType.STORE) },
+      previousBook,
+      nextBook,
       library,
       cover,
       *publishers,
