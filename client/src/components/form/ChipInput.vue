@@ -131,6 +131,7 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
                 'flex items-center gap-2 select-none',
                 'px-2 py-0.5 rounded-lg tracking-wide text-sm',
                 'bg-primary-100 text-primary-700',
+                'dark:bg-gray-800 dark:text-gray-300',
               ]"
             >
               <span>
@@ -146,7 +147,7 @@ const errorMessage = computed(() => errors.value?.[0]?.$message)
                 @click="removeAtIndex(i)"
               >
                 <span class="sr-only">{{ $t('common-actions.remove') }}</span>
-                <XMarkIcon class="w-4 h-4 text-primary-600 group-hover/button:text-primary-700" />
+                <XMarkIcon class="w-4 h-4 light:text-primary-600 light:group-hover/button:text-primary-700" />
               </Button>
             </li>
           </slot>

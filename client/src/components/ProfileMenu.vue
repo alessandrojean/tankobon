@@ -66,13 +66,13 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
   <Menu v-slot="{ open }" as="div" class="ml-3 relative inline-block">
     <div>
       <MenuButton
-        class="max-w-xs flex items-center text-sm group rounded-md focus:outline-none focus-visible:ring-2"
+        class="max-w-xs p-1 flex items-center text-sm group rounded-md focus:outline-none focus-visible:ring-2"
         :class="[
           light ? 'focus-visible:ring-black' : 'focus-visible:ring-white/90',
         ]"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
-        <Avatar :picture-url="avatarUrl" size="mini" kind="gray" />
+        <Avatar :picture-url="avatarUrl" size="xs" kind="gray" />
         <span aria-hidden="true">
           <ChevronDownIcon
             class="w-5 h-5 ml-1 motion-safe:transition-transform"
@@ -110,7 +110,7 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
               :aria-current="isExactActive ? 'page' : undefined"
               @click="handleNavigation({ navigate, close, event: $event })"
             >
-              <Avatar class="shrink-0" :picture-url="avatarUrl" size="small" kind="gray" />
+              <Avatar class="shrink-0" :picture-url="avatarUrl" kind="gray" />
               <div class="min-w-0 grow">
                 <p class="font-medium truncate">{{ me!.attributes.name }}</p>
                 <p

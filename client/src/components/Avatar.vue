@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   letterId: '',
   loading: false,
   pictureUrl: undefined,
-  size: 'normal',
+  size: 'base',
   square: false,
 })
 
@@ -32,16 +32,24 @@ const avatar = cva(
         ],
       },
       size: {
-        'extra-mini': ['w-7 h-7'],
-        'mini': ['w-8 h-8'],
-        'small': ['w-10 h-10'],
-        'normal': ['w-12 h-12'],
+        xxs: ['w-5 h-5 [--inner-padding:0.125rem]'],
+        xs: ['w-7 h-7 [--inner-padding:0.25rem]'],
+        sm: ['w-8 h-8 [--inner-padding:0.5rem]'],
+        base: ['w-10 h-10 [--inner-padding:0.5rem]'],
+        lg: ['w-12 h-12 [--inner-padding:0.5rem]'],
       },
       square: {
         true: 'rounded-lg',
         false: 'rounded-full',
       },
     },
+    compoundVariants: [
+      {
+        square: true,
+        size: 'xxs',
+        class: '!rounded-md',
+      },
+    ],
   },
 )
 
@@ -107,7 +115,7 @@ const colorIsLight = computed(() => {
       class="w-full h-full overflow-hidden motion-safe:transition-colors"
       :class="{
         'motion-safe:animate-pulse': imageLoading,
-        'p-2': emptyStyle === 'icon' && emptyIcon,
+        'p-[--inner-padding]': emptyStyle === 'icon' && emptyIcon,
       }"
     >
       <svg

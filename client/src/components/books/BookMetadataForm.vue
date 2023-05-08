@@ -213,7 +213,6 @@ function getPublisherPicture(publisher: PublisherEntity) {
     </fieldset>
 
     <ChipInput
-      input-class="h-10"
       :placeholder="$t('common-placeholders.book-publisher')"
       :label-text="$t('entities.publishers')"
       :model-value="publishers"
@@ -229,24 +228,25 @@ function getPublisherPicture(publisher: PublisherEntity) {
       <template #chip="{ option, remove }: { option: string, remove: () => void }">
         <li
           v-if="isLoadingPublishers || !publisherMap[option]"
-          class="skeleton w-32 h-10 rounded-xl"
+          class="skeleton w-32 h-7 rounded-lg"
         />
         <li
           v-else
           :class="[
             'flex items-center gap-2 select-none',
-            'pl-1.5 pr-2 py-1.5 rounded-xl',
+            'pl-1 pr-1.5 py-0.5 rounded-lg text-sm',
             'bg-primary-100 text-primary-700',
+            'dark:bg-gray-800 dark:text-gray-300',
           ]"
         >
           <Avatar
             square
-            size="extra-mini"
+            size="xxs"
             :empty-icon="BuildingOffice2Icon"
             :picture-url="
               getFullImageUrl({
                 collection: 'publishers',
-                fileName: getPublisherPicture(publisherMap[option])?.versions['128'],
+                fileName: getPublisherPicture(publisherMap[option])?.versions['64'],
                 timeHex: getPublisherPicture(publisherMap[option])?.timeHex,
               })
             "
@@ -264,7 +264,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
             @click="remove"
           >
             <span class="sr-only">{{ $t('common-actions.remove') }}</span>
-            <XMarkIcon class="w-4 h-4 text-primary-600 group-hover/button:text-primary-700" />
+            <XMarkIcon class="w-4 h-4 light:text-primary-600 light:group-hover/button:text-primary-700" />
           </Button>
         </li>
       </template>
@@ -274,7 +274,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
           <Avatar
             square
             class="-ml-0.5 shrink-0"
-            size="extra-mini"
+            size="xs"
             :empty-icon="BuildingOffice2Icon"
             :picture-url="
               getFullImageUrl({

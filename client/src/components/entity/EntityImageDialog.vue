@@ -110,7 +110,7 @@ const previewUrl = computed(() => removeExisting.value ? null : currentImageUrl.
       <div>
         <div class="flex items-center space-x-3">
           <slot name="preview" :picture-url="uploadingBlobUrl ?? previewUrl">
-            <Avatar :picture-url="uploadingBlobUrl ?? previewUrl" />
+            <Avatar size="lg" :picture-url="uploadingBlobUrl ?? previewUrl" />
           </slot>
           <Button
             size="small"

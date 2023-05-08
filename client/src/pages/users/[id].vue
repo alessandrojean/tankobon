@@ -112,6 +112,7 @@ function handleAvatar(avatar: ImageResult) {
     >
       <template #avatar>
         <Avatar
+          size="lg"
           :loading="isLoading"
           :picture-url="
             getFullImageUrl({

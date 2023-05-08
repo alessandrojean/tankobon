@@ -90,7 +90,7 @@ const columns = [
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),
-            size: 'mini',
+            size: 'sm',
           }),
           h('span', { innerText: name }),
         ])

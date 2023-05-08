@@ -101,6 +101,7 @@ function handleImage(image: ImageResult) {
     >
       <template #avatar>
         <Avatar
+          size="lg"
           square
           :empty-icon="BuildingOffice2Icon"
           :loading="isLoading"
@@ -184,6 +185,7 @@ function handleImage(image: ImageResult) {
     >
       <template #preview="{ pictureUrl }">
         <Avatar
+          size="lg"
           square
           :picture-url="pictureUrl"
           :empty-icon="BuildingOffice2Icon"

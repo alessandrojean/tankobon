@@ -103,7 +103,8 @@ export default {
     }),
 
     /** Custom variants */
-    plugin(({ addVariant, matchVariant }) => {
+    plugin(({ addVariant }) => {
+      addVariant('light', 'html:not(.dark) &')
       addVariant('hocus', ['&:hover', '&:focus-visible'])
       addVariant(
         'group-hocus',

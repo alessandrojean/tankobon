@@ -38,7 +38,7 @@ useFocusZone({
         :key="i"
         class="flex gap-4 items-center"
       >
-        <Avatar loading size="small" />
+        <Avatar loading />
 
         <div class="grow">
           <div class="skeleton w-3/4 h-5" />
@@ -58,7 +58,6 @@ useFocusZone({
         class="group relative flex gap-4 items-center w-full"
       >
         <Avatar
-          size="small"
           kind="gray"
           empty-style="letter"
           class="relative z-10 shrink-0"

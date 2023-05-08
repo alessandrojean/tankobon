@@ -128,8 +128,8 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
             </Button>
           </FadeTransition>
 
-          <ThemeToggle :transparent="transparent && !isScrolling" />
-          <ProfileMenu :transparent="transparent && !isScrolling" />
+          <ThemeToggle class="ml-1" :transparent="transparent && !isScrolling" />
+          <ProfileMenu class="-mr-1" :transparent="transparent && !isScrolling" />
         </div>
       </div>
     </div>

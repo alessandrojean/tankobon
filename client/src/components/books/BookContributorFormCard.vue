@@ -109,7 +109,7 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
         <template #left-icon>
           <div class="absolute left-2 top-1/2 -translate-y-1/2">
             <Avatar
-              size="extra-mini"
+              size="xs"
               :picture-url="
                 getFullImageUrl({
                   collection: 'people',
@@ -124,7 +124,7 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
           <div class="flex items-center gap-3 w-full">
             <Avatar
               class="-ml-0.5 shrink-0"
-              size="extra-mini"
+              size="xs"
               :picture-url="
                 getFullImageUrl({
                   collection: 'people',
