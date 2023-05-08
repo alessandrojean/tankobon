@@ -483,7 +483,9 @@ markdown-input:
   striketrough-letter: S
   link: Link
   unordered-list: Unordered list
+  ordered-list: Ordered list
   guide: Markdown guide
+  supported: Markdown is supported
   description: 'Markdown input: {0}'
   preview-mode: preview mode selected
   edit-mode: edit mode selected
