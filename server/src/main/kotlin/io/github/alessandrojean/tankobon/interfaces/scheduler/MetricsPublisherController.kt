@@ -8,9 +8,10 @@ import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_EVENTS
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_FACTORY
+import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
-import mu.KotlinLogging
+import io.micrometer.core.instrument.Timer
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
@@ -18,7 +19,8 @@ import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Component
 import java.util.concurrent.atomic.AtomicLong
 
-private val logger = KotlinLogging.logger {}
+const val METER_TASKS_EXECUTION = "tankobon.tasks.execution"
+const val METER_TASKS_FAILURE = "tankobon.tasks.failure"
 
 @Profile("!test")
 @Component
@@ -37,6 +39,16 @@ class MetricsPublisherController(
     private const val BOOK_COVERS = "books.covers"
     private const val USERS = "users"
     private const val USER_AVATARS = "users.avatars"
+  }
+
+  init {
+    Timer.builder(METER_TASKS_EXECUTION)
+      .description("Task execution time")
+      .register(meterRegistry)
+
+    Counter.builder(METER_TASKS_FAILURE)
+      .description("Count of failed tasks")
+      .register(meterRegistry)
   }
 
   private final val entitiesNoTags = listOf(LIBRARIES, BOOKS, BOOK_COVERS, USERS, USER_AVATARS)

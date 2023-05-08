@@ -141,6 +141,7 @@ class BookController(
   fun getAllBooksFromLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
@@ -156,7 +157,11 @@ class BookController(
       else -> Sort.unsorted()
     }
 
-    val bookSearch = BookSearch(listOf(libraryId), userId = principal.user.id)
+    val bookSearch = BookSearch(
+      libraryIds = listOf(libraryId),
+      searchTerm = searchTerm,
+      userId = principal.user.id
+    )
     val pageRequest = PageRequest.of(page.pageNumber, page.pageSize, sort)
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
     val books = referenceExpansion.expand(booksPage.content, includes)

@@ -33,6 +33,7 @@ import mu.KotlinLogging
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.Term
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jms.annotation.JmsListener
@@ -66,7 +67,7 @@ class SearchIndexLifecycle(
       when (it) {
         LuceneEntity.Book -> rebuildIndex(
           entity = it,
-          { p: Pageable -> bookDtoRepository.findAll(BookSearch(), p) },
+          { p: Pageable -> bookDtoRepository.findAll(BookSearch(), p).expand() },
           { e: BookEntityDto -> e.toDocument() }
         )
         LuceneEntity.Series -> rebuildIndex(
@@ -218,9 +219,28 @@ class SearchIndexLifecycle(
     relationsToExpand = setOf(
       RelationshipType.LIBRARY,
       RelationshipType.TAG,
+      RelationshipType.PUBLISHER,
       RelationshipType.CONTRIBUTOR
     )
   )
+
+  private fun Page<BookEntityDto>.expand(): Page<BookEntityDto> {
+    val expanded = referenceExpansion.expand(
+      entities = content,
+      relationsToExpand = setOf(
+        RelationshipType.LIBRARY,
+        RelationshipType.TAG,
+        RelationshipType.PUBLISHER,
+        RelationshipType.CONTRIBUTOR
+      )
+    )
+
+    return PageImpl(
+      expanded,
+      PageRequest.of(pageable.pageNumber, pageable.pageSize),
+      totalElements,
+    )
+  }
 
   private fun addEntity(doc: Document) {
     luceneHelper.getIndexWriter().use { indexWriter ->

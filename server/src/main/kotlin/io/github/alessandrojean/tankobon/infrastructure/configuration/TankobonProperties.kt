@@ -33,6 +33,12 @@ class TankobonProperties {
   @DurationUnit(ChronoUnit.SECONDS)
   var sessionTimeout: Duration = Duration.ofMinutes(30)
 
+  @Positive
+  var taskConsumers: Int = 1
+
+  @Positive
+  var taskConsumersMax: Int = 1
+
   class Cors {
     var allowedOrigins: List<String> = emptyList()
   }
