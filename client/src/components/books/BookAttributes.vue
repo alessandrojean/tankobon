@@ -2,6 +2,7 @@
 import {
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/vue/20/solid'
 import type { BookEntity } from '@/types/tankobon-book'
 import { isIsbnCode } from '@/types/tankobon-book'
@@ -121,6 +122,11 @@ const metadata = computed(() => {
         : null,
     },
     {
+      title: t('common-fields.page-count'),
+      value: n(attributes?.pageCount ?? 0, 'integer'),
+      warning: attributes?.pageCount === 0,
+    },
+    {
       title: t('common-fields.label-price'),
       value: formatPrice(attributes?.labelPrice),
     },
@@ -228,6 +234,11 @@ const metadata = computed(() => {
               <ArrowTrendingUpIcon v-else class="w-4 h-4" />
               <span>{{ n(mt.badge, 'percent') }}</span>
             </Badge>
+
+            <ExclamationTriangleIcon
+              v-if="mt.warning"
+              class="w-5 h-5 ml-1 text-amber-500"
+            />
           </dd>
           <div v-else aria-hidden="true" class="mt-1 skeleton w-32 h-6" />
         </div>

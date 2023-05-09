@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Durational
 import io.github.alessandrojean.tankobon.domain.model.ReadProgress
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.DateRangeValidation
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.swagger.v3.oas.annotations.media.Schema
@@ -26,6 +27,7 @@ data class ReadProgressAttributesDto(
   @get:Nullable val startedAt: LocalDateTime? = null,
   @get:Nullable val finishedAt: LocalDateTime? = null,
   val isCompleted: Boolean = false,
+  val createdAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 fun ReadProgress.toDto(
@@ -50,9 +52,10 @@ fun ReadProgress.toDto(
 
 fun ReadProgress.toAttributesDto() = ReadProgressAttributesDto(
   page = page,
-  startedAt = startedAt,
-  finishedAt = finishedAt,
+  startedAt = startedAt?.toUtcTimeZone(),
+  finishedAt = finishedAt?.toUtcTimeZone(),
   isCompleted = isCompleted,
+  createdAt = createdAt.toUtcTimeZone(),
 )
 
 @DateRangeValidation

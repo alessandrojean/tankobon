@@ -13,29 +13,34 @@ const messages = Object.fromEntries(
 )
 
 const numberFormats = {
-  currency: {
+  'currency': {
     style: 'currency',
     notation: 'standard',
   },
-  integer: {
+  'integer': {
     style: 'decimal',
     maximumFractionDigits: 0,
   },
-  decimal: {
+  'decimal': {
     style: 'decimal',
     maximumFractionDigits: 2,
     useGrouping: false,
   },
-  dimension: {
+  'dimension': {
     style: 'decimal',
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
     useGrouping: false,
   },
-  percent: {
+  'percent': {
     style: 'percent',
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
+    useGrouping: false,
+  },
+  'percent-integer': {
+    style: 'percent',
+    maximumFractionDigits: 0,
     useGrouping: false,
   },
 } satisfies DefaultNumberFormatSchema
@@ -44,7 +49,7 @@ const dateTimeFormats = {
   short: {
     day: '2-digit',
     month: '2-digit',
-    year: '2-digit',
+    year: 'numeric',
   },
   dateTime: {
     day: '2-digit',

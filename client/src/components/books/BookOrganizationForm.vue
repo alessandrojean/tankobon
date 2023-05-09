@@ -26,9 +26,9 @@ export interface BookMetadataFormProps {
 export interface BookMetadataFormEmits {
   (e: 'update:collection', collection: string): void
   (e: 'update:notes', notes: string): void
-  (e: 'update:billedAt', billedAt: string): void
-  (e: 'update:arrivedAt', arrivedAt: string): void
-  (e: 'update:boughtAt', boughtAt: string): void
+  (e: 'update:billedAt', billedAt: string | null): void
+  (e: 'update:arrivedAt', arrivedAt: string | null): void
+  (e: 'update:boughtAt', boughtAt: string | null): void
   (e: 'update:labelPrice', labelPrice: MonetaryAmountString): void
   (e: 'update:paidPrice', paidPrice: MonetaryAmountString): void
   (e: 'update:store', store: string | null): void
@@ -73,7 +73,9 @@ defineExpose({ v$ })
 
 function handleDateTimeInput(event: KeyboardEvent, field: 'boughtAt' | 'billedAt' | 'arrivedAt') {
   const input = event.target as HTMLInputElement
-  const value = convertLocalTimeZoneToUtc(input.value)
+  const value = input.value.length > 0
+    ? convertLocalTimeZoneToUtc(input.value)
+    : null
 
   if (field === 'boughtAt') {
     emit('update:boughtAt', value)

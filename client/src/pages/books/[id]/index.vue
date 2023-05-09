@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import { BookmarkIcon, InformationCircleIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import Button from '@/components/form/Button.vue'
 import { isIsbnCode } from '@/types/tankobon-book'
-import { getRelationship, getRelationships } from '@/utils/api'
+import { createEmptyCollectionResponse, getRelationship, getRelationships } from '@/utils/api'
 import { createFlagUrl } from '@/utils/flags'
+import type { ReadProgressCreation, ReadProgressEntity, ReadProgressUpdate } from '@/types/tankobon-read-progress'
 
 const router = useRouter()
 const { t, locale } = useI18n()
@@ -9,7 +12,6 @@ const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
 const { mutate: deleteBook, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteBookMutation()
-// const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
 
 const { data: book, isLoading } = useBookQuery({
   bookId: bookId as Ref<string>,
@@ -38,10 +40,27 @@ const { data: contributors, isLoading: isLoadingContributors } = useBookContribu
   bookId: bookId as Ref<string>,
   includes: ['person_picture'],
   select: response => response.data,
-  enabled: computed(() => !!bookId.value && !isLoading.value), // && !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value && !isLoading.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('book-contributors.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
+const { data: readProgresses, isLoading: isLoadingReadProgresses } = useBookReadProgressesQuery({
+  bookId: bookId as Ref<string>,
+  sort: [
+    { property: 'startedAt', direction: 'desc' },
+    { property: 'finishedAt', direction: 'desc' },
+  ],
+  enabled: computed(() => !!bookId.value && !isLoading.value && !isDeleting.value && !isDeleted.value),
+  select: response => response.data,
+  initialData: createEmptyCollectionResponse(),
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('read-progresses.fetch-failure'),
       body: error.message,
     })
   },
@@ -86,18 +105,100 @@ const flagUrl = computed(() => {
 })
 
 useHead({ title: () => book.value?.attributes?.title ?? '' })
+
+const tabs = [
+  { key: '0', text: 'books.information', icon: InformationCircleIcon },
+  { key: '1', text: 'books.reading', icon: BookmarkIcon },
+]
+
+const activeTab = ref(tabs[0])
+
+const showCreateReadProgressDialog = ref(false)
+const { mutate: createReadProgress, isLoading: isCreatingReadProgress } = useCreateReadProgressMutation()
+
+function handleCreateReadProgress(readProgress: ReadProgressCreation) {
+  createReadProgress(readProgress, {
+    onSuccess: async () => {
+      await notificator.success({ title: t('read-progresses.created-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('read-progresses.created-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
+
+const showEditReadProgressDialog = ref(false)
+const readProgressToEdit = ref<ReadProgressEntity>()
+const { mutate: updateReadProgress, isLoading: isUpdatingReadProgress } = useUpdateReadProgressMutation()
+
+function openEditReadProgressDialog(readProgress: ReadProgressEntity) {
+  readProgressToEdit.value = readProgress
+  nextTick(() => showEditReadProgressDialog.value = true)
+}
+
+function handleEditReadProgress(readProgress: ReadProgressUpdate) {
+  updateReadProgress(readProgress, {
+    onSuccess: async () => {
+      readProgressToEdit.value = undefined
+      await notificator.success({ title: t('read-progresses.edited-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('read-progresses.edited-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
+
+const readProgressToDelete = ref<ReadProgressEntity>()
+const { mutate: deleteReadProgress, isLoading: isDeletingReadProgress } = useDeleteReadProgressMutation()
+
+const isEditingReadProgress = logicOr(
+  isCreatingReadProgress,
+  isUpdatingReadProgress,
+  isDeletingReadProgress,
+)
+
+function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
+  readProgressToDelete.value = readProgress
+
+  deleteReadProgress(readProgress.id, {
+    onSuccess: async () => {
+      readProgressToDelete.value = undefined
+      await notificator.success({ title: t('read-progresses.deleted-with-success') })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('read-progresses.deleted-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
 </script>
 
 <template>
   <div
-    class="bg-white dark:bg-gray-950 motion-safe:transition-colors duration-300 ease-in-out -mt-16 relative"
+    :class="[
+      'bg-white dark:bg-gray-950 motion-safe:transition-colors',
+      'duration-300 ease-in-out -mt-16 relative',
+    ]"
   >
     <div class="absolute inset-x-0 top-0">
       <BookBanner :loading="!showBookInfo" :book="book" />
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
-      <div class="book-grid">
+      <TabGroup
+        as="div"
+        class="book-grid"
+        :selected-index="Number(activeTab.key)"
+        @change="activeTab = tabs[$event]"
+      >
         <BookCover
           class="book-cover"
           :loading="!showBookInfo"
@@ -107,7 +208,11 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
             v-if="flagUrl"
             :src="flagUrl"
             :alt="$t('common.flag', [regionName])"
-            class="inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3 pointer-events-none"
+            :class="[
+              'inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow',
+              'absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3',
+              'pointer-events-none',
+            ]"
           >
         </BookCover>
 
@@ -117,47 +222,114 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
           :book="book"
         />
 
-        <BookButtons
-          class="book-buttons pt-1.5"
-          :loading="!showBookInfo"
-          :book="book"
-          :editing="isDeleting"
-          @click:delete="handleDelete"
-        />
+        <div class="book-buttons pt-1.5 flex items-center justify-between">
+          <TabList class="hidden md:flex items-center gap-2">
+            <Tab
+              v-for="tab in tabs"
+              :key="String(tab.key)"
+              :as="Button"
+              kind="pill-tab"
+              size="pill-tab"
+              :disabled="!showBookInfo"
+            >
+              <component :is="tab.icon" class="w-5 h-5" />
+              <span>{{ $t(tab.text) }}</span>
+            </Tab>
+          </TabList>
 
-        <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
-          <BookNavigator
+          <BasicSelect
+            v-model="activeTab"
+            class="md:hidden h-12"
+            :options="tabs"
+            :option-text="(tab: any) => $t(tab.text)"
+            :option-value="(tab: any) => tab.key"
+            :disabled="!showBookInfo"
+          />
+
+          <BookButtons
+            v-if="activeTab.key === '0'"
             :loading="!showBookInfo"
-            :previous="getRelationship(book, 'PREVIOUS_BOOK')"
-            :next="getRelationship(book, 'NEXT_BOOK')"
+            :book="book"
+            :editing="isDeleting || isEditingReadProgress"
+            @click:delete="handleDelete"
           />
-
-          <BlockMarkdown
-            :title="$t('common-fields.synopsis')"
-            :empty-message="$t('books.empty-synopsis')"
-            :loading="!showBookInfo"
-            :markdown="book?.attributes?.synopsis ?? undefined"
-            :blur="false"
-          />
-
-          <BookContributors
-            :loading="isLoadingContributors"
-            :contributors="contributors"
-          />
-
-          <BookTags
-            class="2xl:hidden"
-            :tags="getRelationships(book, 'TAG')"
-            :loading="!showBookInfo"
-          />
-
-          <BlockMarkdown
-            :title="$t('common-fields.notes')"
-            :loading="!showBookInfo"
-            :markdown="book?.attributes?.notes ?? undefined"
-            :blur="false"
-          />
+          <Button
+            v-else
+            class="aspect-1"
+            size="small"
+            :title="$t('common-actions.add')"
+            :disabled="isEditingReadProgress || isLoadingReadProgresses || book?.attributes.pageCount === 0"
+            :loading="isCreatingReadProgress"
+            @click="showCreateReadProgressDialog = true"
+          >
+            <span class="sr-only">{{ $t('common-actions.add') }}</span>
+            <PlusIcon class="w-5 h-5" />
+          </Button>
         </div>
+
+        <TabPanels class="book-tabs">
+          <TabPanel class="information-grid">
+            <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
+              <BookNavigator
+                :loading="!showBookInfo"
+                :previous="getRelationship(book, 'PREVIOUS_BOOK')"
+                :next="getRelationship(book, 'NEXT_BOOK')"
+              />
+
+              <BlockMarkdown
+                :title="$t('common-fields.synopsis')"
+                :empty-message="$t('books.empty-synopsis')"
+                :loading="!showBookInfo"
+                :markdown="book?.attributes?.synopsis ?? undefined"
+                :blur="false"
+              />
+
+              <BookContributors
+                :loading="isLoadingContributors"
+                :contributors="contributors"
+              />
+
+              <BookTags
+                class="2xl:hidden"
+                :tags="getRelationships(book, 'TAG')"
+                :loading="!showBookInfo"
+              />
+
+              <BlockMarkdown
+                :title="$t('common-fields.notes')"
+                :loading="!showBookInfo"
+                :markdown="book?.attributes?.notes ?? undefined"
+                :blur="false"
+              />
+            </div>
+
+            <aside class="book-right hidden 2xl:block">
+              <div class="sticky top-24 flex flex-col gap-6">
+                <BookTags
+                  group
+                  :tags="getRelationships(book, 'TAG')"
+                  :loading="!showBookInfo"
+                />
+              </div>
+            </aside>
+          </TabPanel>
+
+          <TabPanel>
+            <BookReadProgresses
+              :book="book"
+              :read-progresses="readProgresses ?? []"
+              :loading="!showBookInfo || isLoadingReadProgresses"
+              :creating="isCreatingReadProgress"
+              :deleting="isDeletingReadProgress"
+              :deleting-id="readProgressToDelete?.id"
+              :editing="isUpdatingReadProgress"
+              :editing-id="readProgressToEdit?.id"
+              @click:new="showCreateReadProgressDialog = true"
+              @click:edit="openEditReadProgressDialog($event)"
+              @click:delete="handleDeleteReadProgress($event)"
+            />
+          </TabPanel>
+        </TabPanels>
 
         <div class="book-attributes">
           <BookAttributes
@@ -166,18 +338,26 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
             :book="book"
           />
         </div>
-
-        <aside class="book-right hidden 2xl:block">
-          <div class="sticky top-24 flex flex-col gap-6">
-            <BookTags
-              group
-              :tags="getRelationships(book, 'TAG')"
-              :loading="!showBookInfo"
-            />
-          </div>
-        </aside>
-      </div>
+      </TabGroup>
     </div>
+
+    <ReadProgressCreateDialog
+      v-if="showBookInfo"
+      :book-id="book?.id ?? ''"
+      :page-count="book?.attributes.pageCount ?? 0"
+      :is-open="showCreateReadProgressDialog"
+      @submit="handleCreateReadProgress"
+      @close="showCreateReadProgressDialog = false"
+    />
+
+    <ReadProgressEditDialog
+      v-if="showBookInfo && readProgressToEdit"
+      :is-open="showEditReadProgressDialog"
+      :read-progress-entity="readProgressToEdit"
+      :page-count="book?.attributes.pageCount ?? 0"
+      @submit="handleEditReadProgress"
+      @close="showEditReadProgressDialog = false"
+    />
   </div>
 </template>
 
@@ -188,16 +368,40 @@ meta:
 </route>
 
 <style lang="postcss">
+.information-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-areas:
+    'synopsis synopsis'
+    'notes notes';
+  grid-template-columns: 6rem 1fr;
+
+  @media (min-width: theme('screens.2xl')) {
+    gap: 1.5rem;
+    grid-template-areas:
+      'synopsis right'
+      'tags right'
+      'notes right';
+    grid-template-columns: 1fr 22rem;
+  }
+
+  .book-synopsis {
+    grid-area: synopsis / synopsis / synopsis / synopsis;
+  }
+
+  .book-right {
+    grid-area: right / right / right / right;
+  }
+}
+
 .book-grid {
   display: grid;
   gap: 1rem;
   grid-template-areas:
     'art title'
     'buttons buttons'
-    'synopsis synopsis'
-    'attributes attributes'
-    'notes notes'
-    'tabs tabs';
+    'tabs tabs'
+    'attributes attributes';
   grid-template-columns: 6rem 1fr;
 
   @media (min-width: theme('screens.sm')) {
@@ -206,22 +410,8 @@ meta:
       'art title'
       'art buttons'
       'art padding'
-      'attributes synopsis'
-      'attributes tags'
-      'attributes notes';
+      'attributes tabs';
     grid-template-columns: 14rem 1fr;
-  }
-
-  @media (min-width: theme('screens.2xl')) {
-    gap: 1.5rem;
-    grid-template-areas:
-      'art title title'
-      'art buttons buttons'
-      'art padding padding'
-      'attributes synopsis right'
-      'attributes tags right'
-      'attributes notes right';
-    grid-template-columns: 14rem 1fr 22rem;
   }
 
   .book-cover {
@@ -236,16 +426,12 @@ meta:
     grid-area: title / title / title / title;
   }
 
-  .book-synopsis {
-    grid-area: synopsis / synopsis / synopsis / synopsis;
+  .book-tabs {
+    grid-area: tabs / tabs / tabs / tabs;
   }
 
   .book-attributes {
     grid-area: attributes / attributes / attributes / attributes;
-  }
-
-  .book-right {
-    grid-area: right / right / right / right;
   }
 }
 </style>

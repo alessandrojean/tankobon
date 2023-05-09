@@ -98,6 +98,7 @@ class ReadProgressController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    sort: Sort,
   ): SuccessCollectionResponseDto<ReadProgressEntityDto> {
     if (bookRepository.findByIdOrNull(bookId) == null) {
       throw IdDoesNotExistException("Book not found")
@@ -106,12 +107,12 @@ class ReadProgressController(
     val libraryId = bookRepository.getLibraryIdOrNull(bookId)!!
     val library = libraryRepository.findById(libraryId)
 
-    if (principal.user.canAccessLibrary(library)) {
+    if (!principal.user.canAccessLibrary(library)) {
       throw UserDoesNotHaveAccessException()
     }
 
     val readProgresses = readProgressRepository
-      .findByBookAndUserId(bookId, principal.user.id)
+      .findByBookAndUserId(bookId, principal.user.id, sort)
       .map { it.toDto() }
 
     val expanded = referenceExpansion.expand(

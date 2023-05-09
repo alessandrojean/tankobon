@@ -48,6 +48,12 @@ const button = cva(
           'not-disabled:hocus:text-gray-600 dark:not-disabled:hocus:text-gray-100',
           'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
+        'ghost-danger': [
+          'border-transparent bg-transparent text-gray-500 dark:text-gray-300',
+          'not-disabled:hover:bg-gray-700/10 dark:not-disabled:hover:bg-gray-300/10',
+          'not-disabled:hover:text-red-600 dark:not-disabled:hover:text-red-400',
+          'focus-visible:ring-black dark:focus-visible:ring-white/90',
+        ],
         'navbar-dark': [
           'border-transparent bg-transparent text-gray-300',
           'not-disabled:hocus:bg-gray-700 not-disabled:hocus:text-gray-200',

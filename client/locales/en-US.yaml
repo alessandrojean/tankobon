@@ -41,6 +41,9 @@ common-fields:
   person: Person
   series: Series
   tag: Tag
+  started-at: Started at
+  finished-at: Finished at
+  page: Page
 
 common-actions:
   sign-in: Sign in
@@ -125,7 +128,8 @@ validation:
   not-empty: It can not be empty.
   email: It should be a valid e-mail.
   min: It should have at least {n} characters.
-  min-value: It should be greater or equal to {0}.
+  min-value: It should be greater or equal than {0}.
+  max-value: It should be less or equal than {0}.
   available: It should be an available e-mail.
   max-size: It should have a size lower than {0}.
   max: It should have at most {0} characters.
@@ -134,6 +138,8 @@ validation:
   decimal: It should be a valid decimal.
   unique: It can not contains repeated values.
   repeated-positions: 'Repeated positions: {0}'
+  durational-start: It should be less or equal than the finish date
+  durational-finish: It should be greater or equal than the start date
 
 entities:
   users: Users
@@ -153,6 +159,7 @@ errors:
 
 date:
   unknown: Unknown date
+  unknown-short: Unknown
 
 password-strength:
   very-weak: Very weak
@@ -461,9 +468,33 @@ books:
   relationships: Relationships
   untitled: Untitled
   volume: 'Volume #{0}'
+  information: Information
+  reading: Reading
 
 book-contributors:
   fetch-failure: There was an error while fetching the book contributors
+
+read-progresses:
+  progress: Reading progress
+  fetch-failure: There was an error while fetching the read progresses
+  create-header: Create a new read progress
+  create-description: Read progresses allows you to keep track of your readings
+  update-header: Modify a read progress
+  created-with-success: Read progress created with success
+  created-with-failure: There was an error while creating the read progress
+  edited-with-success: Read progress edited with success
+  edited-with-failure: There was an error while editing the read progress
+  deleted-with-success: Read progress deleted with success
+  deleted-with-failure: There was an error while deleting the read progress
+  empty-header: No read progresses found
+  empty-description: You haven't read this book yet
+  new: New read progress
+  reading: Reading
+  zero-page-count-warning: The book has no pages. Edit it to fix this information.
+  completed: I've finished reading
+  readings-count: Readings count
+  largest-read: Largest read period
+  total-pages-read: Total pages read
 
 picture-upload:
   header: Picture management

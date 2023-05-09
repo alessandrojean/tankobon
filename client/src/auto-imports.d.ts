@@ -136,6 +136,7 @@ declare global {
   const useBodyAttrs: typeof import('@unhead/vue')['useBodyAttrs']
   const useBookContributorsQuery: typeof import('./queries/book/useBookContributorsQuery')['default']
   const useBookQuery: typeof import('./queries/book/useBookQuery')['default']
+  const useBookReadProgressesQuery: typeof import('./queries/read-progress/useBookReadProgressesQuery')['default']
   const useBreakpoints: typeof import('@vueuse/core')['useBreakpoints']
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
@@ -156,6 +157,7 @@ declare global {
   const useCreateLibraryMutation: typeof import('./mutations/library/useCreateLibraryMutation')['default']
   const useCreatePersonMutation: typeof import('./mutations/person/useCreatePersonMutation')['default']
   const useCreatePublisherMutation: typeof import('./mutations/publisher/useCreatePublisherMutation')['default']
+  const useCreateReadProgressMutation: typeof import('./mutations/read-progress/useCreateReadProgressMutation')['default']
   const useCreateSeriesMutation: typeof import('./mutations/series/useCreateSeriesMutation')['default']
   const useCreateStoreMutation: typeof import('./mutations/store/useCreateStoreMutation')['default']
   const useCreateTagMutation: typeof import('./mutations/tag/useCreateTagMutation')['default']
@@ -179,6 +181,7 @@ declare global {
   const useDeletePersonPictureMutation: typeof import('./mutations/person/useDeletePersonPictureMutation')['default']
   const useDeletePublisherMutation: typeof import('./mutations/publisher/useDeletePublisherMutation')['default']
   const useDeletePublisherPictureMutation: typeof import('./mutations/publisher/useDeletePublisherPictureMutation')['default']
+  const useDeleteReadProgressMutation: typeof import('./mutations/read-progress/useDeleteReadProgressMutation')['default']
   const useDeleteSeriesMutation: typeof import('./mutations/series/useDeleteSeriesMutation')['default']
   const useDeleteStoreMutation: typeof import('./mutations/store/useDeleteStoreMutation')['default']
   const useDeleteTagMutation: typeof import('./mutations/tag/useDeleteTagMutation')['default']
@@ -284,6 +287,7 @@ declare global {
   const useProjection: typeof import('@vueuse/math')['useProjection']
   const usePublisherQuery: typeof import('./queries/publisher/usePublisherQuery')['default']
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
+  const useReadProgressQuery: typeof import('./queries/read-progress/useReadProgressQuery')['default']
   const useRefHistory: typeof import('@vueuse/core')['useRefHistory']
   const useResizeObserver: typeof import('@vueuse/core')['useResizeObserver']
   const useRound: typeof import('@vueuse/math')['useRound']
@@ -364,6 +368,7 @@ declare global {
   const useUpdateLibraryMutation: typeof import('./mutations/library/useUpdateLibraryMutation')['default']
   const useUpdatePersonMutation: typeof import('./mutations/person/useUpdatePersonMutation')['default']
   const useUpdatePublisherMutation: typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']
+  const useUpdateReadProgressMutation: typeof import('./mutations/read-progress/useUpdateReadProgressMutation')['default']
   const useUpdateSeriesMutation: typeof import('./mutations/series/useUpdateSeriesMutation')['default']
   const useUpdateStoreMutation: typeof import('./mutations/store/useUpdateStoreMutation')['default']
   const useUpdateTagMutation: typeof import('./mutations/tag/useUpdateTagMutation')['default']
@@ -555,6 +560,7 @@ declare module 'vue' {
     readonly useBodyAttrs: UnwrapRef<typeof import('@unhead/vue')['useBodyAttrs']>
     readonly useBookContributorsQuery: UnwrapRef<typeof import('./queries/book/useBookContributorsQuery')['default']>
     readonly useBookQuery: UnwrapRef<typeof import('./queries/book/useBookQuery')['default']>
+    readonly useBookReadProgressesQuery: UnwrapRef<typeof import('./queries/read-progress/useBookReadProgressesQuery')['default']>
     readonly useBreakpoints: UnwrapRef<typeof import('@vueuse/core')['useBreakpoints']>
     readonly useBroadcastChannel: UnwrapRef<typeof import('@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('@vueuse/core')['useBrowserLocation']>
@@ -575,6 +581,7 @@ declare module 'vue' {
     readonly useCreateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useCreateLibraryMutation')['default']>
     readonly useCreatePersonMutation: UnwrapRef<typeof import('./mutations/person/useCreatePersonMutation')['default']>
     readonly useCreatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useCreatePublisherMutation')['default']>
+    readonly useCreateReadProgressMutation: UnwrapRef<typeof import('./mutations/read-progress/useCreateReadProgressMutation')['default']>
     readonly useCreateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useCreateSeriesMutation')['default']>
     readonly useCreateStoreMutation: UnwrapRef<typeof import('./mutations/store/useCreateStoreMutation')['default']>
     readonly useCreateTagMutation: UnwrapRef<typeof import('./mutations/tag/useCreateTagMutation')['default']>
@@ -598,6 +605,7 @@ declare module 'vue' {
     readonly useDeletePersonPictureMutation: UnwrapRef<typeof import('./mutations/person/useDeletePersonPictureMutation')['default']>
     readonly useDeletePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useDeletePublisherMutation')['default']>
     readonly useDeletePublisherPictureMutation: UnwrapRef<typeof import('./mutations/publisher/useDeletePublisherPictureMutation')['default']>
+    readonly useDeleteReadProgressMutation: UnwrapRef<typeof import('./mutations/read-progress/useDeleteReadProgressMutation')['default']>
     readonly useDeleteSeriesMutation: UnwrapRef<typeof import('./mutations/series/useDeleteSeriesMutation')['default']>
     readonly useDeleteStoreMutation: UnwrapRef<typeof import('./mutations/store/useDeleteStoreMutation')['default']>
     readonly useDeleteTagMutation: UnwrapRef<typeof import('./mutations/tag/useDeleteTagMutation')['default']>
@@ -703,6 +711,7 @@ declare module 'vue' {
     readonly useProjection: UnwrapRef<typeof import('@vueuse/math')['useProjection']>
     readonly usePublisherQuery: UnwrapRef<typeof import('./queries/publisher/usePublisherQuery')['default']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
+    readonly useReadProgressQuery: UnwrapRef<typeof import('./queries/read-progress/useReadProgressQuery')['default']>
     readonly useRefHistory: UnwrapRef<typeof import('@vueuse/core')['useRefHistory']>
     readonly useResizeObserver: UnwrapRef<typeof import('@vueuse/core')['useResizeObserver']>
     readonly useRound: UnwrapRef<typeof import('@vueuse/math')['useRound']>
@@ -783,6 +792,7 @@ declare module 'vue' {
     readonly useUpdateLibraryMutation: UnwrapRef<typeof import('./mutations/library/useUpdateLibraryMutation')['default']>
     readonly useUpdatePersonMutation: UnwrapRef<typeof import('./mutations/person/useUpdatePersonMutation')['default']>
     readonly useUpdatePublisherMutation: UnwrapRef<typeof import('./mutations/publisher/useUpdatePublisherMutation')['default']>
+    readonly useUpdateReadProgressMutation: UnwrapRef<typeof import('./mutations/read-progress/useUpdateReadProgressMutation')['default']>
     readonly useUpdateSeriesMutation: UnwrapRef<typeof import('./mutations/series/useUpdateSeriesMutation')['default']>
     readonly useUpdateStoreMutation: UnwrapRef<typeof import('./mutations/store/useUpdateStoreMutation')['default']>
     readonly useUpdateTagMutation: UnwrapRef<typeof import('./mutations/tag/useUpdateTagMutation')['default']>

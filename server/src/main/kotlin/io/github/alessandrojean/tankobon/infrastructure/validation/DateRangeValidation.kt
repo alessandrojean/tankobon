@@ -19,7 +19,7 @@ annotation class DateRangeValidation(
 
 class DurationalDateRangeValidator : ConstraintValidator<DateRangeValidation, Durational> {
   override fun isValid(value: Durational, context: ConstraintValidatorContext): Boolean {
-    if (value.startedAt == null && value.finishedAt == null) {
+    if (value.startedAt == null || value.finishedAt == null) {
       return true
     }
 

@@ -23,6 +23,7 @@ class ReadProgressDao(
 ) : ReadProgressRepository {
 
   private val sorts = mapOf(
+    "createdAt" to TableReadProgress.CREATED_AT,
     "startedAt" to TableReadProgress.STARTED_AT,
     "finishedAt" to TableReadProgress.FINISHED_AT,
   )
@@ -45,6 +46,14 @@ class ReadProgressDao(
     dsl.selectFrom(TableReadProgress)
       .where(TableReadProgress.BOOK_ID.eq(bookId))
       .and(TableReadProgress.USER_ID.eq(userId))
+      .fetchInto(TableReadProgress)
+      .map { it.toDomain() }
+
+  override fun findByBookAndUserId(bookId: String, userId: String, sort: Sort): Collection<ReadProgress> =
+    dsl.selectFrom(TableReadProgress)
+      .where(TableReadProgress.BOOK_ID.eq(bookId))
+      .and(TableReadProgress.USER_ID.eq(userId))
+      .orderBy(sort.mapNotNull { it.toSortField(sorts) })
       .fetchInto(TableReadProgress)
       .map { it.toDomain() }
 

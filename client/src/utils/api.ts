@@ -8,7 +8,7 @@ import type { ImporterSourceAttributes } from '@/types/tankobon-importer-source'
 import type { LibraryAttributes, LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
 import type { PersonEntity, PersonIncludes } from '@/types/tankobon-person'
 import type { PublisherAttributes, PublisherEntity, PublisherIncludes } from '@/types/tankobon-publisher'
-import type { PaginatedResponse } from '@/types/tankobon-response'
+import type { CollectionResponse, PaginatedResponse } from '@/types/tankobon-response'
 import type { SeriesAttributes } from '@/types/tankobon-series'
 import type { StoreAttributes } from '@/types/tankobon-store'
 import type { TagAttributes } from '@/types/tankobon-tag'
@@ -71,6 +71,14 @@ export function createEmptyPaginatedResponse<T>(): PaginatedResponse<T> {
       totalElements: 20,
       totalPages: 1,
     },
+  }
+}
+
+export function createEmptyCollectionResponse<T>(): CollectionResponse<T> {
+  return {
+    result: 'OK',
+    response: 'COLLECTION',
+    data: [],
   }
 }
 
