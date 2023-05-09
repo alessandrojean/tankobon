@@ -9,14 +9,14 @@ import type { BookEntity } from '@/types/tankobon-book'
 export interface BookButtonsProps {
   book?: BookEntity | null
   canEdit?: boolean
-  editing?: boolean
+  deleting?: boolean
   loading?: boolean
 }
 
 const props = withDefaults(defineProps<BookButtonsProps>(), {
   book: undefined,
   canEdit: true,
-  editing: false,
+  deleting: false,
   loading: false,
 })
 
@@ -29,9 +29,9 @@ defineEmits<{
   (e: 'click:share', event: MouseEvent): void
 }>()
 
-const { editing, loading } = toRefs(props)
+const { loading, deleting } = toRefs(props)
 
-const disabled = computed(() => loading.value || editing.value)
+const disabled = computed(() => loading.value || deleting.value)
 </script>
 
 <template>
@@ -92,6 +92,7 @@ const disabled = computed(() => loading.value || editing.value)
       class="aspect-1"
       size="small"
       :disabled="disabled"
+      :loading="deleting"
       :title="$t('common-actions.delete')"
       @click="$emit('click:delete', $event)"
     >

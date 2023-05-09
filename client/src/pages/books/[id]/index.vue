@@ -3,11 +3,12 @@ import { isIsbnCode } from '@/types/tankobon-book'
 import { getRelationship, getRelationships } from '@/utils/api'
 import { createFlagUrl } from '@/utils/flags'
 
+const router = useRouter()
 const { t, locale } = useI18n()
 const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
-// const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
+const { mutate: deleteBook, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteBookMutation()
 // const { mutate: editPublisher, isLoading: isEditing } = useUpdatePublisherMutation()
 
 const { data: book, isLoading } = useBookQuery({
@@ -24,7 +25,7 @@ const { data: book, isLoading } = useBookQuery({
     'previous_book',
     'next_book',
   ],
-  enabled: computed(() => !!bookId.value), // && !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value && !isDeleting.value && !isDeleted.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('books.fetch-one-failure'),
@@ -50,36 +51,20 @@ const showBookInfo = computed(() => {
   return !isLoading.value && !!book.value
 })
 
-// function handleDelete() {
-//   deletePublisher(publisherId.value!, {
-//     onSuccess: async () => {
-//       notificator.success({ title: t('publishers.deleted-with-success') })
-//       await router.replace({ name: 'publishers' })
-//     },
-//     onError: async (error) => {
-//       await notificator.failure({
-//         title: t('publishers.deleted-with-failure'),
-//         body: error.message,
-//       })
-//     }
-//   })
-// }
-
-// const showEditDialog = ref(false)
-
-// function handleEditPublisher(publisher: PublisherUpdate) {
-//   editPublisher(publisher, {
-//     onSuccess: async () => {
-//       await notificator.success({ title: t('publishers.edited-with-success') })
-//     },
-//     onError: async (error) => {
-//       await notificator.failure({
-//         title: t('publishers.edited-with-failure'),
-//         body: error.message,
-//       })
-//     }
-//   })
-// }
+function handleDelete() {
+  deleteBook(bookId.value!, {
+    onSuccess: async () => {
+      notificator.success({ title: t('books.deleted-with-success') })
+      await router.replace({ name: 'books' })
+    },
+    onError: async (error) => {
+      await notificator.failure({
+        title: t('books.deleted-with-failure'),
+        body: error.message,
+      })
+    },
+  })
+}
 
 const regionCode = computed(() => {
   const code = book.value?.attributes?.code
@@ -136,7 +121,8 @@ useHead({ title: () => book.value?.attributes?.title ?? '' })
           class="book-buttons pt-1.5"
           :loading="!showBookInfo"
           :book="book"
-          :editing="false"
+          :editing="isDeleting"
+          @click:delete="handleDelete"
         />
 
         <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
