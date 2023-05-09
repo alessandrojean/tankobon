@@ -4,27 +4,22 @@ import humanizeDuration from 'humanize-duration'
 import type { Metric } from '@/types/tankobon-metrics'
 
 export interface MetricCardProps {
+  measurement?: number
   metric: Metric
   unit?: string
   title: string
 }
 
 const props = withDefaults(defineProps<MetricCardProps>(), {
+  measurement: 0,
   unit: undefined,
 })
-const { metric, unit } = toRefs(props)
+const { metric, unit, measurement } = toRefs(props)
 
-const { locale } = useI18n()
+const { locale, n } = useI18n()
 
-const value = computed(() => metric.value.measurements[0].value)
+const value = computed(() => metric.value.measurements[measurement.value].value)
 const baseUnit = computed(() => unit.value ?? metric.value.baseUnit)
-const intlFormatters = computed(() => ({
-  percent: new Intl.NumberFormat(locale.value, {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }),
-}))
 
 const shortEnglishHumanizer = humanizeDuration.humanizer({
   language: 'shortEn',
@@ -53,7 +48,7 @@ const formattedValue = computed(() => {
       return { formatted, unit }
     }
     case 'percent': {
-      const formatted = intlFormatters.value.percent.format(value.value)
+      const formatted = n(value.value, 'percent')
       return { formatted: formatted.replace('%', '').trim(), unit: '%' }
     }
     case 'seconds': {
@@ -64,6 +59,11 @@ const formattedValue = computed(() => {
       const [formatted, unit] = formattedString.split(' ')
 
       return { formatted, unit }
+    }
+    case 'count': {
+      const formatted = n(value.value, 'integer')
+
+      return { formatted }
     }
     default: return null
   }
@@ -82,7 +82,10 @@ const formattedValue = computed(() => {
       class="text-3xl font-medium mt-2 text-primary-600 dark:text-primary-500"
     >
       {{ formattedValue.formatted }}
-      <span class="text-sm text-gray-600 dark:text-gray-400">
+      <span
+        v-if="formattedValue.unit"
+        class="text-sm text-gray-600 dark:text-gray-400"
+      >
         {{ formattedValue.unit }}
       </span>
     </p>

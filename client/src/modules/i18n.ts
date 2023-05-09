@@ -17,6 +17,10 @@ const numberFormats = {
     style: 'currency',
     notation: 'standard',
   },
+  integer: {
+    style: 'decimal',
+    maximumFractionDigits: 0,
+  },
   decimal: {
     style: 'decimal',
     maximumFractionDigits: 2,

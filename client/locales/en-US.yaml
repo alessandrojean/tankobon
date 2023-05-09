@@ -279,6 +279,8 @@ metrics:
   total-disk-space: Total disk space
   cpu-usage: CPU usage
   uptime: Uptime
+  tasks-count: Tasks count
+  tasks-total-time: Tasks total time
 
 collections:
   fetch-failure: There was an error while fetching the collections

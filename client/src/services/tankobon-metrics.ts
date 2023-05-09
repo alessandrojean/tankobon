@@ -7,7 +7,7 @@ export type MetricKey = 'disk.free' | 'disk.total' | 'system.cpu.count' |
 'system.cpu.usage' | 'tankobon.books' | 'tankobon.books.covers' |
 'tankobon.libraries' | 'tankobon.users.avatars' | 'jvm.info' |
 'application.ready.time' | 'application.started.time' | 'tankobon.users' |
-'process.uptime'
+'process.uptime' | 'tankobon.tasks.execution'
 
 export interface GetMetricParams {
   metric: MetricKey
@@ -20,7 +20,7 @@ export async function getMetric({ metric, tags }: GetMetricParams): Promise<Metr
       params: {
         tag: tags?.map(t => `${t.key}:${t.value}`),
       },
-      paramsSerializer: { indexes: false },
+      paramsSerializer: { indexes: null },
     })
 
     return data
