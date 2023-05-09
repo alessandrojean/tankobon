@@ -3,6 +3,7 @@ import { CheckIcon } from '@heroicons/vue/20/solid'
 import useVuelidate from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { maxFileSize } from '@/utils/validation'
+import { ACCEPTED_IMAGE_FORMATS } from '@/utils/api'
 
 export interface EntityImageDialogProps {
   currentImageUrl: string | undefined | null
@@ -24,15 +25,6 @@ export interface UserCreateDialogEmits {
 const props = defineProps<EntityImageDialogProps>()
 
 const emit = defineEmits<UserCreateDialogEmits>()
-
-const ACCEPT_FORMATS = [
-  'image/png',
-  'image/jpeg',
-  'image/bmp',
-  'image/gif',
-  'image/x-webp',
-  'image/webp',
-]
 
 const { t } = useI18n()
 
@@ -124,7 +116,7 @@ const previewUrl = computed(() => removeExisting.value ? null : currentImageUrl.
         <div class="mt-6">
           <FileInput
             id="image"
-            :accept="ACCEPT_FORMATS"
+            :accept="ACCEPTED_IMAGE_FORMATS"
             :invalid="v$.file.$error"
             :errors="v$.file.$errors"
             @change="handleUpload"

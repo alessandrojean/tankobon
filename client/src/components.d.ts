@@ -28,6 +28,7 @@ declare module '@vue/runtime-core' {
     BookContributors: typeof import('./components/books/BookContributors.vue')['default']
     BookContributorsForm: typeof import('./components/books/BookContributorsForm.vue')['default']
     BookCover: typeof import('./components/books/BookCover.vue')['default']
+    BookCoverArtForm: typeof import('./components/books/BookCoverArtForm.vue')['default']
     BookCoverDialog: typeof import('./components/books/BookCoverDialog.vue')['default']
     BookMetadataForm: typeof import('./components/books/BookMetadataForm.vue')['default']
     BookNavigator: typeof import('./components/books/BookNavigator.vue')['default']

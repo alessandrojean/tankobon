@@ -16,7 +16,6 @@ export interface BookCoverProps {
 
 const props = withDefaults(defineProps<BookCoverProps>(), {
   book: undefined,
-  collection: undefined,
   loading: false,
 })
 
@@ -161,6 +160,7 @@ whenever(coverArt, async (coverArt) => {
     <BookCoverDialog
       v-if="showBookCover && showBookInfo"
       :cover-url="coverOriginalUrl"
+      :aspect-ratio="coverArt?.attributes?.aspectRatio"
       :open="dialogOpen"
       @close="closeDialog"
     />

@@ -6,6 +6,7 @@ import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 export interface FileInputProps {
   accept?: string[]
   errors?: ErrorObject[]
+  id: string
   invalid?: boolean
   label?: string
 }
@@ -21,6 +22,8 @@ const props = withDefaults(defineProps<FileInputProps>(), {
 })
 
 const emit = defineEmits<FileInputEmits>()
+
+const { locale } = useI18n()
 
 const { accept, errors } = toRefs(props)
 const isDragging = ref(false)
@@ -51,15 +54,20 @@ function handleChange() {
 }
 
 const errorMessage = computed(() => errors.value?.[0]?.$message)
-</script>
 
-<script lang="ts">
-export default { inheritAttrs: false }
+const extensionList = computed(() => {
+  const listFormatter = new Intl.ListFormat(locale.value, {
+    type: 'disjunction',
+    style: 'long',
+  })
+
+  return listFormatter.format(extensions.value)
+})
 </script>
 
 <template>
   <div
-    class="flex flex-col items-center rounded-md border-2 border-dashed px-6 pt-5 pb-6 motion-safe:transition-colors"
+    class="flex flex-col items-center justify-center rounded-md border-2 border-dashed px-6 pt-5 pb-6 motion-safe:transition-colors"
     :class="[
       {
         'border-primary-400 bg-primary-100': isDragging,
@@ -90,26 +98,28 @@ export default { inheritAttrs: false }
       </svg>
     </slot>
     <div class="flex text-sm text-gray-600">
-      <label
-        :for="String($attrs.id)"
-        class="relative cursor-pointer rounded-md font-medium focus-within:outline-none focus-within:ring-2  focus-within:ring-offset-2"
-        :class="[
-          {
-            'text-primary-600 focus-within:ring-primary-500 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400': !invalid || isDragging,
-            'text-red-600 focus-within:ring-red-500 hover:text-red-500': invalid && !isDragging,
-          },
-        ]"
-      >
-        <span>{{ $t('upload.prompt') }}</span>
-      </label>
       <input
-        v-bind="$attrs"
+        :id="id"
         ref="fileInput"
         type="file"
-        class="sr-only"
+        class="sr-only peer"
         :accept="accept?.join(',')"
         @change="handleChange"
       >
+      <label
+        :for="id"
+        :class="[
+          'relative cursor-pointer rounded-md font-medium',
+          'peer-focus:outline-none peer-focus:ring-2',
+          'peer-focus:ring-black dark:peer-focus:ring-white/90',
+          {
+            'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400': !invalid || isDragging,
+            'text-red-600 hover:text-red-500': invalid && !isDragging,
+          },
+        ]"
+      >
+        {{ $t('upload.prompt') }}
+      </label>
       <p
         class="pl-1"
         :class="[
@@ -133,7 +143,7 @@ export default { inheritAttrs: false }
         },
       ]"
     >
-      {{ $t('upload.formats', [extensions.join(', '), '5MB']) }}
+      {{ $t('upload.formats', [extensionList, '5MB']) }}
     </p>
 
     <p

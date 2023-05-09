@@ -92,9 +92,52 @@ export async function addOneBook(book: BookUpdate): Promise<BookEntity> {
   }
 }
 
+export interface UploadBookCoverOptions {
+  bookId: string
+  cover: File
+}
+
+export async function uploadBookCover(options: UploadBookCoverOptions): Promise<void> {
+  try {
+    await api.postForm(`books/${options.bookId}/cover`, {
+      cover: options.cover,
+    })
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export async function updateOneBook(book: BookUpdate): Promise<void> {
   try {
     await api.put(`books/${book.id}`, book)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteOneBook(bookId: string): Promise<void> {
+  try {
+    await api.delete(`books/${bookId}`)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteBookCover(bookId: string): Promise<void> {
+  try {
+    await api.delete(`books/${bookId}/cover`)
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)

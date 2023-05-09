@@ -3,11 +3,15 @@ import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
 
 export interface BookCoverDialogProps {
+  aspectRatio?: string
   coverUrl: string
   open?: boolean
 }
 
-const props = withDefaults(defineProps<BookCoverDialogProps>(), { open: false })
+const props = withDefaults(defineProps<BookCoverDialogProps>(), {
+  aspectRatio: '2/3',
+  open: false,
+})
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -53,7 +57,10 @@ onBeforeRouteLeave(() => {
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogPanel class="dialog-content">
+          <DialogPanel
+            class="dialog-content"
+            :style="{ '--aspect-ratio': aspectRatio }"
+          >
             <DialogTitle as="h3" class="sr-only">
               {{ $t('common-actions.zoom') }}
             </DialogTitle>
@@ -95,7 +102,7 @@ onBeforeRouteLeave(() => {
 .dialog-content {
   @apply relative flex flex-col items-center align-middle
     min-w-0 max-w-full min-h-0 max-h-full overflow-visible
-    text-left bg-white dark:bg-gray-800 w-fit h-fit
+    text-left bg-white dark:bg-gray-800 w-fit h-fit aspect-[--aspect-ratio]
     shadow-xl rounded-xl ring-1 ring-black/5;
 }
 

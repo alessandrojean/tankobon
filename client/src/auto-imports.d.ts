@@ -170,6 +170,8 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDeleteBookCoverMutation: typeof import('./mutations/book/useDeleteBookCoverMutation')['default']
+  const useDeleteBookMutation: typeof import('./mutations/book/useDeleteBookMutation')['default']
   const useDeleteCollectionMutation: typeof import('./mutations/collection/useDeleteCollectionMutation')['default']
   const useDeleteContributorRoleMutation: typeof import('./mutations/contributor-role/useDeleteContributorRoleMutation')['default']
   const useDeleteLibraryMutation: typeof import('./mutations/library/useDeleteLibraryMutation')['default']
@@ -366,6 +368,7 @@ declare global {
   const useUpdateStoreMutation: typeof import('./mutations/store/useUpdateStoreMutation')['default']
   const useUpdateTagMutation: typeof import('./mutations/tag/useUpdateTagMutation')['default']
   const useUpdateUserMutation: typeof import('./mutations/user/useUpdateUserMutation')['default']
+  const useUploadBookCoverMutation: typeof import('./mutations/book/useUploadBookCoverMutation')['default']
   const useUploadPersonPictureMutation: typeof import('./mutations/person/useUploadPersonPictureMutation')['default']
   const useUploadPublisherPictureMutation: typeof import('./mutations/publisher/useUploadPublisherPictureMutation')['default']
   const useUploadUserAvatarMutation: typeof import('./mutations/user/useUploadUserAvatarMutation')['default']
@@ -586,6 +589,8 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDeleteBookCoverMutation: UnwrapRef<typeof import('./mutations/book/useDeleteBookCoverMutation')['default']>
+    readonly useDeleteBookMutation: UnwrapRef<typeof import('./mutations/book/useDeleteBookMutation')['default']>
     readonly useDeleteCollectionMutation: UnwrapRef<typeof import('./mutations/collection/useDeleteCollectionMutation')['default']>
     readonly useDeleteContributorRoleMutation: UnwrapRef<typeof import('./mutations/contributor-role/useDeleteContributorRoleMutation')['default']>
     readonly useDeleteLibraryMutation: UnwrapRef<typeof import('./mutations/library/useDeleteLibraryMutation')['default']>
@@ -782,6 +787,7 @@ declare module 'vue' {
     readonly useUpdateStoreMutation: UnwrapRef<typeof import('./mutations/store/useUpdateStoreMutation')['default']>
     readonly useUpdateTagMutation: UnwrapRef<typeof import('./mutations/tag/useUpdateTagMutation')['default']>
     readonly useUpdateUserMutation: UnwrapRef<typeof import('./mutations/user/useUpdateUserMutation')['default']>
+    readonly useUploadBookCoverMutation: UnwrapRef<typeof import('./mutations/book/useUploadBookCoverMutation')['default']>
     readonly useUploadPersonPictureMutation: UnwrapRef<typeof import('./mutations/person/useUploadPersonPictureMutation')['default']>
     readonly useUploadPublisherPictureMutation: UnwrapRef<typeof import('./mutations/publisher/useUploadPublisherPictureMutation')['default']>
     readonly useUploadUserAvatarMutation: UnwrapRef<typeof import('./mutations/user/useUploadUserAvatarMutation')['default']>

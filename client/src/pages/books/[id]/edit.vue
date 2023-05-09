@@ -8,6 +8,10 @@ import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import { getRelationship, getRelationships } from '@/utils/api'
 import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
+import type { CoverArt } from '@/components/books/BookCoverArtForm.vue'
+import { getFullImageUrl } from '@/modules/api'
+import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
+import type { TankobonApiError } from '@/types/tankobon-response'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -15,7 +19,11 @@ const router = useRouter()
 const notificator = useToaster()
 const bookId = computed(() => route.params.id as string)
 
-const { mutate: editBook, isLoading: isEditing } = useUpdateBookMutation()
+const { mutateAsync: editBook, isLoading: isEditingBook } = useUpdateBookMutation()
+const { mutateAsync: uploadCover, isLoading: isUploadingCover } = useUploadBookCoverMutation()
+const { mutateAsync: deleteCover, isLoading: isDeletingCover } = useDeleteBookCoverMutation()
+
+const isEditing = logicOr(isEditingBook, isUploadingCover, isDeletingCover)
 
 const { data: book, isLoading } = useBookQuery({
   bookId,
@@ -40,10 +48,12 @@ const { data: book, isLoading } = useBookQuery({
 
 const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
 const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
+const coverArtForm = ref<InstanceType<typeof BookCoverArtForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
+const coverArtInvalid = computed(() => coverArtForm.value?.v$.$error ?? false)
 const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
 
 const tabs = [
@@ -56,7 +66,7 @@ const tabs = [
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   contributorsInvalid.value,
-  false,
+  coverArtInvalid.value,
   organizationInvalid.value,
 ])
 
@@ -145,6 +155,11 @@ whenever(book, (loadedBook) => {
   initialBookToEdit.value = JSON.stringify(toRaw(updatedBook))
 }, { immediate: true })
 
+const coverArt = ref<CoverArt>({
+  removeExisting: false,
+  file: null,
+})
+
 const activeTab = ref(tabs[0])
 
 const headerTitle = computed(() => {
@@ -167,9 +182,15 @@ function validNumber(valueStr: string): number {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidContributors = await contributorsForm.value!.v$.$validate()
+  const isValidCoverArt = await coverArtForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
+  if (
+    !isValidMetadata
+    || !isValidContributors
+    || !isValidOrganization
+    || !isValidCoverArt
+  ) {
     return
   }
 
@@ -194,18 +215,23 @@ async function handleSubmit() {
     },
   }
 
-  editBook(editedBook, {
-    onSuccess: async () => {
-      await router.replace({ name: 'books-id', params: { id: updatedBook.id } })
-      await notificator.success({ title: t('books.edited-with-success') })
-    },
-    onError: async (error) => {
-      await notificator.failure({
-        title: t('books.edited-with-failure'),
-        body: error.message,
-      })
-    },
-  })
+  try {
+    await editBook(editedBook)
+
+    if (coverArt.value.file) {
+      await uploadCover({ bookId: updatedBook.id, cover: coverArt.value.file })
+    } else if (coverArt.value.removeExisting) {
+      await deleteCover(updatedBook.id)
+    }
+
+    await router.replace({ name: 'books-id', params: { id: updatedBook.id } })
+    await notificator.success({ title: t('books.edited-with-success') })
+  } catch (error) {
+    await notificator.failure({
+      title: t('books.edited-with-failure'),
+      body: (error as TankobonApiError | Error).message,
+    })
+  }
 }
 
 const bookWasModified = ref(false)
@@ -215,6 +241,8 @@ watch(updatedBook, (newUpdatedBook) => {
 })
 
 useBeforeUnload({ enabled: bookWasModified })
+
+const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
 </script>
 
 <template>
@@ -317,7 +345,20 @@ useBeforeUnload({ enabled: bookWasModified })
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
-          <TabPanel>Cover art</TabPanel>
+          <TabPanel :unmount="false">
+            <BookCoverArtForm
+              ref="coverArtForm"
+              v-model:cover-art="coverArt"
+              :current-image-url="
+                getFullImageUrl({
+                  collection: 'covers',
+                  fileName: bookCover?.attributes?.versions?.['256'],
+                  timeHex: bookCover?.attributes?.timeHex,
+                })
+              "
+              :disabled="isLoading || isEditing"
+            />
+          </TabPanel>
           <TabPanel :unmount="false">
             <BookOrganizationForm
               ref="organizationForm"

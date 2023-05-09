@@ -73,3 +73,12 @@ export function createEmptyPaginatedResponse<T>(): PaginatedResponse<T> {
     },
   }
 }
+
+export const ACCEPTED_IMAGE_FORMATS = [
+  'image/png',
+  'image/jpeg',
+  'image/bmp',
+  'image/gif',
+  'image/x-webp',
+  'image/webp',
+]

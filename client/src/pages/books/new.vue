@@ -7,20 +7,28 @@ import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
 import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
+import type { CoverArt } from '@/components/books/BookCoverArtForm.vue'
+import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
+import type { TankobonApiError } from '@/types/tankobon-response'
 
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const notificator = useToaster()
 
-const { mutate: createBook, isLoading: isCreating } = useCreateBookMutation()
+const { mutateAsync: createBook, isLoading: isCreatingBook } = useCreateBookMutation()
+const { mutateAsync: uploadCover, isLoading: isUploadingCover } = useUploadBookCoverMutation()
+
+const isCreating = logicOr(isCreatingBook, isUploadingCover)
 
 const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
 const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
+const coverArtForm = ref<InstanceType<typeof BookCoverArtForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
+const coverArtInvalid = computed(() => coverArtForm.value?.v$.$error ?? false)
 const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
 
 const tabs = [
@@ -33,7 +41,7 @@ const tabs = [
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   contributorsInvalid.value,
-  false,
+  coverArtInvalid.value,
   organizationInvalid.value,
 ])
 
@@ -78,6 +86,11 @@ const newBook = reactive<CustomBookUpdate>({
   title: '',
 })
 
+const coverArt = ref<CoverArt>({
+  removeExisting: false,
+  file: null,
+})
+
 const activeTab = ref(tabs[0])
 
 const headerTitle = computed(() => {
@@ -96,9 +109,15 @@ function validNumber(valueStr: string): number {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidContributors = await contributorsForm.value!.v$.$validate()
+  const isValidCoverArt = await coverArtForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidContributors || !isValidOrganization) {
+  if (
+    !isValidMetadata
+    || !isValidContributors
+    || !isValidOrganization
+    || !isValidCoverArt
+  ) {
     return
   }
 
@@ -123,18 +142,21 @@ async function handleSubmit() {
     },
   }
 
-  createBook(bookToCreate, {
-    onSuccess: async ({ id }) => {
-      notificator.success({ title: t('books.created-with-success') })
-      await router.push({ name: 'books-id', params: { id } })
-    },
-    onError: async (error) => {
-      await notificator.failure({
-        title: t('books.created-with-failure'),
-        body: error.message,
-      })
-    },
-  })
+  try {
+    const { id } = await createBook(bookToCreate)
+
+    if (coverArt.value.file) {
+      await uploadCover({ bookId: id, cover: coverArt.value.file })
+    }
+
+    notificator.success({ title: t('books.created-with-success') })
+    await router.replace({ name: 'books-id', params: { id } })
+  } catch (error) {
+    await notificator.failure({
+      title: t('books.created-with-failure'),
+      body: (error as TankobonApiError | Error).message,
+    })
+  }
 }
 
 useBeforeUnload({
@@ -238,7 +260,13 @@ useBeforeUnload({
               :disabled="isCreating"
             />
           </TabPanel>
-          <TabPanel>Cover art</TabPanel>
+          <TabPanel :unmount="false">
+            <BookCoverArtForm
+              ref="coverArtForm"
+              v-model:cover-art="coverArt"
+              :disabled="isCreating"
+            />
+          </TabPanel>
           <TabPanel :unmount="false">
             <BookOrganizationForm
               ref="organizationForm"
