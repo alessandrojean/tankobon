@@ -7,8 +7,10 @@ import io.github.alessandrojean.tankobon.infrastructure.parser.guessCodeType
 import io.github.alessandrojean.tankobon.infrastructure.parser.toIsbnInformation
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
+import io.github.alessandrojean.tankobon.infrastructure.validation.PositiveAmount
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.annotation.Nullable
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -132,17 +134,20 @@ data class BookCreationDto(
   @get:NotBlank val title: String,
   val subtitle: String,
   @get:NotNull
+  @get:PositiveAmount
   val paidPrice: MonetaryAmount,
   @get:NotNull
+  @get:PositiveAmount
   val labelPrice: MonetaryAmount,
   @get:NotNull
   val dimensions: DimensionsDto,
   @get:Schema(description = "If the book is a future and planned acquisition, set as `false`")
   val isInLibrary: Boolean,
-  @get:NotBlank
+  @get:NotNull
   @get:Schema(description = "If the book is part of a series, this will control the order")
   val number: String,
   @get:NotNull
+  @get:Min(value = 0)
   val pageCount: Int,
   @get:NotNull
   val synopsis: String,
@@ -173,9 +178,11 @@ data class BookContributorCreationDto(
 
 data class DimensionsDto(
   @get:NotNull
+  @get:Min(value = 0L)
   @get:Schema(example = "13.2")
   val widthCm: Float,
   @get:NotNull
+  @get:Min(value = 0L)
   @get:Schema(example = "20.0")
   val heightCm: Float,
 )

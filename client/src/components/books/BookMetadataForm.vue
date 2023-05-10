@@ -56,7 +56,6 @@ const rules = computed(() => {
   return {
     code: { messageRequired },
     title: { messageRequired },
-    number: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
     publishers: { messageNotEmpty },
     dimensions: {
@@ -66,7 +65,7 @@ const rules = computed(() => {
   }
 })
 
-const v$ = useVuelidate(rules, { code, title, number, pageCount, dimensions, publishers })
+const v$ = useVuelidate(rules, { code, title, pageCount, dimensions, publishers })
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 watch(publishers, () => v$.value.publishers.$touch())
@@ -166,9 +165,6 @@ function getPublisherPicture(publisher: PublisherEntity) {
           inputmode="decimal"
           :label-text="$t('common-fields.number')"
           :placeholder="$t('common-placeholders.book-number')"
-          :invalid="v$.number.$error"
-          :errors="v$.number.$errors"
-          @blur="v$.number.$touch()"
           @input="$emit('update:number', $event.target.value)"
         />
       </div>
