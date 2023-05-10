@@ -37,6 +37,10 @@ function formatDate(date: string | null) {
             :class="[
               'appearance-none w-full h-2.5 rounded-full',
               'bg-gray-200 dark:bg-gray-700',
+              '[&::-webkit-progress-bar]:rounded-full',
+              '[&::-webkit-progress-bar]:overflow-hidden',
+              '[&::-webkit-progress-bar]:bg-gray-200',
+              'dark:[&::-webkit-progress-bar]:bg-gray-700',
               '[&::-webkit-progress-value]:bg-primary-500',
               '[&::-moz-progress-bar]:bg-primary-500',
             ]"
