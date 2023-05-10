@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BookOpenIcon } from '@heroicons/vue/20/solid'
+import { BookOpenIcon } from '@heroicons/vue/24/solid'
 
 export interface LogoProps {
   dark?: boolean
