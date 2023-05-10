@@ -8,6 +8,7 @@ import typographyPlugin from '@tailwindcss/typography'
 import formsPlugin from '@tailwindcss/forms'
 import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
 import headlessUiPlugin from '@headlessui/tailwindcss'
+import type { PluginUtils } from 'tailwindcss/types/config'
 
 export default {
   content: ['./index.html', './src/**/*.vue', './src/**/*.js', './src/**/*.ts'],
@@ -60,6 +61,37 @@ export default {
           from: { transform: 'translateX(100%)' },
         },
       },
+      typography: ({ theme }: PluginUtils) => ({
+        DEFAULT: {
+          css: {
+            '.video-player': {
+              'position': 'relative',
+              'maxWidth': '100%',
+              'paddingTop': theme('padding.4'),
+              'paddingBottom': theme('padding.4'),
+              'borderRadius': theme('borderRadius.xl'),
+              'boxShadow': theme('boxShadow.lg'),
+              'backgroundColor': theme('colors.gray.50'),
+              'overflow': 'hidden',
+
+              '& > iframe': {
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                top: '0px',
+                left: '0px',
+              },
+            },
+          },
+        },
+        invert: {
+          css: {
+            '.video-player': {
+              backgroundColor: theme('colors.gray.800'),
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [

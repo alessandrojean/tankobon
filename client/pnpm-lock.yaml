@@ -46,6 +46,9 @@ dependencies:
   cva:
     specifier: npm:class-variance-authority
     version: /class-variance-authority@0.6.0(typescript@5.0.4)
+  dedent:
+    specifier: ^0.7.0
+    version: 0.7.0
   filesize:
     specifier: 10.0.7
     version: 10.0.7
@@ -108,6 +111,9 @@ devDependencies:
   '@tailwindcss/typography':
     specifier: 0.5.9
     version: 0.5.9(tailwindcss@3.3.2)
+  '@types/dedent':
+    specifier: ^0.7.0
+    version: 0.7.0
   '@types/humanize-duration':
     specifier: 3.27.1
     version: 3.27.1
@@ -866,6 +872,10 @@ packages:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
       '@types/ms': 0.7.31
+    dev: true
+
+  /@types/dedent@0.7.0:
+    resolution: {integrity: sha512-EGlKlgMhnLt/cM4DbUSafFdrkeJoC9Mvnj0PUCU7tFmTjMjNRT957kXCx0wYm3JuEq4o4ZsS5vG+NlkM2DMd2A==}
     dev: true
 
   /@types/estree@1.0.1:
@@ -1828,6 +1838,10 @@ packages:
     dependencies:
       ms: 2.1.2
     dev: true
+
+  /dedent@0.7.0:
+    resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
+    dev: false
 
   /deep-equal@2.2.1:
     resolution: {integrity: sha512-lKdkdV6EOGoVn65XaOsPdH4rMxTZOnmFyuIkMjM1i5HHCbfjC97dawgTAy0deYNfuqUqW+Q5VrVaQYtUpSd6yQ==}
