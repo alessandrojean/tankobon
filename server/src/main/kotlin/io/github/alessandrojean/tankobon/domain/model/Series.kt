@@ -10,6 +10,8 @@ data class Series(
   val id: String = UUID.randomUUID().toString(),
   override val libraryId: String = "",
   val description: String = "",
+  val type: SeriesType? = null,
+  val alternativeNames: List<SeriesAlternativeName> = emptyList(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

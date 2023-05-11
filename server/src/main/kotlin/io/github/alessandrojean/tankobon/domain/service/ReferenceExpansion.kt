@@ -66,7 +66,10 @@ class ReferenceExpansion(
       tagRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
     RelationshipType.SERIES to { ids ->
-      seriesRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
+      val alternativeNames = seriesRepository.findAlternativeNamesByIds(ids)
+      seriesRepository.findAllByIds(ids).associate {
+        it.id to it.toAttributesDto(alternativeNames[it.id].orEmpty())
+      }
     },
     RelationshipType.STORE to { ids ->
       storeRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }

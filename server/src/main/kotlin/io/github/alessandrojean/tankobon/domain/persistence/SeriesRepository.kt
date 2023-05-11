@@ -1,11 +1,15 @@
 package io.github.alessandrojean.tankobon.domain.persistence
 
 import io.github.alessandrojean.tankobon.domain.model.Series
+import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface SeriesRepository {
+  fun findAlternativeNamesById(seriesId: String): Collection<SeriesAlternativeName>
+  fun findAlternativeNamesByIds(seriesIds: Collection<String>): Map<String, List<SeriesAlternativeName>>
+
   fun findById(seriesId: String): Series
   fun findByIdOrNull(seriesId: String): Series?
   fun findByIds(seriesIds: Collection<String>): Collection<Series>

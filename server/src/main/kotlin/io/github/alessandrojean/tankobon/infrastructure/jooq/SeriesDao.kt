@@ -1,11 +1,15 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Series
+import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
+import io.github.alessandrojean.tankobon.domain.model.SeriesType
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
+import io.github.alessandrojean.tankobon.jooq.Tables
+import io.github.alessandrojean.tankobon.jooq.tables.records.SeriesAlternativeNameRecord
 import io.github.alessandrojean.tankobon.jooq.tables.records.SeriesRecord
 import org.jooq.Condition
 import org.jooq.DSLContext
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
 import io.github.alessandrojean.tankobon.jooq.Tables.SERIES as TableSeries
+import io.github.alessandrojean.tankobon.jooq.Tables.SERIES_ALTERNATIVE_NAME as TableSeriesAlternativeName
 
 @Component
 class SeriesDao(
@@ -35,30 +40,56 @@ class SeriesDao(
     "name" to TableSeries.NAME.collate(SqliteUdfDataSource.collationUnicode3),
   )
 
+  override fun findAlternativeNamesById(seriesId: String): List<SeriesAlternativeName> =
+    dsl.selectFrom(TableSeriesAlternativeName)
+      .where(TableSeriesAlternativeName.SERIES_ID.eq(seriesId))
+      .orderBy(TableSeriesAlternativeName.CREATED_AT.asc())
+      .fetchInto(TableSeriesAlternativeName)
+      .map { it.toDomain() }
+
+  override fun findAlternativeNamesByIds(seriesIds: Collection<String>): Map<String, List<SeriesAlternativeName>> =
+    dsl.selectFrom(TableSeriesAlternativeName)
+      .where(TableSeriesAlternativeName.SERIES_ID.`in`(seriesIds))
+      .orderBy(TableSeriesAlternativeName.CREATED_AT.asc())
+      .groupBy({ it.get(TableSeriesAlternativeName.SERIES_ID) }) { it.toDomain() }
+
   override fun findById(seriesId: String): Series = findByIdOrNull(seriesId)!!
 
-  override fun findByIdOrNull(seriesId: String): Series? =
-    dsl.selectFrom(TableSeries)
+  override fun findByIdOrNull(seriesId: String): Series? {
+    val series = dsl.selectFrom(TableSeries)
       .where(TableSeries.ID.eq(seriesId))
       .fetchOne()
-      ?.toDomain()
 
-  override fun findByIds(seriesIds: Collection<String>): Collection<Series> =
-    dsl.selectFrom(TableSeries)
+    return series?.toDomain(findAlternativeNamesById(seriesId))
+  }
+
+  override fun findByIds(seriesIds: Collection<String>): Collection<Series> {
+    val alternativeNames = findAlternativeNamesByIds(seriesIds)
+
+    return dsl.selectFrom(TableSeries)
       .where(TableSeries.ID.`in`(seriesIds))
       .fetchInto(TableSeries)
-      .map { it.toDomain() }
+      .map { it.toDomain(alternativeNames[it.id].orEmpty()) }
+  }
 
-  override fun findByLibraryId(libraryId: String): Collection<Series> =
-    dsl.selectFrom(TableSeries)
+  override fun findByLibraryId(libraryId: String): Collection<Series> {
+    val records = dsl.selectFrom(TableSeries)
       .where(TableSeries.LIBRARY_ID.eq(libraryId))
       .fetchInto(TableSeries)
-      .map { it.toDomain() }
 
-  override fun findAll(): Collection<Series> =
-    dsl.selectFrom(TableSeries)
+    val alternativeNames = findAlternativeNamesByIds(records.map { it.id })
+
+    return records.map { it.toDomain(alternativeNames[it.id].orEmpty()) }
+  }
+
+  override fun findAll(): Collection<Series> {
+    val alternativeNames = dsl.selectFrom(TableSeriesAlternativeName)
+      .groupBy({ it.get(TableSeriesAlternativeName.SERIES_ID) }) { it.toDomain() }
+
+    return dsl.selectFrom(TableSeries)
       .fetchInto(TableSeries)
-      .map { it.toDomain() }
+      .map { it.toDomain(alternativeNames[it.id].orEmpty()) }
+  }
 
   override fun findAll(search: SeriesSearch, pageable: Pageable): Page<Series> {
     val seriesIds = luceneHelper.searchEntitiesIds(search.searchTerm, LuceneEntity.Series)
@@ -81,12 +112,15 @@ class SeriesDao(
       }
     }
 
-    val series = dsl.selectFrom(TableSeries)
+    val seriesRecords = dsl.selectFrom(TableSeries)
       .where(conditions)
       .orderBy(orderBy)
       .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
       .fetchInto(TableSeries)
-      .map { it.toDomain() }
+
+    val alternativeNames = findAlternativeNamesByIds(seriesRecords.map { it.id })
+
+    val series = seriesRecords.map { it.toDomain(alternativeNames[it.id].orEmpty()) }
 
     val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
     val pageRequest = if (pageable.isPaged) {
@@ -102,12 +136,15 @@ class SeriesDao(
     )
   }
 
-  override fun findAllByIds(seriesIds: Collection<String>): Collection<Series> =
-    dsl.selectFrom(TableSeries)
+  override fun findAllByIds(seriesIds: Collection<String>): Collection<Series> {
+    val alternativeNames = findAlternativeNamesByIds(seriesIds)
+
+    return dsl.selectFrom(TableSeries)
       .where(TableSeries.ID.`in`(seriesIds))
       .orderBy(TableSeries.ID.sortByValues(seriesIds.toList(), true))
       .fetchInto(TableSeries)
-      .map { it.toDomain() }
+      .map { it.toDomain(alternativeNames[it.id].orEmpty()) }
+  }
 
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
@@ -128,21 +165,54 @@ class SeriesDao(
       .set(TableSeries.ID, series.id)
       .set(TableSeries.NAME, series.name)
       .set(TableSeries.DESCRIPTION, series.description)
+      .set(TableSeries.TYPE, series.type?.ordinal)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .execute()
+
+    insertAlternativeNames(series)
   }
 
   @Transactional
   override fun update(series: Series) {
     dsl.update(TableSeries)
-      .set(TableSeries.ID, series.id)
       .set(TableSeries.NAME, series.name)
       .set(TableSeries.DESCRIPTION, series.description)
+      .set(TableSeries.TYPE, series.type?.ordinal)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .set(TableSeries.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TableSeries.ID.eq(series.id))
       .execute()
+
+    insertAlternativeNames(series)
   }
+
+  private fun insertAlternativeNames(series: Series) {
+    dsl.deleteFrom(Tables.SERIES_ALTERNATIVE_NAME)
+      .where(Tables.SERIES_ALTERNATIVE_NAME.SERIES_ID.eq(series.id))
+      .execute()
+
+    dsl.insertInto(Tables.SERIES_ALTERNATIVE_NAME)
+      .columns(
+        Tables.SERIES_ALTERNATIVE_NAME.ID,
+        Tables.SERIES_ALTERNATIVE_NAME.SERIES_ID,
+        Tables.SERIES_ALTERNATIVE_NAME.NAME,
+        Tables.SERIES_ALTERNATIVE_NAME.LANGUAGE,
+        Tables.SERIES_ALTERNATIVE_NAME.CREATED_AT,
+      )
+      .apply {
+        series.alternativeNames.forEach { alternativeName ->
+          values(
+            series.id,
+            alternativeName.id,
+            alternativeName.name,
+            alternativeName.language,
+            LocalDateTime.now(ZoneId.of("Z"))
+          )
+        }
+      }
+      .execute()
+  }
+
 
   @Transactional
   override fun delete(seriesId: String) {
@@ -182,13 +252,23 @@ class SeriesDao(
     return c.and(libraryCondition)
   }
 
-  private fun SeriesRecord.toDomain(): Series = Series(
+  private fun SeriesRecord.toDomain(alternativeNames: List<SeriesAlternativeName>): Series = Series(
     name = name,
     description = description,
+    type = SeriesType.values().getOrNull(type ?: -1),
+    alternativeNames = alternativeNames,
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
+  )
+
+  private fun SeriesAlternativeNameRecord.toDomain(): SeriesAlternativeName = SeriesAlternativeName(
+    name = name,
+    language = language,
+    id = id,
+    seriesId = seriesId,
+    createdAt = createdAt,
   )
 
 }
