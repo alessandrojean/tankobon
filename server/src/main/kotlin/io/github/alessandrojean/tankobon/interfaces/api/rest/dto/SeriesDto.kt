@@ -75,4 +75,7 @@ data class SeriesUpdateDto(
   @get:NotNull
   val description: String,
   val type: SeriesType?,
+  @get:NotNull
+  @get:UniqueElements
+  val alternativeNames: List<@NotNull SeriesAlternativeNameDto>,
 )

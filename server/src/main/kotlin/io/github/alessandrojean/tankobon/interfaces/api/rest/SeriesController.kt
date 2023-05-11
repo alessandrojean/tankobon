@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Series
+import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -176,6 +177,10 @@ class SeriesController(
       Series(
         name = series.name,
         description = series.description,
+        type = series.type,
+        alternativeNames = series.alternativeNames.map {
+          SeriesAlternativeName(it.name, it.language)
+        },
         libraryId = series.library
       )
     )
@@ -261,6 +266,10 @@ class SeriesController(
     val toUpdate = existing.copy(
       name = series.name,
       description = series.description,
+      type = series.type,
+      alternativeNames = series.alternativeNames.map {
+        SeriesAlternativeName(it.name, it.language)
+      },
     )
 
     seriesLifecycle.updateSeries(toUpdate)

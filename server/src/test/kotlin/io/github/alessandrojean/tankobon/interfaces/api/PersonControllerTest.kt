@@ -81,7 +81,7 @@ class PersonControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = OWNER_ID, roles = [ROLE_ADMIN])
     fun `it should return ok when getting the persons from a library if the user is an admin`() {
       personLifecycle.addPerson(person)
 

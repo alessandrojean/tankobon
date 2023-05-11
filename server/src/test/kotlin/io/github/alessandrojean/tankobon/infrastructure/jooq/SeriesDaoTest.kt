@@ -1,6 +1,8 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Series
+import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
+import io.github.alessandrojean.tankobon.domain.model.SeriesType
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -40,7 +42,7 @@ class SeriesDaoTest(
   }
 
   @AfterEach
-  fun deleteSeriess() {
+  fun deleteSeries() {
     seriesDao.deleteAll()
     assertThat(seriesDao.count()).isEqualTo(0)
   }
@@ -51,6 +53,8 @@ class SeriesDaoTest(
     val series = Series(
       name = "Series",
       description = "Series description",
+      type = SeriesType.MANGA,
+      alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
       libraryId = library.id,
     )
 
@@ -62,6 +66,10 @@ class SeriesDaoTest(
       assertThat(modifiedAt).isCloseTo(now, offset)
       assertThat(name).isEqualTo(series.name)
       assertThat(description).isEqualTo(series.description)
+      assertThat(type).isEqualTo(series.type)
+      assertThat(alternativeNames).hasSize(series.alternativeNames.size)
+      assertThat(alternativeNames[0].name).isEqualTo(series.alternativeNames[0].name)
+      assertThat(alternativeNames[0].language).isEqualTo(series.alternativeNames[0].language)
       assertThat(libraryId).isEqualTo(series.libraryId)
     }
   }
@@ -71,6 +79,8 @@ class SeriesDaoTest(
     val series = Series(
       name = "Series",
       description = "Series description",
+      type = SeriesType.MANGA,
+      alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
       libraryId = library.id,
     )
     seriesDao.insert(series)
@@ -79,7 +89,9 @@ class SeriesDaoTest(
 
     val updated = seriesDao.findById(series.id).copy(
       name = "SeriesUpdated",
-      description = "SeriesUpdated description"
+      description = "SeriesUpdated description",
+      type = SeriesType.MANHWA,
+      alternativeNames = emptyList(),
     )
 
     seriesDao.update(updated)
@@ -93,6 +105,8 @@ class SeriesDaoTest(
         .isNotEqualTo(updated.modifiedAt)
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
+      assertThat(type).isEqualTo(updated.type)
+      assertThat(alternativeNames).hasSize(updated.alternativeNames.size)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

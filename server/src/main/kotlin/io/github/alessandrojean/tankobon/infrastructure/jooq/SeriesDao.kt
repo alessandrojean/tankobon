@@ -202,8 +202,8 @@ class SeriesDao(
       .apply {
         series.alternativeNames.forEach { alternativeName ->
           values(
-            series.id,
             alternativeName.id,
+            series.id,
             alternativeName.name,
             alternativeName.language,
             LocalDateTime.now(ZoneId.of("Z"))

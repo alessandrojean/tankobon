@@ -149,7 +149,8 @@ class BookControllerTest(
               "store": "$STORE_ID",
               "synopsis": "Synopsis",
               "tags": ["$TAG_ID"],
-              "title": "Akira #01: Part 1 - Tetsuo"
+              "title": "Akira #01",
+              "subtitle": "Part 1 - Tetsuo"
             }
           """.trimIndent()
         }
@@ -158,7 +159,8 @@ class BookControllerTest(
           jsonPath("$.result") { value("OK") }
           jsonPath("$.response") { value("ENTITY") }
           jsonPath("$.data.type") { value("BOOK") }
-          jsonPath("$.data.attributes.title") { value("Akira #01: Part 1 - Tetsuo") }
+          jsonPath("$.data.attributes.title") { value("Akira #01") }
+          jsonPath("$.data.attributes.subtitle") { value("Part 1 - Tetsuo") }
         }
     }
 
@@ -209,7 +211,8 @@ class BookControllerTest(
               "store": "$STORE_ID",
               "synopsis": "Synopsis",
               "tags": ["$TAG_ID"],
-              "title": "Akira #01: Part 1 - Tetsuo"
+              "title": "Akira #01",
+              "subtitle": "Part 1 - Tetsuo"
             }
           """.trimIndent()
         }

@@ -38,6 +38,7 @@ class ReadProgressDaoTest(
   private val book = Book(
     code = "12345",
     title = "Book",
+    subtitle = "Subtitle",
     paidPrice = FastMoney.of(10.99f, "USD"),
     labelPrice = FastMoney.of(9.99f, "USD"),
     dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),

@@ -81,7 +81,7 @@ class StoreControllerTest(
     }
 
     @Test
-    @WithMockCustomUser(roles = [ROLE_ADMIN])
+    @WithMockCustomUser(id = OWNER_ID, roles = [ROLE_ADMIN])
     fun `it should return ok when getting the stores from a library if the user is an admin`() {
       storeLifecycle.addStore(store)
 

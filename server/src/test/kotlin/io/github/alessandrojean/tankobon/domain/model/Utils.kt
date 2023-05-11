@@ -21,6 +21,7 @@ fun makeLibrary(
 fun makeBook(
   code: String = makeUuid(),
   title: String = "default",
+  subtitle: String = "",
   paidPrice: MonetaryAmount = FastMoney.of(10.99f, "USD"),
   labelPrice: MonetaryAmount = FastMoney.of(9.99f, "USD"),
   dimensions: Dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
@@ -29,6 +30,7 @@ fun makeBook(
 ): Book = Book(
   code = code,
   title = title,
+  subtitle = subtitle,
   paidPrice = paidPrice,
   labelPrice = labelPrice,
   dimensions = dimensions,

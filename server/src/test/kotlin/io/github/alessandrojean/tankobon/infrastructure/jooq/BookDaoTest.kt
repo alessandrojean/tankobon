@@ -60,6 +60,7 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
+      subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
@@ -86,6 +87,7 @@ class BookDaoTest(
       assertThat(billedAt).isEqualToIgnoringNanos(now)
       assertThat(arrivedAt).isEqualToIgnoringNanos(now)
       assertThat(title).isEqualTo(book.title)
+      assertThat(subtitle).isEqualTo(book.subtitle)
       assertThat(createdAt).isCloseTo(now, offset)
       assertThat(modifiedAt).isCloseTo(now, offset)
     }
@@ -97,6 +99,7 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
+      subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
@@ -113,6 +116,7 @@ class BookDaoTest(
     val updated = with(bookDao.findByIdOrNull(book.id)!!) {
       copy(
         title = "Updated",
+        subtitle = "Subtitle updated",
         boughtAt = modificationDate.toUtcTimeZone(),
         billedAt = modificationDate.toUtcTimeZone(),
         arrivedAt = modificationDate.toUtcTimeZone(),
@@ -133,6 +137,7 @@ class BookDaoTest(
       assertThat(billedAt).isEqualToIgnoringNanos(modificationDate)
       assertThat(arrivedAt).isEqualToIgnoringNanos(modificationDate)
       assertThat(title).isEqualTo(updated.title)
+      assertThat(subtitle).isEqualTo(updated.subtitle)
       assertThat(createdAt).isEqualTo(updated.createdAt)
       assertThat(modifiedAt)
         .isCloseTo(modificationDate, offset)
@@ -145,6 +150,7 @@ class BookDaoTest(
     val book = Book(
       code = "12345",
       title = "Book",
+      subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
