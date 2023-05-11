@@ -62,4 +62,8 @@ sealed class DomainEvent : Serializable {
   data class PublisherPictureAdded(val imageDetails: ImageDetails) : DomainEvent()
   data class PublisherPictureUpdated(val imageDetails: ImageDetails) : DomainEvent()
   data class PublisherPictureDeleted(val imageDetails: ImageDetails) : DomainEvent()
+
+  data class SeriesCoverAdded(val imageDetails: ImageDetails) : DomainEvent()
+  data class SeriesCoverUpdated(val imageDetails: ImageDetails) : DomainEvent()
+  data class SeriesCoverDeleted(val imageDetails: ImageDetails) : DomainEvent()
 }

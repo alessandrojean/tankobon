@@ -22,4 +22,4 @@ export interface SeriesUpdate {
 }
 
 export type SeriesSort = 'name' | 'createdAt' | 'modifiedAt'
-export type SeriesIncludes = 'library'
+export type SeriesIncludes = 'library' | 'series_cover'

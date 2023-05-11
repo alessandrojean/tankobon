@@ -8,8 +8,11 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.SeriesLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.SeriesCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesEntityDto
@@ -18,7 +21,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @Validated
 @RestController
@@ -54,6 +57,7 @@ class SeriesController(
   private val seriesRepository: SeriesRepository,
   private val seriesLifecycle: SeriesLifecycle,
   private val referenceExpansion: ReferenceExpansion,
+  private val seriesCoverLifecycle: SeriesCoverLifecycle,
 ) {
 
   @GetMapping("v1/series")
@@ -77,7 +81,7 @@ class SeriesController(
     )
 
     val series = referenceExpansion.expand(
-      entities = seriesPage.content.map { it.toDto() },
+      entities = seriesPage.content.map { it.toDto().withCoverIfExists() },
       relationsToExpand = includes,
     )
 
@@ -113,7 +117,7 @@ class SeriesController(
       PageRequest.of(page.pageNumber, page.pageSize, sort)
     }
 
-    val series = seriesRepository.findAll(
+    val seriesPage = seriesRepository.findAll(
       search = SeriesSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
@@ -122,7 +126,12 @@ class SeriesController(
       pageable = pageRequest,
     )
 
-    return series.toSuccessCollectionResponseDto { it.toDto() }
+    val series = referenceExpansion.expand(
+      entities = seriesPage.content.map { it.toDto().withCoverIfExists() },
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(series, seriesPage.toPaginationDto())
   }
 
   @GetMapping("v1/series/{seriesId}")
@@ -142,7 +151,7 @@ class SeriesController(
     }
 
     val expanded = referenceExpansion.expand(
-      entity = series.toDto(),
+      entity = series.toDto().withCoverIfExists(),
       relationsToExpand = includes,
     )
 
@@ -174,6 +183,25 @@ class SeriesController(
     return SuccessEntityResponseDto(created.toDto())
   }
 
+  @PostMapping("v1/series/{seriesId}/cover", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Upload a cover to a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun uploadPersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @RequestParam("cover") @SupportedImageFormat coverFile: MultipartFile,
+  ) {
+    val libraryId = seriesRepository.getLibraryIdOrNull(seriesId)
+      ?: throw IdDoesNotExistException("Series not found")
+    val library = libraryRepository.findById(libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    seriesCoverLifecycle.createImage(seriesId, coverFile.bytes)
+  }
+
   @DeleteMapping("v1/series/{seriesId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
@@ -191,6 +219,25 @@ class SeriesController(
     }
 
     seriesLifecycle.deleteSeries(existing)
+  }
+
+  @DeleteMapping("v1/series/{seriesId}/cover")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Delete a series cover by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun deletePersonPicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String
+  ) {
+    val existing = seriesRepository.findByIdOrNull(seriesId)
+      ?: throw IdDoesNotExistException("Series not found")
+
+    val library = libraryRepository.findById(seriesRepository.getLibraryIdOrNull(existing.id)!!)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    seriesCoverLifecycle.deleteImage(seriesId)
   }
 
   @PutMapping("v1/series/{seriesId}")
@@ -217,5 +264,15 @@ class SeriesController(
     )
 
     seriesLifecycle.updateSeries(toUpdate)
+  }
+
+  private fun SeriesEntityDto.withCoverIfExists(): SeriesEntityDto {
+    if (!seriesCoverLifecycle.hasImage(id)) {
+      return this
+    }
+
+    return copy(
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.SERIES_COVER))
+    )
   }
 }

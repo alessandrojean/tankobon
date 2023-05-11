@@ -94,6 +94,25 @@ export async function getOneSeries({ seriesId, includes }: GetOneSeriesParameter
   }
 }
 
+export interface UploadSeriesCoverOptions {
+  seriesId: string
+  cover: File
+}
+
+export async function uploadSeriesCover(options: UploadSeriesCoverOptions): Promise<void> {
+  try {
+    await api.postForm(`series/${options.seriesId}/cover`, {
+      cover: options.cover,
+    })
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export async function updateOneSeries(series: SeriesUpdate): Promise<void> {
   try {
     await api.put(`series/${series.id}`, series)
@@ -109,6 +128,18 @@ export async function updateOneSeries(series: SeriesUpdate): Promise<void> {
 export async function deleteOneSeries(seriesId: string): Promise<void> {
   try {
     await api.delete(`series/${seriesId}`)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteSeriesCover(seriesId: string): Promise<void> {
+  try {
+    await api.delete(`series/${seriesId}/cover`)
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)

@@ -9,7 +9,7 @@ import type { LibraryAttributes, LibraryEntity, LibraryIncludes } from '@/types/
 import type { PersonEntity, PersonIncludes } from '@/types/tankobon-person'
 import type { PublisherAttributes, PublisherEntity, PublisherIncludes } from '@/types/tankobon-publisher'
 import type { CollectionResponse, PaginatedResponse } from '@/types/tankobon-response'
-import type { SeriesAttributes } from '@/types/tankobon-series'
+import type { SeriesAttributes, SeriesEntity, SeriesIncludes } from '@/types/tankobon-series'
 import type { StoreAttributes } from '@/types/tankobon-store'
 import type { TagAttributes } from '@/types/tankobon-tag'
 import type { UserAttributes, UserEntity, UserIncludes } from '@/types/tankobon-user'
@@ -22,6 +22,7 @@ type AttributeType<E extends object, T extends EntityAttributes<E>> =
   T extends 'COVER_ART' ? ImageDetailsAttributes :
   T extends 'PERSON_PICTURE' ? ImageDetailsAttributes :
   T extends 'PUBLISHER_PICTURE' ? ImageDetailsAttributes :
+  T extends 'SERIES_COVER' ? ImageDetailsAttributes :
   T extends 'USER' ? UserAttributes :
   T extends 'OWNER' ? UserAttributes :
   T extends 'IMPORTER_SOURCE' ? ImporterSourceAttributes :
@@ -44,6 +45,7 @@ type EntityAttributes<T> =
   T extends PersonEntity ? Uppercase<PersonIncludes> :
   T extends ContributorEntity ? Uppercase<ContributorIncludes> :
   T extends PublisherEntity ? Uppercase<PublisherIncludes> :
+  T extends SeriesEntity ? Uppercase<SeriesIncludes> :
   unknown
 /* eslint-enable */
 

@@ -193,7 +193,7 @@ class PublisherController(
     @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
   ) {
     val libraryId = publisherRepository.getLibraryIdOrNull(publisherId)
-      ?: throw IdDoesNotExistException("Person not found")
+      ?: throw IdDoesNotExistException("Publisher not found")
     val library = libraryRepository.findById(libraryId)
 
     if (!principal.user.canAccessLibrary(library)) {
