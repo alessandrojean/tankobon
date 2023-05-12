@@ -166,6 +166,8 @@ class SeriesDao(
       .set(TableSeries.NAME, series.name)
       .set(TableSeries.DESCRIPTION, series.description)
       .set(TableSeries.TYPE, series.type?.ordinal)
+      .set(TableSeries.LAST_NUMBER, series.lastNumber)
+      .set(TableSeries.ORIGINAL_LANGUAGE, series.originalLanguage)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .execute()
 
@@ -178,6 +180,8 @@ class SeriesDao(
       .set(TableSeries.NAME, series.name)
       .set(TableSeries.DESCRIPTION, series.description)
       .set(TableSeries.TYPE, series.type?.ordinal)
+      .set(TableSeries.LAST_NUMBER, series.lastNumber)
+      .set(TableSeries.ORIGINAL_LANGUAGE, series.originalLanguage)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .set(TableSeries.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TableSeries.ID.eq(series.id))
@@ -257,6 +261,8 @@ class SeriesDao(
     description = description,
     type = SeriesType.values().getOrNull(type ?: -1),
     alternativeNames = alternativeNames,
+    lastNumber = lastNumber,
+    originalLanguage = originalLanguage,
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),

@@ -20,7 +20,7 @@ import org.apache.lucene.document.TextField
 
 enum class LuceneEntity(val type: String, val id: String, val defaultFields: Array<String>) {
   Book("book", "book_id", arrayOf("title", "code")),
-  Series("series", "series_id", arrayOf("name")),
+  Series("series", "series_id", arrayOf("name", "alternative-name")),
   Collection("collection", "collection_id", arrayOf("name")),
   Publisher("publisher", "publisher_id", arrayOf("name")),
   Person("person", "person_id", arrayOf("name")),
@@ -51,7 +51,7 @@ fun BookEntityDto.toDocument() = Document().apply {
     .forEach {
       val attributes = it.attributes as BookContributorAttributesDto
       add(TextField("contributor", attributes.person.name, Field.Store.NO))
-      add(TextField(attributes.role.name, attributes.person.name, Field.Store.NO))
+      add(TextField(attributes.role.name.lowercase(), attributes.person.name, Field.Store.NO))
     }
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Book.type, Field.Store.NO))
   add(StringField(LuceneEntity.Book.id, id, Field.Store.YES))
@@ -59,6 +59,15 @@ fun BookEntityDto.toDocument() = Document().apply {
 
 fun Series.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
+  add(TextField("language", originalLanguage ?: "unknown", Field.Store.NO))
+
+  alternativeNames.forEach { alternativeName ->
+    add(TextField("alternative-name", alternativeName.name, Field.Store.NO))
+  }
+
+  val typeDashCase = type?.toString()?.lowercase()?.replace("_", "-") ?: "unknown"
+  add(TextField("series-type", typeDashCase, Field.Store.NO))
+
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Series.type, Field.Store.NO))
   add(StringField(LuceneEntity.Series.id, id, Field.Store.YES))
 }

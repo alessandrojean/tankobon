@@ -110,6 +110,10 @@ class SeriesControllerTest(
           "name": "${series.name.lowercase()}",
           "description": "",
           "library": "${library.id}",
+          "type": "MANGA",
+          "alternativeNames": [],
+          "originalLanguage": "en-US",
+          "lastNumber": "1"
         }
       """.trimIndent()
 

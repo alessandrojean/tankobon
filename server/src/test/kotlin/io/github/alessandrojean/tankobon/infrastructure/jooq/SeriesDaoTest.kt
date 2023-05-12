@@ -55,6 +55,8 @@ class SeriesDaoTest(
       description = "Series description",
       type = SeriesType.MANGA,
       alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
+      lastNumber = "2",
+      originalLanguage = "en-US",
       libraryId = library.id,
     )
 
@@ -67,6 +69,8 @@ class SeriesDaoTest(
       assertThat(name).isEqualTo(series.name)
       assertThat(description).isEqualTo(series.description)
       assertThat(type).isEqualTo(series.type)
+      assertThat(lastNumber).isEqualTo(series.lastNumber)
+      assertThat(originalLanguage).isEqualTo(series.originalLanguage)
       assertThat(alternativeNames).hasSize(series.alternativeNames.size)
       assertThat(alternativeNames[0].name).isEqualTo(series.alternativeNames[0].name)
       assertThat(alternativeNames[0].language).isEqualTo(series.alternativeNames[0].language)
@@ -81,6 +85,8 @@ class SeriesDaoTest(
       description = "Series description",
       type = SeriesType.MANGA,
       alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
+      lastNumber = "2",
+      originalLanguage = "en-US",
       libraryId = library.id,
     )
     seriesDao.insert(series)
@@ -92,6 +98,8 @@ class SeriesDaoTest(
       description = "SeriesUpdated description",
       type = SeriesType.MANHWA,
       alternativeNames = emptyList(),
+      lastNumber = "3",
+      originalLanguage = "en-UK",
     )
 
     seriesDao.update(updated)
@@ -106,6 +114,8 @@ class SeriesDaoTest(
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
       assertThat(type).isEqualTo(updated.type)
+      assertThat(lastNumber).isEqualTo(updated.lastNumber)
+      assertThat(originalLanguage).isEqualTo(updated.originalLanguage)
       assertThat(alternativeNames).hasSize(updated.alternativeNames.size)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }

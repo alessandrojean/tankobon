@@ -15,7 +15,6 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesUpdateDto
@@ -182,6 +181,8 @@ class SeriesController(
         alternativeNames = series.alternativeNames.map {
           SeriesAlternativeName(it.name, it.language)
         },
+        lastNumber = series.lastNumber,
+        originalLanguage = series.originalLanguage,
         libraryId = series.library
       )
     )
@@ -271,6 +272,8 @@ class SeriesController(
       alternativeNames = series.alternativeNames.map {
         SeriesAlternativeName(it.name, it.language)
       },
+      lastNumber = series.lastNumber,
+      originalLanguage = series.originalLanguage,
     )
 
     seriesLifecycle.updateSeries(toUpdate)
