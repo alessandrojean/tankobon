@@ -9,8 +9,8 @@ import org.hibernate.validator.constraints.UUID
 data class LibraryEntityDto(
   override val id: String,
   override val attributes: LibraryAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionLibrary>>? = null,
+) : EntityDto<ReferenceExpansionLibrary> {
   @Schema(type = "string", allowableValues = ["LIBRARY"])
   override val type = EntityType.LIBRARY
 }
@@ -20,17 +20,22 @@ data class LibraryAttributesDto(
   val description: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionLibrary : ReferenceExpansionEnum {
+  OWNER,
+  LIBRARY_SHARING,
+}
+
 fun Library.toDto(userAttributes: UserAttributesDto? = null) = LibraryEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = ownerId,
-      type = RelationshipType.OWNER,
+      type = ReferenceExpansionLibrary.OWNER,
       attributes = userAttributes
     ),
     *sharedUsersIds
-      .map { RelationDto(it, RelationshipType.LIBRARY_SHARING) }
+      .map { RelationDto(it, ReferenceExpansionLibrary.LIBRARY_SHARING) }
       .toTypedArray()
   )
 )

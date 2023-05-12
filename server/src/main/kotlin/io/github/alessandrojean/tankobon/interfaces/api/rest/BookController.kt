@@ -18,6 +18,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepos
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBook
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -77,7 +78,7 @@ class BookController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
     val sort = when {
@@ -114,7 +115,7 @@ class BookController(
     @Schema(format = "uuid")
     library: String? = null,
     @PathVariable @ISBN @Schema(format = "isbn") isbn: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
   ): SuccessCollectionResponseDto<BookEntityDto> {
     val libraries = if (library.isNullOrEmpty()) {
       libraryRepository.findByOwnerIdIncludingShared(principal.user.id)
@@ -142,7 +143,7 @@ class BookController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -178,7 +179,7 @@ class BookController(
   fun getLatestBooksInLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -203,7 +204,7 @@ class BookController(
   fun getOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
   ): SuccessEntityResponseDto<BookEntityDto> {
     val book = bookDtoRepository.findByIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")

@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionLibrary
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -66,7 +67,7 @@ class LibraryController(
   fun getAllLibraries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(required = false) @UUID(version = [4]) @Schema(format = "uuid") ownerId: String?,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
     val libraries = when {
       principal.user.isAdmin && ownerId.isNullOrEmpty() ->
@@ -95,7 +96,7 @@ class LibraryController(
   fun getAllLibrariesByOwner(
     @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
     @RequestParam(required = false, defaultValue = "false") includeShared: Boolean = false,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
@@ -123,7 +124,7 @@ class LibraryController(
   fun getOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessEntityResponseDto<LibraryEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")

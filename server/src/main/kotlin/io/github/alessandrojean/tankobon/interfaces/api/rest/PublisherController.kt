@@ -16,6 +16,8 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImag
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPublisher
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -69,7 +71,7 @@ class PublisherController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPublisher> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PublisherEntityDto> {
     val publishersPage = publisherRepository.findAll(
@@ -95,7 +97,7 @@ class PublisherController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPublisher> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PublisherEntityDto> {
@@ -140,7 +142,7 @@ class PublisherController(
   fun getOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPublisher> = emptySet(),
   ): SuccessEntityResponseDto<PublisherEntityDto> {
     val publisher = publisherRepository.findByIdOrNull(publisherId)
       ?: throw IdDoesNotExistException("Publisher not found")
@@ -274,7 +276,7 @@ class PublisherController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.PUBLISHER_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE))
     )
   }
 }

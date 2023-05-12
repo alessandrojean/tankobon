@@ -4,6 +4,8 @@ import io.github.alessandrojean.tankobon.domain.model.BookContributor
 import io.github.alessandrojean.tankobon.domain.persistence.BookContributorRepository
 import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorEntityDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBookContributor
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPerson
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
@@ -177,7 +179,7 @@ class BookContributorDao(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = RelationshipType.PERSON_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = ReferenceExpansionBookContributor.PERSON_PICTURE))
     )
   }
 

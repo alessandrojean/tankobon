@@ -12,8 +12,8 @@ import java.time.LocalDateTime
 data class UserEntityDto(
   override val id: String,
   override val attributes: UserAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionUser>>? = null,
+) : EntityDto<ReferenceExpansionUser> {
   @Schema(type = "string", allowableValues = ["USER"])
   override val type = EntityType.USER
 }
@@ -30,7 +30,11 @@ enum class RoleDto {
   ROLE_USER, ROLE_ADMIN
 }
 
-fun TankobonUser.toDto(avatarRelationship: RelationDto? = null) = UserEntityDto(
+enum class ReferenceExpansionUser : ReferenceExpansionEnum {
+  AVATAR
+}
+
+fun TankobonUser.toDto(avatarRelationship: RelationDto<ReferenceExpansionUser>? = null) = UserEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = avatarRelationship?.let { listOf(it) },

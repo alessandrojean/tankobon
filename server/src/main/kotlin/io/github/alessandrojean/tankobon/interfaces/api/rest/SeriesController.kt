@@ -13,6 +13,7 @@ import io.github.alessandrojean.tankobon.infrastructure.image.SeriesCoverLifecyc
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SeriesCreationDto
@@ -69,7 +70,7 @@ class SeriesController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionSeries> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<SeriesEntityDto> {
     val seriesPage = seriesRepository.findAll(
@@ -95,7 +96,7 @@ class SeriesController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionSeries> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<SeriesEntityDto> {
@@ -140,7 +141,7 @@ class SeriesController(
   fun getOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionSeries> = emptySet(),
   ): SuccessEntityResponseDto<SeriesEntityDto> {
     val series = seriesRepository.findByIdOrNull(seriesId)
       ?: throw IdDoesNotExistException("Series not found")
@@ -281,7 +282,7 @@ class SeriesController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.SERIES_COVER))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionSeries.SERIES_COVER))
     )
   }
 }

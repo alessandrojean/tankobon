@@ -13,8 +13,8 @@ data class ImporterEntityDto(
   @get:Schema(format = "")
   override val id: String,
   override val attributes: ImporterAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionImporter>>? = null,
+) : EntityDto<ReferenceExpansionImporter> {
   @Schema(type = "string", allowableValues = ["EXTERNAL_BOOK"])
   override val type = EntityType.EXTERNAL_BOOK
 }
@@ -38,11 +38,15 @@ data class ImporterContributorDto(
   val role: String,
 )
 
+enum class ReferenceExpansionImporter : ReferenceExpansionEnum {
+  IMPORTER_SOURCE
+}
+
 data class ImporterSourceEntityDto(
   override val id: String,
   override val attributes: ImporterSourceAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionImporterSource>>? = null,
+) : EntityDto<ReferenceExpansionImporterSource> {
   @Schema(type = "string", allowableValues = ["IMPORTER_SOURCE"])
   override val type = EntityType.IMPORTER_SOURCE
 }
@@ -58,6 +62,8 @@ data class ImporterSourceAttributesDto(
   @get:Schema(format = "bcp-47")
   val language: String,
 ) : EntityAttributesDto()
+
+enum class ReferenceExpansionImporterSource : ReferenceExpansionEnum
 
 fun ImporterProvider.toDto() = ImporterSourceEntityDto(
   id = key.name,
@@ -77,7 +83,7 @@ fun ImporterBookResult.toDto(importerSourceAttributes: ImporterSourceAttributesD
   relationships = listOf(
     RelationDto(
       id = provider.name,
-      type = RelationshipType.IMPORTER_SOURCE,
+      type = ReferenceExpansionImporter.IMPORTER_SOURCE,
       attributes = importerSourceAttributes
     )
   )

@@ -25,8 +25,8 @@ import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepos
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBook
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
 import org.javamoney.moneta.FastMoney
@@ -361,32 +361,32 @@ class BookDtoDao(
       .from(TableBookPublisher)
       .where(TableBookPublisher.BOOK_ID.eq(id))
       .orderBy(TableBookPublisher.CREATED_AT.asc())
-      .fetch { RelationDto(it.get(TableBookPublisher.PUBLISHER_ID), RelationshipType.PUBLISHER) }
+      .fetch { RelationDto(it.get(TableBookPublisher.PUBLISHER_ID), ReferenceExpansionBook.PUBLISHER) }
 
     val tags = dsl.select(TableBookTag.TAG_ID)
       .from(TableBookTag)
       .where(TableBookTag.BOOK_ID.eq(id))
       .orderBy(TableBookTag.CREATED_AT.asc())
-      .fetch { RelationDto(it.get(TableBookTag.TAG_ID), RelationshipType.TAG) }
+      .fetch { RelationDto(it.get(TableBookTag.TAG_ID), ReferenceExpansionBook.TAG) }
 
     val contributors = dsl
       .select(TableBookContributor.ID)
       .from(TableBookContributor)
       .where(TableBookContributor.BOOK_ID.eq(id))
       .orderBy(TableBookContributor.CREATED_AT.asc())
-      .fetch { RelationDto(it.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR) }
+      .fetch { RelationDto(it.get(TableBookContributor.ID), ReferenceExpansionBook.CONTRIBUTOR) }
 
     val neighbors = seriesId?.let { bookDao.findAllBySeriesId(it).toList() } ?: emptyList()
     val currentBookIndex = neighbors.indexOfFirst { it.id == id }
 
     val previousBook = neighbors.getOrNull(currentBookIndex - 1)
-      ?.let { RelationDto(it.id, RelationshipType.PREVIOUS_BOOK) }
+      ?.let { RelationDto(it.id, ReferenceExpansionBook.PREVIOUS_BOOK) }
     val nextBook = neighbors.getOrNull(currentBookIndex + 1)
-      ?.let { RelationDto(it.id, RelationshipType.NEXT_BOOK) }
+      ?.let { RelationDto(it.id, ReferenceExpansionBook.NEXT_BOOK) }
 
-    val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, RelationshipType.LIBRARY)
+    val library = RelationDto(bookDao.getLibraryIdOrNull(id)!!, ReferenceExpansionBook.LIBRARY)
 
-    val cover = RelationDto(id, RelationshipType.COVER_ART)
+    val cover = RelationDto(id, ReferenceExpansionBook.COVER_ART)
       .takeIf { bookCoverLifecycle.hasImage(id) }
 
     return toDto(
@@ -403,11 +403,11 @@ class BookDtoDao(
   private fun List<Book>.toDto(): List<BookEntityDto> {
     val bookIds = map(Book::id)
 
-    lateinit var publishers: Map<String, List<RelationDto>>
-    lateinit var tags: Map<String, List<RelationDto>>
-    lateinit var contributors: Map<String, List<RelationDto>>
-    lateinit var libraries: Map<String, RelationDto>
-    lateinit var covers: Map<String, RelationDto>
+    lateinit var publishers: Map<String, List<RelationDto<ReferenceExpansionBook>>>
+    lateinit var tags: Map<String, List<RelationDto<ReferenceExpansionBook>>>
+    lateinit var contributors: Map<String, List<RelationDto<ReferenceExpansionBook>>>
+    lateinit var libraries: Map<String, RelationDto<ReferenceExpansionBook>>
+    lateinit var covers: Map<String, RelationDto<ReferenceExpansionBook>>
 
     transactionTemplate.executeWithoutResult {
       dsl.insertTempStrings(batchSize, bookIds)
@@ -416,14 +416,14 @@ class BookDtoDao(
         .from(TableBookPublisher)
         .where(TableBookPublisher.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookPublisher.BOOK_ID) }) { record ->
-          RelationDto(record.get(TableBookPublisher.PUBLISHER_ID), RelationshipType.PUBLISHER)
+          RelationDto(record.get(TableBookPublisher.PUBLISHER_ID), ReferenceExpansionBook.PUBLISHER)
         }
 
       tags = dsl.select(*TableBookTag.fields())
         .from(TableBookTag)
         .where(TableBookTag.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookTag.BOOK_ID) }) { record ->
-          RelationDto(record.get(TableBookTag.TAG_ID), RelationshipType.TAG)
+          RelationDto(record.get(TableBookTag.TAG_ID), ReferenceExpansionBook.TAG)
         }
 
       contributors = dsl
@@ -431,7 +431,7 @@ class BookDtoDao(
         .from(TableBookContributor)
         .where(TableBookContributor.BOOK_ID.`in`(dsl.selectTempStrings()))
         .groupBy({ it.get(TableBookContributor.BOOK_ID) }) { record ->
-          RelationDto(record.get(TableBookContributor.ID), RelationshipType.CONTRIBUTOR)
+          RelationDto(record.get(TableBookContributor.ID), ReferenceExpansionBook.CONTRIBUTOR)
         }
 
       libraries = dsl
@@ -441,12 +441,12 @@ class BookDtoDao(
         .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
         .where(TableBook.ID.`in`(dsl.selectTempStrings()))
         .fetch()
-        .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], RelationshipType.LIBRARY) }
+        .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], ReferenceExpansionBook.LIBRARY) }
 
       covers = bookIds
         .associateWith { bookCoverLifecycle.hasImage(it) }
         .filterValues { it }
-        .mapValues { RelationDto(it.key, RelationshipType.COVER_ART) }
+        .mapValues { RelationDto(it.key, ReferenceExpansionBook.COVER_ART) }
     }
 
     return map { book ->
@@ -489,20 +489,20 @@ class BookDtoDao(
   }
 
   private fun Book.toDto(
-    library: RelationDto,
-    cover: RelationDto?,
-    publishers: Array<RelationDto>,
-    tags: Array<RelationDto>,
-    contributors: Array<RelationDto>,
-    previousBook: RelationDto? = null,
-    nextBook: RelationDto? = null,
+    library: RelationDto<ReferenceExpansionBook>,
+    cover: RelationDto<ReferenceExpansionBook>?,
+    publishers: Array<RelationDto<ReferenceExpansionBook>>,
+    tags: Array<RelationDto<ReferenceExpansionBook>>,
+    contributors: Array<RelationDto<ReferenceExpansionBook>>,
+    previousBook: RelationDto<ReferenceExpansionBook>? = null,
+    nextBook: RelationDto<ReferenceExpansionBook>? = null,
   ) = BookEntityDto(
     id = id,
     attributes = toAttributesDto(),
     relationships = listOfNotNull(
-      RelationDto(collectionId, RelationshipType.COLLECTION),
-      seriesId?.let { RelationDto(it, RelationshipType.SERIES) },
-      storeId?.let { RelationDto(it, RelationshipType.STORE) },
+      RelationDto(collectionId, ReferenceExpansionBook.COLLECTION),
+      seriesId?.let { RelationDto(it, ReferenceExpansionBook.SERIES) },
+      storeId?.let { RelationDto(it, ReferenceExpansionBook.STORE) },
       previousBook,
       nextBook,
       library,

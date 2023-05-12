@@ -11,6 +11,8 @@ import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.StoreLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionStore
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreEntityDto
@@ -65,7 +67,7 @@ class StoreController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionStore> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<StoreEntityDto> {
     val storesPage = storeRepository.findAll(
@@ -130,7 +132,7 @@ class StoreController(
   fun getOneStory(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionStore> = emptySet(),
   ): SuccessEntityResponseDto<StoreEntityDto> {
     val store = storeRepository.findByIdOrNull(storeId)
       ?: throw IdDoesNotExistException("Store not found")

@@ -17,7 +17,7 @@ import io.github.alessandrojean.tankobon.infrastructure.image.SeriesCoverLifecyc
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionEnum
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import org.springframework.stereotype.Component
 
@@ -43,90 +43,90 @@ class ReferenceExpansion(
   private val seriesCoverLifecycle: SeriesCoverLifecycle,
 ) {
 
-  private val expansionMap: Map<RelationshipType, IdsToAttributesFn> = mapOf(
-    RelationshipType.COLLECTION to { ids ->
+  private val expansionMap: Map<String, IdsToAttributesFn> = mapOf(
+    "COLLECTION" to { ids ->
       collectionRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.LIBRARY to { ids ->
+    "LIBRARY" to { ids ->
       libraryRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.USER to { ids ->
+    "USER" to { ids ->
       userRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.OWNER to { ids ->
+    "OWNER" to { ids ->
       userRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.LIBRARY_SHARING to { ids ->
+    "LIBRARY_SHARING" to { ids ->
       userRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.PUBLISHER to { ids ->
+    "PUBLISHER" to { ids ->
       publisherRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.TAG to { ids ->
+    "TAG" to { ids ->
       tagRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.SERIES to { ids ->
+    "SERIES" to { ids ->
       val alternativeNames = seriesRepository.findAlternativeNamesByIds(ids)
       seriesRepository.findAllByIds(ids).associate {
         it.id to it.toAttributesDto(alternativeNames[it.id].orEmpty())
       }
     },
-    RelationshipType.STORE to { ids ->
+    "STORE" to { ids ->
       storeRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.BOOK to { ids ->
+    "BOOK" to { ids ->
       bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.PREVIOUS_BOOK to { ids ->
+    "PREVIOUS_BOOK" to { ids ->
       bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.NEXT_BOOK to { ids ->
+    "NEXT_BOOK" to { ids ->
       bookRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.CONTRIBUTOR_ROLE to { ids ->
+    "CONTRIBUTOR_ROLE" to { ids ->
       contributorRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.PERSON to { ids ->
+    "PERSON" to { ids ->
       personRepository.findAllByIds(ids).associate { it.id to it.toAttributesDto() }
     },
-    RelationshipType.CONTRIBUTOR to { ids ->
+    "CONTRIBUTOR" to { ids ->
       bookContributorRepository.findAllByIdsAsDto(ids).associate { it.id to it.attributes }
     },
-    RelationshipType.COVER_ART to { ids ->
+    "COVER_ART" to { ids ->
       ids.associateWith { bookCoverLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
-    RelationshipType.AVATAR to { ids ->
+    "AVATAR" to { ids ->
       ids.associateWith { userAvatarLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
-    RelationshipType.PERSON_PICTURE to { ids ->
+    "PERSON_PICTURE" to { ids ->
       ids.associateWith { personPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
-    RelationshipType.PUBLISHER_PICTURE to { ids ->
+    "PUBLISHER_PICTURE" to { ids ->
       ids.associateWith { publisherPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
-    RelationshipType.SERIES_COVER to { ids ->
+    "SERIES_COVER" to { ids ->
       ids.associateWith{ seriesCoverLifecycle.getImageDetails(it)!!.toAttributesDto() }
     }
   )
 
-  fun <T : EntityDto> expand(entity: T, relationsToExpand: Set<RelationshipType>): T {
+  fun <R : ReferenceExpansionEnum, T : EntityDto<R>> expand(entity: T, relationsToExpand: Set<R>): T {
     if (relationsToExpand.isEmpty()) {
       return entity
     }
 
     val relationsAttributes = entity.relationships.orEmpty()
       .filter { it.type in relationsToExpand }
-      .groupBy({ it.type }, { it.id })
+      .groupBy({ it.type.toString() }, { it.id })
       .mapValues { (type, ids) -> expansionMap[type]!!.invoke(ids) }
 
     val relationships = entity.relationships?.map { relation ->
-      relation.copy(attributes = relationsAttributes[relation.type]?.get(relation.id))
+      relation.copy(attributes = relationsAttributes[relation.type.toString()]?.get(relation.id))
     }
 
     return entity.apply { this.relationships = relationships }
   }
 
-  fun <T : EntityDto> expand(entities: Collection<T>, relationsToExpand: Set<RelationshipType>): List<T> {
+  fun <R : ReferenceExpansionEnum, T : EntityDto<R>> expand(entities: Collection<T>, relationsToExpand: Set<R>): List<T> {
     if (relationsToExpand.isEmpty()) {
       return entities.toList()
     }
@@ -135,12 +135,12 @@ class ReferenceExpansion(
       .flatMap { it.relationships.orEmpty() }
       .distinctBy { "${it.type}-${it.id}" }
       .filter { it.type in relationsToExpand }
-      .groupBy({ it.type }, { it.id })
+      .groupBy({ it.type.toString() }, { it.id })
       .mapValues { (type, ids) -> expansionMap[type]!!.invoke(ids) }
 
     return entities.map { entity ->
       val relationships = entity.relationships?.map { relation ->
-        relation.copy(attributes = relationsAttributes[relation.type]?.get(relation.id))
+        relation.copy(attributes = relationsAttributes[relation.type.toString()]?.get(relation.id))
       }
 
       entity.apply { this.relationships = relationships }

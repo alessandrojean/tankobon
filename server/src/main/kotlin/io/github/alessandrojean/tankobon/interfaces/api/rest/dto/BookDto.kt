@@ -22,8 +22,8 @@ import javax.money.MonetaryAmount
 data class BookEntityDto(
   override val id: String,
   override val attributes: BookAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionBook>>? = null,
+) : EntityDto<ReferenceExpansionBook> {
   @Schema(type = "string", allowableValues = ["BOOK"])
   override val type = EntityType.BOOK
 }
@@ -47,6 +47,19 @@ data class BookAttributesDto(
   val createdAt: LocalDateTime?,
   val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
+
+enum class ReferenceExpansionBook : ReferenceExpansionEnum {
+  CONTRIBUTOR,
+  COLLECTION,
+  PUBLISHER,
+  SERIES,
+  STORE,
+  TAG,
+  LIBRARY,
+  COVER_ART,
+  PREVIOUS_BOOK,
+  NEXT_BOOK,
+}
 
 interface CodeDto {
   val type: CodeType

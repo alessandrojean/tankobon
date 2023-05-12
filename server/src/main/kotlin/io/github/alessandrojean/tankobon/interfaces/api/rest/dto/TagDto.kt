@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.UUID
 data class TagEntityDto(
   override val id: String,
   override val attributes: TagAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionTag>>? = null,
+) : EntityDto<ReferenceExpansionTag> {
   @Schema(type = "string", allowableValues = ["TAG"])
   override val type = EntityType.TAG
 }
@@ -19,13 +19,17 @@ data class TagAttributesDto(
   val description: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionTag : ReferenceExpansionEnum {
+  LIBRARY,
+}
+
 fun Tag.toDto(libraryAttributes: LibraryAttributesDto? = null) = TagEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = libraryId,
-      type = RelationshipType.LIBRARY,
+      type = ReferenceExpansionTag.LIBRARY,
       attributes = libraryAttributes
     )
   )

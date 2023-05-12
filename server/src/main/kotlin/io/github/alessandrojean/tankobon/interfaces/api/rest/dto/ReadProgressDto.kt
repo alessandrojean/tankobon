@@ -16,8 +16,8 @@ import java.time.LocalDateTime
 data class ReadProgressEntityDto(
   override val id: String,
   override val attributes: ReadProgressAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionReadProgress>>? = null,
+) : EntityDto<ReferenceExpansionReadProgress> {
   @Schema(type = "string", allowableValues = ["READ_PROGRESS"])
   override val type = EntityType.READ_PROGRESS
 }
@@ -30,6 +30,11 @@ data class ReadProgressAttributesDto(
   val createdAt: LocalDateTime,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionReadProgress : ReferenceExpansionEnum {
+  BOOK,
+  USER,
+}
+
 fun ReadProgress.toDto(
   bookAttributesDto: BookAttributesDto? = null,
   userAttributesDto: UserAttributesDto? = null,
@@ -39,12 +44,12 @@ fun ReadProgress.toDto(
   relationships = listOf(
     RelationDto(
       id = bookId,
-      type = RelationshipType.BOOK,
+      type = ReferenceExpansionReadProgress.BOOK,
       attributes = bookAttributesDto,
     ),
     RelationDto(
       id = userId,
-      type = RelationshipType.USER,
+      type = ReferenceExpansionReadProgress.USER,
       attributes = userAttributesDto,
     )
   ),

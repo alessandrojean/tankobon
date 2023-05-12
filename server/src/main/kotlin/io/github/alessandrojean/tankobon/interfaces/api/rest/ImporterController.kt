@@ -13,7 +13,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ImportDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ImporterEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ImporterSourceEntityDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionImporter
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
@@ -112,7 +112,7 @@ class ImporterController(
     @Schema(format = "isbn")
     isbn: String,
     @RequestParam(required = false, defaultValue = "") sources: Set<ImporterSource>,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType>,
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionImporter>,
   ): SuccessCollectionResponseDto<ImporterEntityDto> {
     val results = coroutineScope {
       importerProviders
@@ -127,7 +127,7 @@ class ImporterController(
         .flatMap { it.getOrElse { emptyList() } }
     }
 
-    val expanded = if (includes.contains(RelationshipType.IMPORTER_SOURCE)) {
+    val expanded = if (includes.contains(ReferenceExpansionImporter.IMPORTER_SOURCE)) {
       results.map { book ->
         book.toDto(importerProviders.first { it.key == book.provider }.toAttributesDto())
       }

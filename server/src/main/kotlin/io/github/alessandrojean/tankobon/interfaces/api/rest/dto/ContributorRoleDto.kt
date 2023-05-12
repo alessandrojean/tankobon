@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.UUID
 data class ContributorRoleEntityDto(
   override val id: String,
   override val attributes: ContributorRoleAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionContributorRole>>? = null,
+) : EntityDto<ReferenceExpansionContributorRole> {
   @Schema(type = "string", allowableValues = ["CONTRIBUTOR_ROLE"])
   override val type = EntityType.CONTRIBUTOR_ROLE
 }
@@ -19,13 +19,17 @@ data class ContributorRoleAttributesDto(
   val description: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionContributorRole : ReferenceExpansionEnum {
+  LIBRARY,
+}
+
 fun ContributorRole.toDto(libraryAttributes: LibraryAttributesDto? = null) = ContributorRoleEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = libraryId,
-      type = RelationshipType.LIBRARY,
+      type = ReferenceExpansionContributorRole.LIBRARY,
       attributes = libraryAttributes,
     )
   ),

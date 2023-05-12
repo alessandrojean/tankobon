@@ -15,8 +15,9 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImag
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.AuthenticationActivityEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EmailAvailabilityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PasswordUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionAuthenticationActivity
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionUser
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RoleDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
@@ -77,7 +78,7 @@ class UserController(
   @Operation(summary = "Get the current authenticated user", security = [SecurityRequirement(name = "Basic Auth")])
   fun getMe(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionUser> = emptySet(),
   ): SuccessEntityResponseDto<UserEntityDto> {
     val current = principal.toDto().withAvatarIfExists()
     val expanded = referenceExpansion.expand(current, includes)
@@ -178,7 +179,7 @@ class UserController(
   )
   fun getMyAuthenticationActivity(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
     if (isDemo && !principal.user.isAdmin) {
@@ -216,7 +217,7 @@ class UserController(
   fun getAuthenticationActivityFromUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
     if (isDemo && !principal.user.isAdmin) {
@@ -255,7 +256,7 @@ class UserController(
     security = [SecurityRequirement(name = "Basic Auth")]
   )
   fun getAuthenticationActivity(
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
     val sort = if (page.sort.isSorted) {
@@ -284,7 +285,7 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "List all users", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllUsers(
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionUser> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<UserEntityDto> {
     val sort = when {
@@ -311,7 +312,7 @@ class UserController(
   fun getOneUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) userId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionUser> = emptySet(),
   ): SuccessEntityResponseDto<UserEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
@@ -435,7 +436,7 @@ class UserController(
     }
 
     return copy(
-      relationships = listOf(RelationDto(id = id, type = RelationshipType.AVATAR))
+      relationships = listOf(RelationDto(id = id, type = ReferenceExpansionUser.AVATAR))
     )
   }
 
@@ -448,7 +449,7 @@ class UserController(
   fun getLatestAuthenticationActivityForUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) userId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
   ): SuccessEntityResponseDto<AuthenticationActivityEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")

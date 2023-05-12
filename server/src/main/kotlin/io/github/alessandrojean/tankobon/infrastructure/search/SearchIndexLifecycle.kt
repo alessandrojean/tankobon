@@ -28,7 +28,7 @@ import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_EVENTS
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_FACTORY
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBook
 import mu.KotlinLogging
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.Term
@@ -217,10 +217,10 @@ class SearchIndexLifecycle(
   private fun BookEntityDto.expand(): BookEntityDto = referenceExpansion.expand(
     entity = this,
     relationsToExpand = setOf(
-      RelationshipType.LIBRARY,
-      RelationshipType.TAG,
-      RelationshipType.PUBLISHER,
-      RelationshipType.CONTRIBUTOR
+      ReferenceExpansionBook.LIBRARY,
+      ReferenceExpansionBook.TAG,
+      ReferenceExpansionBook.PUBLISHER,
+      ReferenceExpansionBook.CONTRIBUTOR
     )
   )
 
@@ -228,10 +228,10 @@ class SearchIndexLifecycle(
     val expanded = referenceExpansion.expand(
       entities = content,
       relationsToExpand = setOf(
-        RelationshipType.LIBRARY,
-        RelationshipType.TAG,
-        RelationshipType.PUBLISHER,
-        RelationshipType.CONTRIBUTOR
+        ReferenceExpansionBook.LIBRARY,
+        ReferenceExpansionBook.TAG,
+        ReferenceExpansionBook.PUBLISHER,
+        ReferenceExpansionBook.CONTRIBUTOR
       )
     )
 

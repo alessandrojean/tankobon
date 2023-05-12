@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.UUID
 data class PublisherEntityDto(
   override val id: String,
   override val attributes: PublisherAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionPublisher>>? = null,
+) : EntityDto<ReferenceExpansionPublisher> {
   @Schema(type = "string", allowableValues = ["PUBLISHER"])
   override val type = EntityType.PUBLISHER
 }
@@ -19,13 +19,18 @@ data class PublisherAttributesDto(
   val description: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionPublisher : ReferenceExpansionEnum {
+  LIBRARY,
+  PUBLISHER_PICTURE,
+}
+
 fun Publisher.toDto(libraryAttributes: LibraryAttributesDto? = null) = PublisherEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = libraryId,
-      type = RelationshipType.LIBRARY,
+      type = ReferenceExpansionPublisher.LIBRARY,
       attributes = libraryAttributes,
     )
   )

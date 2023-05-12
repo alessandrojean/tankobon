@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 data class AuthenticationActivityEntityDto(
   override val id: String,
   override val attributes: AuthenticationActivityAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionAuthenticationActivity>>? = null,
+) : EntityDto<ReferenceExpansionAuthenticationActivity> {
   @Schema(type = "string", allowableValues = ["AUTHENTICATION_ACTIVITY"])
   override val type = EntityType.AUTHENTICATION_ACTIVITY
 }
@@ -24,6 +24,10 @@ data class AuthenticationActivityAttributesDto(
   val source: String? = null,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionAuthenticationActivity : ReferenceExpansionEnum {
+  USER
+}
+
 fun AuthenticationActivity.toDto(userAttributes: UserAttributesDto? = null) = AuthenticationActivityEntityDto(
   id = id,
   attributes = toAttributesDto(),
@@ -31,7 +35,7 @@ fun AuthenticationActivity.toDto(userAttributes: UserAttributesDto? = null) = Au
     userId?.let {
       RelationDto(
         id = userId,
-        type = RelationshipType.USER,
+        type = ReferenceExpansionAuthenticationActivity.USER,
         attributes = userAttributes,
       )
     }

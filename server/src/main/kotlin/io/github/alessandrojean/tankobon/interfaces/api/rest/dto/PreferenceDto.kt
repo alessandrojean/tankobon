@@ -8,8 +8,8 @@ data class PreferenceEntityDto(
   @get:Schema(type = "string", format = "")
   override val id: String,
   override val attributes: PreferenceAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionPreference>>? = null,
+) : EntityDto<ReferenceExpansionPreference> {
   @Schema(type = "string", allowableValues = ["PREFERENCE"])
   override val type = EntityType.PREFERENCE
 }
@@ -19,11 +19,15 @@ data class PreferenceAttributesDto(
   val value: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionPreference : ReferenceExpansionEnum {
+  USER,
+}
+
 fun Preference.toDto() = PreferenceEntityDto(
   id = key,
   attributes = toAttributesDto(),
   relationships = listOf(
-    RelationDto(id = userId, type = RelationshipType.USER)
+    RelationDto(id = userId, type = ReferenceExpansionPreference.USER)
   )
 )
 

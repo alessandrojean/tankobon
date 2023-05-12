@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionReadProgress
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -66,7 +67,7 @@ class ReadProgressController(
   fun getReadProgressesByUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<ReadProgressEntityDto> {
     val user = libraryRepository.findByIdOrNull(userId)
@@ -97,7 +98,7 @@ class ReadProgressController(
   fun getReadProgressesByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
     sort: Sort,
   ): SuccessCollectionResponseDto<ReadProgressEntityDto> {
     if (bookRepository.findByIdOrNull(bookId) == null) {
@@ -128,7 +129,7 @@ class ReadProgressController(
   fun getOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
   ): SuccessEntityResponseDto<ReadProgressEntityDto> {
     val readProgress = readProgressRepository.findByIdOrNull(readProgressId)
       ?: throw IdDoesNotExistException("Read progress not found")

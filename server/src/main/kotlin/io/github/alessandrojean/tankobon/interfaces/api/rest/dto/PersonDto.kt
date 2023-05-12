@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.UUID
 data class PersonEntityDto(
   override val id: String,
   override val attributes: PersonAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionPerson>>? = null,
+) : EntityDto<ReferenceExpansionPerson> {
   @Schema(type = "string", allowableValues = ["PERSON"])
   override val type = EntityType.PERSON
 }
@@ -19,13 +19,18 @@ data class PersonAttributesDto(
   val description: String,
 ) : EntityAttributesDto()
 
+enum class ReferenceExpansionPerson : ReferenceExpansionEnum {
+  LIBRARY,
+  PERSON_PICTURE,
+}
+
 fun Person.toDto(libraryAttributesDto: LibraryAttributesDto? = null) = PersonEntityDto(
   id = id,
   attributes = toAttributesDto(),
   relationships = listOf(
     RelationDto(
       id = libraryId,
-      type = RelationshipType.LIBRARY,
+      type = ReferenceExpansionPerson.LIBRARY,
       attributes = libraryAttributesDto,
     )
   )

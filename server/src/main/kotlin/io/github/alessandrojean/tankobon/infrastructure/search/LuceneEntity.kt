@@ -11,7 +11,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributor
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherAttributesDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBook
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagAttributesDto
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
@@ -38,16 +38,16 @@ fun BookEntityDto.toDocument() = Document().apply {
   add(TextField("subtitle", attributes.subtitle, Field.Store.NO))
   add(TextField("code", attributes.code.code, Field.Store.NO))
   relationships.orEmpty()
-    .filter { it.type == RelationshipType.TAG && it.attributes != null }
+    .filter { it.type == ReferenceExpansionBook.TAG && it.attributes != null }
     .forEach { add(TextField("tag", (it.attributes as TagAttributesDto).name, Field.Store.NO)) }
   relationships.orEmpty()
-    .filter { it.type == RelationshipType.PUBLISHER && it.attributes != null }
+    .filter { it.type == ReferenceExpansionBook.PUBLISHER && it.attributes != null }
     .forEach { add(TextField("publisher", (it.attributes as PublisherAttributesDto).name, Field.Store.NO)) }
   relationships.orEmpty()
-    .firstOrNull { it.type == RelationshipType.LIBRARY && it.attributes != null }
+    .firstOrNull { it.type == ReferenceExpansionBook.LIBRARY && it.attributes != null }
     ?.let { add(TextField("library", (it.attributes as LibraryAttributesDto).name, Field.Store.NO)) }
   relationships.orEmpty()
-    .filter { it.type == RelationshipType.CONTRIBUTOR && it.attributes != null }
+    .filter { it.type == ReferenceExpansionBook.CONTRIBUTOR && it.attributes != null }
     .forEach {
       val attributes = it.attributes as BookContributorAttributesDto
       add(TextField("contributor", attributes.person.name, Field.Store.NO))

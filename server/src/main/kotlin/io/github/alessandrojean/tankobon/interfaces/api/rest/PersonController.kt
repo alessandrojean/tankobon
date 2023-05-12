@@ -16,6 +16,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImag
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPerson
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -69,7 +70,7 @@ class PersonController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPerson> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PersonEntityDto> {
     val peoplePage = personRepository.findAll(
@@ -95,7 +96,7 @@ class PersonController(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPerson> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<PersonEntityDto> {
@@ -140,7 +141,7 @@ class PersonController(
   fun getOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPerson> = emptySet(),
   ): SuccessEntityResponseDto<PersonEntityDto> {
     val person = personRepository.findByIdOrNull(personId)
       ?: throw IdDoesNotExistException("Person not found")
@@ -273,7 +274,7 @@ class PersonController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = RelationshipType.PERSON_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPerson.PERSON_PICTURE))
     )
   }
 }

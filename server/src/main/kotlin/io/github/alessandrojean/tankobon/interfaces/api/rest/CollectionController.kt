@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionCollection
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
@@ -66,7 +67,7 @@ class CollectionController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionCollection> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessCollectionResponseDto<CollectionEntityDto> {
@@ -156,7 +157,7 @@ class CollectionController(
   fun getOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionCollection> = emptySet(),
   ): SuccessEntityResponseDto<CollectionEntityDto> {
     val collection = collectionRepository.findByIdOrNull(collectionId)
       ?: throw IdDoesNotExistException("Collection not found")

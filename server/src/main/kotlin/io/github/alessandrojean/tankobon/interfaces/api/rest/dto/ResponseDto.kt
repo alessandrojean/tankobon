@@ -38,19 +38,19 @@ enum class SuccessResponseTypeDto {
   ENTITY, COLLECTION
 }
 
-class SuccessEntityResponseDto<T : EntityDto>(data: T) : SuccessResponseDto<T>(data) {
+class SuccessEntityResponseDto<T : EntityDto<*>>(data: T) : SuccessResponseDto<T>(data) {
   @Schema(type = "string", allowableValues = ["ENTITY"])
   override val response = SuccessResponseTypeDto.ENTITY
 }
 
-open class SuccessCollectionResponseDto<T : EntityDto>(data: Collection<T>)
+open class SuccessCollectionResponseDto<T : EntityDto<*>>(data: Collection<T>)
   : SuccessResponseDto<Collection<T>>(data) {
   @Schema(type = "string", allowableValues = ["COLLECTION"])
   override val response = SuccessResponseTypeDto.COLLECTION
 }
 
 @JsonInclude(Include.NON_NULL)
-open class SuccessPaginatedCollectionResponseDto<T : EntityDto>(
+open class SuccessPaginatedCollectionResponseDto<T : EntityDto<*>>(
   data: Collection<T>,
   val pagination: PaginationDto
 ) : SuccessCollectionResponseDto<T>(data)
@@ -64,19 +64,19 @@ data class PaginationDto(
 open class EntityAttributesDto
 
 @JsonInclude(Include.NON_NULL)
-interface EntityDto {
+interface EntityDto<R : ReferenceExpansionEnum> {
   @get:Schema(format = "uuid")
   val id: String
   val type: EntityType
   val attributes: EntityAttributesDto
-  var relationships: List<RelationDto>?
+  var relationships: List<RelationDto<R>>?
 }
 
 @JsonInclude(Include.NON_NULL)
-data class RelationDto(
+data class RelationDto<R : ReferenceExpansionEnum>(
   @get:Schema(format = "uuid")
   val id: String,
-  val type: RelationshipType,
+  val type: R,
   val attributes: EntityAttributesDto? = null,
 )
 
@@ -98,6 +98,8 @@ enum class EntityType {
   AUTHENTICATION_ACTIVITY,
   PREFERENCE,
 }
+
+interface ReferenceExpansionEnum
 
 enum class RelationshipType {
   COLLECTION,
@@ -123,7 +125,7 @@ enum class RelationshipType {
   SERIES_COVER,
 }
 
-fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =
+fun <T, R : EntityDto<*>> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) =
   SuccessPaginatedCollectionResponseDto(
     data = content.map(mapper),
     pagination = PaginationDto(
@@ -133,6 +135,6 @@ fun <T, R : EntityDto> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> R) 
     ),
   )
 
-fun <T : EntityDto> Page<T>.toSuccessCollectionResponseDto() = toSuccessCollectionResponseDto { it }
+fun <T : EntityDto<*>> Page<T>.toSuccessCollectionResponseDto() = toSuccessCollectionResponseDto { it }
 
 fun <T> Page<T>.toPaginationDto() = PaginationDto(number, totalPages, totalElements)

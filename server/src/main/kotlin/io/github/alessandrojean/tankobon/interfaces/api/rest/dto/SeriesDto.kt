@@ -13,8 +13,8 @@ import org.hibernate.validator.constraints.UniqueElements
 data class SeriesEntityDto(
   override val id: String,
   override val attributes: EntityAttributesDto,
-  override var relationships: List<RelationDto>? = null,
-) : EntityDto {
+  override var relationships: List<RelationDto<ReferenceExpansionSeries>>? = null,
+) : EntityDto<ReferenceExpansionSeries> {
   @Schema(type = "string", allowableValues = ["SERIES"])
   override val type = EntityType.SERIES
 }
@@ -34,13 +34,18 @@ data class SeriesAlternativeNameDto(
   val language: String,
 )
 
+enum class ReferenceExpansionSeries : ReferenceExpansionEnum {
+  LIBRARY,
+  SERIES_COVER,
+}
+
 fun Series.toDto(libraryAttributes: LibraryAttributesDto? = null) = SeriesEntityDto(
   id = id,
   attributes = toAttributesDto(alternativeNames),
   relationships = listOf(
     RelationDto(
       id = libraryId,
-      type = RelationshipType.LIBRARY,
+      type = ReferenceExpansionSeries.LIBRARY,
       attributes = libraryAttributes,
     )
   )

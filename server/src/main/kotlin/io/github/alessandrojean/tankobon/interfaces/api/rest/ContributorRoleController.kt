@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincip
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleUpdateDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionContributorRole
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
@@ -65,7 +66,7 @@ class ContributorRoleController(
     @RequestParam(name = "libraries", required = false)
     @ArraySchema(schema = Schema(format = "uuid"))
     libraryIds: Set<@UUID(version = [4]) String>? = null,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionContributorRole> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<ContributorRoleEntityDto> {
     val contributorRolesPage = contributorRoleRepository.findAll(
@@ -133,7 +134,7 @@ class ContributorRoleController(
   fun getOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionContributorRole> = emptySet(),
   ): SuccessEntityResponseDto<ContributorRoleEntityDto> {
     val contributorRole = contributorRoleRepository.findByIdOrNull(contributorRoleId)
       ?: throw IdDoesNotExistException("Contributor role not found")

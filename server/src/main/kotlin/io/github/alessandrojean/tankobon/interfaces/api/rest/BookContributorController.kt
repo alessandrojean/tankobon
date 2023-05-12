@@ -8,7 +8,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorEntityDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBookContributor
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.swagger.v3.oas.annotations.Operation
@@ -41,7 +41,7 @@ class BookContributorController(
   fun getAllContributorsByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBookContributor> = emptySet(),
   ): SuccessCollectionResponseDto<BookContributorEntityDto> {
     val libraryId = bookRepository.getLibraryIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")
@@ -66,7 +66,7 @@ class BookContributorController(
   fun getOneBookContributor(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorId: String,
-    @RequestParam(required = false, defaultValue = "") includes: Set<RelationshipType> = emptySet(),
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBookContributor> = emptySet(),
   ): SuccessEntityResponseDto<BookContributorEntityDto> {
     val contributor = bookContributorRepository.findByIdAsDtoOrNull(contributorId)
       ?: throw IdDoesNotExistException("Book contributor not found")
