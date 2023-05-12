@@ -33,10 +33,12 @@ class Bcp47Validator : ConstraintValidator<Bcp47, String> {
 
 object Bcp47TagValidator {
   val languages by lazy { ULocale.getISOLanguages().toSet() }
+  val regions by lazy { ULocale.getISOCountries().toSet() }
 
   fun isValid(value: String): Boolean {
     return ULocale.forLanguageTag(value).let {
-      it.language.isNotBlank() && languages.contains(it.language)
+      it.language.isNotBlank() && languages.contains(it.language) &&
+        it.country.isNotBlank() && regions.contains(it.country)
     }
   }
 }
