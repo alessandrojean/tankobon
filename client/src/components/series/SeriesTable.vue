@@ -73,11 +73,19 @@ const columns = [
     header: () => t('common-fields.name'),
     cell: info => info.getValue(),
   }),
-  columnHelper.accessor('attributes.description', {
-    id: 'description',
-    enableSorting: false,
-    header: () => t('common-fields.description'),
-    cell: info => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
+  columnHelper.accessor('attributes.type', {
+    id: 'type',
+    header: () => t('series.type'),
+    cell: (info) => {
+      const type = info.getValue()
+      const typeKey = type ? type.toLowerCase().replace(/_/g, '-') : 'unknown'
+
+      return t(`series-types.${typeKey}`)
+    },
+    meta: {
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+    },
   }),
   columnHelper.display({
     id: 'actions',

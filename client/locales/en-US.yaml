@@ -328,6 +328,19 @@ series:
   empty-search-description: Matches not found for “{0}”
   search: Search into series
   none: None
+  type: Type
+
+series-types:
+  unknown: Unknown
+  manga: Manga
+  manhwa: Manhwa
+  manhua: Manhua
+  comic: Comic
+  book: Book
+  novel: Novel
+  databook: Databook
+  artbook: Artbook
+  light-novel: Light novel
 
 publishers:
   fetch-failure: There was an error while fetching the publisher
@@ -533,3 +546,8 @@ aside-menu:
 
 searchable-combobox:
   no-results-found: No results found
+
+alternative-names:
+  title: Alternative names
+  label-language: Language for alternative name no. {0}
+  label-name: Alternative name no. {0}
