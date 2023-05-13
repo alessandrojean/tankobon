@@ -4,16 +4,21 @@ import { Square2StackIcon } from '@heroicons/vue/24/outline'
 import { getRelationship } from '@/utils/api'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const seriesId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
 const { mutate: deleteSeries, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteSeriesMutation()
 
+const queryEnabled = computed(() => {
+  return !!seriesId.value && !isDeleting.value && !isDeleted.value && route.name === 'series-id'
+})
+
 const { data: series, isLoading } = useSeriesQuery({
   seriesId: seriesId as Ref<string>,
   includes: ['library', 'series_cover'],
-  enabled: computed(() => !!seriesId.value && !isDeleting.value && !isDeleted.value),
+  enabled: queryEnabled,
   onError: async (error) => {
     await notificator.failure({
       title: t('series.fetch-one-failure'),

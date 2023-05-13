@@ -73,9 +73,9 @@ dependencies:
   markdown-it-link-attributes:
     specifier: 4.0.1
     version: 4.0.1
-  mime-types:
-    specifier: 2.1.35
-    version: 2.1.35
+  mime:
+    specifier: ^3.0.0
+    version: 3.0.0
   pinia:
     specifier: 2.0.35
     version: 2.0.35(typescript@5.0.4)(vue@3.2.47)
@@ -135,9 +135,9 @@ devDependencies:
   '@types/markdown-it-link-attributes':
     specifier: 3.0.1
     version: 3.0.1
-  '@types/mime-types':
-    specifier: 2.1.1
-    version: 2.1.1
+  '@types/mime':
+    specifier: ^3.0.1
+    version: 3.0.1
   '@types/node':
     specifier: 18.16.3
     version: 18.16.3
@@ -947,8 +947,8 @@ packages:
     resolution: {integrity: sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==}
     dev: true
 
-  /@types/mime-types@2.1.1:
-    resolution: {integrity: sha512-vXOTGVSLR2jMw440moWTC7H19iUyLtP3Z1YTj7cSsubOICinjMxFeb/V57v9QdyyPGbbWolUFSSmSiRSn94tFw==}
+  /@types/mime@3.0.1:
+    resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
     dev: true
 
   /@types/ms@0.7.31:
@@ -3469,6 +3469,12 @@ packages:
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.52.0
+    dev: false
+
+  /mime@3.0.0:
+    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
     dev: false
 
   /mimic-fn@2.1.0:

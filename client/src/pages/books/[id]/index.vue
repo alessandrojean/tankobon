@@ -5,12 +5,17 @@ import { isIsbnCode } from '@/types/tankobon-book'
 import { createEmptyCollectionResponse, getRelationship, getRelationships } from '@/utils/api'
 import type { ReadProgressCreation, ReadProgressEntity, ReadProgressUpdate } from '@/types/tankobon-read-progress'
 
+const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
 const { mutate: deleteBook, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteBookMutation()
+
+const queryEnabled = computed(() => {
+  return !!bookId.value && !isDeleting.value && !isDeleted.value && route.name === 'books-id'
+})
 
 const { data: book, isLoading } = useBookQuery({
   bookId: bookId as Ref<string>,
@@ -26,7 +31,7 @@ const { data: book, isLoading } = useBookQuery({
     'previous_book',
     'next_book',
   ],
-  enabled: computed(() => !!bookId.value && !isDeleting.value && !isDeleted.value),
+  enabled: queryEnabled,
   onError: async (error) => {
     await notificator.failure({
       title: t('books.fetch-one-failure'),
@@ -39,7 +44,7 @@ const { data: contributors, isLoading: isLoadingContributors } = useBookContribu
   bookId: bookId as Ref<string>,
   includes: ['person_picture'],
   select: response => response.data,
-  enabled: computed(() => !!bookId.value && !isLoading.value && !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => queryEnabled.value && !isLoading.value),
   onError: async (error) => {
     await notificator.failure({
       title: t('book-contributors.fetch-failure'),
@@ -54,7 +59,7 @@ const { data: readProgresses, isLoading: isLoadingReadProgresses } = useBookRead
     { property: 'startedAt', direction: 'desc' },
     { property: 'finishedAt', direction: 'desc' },
   ],
-  enabled: computed(() => !!bookId.value && !isLoading.value && !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => queryEnabled.value && !isLoading.value),
   select: response => response.data,
   initialData: createEmptyCollectionResponse(),
   onError: async (error) => {

@@ -3,7 +3,7 @@ import type { AlternativeName } from '@/types/tankobon-alternative-name'
 import { getFlagScriptCode, getRegionCode } from '@/utils/language'
 
 export interface SeriesAlternativeNamesProps {
-  alternativeNames: AlternativeName[] | undefined
+  alternativeNames?: AlternativeName[] | undefined | null
   loading?: boolean
 }
 

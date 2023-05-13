@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import mime from 'mime-types'
+import mime from 'mime/lite'
 import type { ErrorObject } from '@vuelidate/core'
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 
@@ -31,7 +31,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
 
 const extensions = computed(() => {
   const ext = accept.value
-    ?.map(mimeType => mime.extension(mimeType))
+    ?.map(mimeType => mime.getExtension(mimeType))
     ?.filter(extension => typeof extension === 'string')
     ?.map(extension => (extension as string).toUpperCase())
     ?.sort()
