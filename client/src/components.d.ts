@@ -124,6 +124,7 @@ declare module '@vue/runtime-core' {
     SearchButton: typeof import('./components/SearchButton.vue')['default']
     Select: typeof import('./components/form/Select.vue')['default']
     SeriesAlternativeNameFormCard: typeof import('./components/series/SeriesAlternativeNameFormCard.vue')['default']
+    SeriesAlternativeNames: typeof import('./components/series/SeriesAlternativeNames.vue')['default']
     SeriesAlternativeNamesForm: typeof import('./components/series/SeriesAlternativeNamesForm.vue')['default']
     SeriesCoverForm: typeof import('./components/series/SeriesCoverForm.vue')['default']
     SeriesCreateDialog: typeof import('./components/series/SeriesCreateDialog.vue')['default']

@@ -136,6 +136,12 @@ useHead({ title: () => series.value?.attributes.name ?? '' })
             :title="$t('common-fields.description')"
           />
         </div>
+
+        <SeriesAlternativeNames
+          class="series-names"
+          :alternative-names="series?.attributes?.alternativeNames"
+          :loading="isLoading"
+        />
       </div>
     </div>
   </div>
@@ -155,6 +161,7 @@ meta:
     'cover title'
     'buttons buttons'
     'description description'
+    'names names'
     'statistics statistics';
   grid-template-columns: 6rem 1fr;
 
@@ -164,7 +171,8 @@ meta:
       'cover title'
       'cover buttons'
       'cover padding'
-      'statistics description';
+      'statistics description'
+      'statistics names';
     grid-template-columns: 14rem 1fr;
   }
 
@@ -182,6 +190,10 @@ meta:
 
   .series-description {
     grid-area: description / description / description / description;
+  }
+
+  .series-names {
+    grid-area: names / names / names / names;
   }
 
   .series-statistics {

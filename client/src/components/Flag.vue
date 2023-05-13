@@ -2,11 +2,13 @@
 import { createFlagUrl } from '@/utils/flags'
 
 export interface FlagProps {
+  loading?: boolean
   region?: string | null
   script?: 'romanized' | 'oriental'
 }
 
 const props = withDefaults(defineProps<FlagProps>(), {
+  loading: false,
   region: undefined,
   script: undefined,
 })
@@ -32,7 +34,11 @@ const showFlagImage = ref(true)
 </script>
 
 <template>
-  <div class="rounded-sm shadow ring-1 ring-black/5 pointer-events-none">
+  <div
+    v-if="loading"
+    class="skeleton w-5 sm:w-6 aspect-[3/2] rounded-sm ring-1 ring-black/5 pointer-events-none"
+  />
+  <div v-else class="w-5 sm:w-6 aspect-[3/2] rounded-sm shadow ring-1 ring-black/5 pointer-events-none">
     <div v-if="flagUrl && showFlagImage" class="relative">
       <img
         :src="flagUrl"
