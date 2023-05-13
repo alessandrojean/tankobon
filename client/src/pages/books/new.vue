@@ -202,6 +202,7 @@ useBeforeUnload({
               :key="tab.key"
               v-slot="{ selected }"
               as="template"
+              :disabled="isCreating"
             >
               <Button
                 kind="underline-tab"
@@ -225,6 +226,7 @@ useBeforeUnload({
           <BasicSelect
             v-model="activeTab"
             class="md:hidden mb-4"
+            :disabled="isCreating"
             :options="tabs"
             :option-text="(tab: any) => $t(tab.text)"
             :option-value="(tab: any) => tab.key"

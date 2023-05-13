@@ -21,6 +21,7 @@ export interface BookMetadataFormProps {
   mode?: 'creation' | 'update'
   store: string | null | undefined
   tags: string[] | null | undefined
+  disabled?: boolean
 }
 
 export interface BookMetadataFormEmits {
@@ -37,6 +38,7 @@ export interface BookMetadataFormEmits {
 }
 
 const props = withDefaults(defineProps<BookMetadataFormProps>(), {
+  disabled: false,
   mode: 'creation',
 })
 const emit = defineEmits<BookMetadataFormEmits>()
@@ -158,7 +160,7 @@ const tagMap = computed(() => {
 </script>
 
 <template>
-  <fieldset class="space-y-6">
+  <fieldset class="space-y-6" :disabled="disabled">
     <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <SearchableCombobox
         kind="fancy"

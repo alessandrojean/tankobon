@@ -1,35 +1,13 @@
 <script lang="ts" setup>
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon as MagnifyingGlassIconOutline, Square2StackIcon } from '@heroicons/vue/24/outline'
-import type { SeriesCreation } from '@/types/tankobon-series'
-
-const { t } = useI18n()
-const router = useRouter()
-const notificator = useToaster()
 
 const showCreateDialog = ref(false)
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
 
-const { mutate } = useCreateSeriesMutation()
-
 const libraryStore = useLibraryStore()
 const library = computed(() => libraryStore.library!)
-
-function handleCreateSeries(series: SeriesCreation) {
-  mutate(series, {
-    onSuccess: async ({ id }) => {
-      notificator.success({ title: t('series.created-with-success') })
-      await router.push({ name: 'series-id', params: { id } })
-    },
-    onError: async (error) => {
-      await notificator.failure({
-        title: t('series.created-with-failure'),
-        body: error.message,
-      })
-    },
-  })
-}
 </script>
 
 <route lang="yaml">
@@ -46,7 +24,8 @@ meta:
       <template #actions>
         <Button
           kind="primary"
-          @click="showCreateDialog = true"
+          is-router-link
+          :to="{ name: 'series-new' }"
         >
           <PlusIcon class="w-5 h-5" />
           <span>{{ $t('series.new') }}</span>
@@ -104,13 +83,5 @@ meta:
         </template>
       </SeriesTable>
     </div>
-
-    <SeriesCreateDialog
-      v-if="library"
-      :library-id="library.id"
-      :is-open="showCreateDialog"
-      @submit="handleCreateSeries"
-      @close="showCreateDialog = false"
-    />
   </div>
 </template>

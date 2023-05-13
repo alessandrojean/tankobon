@@ -5,59 +5,60 @@ import {
   ExclamationCircleIcon,
   MagnifyingGlassPlusIcon,
 } from '@heroicons/vue/24/outline'
+import type { ImageCollection } from '@/modules/api'
 import { getFullImageUrl } from '@/modules/api'
-import type { BookEntity } from '@/types/tankobon-book'
-import { getRelationship } from '@/utils/api'
+import type { ImageDetailsAttributes } from '@/types/tankobon-image-details'
 
-export interface BookCoverProps {
-  book: BookEntity | null | undefined
+export interface ImageCoverProps {
+  alt: string
+  collection: ImageCollection
+  icon?: Component
+  image: ImageDetailsAttributes | null | undefined
   loading?: boolean
+  version?: string
 }
 
-const props = withDefaults(defineProps<BookCoverProps>(), {
-  book: undefined,
+const props = withDefaults(defineProps<ImageCoverProps>(), {
+  icon: BookOpenIcon,
+  image: undefined,
   loading: false,
+  version: 'original',
 })
 
-const { book, loading } = toRefs(props)
-const coverArt = computed(() => getRelationship(book.value, 'COVER_ART'))
+const { collection, image, loading, version } = toRefs(props)
 
-function getBookCoverUrl(version: string) {
-  if (!book.value) {
+function getCoverUrl(as: string) {
+  if (!image.value || !image.value.versions[as]) {
     return ''
   }
 
   return getFullImageUrl({
-    collection: 'covers',
-    fileName: version === 'original'
-      ? coverArt.value?.attributes?.fileName
-      : coverArt.value?.attributes?.versions?.[version],
-    timeHex: coverArt.value?.attributes?.timeHex,
+    collection: collection.value,
+    fileName: version.value === 'original'
+      ? image.value.fileName
+      : image.value.versions[as],
+    timeHex: image.value.timeHex,
   }) ?? ''
 }
 
-const coverUrl = computed(() => getBookCoverUrl('256'))
-const coverOriginalUrl = computed(() => getBookCoverUrl('original'))
+const coverUrl = computed(() => getCoverUrl(version.value))
+const coverOriginalUrl = computed(() => getCoverUrl('original'))
 
 const { imageHasError, imageLoading, loadImage }
   = useImageLoader(coverUrl)
 
-const showBookInfo = computed(() => {
-  return !loading.value && book.value !== null
+const showCover = computed(() => {
+  return !loading.value && !!image.value
 })
 
-const showBookCover = computed(() => {
-  return !imageHasError.value && !imageLoading.value && showBookInfo.value
+const showCoverImage = computed(() => {
+  return !imageHasError.value && !imageLoading.value && showCover.value
 })
 
-watch(book, (newValue) => {
-  if (newValue !== null) {
-    loadImage()
-  }
-})
+whenever(image, () => loadImage())
 
 onMounted(() => {
-  if (book.value !== null) {
+  if (image.value !== null) {
     loadImage()
   }
 })
@@ -72,21 +73,19 @@ function closeDialog() {
   dialogOpen.value = false
 }
 
-const { t } = useI18n({ useScope: 'global' })
-
 const figure = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 
 const imageAspectRatio = computed(() => {
-  return coverArt.value ? coverArt.value.attributes!.aspectRatio : '2 / 3'
+  return image.value ? image.value.aspectRatio : '2 / 3'
 })
 
-whenever(coverArt, async (coverArt) => {
+whenever(image, async (image) => {
   if (!canvas.value || !figure.value) {
     return
   }
 
-  const { width, height, blurHash } = coverArt.attributes!
+  const { width, height, blurHash } = image
 
   const figureWidth = figure.value.clientWidth
   const figureHeight = Math.floor((figureWidth * height) / width)
@@ -107,17 +106,14 @@ whenever(coverArt, async (coverArt) => {
   >
     <FadeTransition>
       <img
-        v-if="showBookCover"
+        v-if="showCoverImage"
         :src="coverUrl"
-        :alt="
-          book?.attributes?.title
-            ? t('books.cover', { title: book.attributes.title })
-            : undefined
-        "
+        :alt="alt ?? ''"
         class="w-full h-full"
       >
       <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
-        <BookOpenIcon
+        <component
+          :is="icon"
           v-if="loading || coverUrl.length === 0"
           class="w-10 h-10 text-gray-500 dark:text-gray-600"
           :class="[
@@ -134,12 +130,12 @@ whenever(coverArt, async (coverArt) => {
     <canvas
       ref="canvas" class="w-full h-full motion-safe:transition-opacity motion-safe:duration-500 motion-safe:animate-pulse"
       :class="[
-        { 'opacity-0': showBookCover || loading || coverUrl.length === 0 },
+        { 'opacity-0': showCoverImage || loading || coverUrl.length === 0 },
       ]"
     />
 
     <button
-      v-if="showBookCover"
+      v-if="showCoverImage"
       :class="[
         'z-10 bg-gray-900/60 flex items-center justify-center',
         'absolute inset-0 w-full h-full opacity-0 rounded-xl',
@@ -158,9 +154,9 @@ whenever(coverArt, async (coverArt) => {
     <slot />
 
     <BookCoverDialog
-      v-if="showBookCover && showBookInfo"
+      v-if="showCoverImage && showCover"
       :cover-url="coverOriginalUrl"
-      :aspect-ratio="coverArt?.attributes?.aspectRatio"
+      :aspect-ratio="image?.aspectRatio"
       :open="dialogOpen"
       @close="closeDialog"
     />

@@ -8,8 +8,10 @@ export type SeriesEntity = Entity<SeriesAttributes> & {
 export interface SeriesAttributes {
   name: string
   description: string
-  type: SeriesType
+  type: SeriesType | null
   alternativeNames: AlternativeName[]
+  lastNumber: string | null
+  originalLanguage: string | null
 }
 
 export type SeriesType = 'MANGA' | 'MANHWA' | 'MANHUA' | 'COMIC'
@@ -20,6 +22,8 @@ export interface SeriesCreation {
   description: string
   type: SeriesType | null
   alternativeNames: AlternativeName[]
+  lastNumber: string | null
+  originalLanguage: string | null
   library: string
 }
 

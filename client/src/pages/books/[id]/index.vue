@@ -3,11 +3,10 @@ import { BookmarkIcon, InformationCircleIcon, PlusIcon } from '@heroicons/vue/20
 import Button from '@/components/form/Button.vue'
 import { isIsbnCode } from '@/types/tankobon-book'
 import { createEmptyCollectionResponse, getRelationship, getRelationships } from '@/utils/api'
-import { createFlagUrl } from '@/utils/flags'
 import type { ReadProgressCreation, ReadProgressEntity, ReadProgressUpdate } from '@/types/tankobon-read-progress'
 
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const bookId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
@@ -88,20 +87,6 @@ function handleDelete() {
 const regionCode = computed(() => {
   const code = book.value?.attributes?.code
   return isIsbnCode(code) ? code.region : null
-})
-
-const regionName = computed(() => {
-  if (regionCode.value === null) {
-    return null
-  }
-
-  const formatter = new Intl.DisplayNames(locale.value, { type: 'region' })
-
-  return formatter.of(regionCode.value!)
-})
-
-const flagUrl = computed(() => {
-  return regionCode.value ? createFlagUrl(regionCode.value, 'rectangle') : null
 })
 
 useHead({ title: () => book.value?.attributes?.title ?? '' })
@@ -189,7 +174,12 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
     ]"
   >
     <div class="absolute inset-x-0 top-0">
-      <BookBanner :loading="!showBookInfo" :book="book" />
+      <ImageBanner
+        collection="covers"
+        :alt="book?.attributes.title ?? ''"
+        :loading="!showBookInfo"
+        :image="getRelationship(book, 'COVER_ART')?.attributes"
+      />
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
@@ -199,22 +189,24 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
         :selected-index="Number(activeTab.key)"
         @change="activeTab = tabs[$event]"
       >
-        <BookCover
+        <ImageCover
           class="book-cover"
+          collection="covers"
+          version="256"
           :loading="!showBookInfo"
-          :book="book"
+          :image="getRelationship(book, 'COVER_ART')?.attributes"
+          :alt="book?.attributes.title ?? ''"
         >
-          <img
-            v-if="flagUrl"
-            :src="flagUrl"
-            :alt="$t('common.flag', [regionName])"
+          <Flag
+            v-if="!isLoading"
+            :region="regionCode"
             :class="[
-              'inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow',
+              'inline-block z-10',
               'absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3',
               'pointer-events-none',
             ]"
-          >
-        </BookCover>
+          />
+        </ImageCover>
 
         <BookTitle
           class="book-title"
@@ -268,7 +260,7 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
         </div>
 
         <TabPanels class="book-tabs">
-          <TabPanel class="information-grid">
+          <TabPanel class="information-grid -mb-4 sm:mb-0">
             <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
               <BookNavigator
                 :loading="!showBookInfo"
@@ -333,7 +325,7 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
 
         <div class="book-attributes">
           <BookAttributes
-            class="sticky top-24"
+            class="sm:sticky sm:top-24"
             :loading="!showBookInfo"
             :book="book"
           />
@@ -376,8 +368,11 @@ meta:
     'notes notes';
   grid-template-columns: 6rem 1fr;
 
-  @media (min-width: theme('screens.2xl')) {
+  @media (min-width: theme('screens.sm')) {
     gap: 1.5rem;
+  }
+
+  @media (min-width: theme('screens.2xl')) {
     grid-template-areas:
       'synopsis right'
       'tags right'

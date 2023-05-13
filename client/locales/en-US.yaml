@@ -90,6 +90,9 @@ common-placeholders:
   search: Search…
   series-name: AKIRA
   series-description: AKIRA is a japanese manga created by Katsuhiro Otomo…
+  series-last-number: '6'
+  series-original-language: Japanese
+  series-type: Manga
   publisher-name: VIZ Media
   publisher-description: VIZ Media is an American entertainment company…
   person-name: Katsuhiro Otomo
@@ -126,6 +129,7 @@ common-placeholders:
 validation:
   required: It can not be blank.
   not-empty: It can not be empty.
+  not-unknown: It can not be unknown.
   email: It should be a valid e-mail.
   min: It should have at least {n} characters.
   min-value: It should be greater or equal than {0}.
@@ -329,6 +333,9 @@ series:
   search: Search into series
   none: None
   type: Type
+  metadata: Metadata
+  cover: Cover
+  last-number: Last number
 
 series-types:
   unknown: Unknown
@@ -551,3 +558,9 @@ alternative-names:
   title: Alternative names
   label-language: Language for alternative name no. {0}
   label-name: Alternative name no. {0}
+
+original-language:
+  label: Original language
+  unknown: Unknown
+  romanized: Romanized
+  

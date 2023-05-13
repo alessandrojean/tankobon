@@ -6,8 +6,8 @@ import type { AnchorAlignment, AnchorPosition, PositionSettings } from '@primer/
 
 export interface UseAnchoredPositionOptions extends Partial<Omit<PositionSettings, 'align'>> {
   align?: MaybeRef<AnchorAlignment>
-  floatingElementRef?: Ref<HTMLElement>
-  anchorElementRef?: Ref<HTMLElement>
+  floatingElementRef?: Ref<HTMLElement | undefined>
+  anchorElementRef?: Ref<HTMLElement | undefined>
 }
 
 export function useAnchoredPosition(options?: UseAnchoredPositionOptions) {

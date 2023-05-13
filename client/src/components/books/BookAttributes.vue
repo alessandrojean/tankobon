@@ -79,6 +79,7 @@ const metadata = computed(() => {
   const publishers = getRelationships(book.value, 'PUBLISHER')
   const collection = getRelationship(book.value, 'COLLECTION')
   const store = getRelationship(book.value, 'STORE')
+  const series = getRelationship(book.value, 'SERIES')
 
   return [
     {
@@ -90,6 +91,15 @@ const metadata = computed(() => {
         ? attributes!.code.type.replace(/_/g, '-')
         : t('common-fields.code'),
       value: attributes?.code.code,
+    },
+    {
+      title: t('common-fields.series'),
+      key: 'series',
+      value: series?.attributes?.name,
+      link: {
+        name: 'series-id',
+        params: { id: series?.id },
+      },
     },
     {
       title: t('publishers.publisher', publishers?.length ?? 0),

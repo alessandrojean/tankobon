@@ -37,7 +37,10 @@ const { data: book, isLoading } = useBookQuery({
     'library',
     'cover_art',
   ],
-  enabled: computed(() => !!bookId.value), // && !isDeleting.value && !isDeleted.value),
+  enabled: computed(() => !!bookId.value),
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+  staleTime: Infinity,
   onError: async (error) => {
     await notificator.failure({
       title: t('books.fetch-one-failure'),
@@ -285,6 +288,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
               v-for="tab in tabs"
               :key="tab.key"
               v-slot="{ selected }"
+              :disabled="isLoading || isEditing"
               as="template"
             >
               <Button
@@ -309,6 +313,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
           <BasicSelect
             v-model="activeTab"
             class="md:hidden mb-4"
+            :disabled="isLoading || isEditing"
             :options="tabs"
             :option-text="(tab: any) => $t(tab.text)"
             :option-value="(tab: any) => tab.key"

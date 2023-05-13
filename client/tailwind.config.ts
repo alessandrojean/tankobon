@@ -25,6 +25,43 @@ export default {
           fontVariationSettings: '"opsz" 32',
         },
       ],
+      'japanese': [
+        '\'ヒラギノ角ゴ Pro W3\'',
+        '\'Hiragino Kaku Gothic Pro\'',
+        '\'メイリオ\'',
+        'Meiryo',
+        '\'ＭＳ Ｐゴシック\'',
+        '\'Noto Sans CJK JP\'',
+        'Inter',
+        ...defaultTheme.fontFamily.sans,
+      ],
+      'korean': [
+        '\'Apple SD Gothic Neo\'',
+        '\'NanumBarunGothic\'',
+        '\'맑은 고딕\'',
+        '\'Malgun Gothic\'',
+        '\'굴림\'',
+        '\'Gulim\'',
+        '\'돋움\'',
+        '\'Dotum\'',
+        '\'Noto Sans CJK KR\'',
+        'Inter',
+        ...defaultTheme.fontFamily.sans,
+      ],
+      'chinese': [
+        '\'华文细黑\'',
+        '\'STXihei\'',
+        '\'PingFang TC\'',
+        '\'微软雅黑体\'',
+        '\'Microsoft YaHei New\'',
+        '\'微软雅黑\'',
+        '\'Microsoft Yahei\'',
+        '\'宋体\'',
+        '\'SimSun\'',
+        '\'Noto Sans CJK SC\'',
+        'Inter',
+        ...defaultTheme.fontFamily.sans,
+      ],
     },
     extend: {
       colors: {
@@ -239,6 +276,22 @@ export default {
           },
         })
       }
+    }),
+
+    /** Custom fonts for different languages */
+    // https://tech.busuu.com/handling-css-font-stacks-for-multi-language-websites-cf852e321f06
+    plugin(({ addBase, theme }) => {
+      addBase({
+        '[lang|=ja]:not([lang*=Latn])': {
+          fontFamily: `${theme('fontFamily.japanese')} !important`,
+        },
+        '[lang|=ko]:not([lang*=Latn])': {
+          fontFamily: `${theme('fontFamily.korean')} !important`,
+        },
+        '[lang|=zh]:not([lang*=Latn])': {
+          fontFamily: `${theme('fontFamily.chinese')} !important`,
+        },
+      })
     }),
   ],
 } satisfies Config

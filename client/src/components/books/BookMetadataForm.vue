@@ -10,6 +10,7 @@ import type { PublisherEntity } from '@/types/tankobon-publisher'
 import { getFullImageUrl } from '@/modules/api'
 
 export interface BookMetadataFormProps {
+  disabled?: boolean
   code: string
   barcode: string | null | undefined
   number: string
@@ -38,6 +39,7 @@ export interface BookMetadataFormEmits {
 }
 
 const props = withDefaults(defineProps<BookMetadataFormProps>(), {
+  disabled: false,
   mode: 'creation',
 })
 const emit = defineEmits<BookMetadataFormEmits>()
@@ -111,6 +113,10 @@ const nullSeries = computed<SeriesEntity>(() => ({
   attributes: {
     name: t('series.none'),
     description: '',
+    originalLanguage: '',
+    type: null,
+    lastNumber: '',
+    alternativeNames: [],
   },
   relationships: [],
 }))
@@ -135,8 +141,8 @@ function getPublisherPicture(publisher: PublisherEntity) {
 </script>
 
 <template>
-  <fieldset class="space-y-6">
-    <fieldset class="space-y-2">
+  <fieldset class="space-y-6" :disabled="disabled">
+    <div class="space-y-2">
       <TextInput
         id="title"
         :model-value="title ?? ''"
@@ -168,9 +174,9 @@ function getPublisherPicture(publisher: PublisherEntity) {
           @input="$emit('update:number', $event.target.value)"
         />
       </div>
-    </fieldset>
+    </div>
 
-    <fieldset class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
       <TextInput
         id="code"
         :model-value="code ?? ''"
@@ -206,7 +212,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
         @update:model-value="$emit('update:series', $event?.id === 'null' ? null : $event?.id)"
         @update:model-value-select="$emit('update:series', $event === 'null' ? null : $event)"
       />
-    </fieldset>
+    </div>
 
     <ChipInput
       :placeholder="$t('common-placeholders.book-publisher')"
@@ -296,7 +302,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
       @input="$emit('update:synopsis', $event.target.value)"
     />
 
-    <fieldset class="grid grid-cols-1 lg:grid-cols-10 gap-2">
+    <div class="grid grid-cols-1 lg:grid-cols-10 gap-2">
       <div class="lg:col-span-2">
         <TextInput
           id="page-count"
@@ -332,6 +338,6 @@ function getPublisherPicture(publisher: PublisherEntity) {
         @blur:height="v$.dimensions.heightCm.$touch()"
         @update:model-value="$emit('update:dimensions', $event)"
       />
-    </fieldset>
+    </div>
   </fieldset>
 </template>
