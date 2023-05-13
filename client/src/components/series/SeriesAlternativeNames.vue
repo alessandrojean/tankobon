@@ -17,7 +17,7 @@ withDefaults(defineProps<SeriesAlternativeNamesProps>(), {
     v-if="loading || (alternativeNames && alternativeNames.length > 0)"
     :title="$t('alternative-names.title')"
   >
-    <div v-if="loading" class="flex flex-col gap-1.5 divide-y">
+    <div v-if="loading" class="flex flex-col gap-1.5 divide-y dark:divide-gray-700">
       <div
         v-for="i in 3"
         :key="i"
@@ -27,11 +27,11 @@ withDefaults(defineProps<SeriesAlternativeNamesProps>(), {
         <div class="skeleton w-36 h-6" />
       </div>
     </div>
-    <ul v-else class="flex flex-col gap-1.5 divide-y">
+    <ul v-else class="flex flex-col gap-1.5 divide-y dark:divide-gray-700">
       <li
         v-for="(alternativeName, i) in alternativeNames"
         :key="i"
-        class="flex items-center gap-4 pt-1.5 first:pt-0"
+        class="flex items-center gap-4 pt-1.5 first:pt-0 dark:text-gray-200"
       >
         <Flag
           :region="getRegionCode(alternativeName.language)"
