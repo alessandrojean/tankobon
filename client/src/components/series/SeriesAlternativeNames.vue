@@ -7,7 +7,7 @@ export interface SeriesAlternativeNamesProps {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<SeriesAlternativeNamesProps>(), {
+withDefaults(defineProps<SeriesAlternativeNamesProps>(), {
   loading: false,
 })
 </script>

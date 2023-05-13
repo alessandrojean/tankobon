@@ -56,8 +56,19 @@ const errorMessage = computed(() => {
   }
 })
 
+function handleNameChange(newName: string) {
+  emit('update:name', newName)
+  emit('blur:name')
+  emit('blur:language')
+}
+
 function handleLanguageChange(newLanguage: string) {
   emit('update:language', newLanguage)
+  emit('blur:language')
+}
+
+function blurBothFields() {
+  emit('blur:name')
   emit('blur:language')
 }
 </script>
@@ -84,8 +95,8 @@ function handleLanguageChange(newLanguage: string) {
       :placeholder="placeholder"
       :value="name"
       :lang="language !== 'null' ? language : undefined"
-      @blur="$emit('blur:name')"
-      @input="$emit('update:name', ($event.target! as HTMLInputElement).value)"
+      @blur="blurBothFields"
+      @input="handleNameChange(($event.target! as HTMLInputElement).value)"
     >
     <div
       :class="[
