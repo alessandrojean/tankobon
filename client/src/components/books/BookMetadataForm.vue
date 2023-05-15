@@ -19,6 +19,7 @@ export interface BookMetadataFormProps {
   synopsis: string
   pageCount: string
   dimensions: DimensionsString
+  weight: string
   publishers: string[]
   series: string | null | undefined
   mode?: 'creation' | 'update'
@@ -33,6 +34,7 @@ export interface BookMetadataFormEmits {
   (e: 'update:synopsis', synopsis: string): void
   (e: 'update:pageCount', pageCount: string): void
   (e: 'update:dimensions', dimensions: DimensionsString): void
+  (e: 'update:weight', weight: string): void
   (e: 'update:series', series: string | null): void
   (e: 'update:publishers', publishers: string[]): void
   (e: 'validate', isValid: boolean): void
@@ -44,7 +46,7 @@ const props = withDefaults(defineProps<BookMetadataFormProps>(), {
 })
 const emit = defineEmits<BookMetadataFormEmits>()
 
-const { code, title, number, pageCount, dimensions, series, publishers } = toRefs(props)
+const { code, title, number, pageCount, dimensions, series, publishers, weight } = toRefs(props)
 
 const { t } = useI18n()
 
@@ -59,6 +61,7 @@ const rules = computed(() => {
     code: { messageRequired },
     title: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
+    weight: { messageRequired },
     publishers: { messageNotEmpty },
     dimensions: {
       widthCm: { messageDecimal },
@@ -67,7 +70,7 @@ const rules = computed(() => {
   }
 })
 
-const v$ = useVuelidate(rules, { code, title, pageCount, dimensions, publishers })
+const v$ = useVuelidate(rules, { code, title, pageCount, dimensions, publishers, weight })
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 watch(publishers, () => v$.value.publishers.$touch())
@@ -338,6 +341,27 @@ function getPublisherPicture(publisher: PublisherEntity) {
         @blur:height="v$.dimensions.heightCm.$touch()"
         @update:model-value="$emit('update:dimensions', $event)"
       />
+
+      <div class="lg:col-span-2">
+        <TextInput
+          id="weight"
+          :model-value="weight ?? ''"
+          required
+          inputmode="numeric"
+          unit="kg"
+          :input-mask="{
+            regex: '\\d+([,.]\\d{1,3})?',
+            showMaskOnHover: false,
+            showMaskOnFocus: false,
+          }"
+          :placeholder="$t('common-placeholders.book-weight')"
+          :label-text="$t('common-fields.weight')"
+          :invalid="v$.weight.$error"
+          :errors="v$.weight.$errors"
+          @blur="v$.weight.$touch()"
+          @input="$emit('update:weight', $event.target.value)"
+        />
+      </div>
     </div>
   </fieldset>
 </template>

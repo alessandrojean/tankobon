@@ -14,6 +14,7 @@ export interface TextInputProps {
   inputMode?: HTMLAttributes['inputmode']
   placeholder?: string
   required?: boolean
+  unit?: string
 }
 
 const props = withDefaults(defineProps<TextInputProps>(), {
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<TextInputProps>(), {
   invalid: false,
   type: 'text',
   required: false,
+  unit: undefined,
 })
 
 defineEmits<{
@@ -56,7 +58,7 @@ export default { inheritAttrs: false }
         ref="input"
         class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500"
         :class="[
-          { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
+          { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'], 'pr-9': unit },
           invalid
             ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
             : 'border-gray-300 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
@@ -91,7 +93,7 @@ export default { inheritAttrs: false }
         <slot name="left-icon" />
       </div>
       <div
-        v-if="$slots['right-icon']"
+        v-if="$slots['right-icon'] && !unit"
         class="absolute right-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
         :class="[
           invalid
@@ -101,6 +103,16 @@ export default { inheritAttrs: false }
       >
         <slot name="right-icon" />
       </div>
+      <span
+        v-else-if="unit"
+        :class="[
+          'absolute right-3 bottom-3.5',
+          'text-center text-sm/none select-none text-gray-500',
+          'block pointer-events-none',
+        ]"
+      >
+        {{ unit }}
+      </span>
     </div>
 
     <slot name="footer" />

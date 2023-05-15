@@ -28,7 +28,8 @@ data class Book(
   val source: ImporterSource? = null,
   val sourceBookId: String? = null,
 
-  val subtitle: String,
+  val subtitle: String = "",
+  val weightKg: Float = 0f,
 
   /**
    * Assumed to be in the UTC timezone.
@@ -48,8 +49,3 @@ data class Book(
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt,
 ) : Auditable, Serializable
-
-data class Dimensions(
-  val widthCm: Float,
-  val heightCm: Float,
-) : Serializable

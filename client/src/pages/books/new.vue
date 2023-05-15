@@ -45,11 +45,12 @@ const invalidTabs = computed(() => [
   organizationInvalid.value,
 ])
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice'> {
+interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
   dimensions: DimensionsString
   labelPrice: MonetaryAmountString
   paidPrice: MonetaryAmountString
   pageCount: string
+  weightKg: string
 }
 
 const newBook = reactive<CustomBookUpdate>({
@@ -84,6 +85,7 @@ const newBook = reactive<CustomBookUpdate>({
   synopsis: '',
   tags: [],
   title: '',
+  weightKg: '0',
 })
 
 const coverArt = ref<CoverArt>({
@@ -128,6 +130,7 @@ async function handleSubmit() {
     billedAt: nullOrNotBlank(newBook.billedAt),
     arrivedAt: nullOrNotBlank(newBook.arrivedAt),
     pageCount: validNumber(newBook.pageCount),
+    weightKg: validNumber(newBook.weightKg),
     labelPrice: {
       amount: validNumber(newBook.labelPrice.amount),
       currency: newBook.labelPrice.currency,
@@ -252,6 +255,7 @@ useBeforeUnload({
               v-model:dimensions="newBook.dimensions"
               v-model:series="newBook.series"
               v-model:publishers="newBook.publishers"
+              v-model:weight="newBook.weightKg"
               :disabled="isCreating"
             />
           </TabPanel>

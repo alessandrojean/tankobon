@@ -73,11 +73,12 @@ const invalidTabs = computed(() => [
   organizationInvalid.value,
 ])
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice'> {
+interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
   dimensions: DimensionsString
   labelPrice: MonetaryAmountString
   paidPrice: MonetaryAmountString
   pageCount: string
+  weightKg: string
 }
 
 const updatedBook = reactive<CustomBookUpdate>({
@@ -112,6 +113,7 @@ const updatedBook = reactive<CustomBookUpdate>({
   synopsis: '',
   tags: [],
   title: '',
+  weightKg: '0',
 })
 
 const initialBookToEdit = ref('')
@@ -153,6 +155,7 @@ whenever(book, (loadedBook) => {
     tags: (getRelationships(loadedBook, 'TAG') ?? []).map(t => t.id),
     series: getRelationship(loadedBook, 'SERIES')?.id ?? null,
     store: getRelationship(loadedBook, 'STORE')?.id ?? null,
+    weightKg: String(loadedBook.attributes.weightKg),
   } satisfies CustomBookUpdate)
 
   initialBookToEdit.value = JSON.stringify(toRaw(updatedBook))
@@ -204,6 +207,7 @@ async function handleSubmit() {
     billedAt: nullOrNotBlank(updatedBook.billedAt),
     arrivedAt: nullOrNotBlank(updatedBook.arrivedAt),
     pageCount: validNumber(updatedBook.pageCount),
+    weightKg: validNumber(updatedBook.weightKg),
     labelPrice: {
       amount: validNumber(updatedBook.labelPrice.amount),
       currency: updatedBook.labelPrice.currency,
@@ -339,6 +343,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
               v-model:dimensions="updatedBook.dimensions"
               v-model:series="updatedBook.series"
               v-model:publishers="updatedBook.publishers"
+              v-model:weight="updatedBook.weightKg"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

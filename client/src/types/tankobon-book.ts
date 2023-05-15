@@ -24,6 +24,7 @@ export interface BookAttributes {
   subtitle: string
   synopsis: string
   title: string
+  weightKg: number
 }
 
 export interface BookContributor {
@@ -77,6 +78,7 @@ export interface BookUpdate {
   synopsis: string
   tags?: string[] | null
   title: string
+  weightKg: number
 }
 
 export interface BookContributorCreateUpdate {

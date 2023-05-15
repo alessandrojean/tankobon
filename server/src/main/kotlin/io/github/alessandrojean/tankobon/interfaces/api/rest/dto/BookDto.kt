@@ -36,6 +36,7 @@ data class BookAttributesDto(
   val paidPrice: MonetaryAmount,
   val labelPrice: MonetaryAmount,
   val dimensions: DimensionsDto,
+  val weightKg: Float,
   val isInLibrary: Boolean,
   val number: String,
   val pageCount: Int,
@@ -105,6 +106,7 @@ fun Book.toAttributesDto() = BookAttributesDto(
     widthCm = dimensions.widthCm,
     heightCm = dimensions.heightCm,
   ),
+  weightKg = weightKg,
   isInLibrary = isInLibrary,
   number = number,
   pageCount = pageCount,
@@ -154,6 +156,9 @@ data class BookCreationDto(
   val labelPrice: MonetaryAmount,
   @get:NotNull
   val dimensions: DimensionsDto,
+  @get:NotNull
+  @get:Min(0)
+  val weightKg: Float,
   @get:Schema(description = "If the book is a future and planned acquisition, set as `false`")
   val isInLibrary: Boolean,
   @get:NotNull

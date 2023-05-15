@@ -137,6 +137,11 @@ const metadata = computed(() => {
       warning: attributes?.pageCount === 0,
     },
     {
+      title: t('common-fields.weight'),
+      // @ts-expect-error The signature is wrong at the library.
+      value: n(attributes?.weightKg ?? 0, 'unit', { unit: 'kilogram' }),
+    },
+    {
       title: t('common-fields.label-price'),
       value: formatPrice(attributes?.labelPrice),
     },

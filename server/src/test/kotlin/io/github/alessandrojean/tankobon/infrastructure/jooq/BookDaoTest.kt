@@ -64,6 +64,7 @@ class BookDaoTest(
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
+      weightKg = 0.2f,
       collectionId = collection.id,
       barcode = "12345",
       boughtAt = now.toUtcTimeZone(),
@@ -81,6 +82,7 @@ class BookDaoTest(
       assertThat(labelPrice).isEqualTo(book.labelPrice)
       assertThat(dimensions.widthCm).isEqualTo(book.dimensions.widthCm)
       assertThat(dimensions.heightCm).isEqualTo(book.dimensions.heightCm)
+      assertThat(weightKg).isEqualTo(book.weightKg)
       assertThat(collectionId).isEqualTo(book.collectionId)
       assertThat(barcode).isEqualTo(book.barcode)
       assertThat(boughtAt).isEqualToIgnoringNanos(now)
@@ -103,6 +105,7 @@ class BookDaoTest(
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
+      weightKg = 0.2f,
       collectionId = collection.id,
       barcode = "12345",
       boughtAt = now.toUtcTimeZone(),
@@ -117,6 +120,7 @@ class BookDaoTest(
       copy(
         title = "Updated",
         subtitle = "Subtitle updated",
+        weightKg = 0.3f,
         boughtAt = modificationDate.toUtcTimeZone(),
         billedAt = modificationDate.toUtcTimeZone(),
         arrivedAt = modificationDate.toUtcTimeZone(),
@@ -138,6 +142,7 @@ class BookDaoTest(
       assertThat(arrivedAt).isEqualToIgnoringNanos(modificationDate)
       assertThat(title).isEqualTo(updated.title)
       assertThat(subtitle).isEqualTo(updated.subtitle)
+      assertThat(weightKg).isEqualTo(updated.weightKg)
       assertThat(createdAt).isEqualTo(updated.createdAt)
       assertThat(modifiedAt)
         .isCloseTo(modificationDate, offset)

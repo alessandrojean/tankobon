@@ -137,6 +137,7 @@ class BookDao(
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
+      .set(TableBook.WEIGHT_KG, book.weightKg)
       .execute()
   }
 
@@ -166,6 +167,7 @@ class BookDao(
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
+      .set(TableBook.WEIGHT_KG, book.weightKg)
       .set(TableBook.MODIFIED_AT, LocalDateTime.now(ZoneId.of("UTC")))
       .where(TableBook.ID.eq(book.id))
       .execute()
@@ -203,6 +205,7 @@ class BookDao(
     source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
     sourceBookId = sourceBookId,
     subtitle = subtitle,
+    weightKg = weightKg,
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

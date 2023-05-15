@@ -132,6 +132,7 @@ class BookControllerTest(
                 "heightCm": 25.6,
                 "widthCm": 17.8
               },
+              "weightKg": 0.2,
               "isInLibrary": true,
               "labelPrice": {
                 "currency": "BRL",
@@ -199,6 +200,7 @@ class BookControllerTest(
                 "currency": "BRL",
                 "amount": 69.9
               },
+              "weightKg": 0.2,
               "notes": "",
               "number": "1",
               "pageCount": 300,

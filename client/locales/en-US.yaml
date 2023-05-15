@@ -44,6 +44,7 @@ common-fields:
   started-at: Started at
   finished-at: Finished at
   page: Page
+  weight: Weight
 
 common-actions:
   sign-in: Sign in
@@ -125,6 +126,7 @@ common-placeholders:
   book-store: Amazon
   book-publisher: Add a publisher…
   book-tag: Add a tag…
+  book-weight: '0.8'
 
 validation:
   required: It can not be blank.

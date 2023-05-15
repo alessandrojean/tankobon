@@ -109,6 +109,7 @@ class ImporterLifecycle(
         isInLibrary = true,
         pageCount = import.pageCount,
         synopsis = import.synopsis,
+        weightKg = 0f,
         notes = "",
       )
 

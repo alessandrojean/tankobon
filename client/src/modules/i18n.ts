@@ -43,6 +43,11 @@ const numberFormats = {
     maximumFractionDigits: 0,
     useGrouping: false,
   },
+  'unit': {
+    style: 'unit',
+    maximumFractionDigits: 2,
+    useGrouping: false,
+  },
 } satisfies DefaultNumberFormatSchema
 
 const dateTimeFormats = {
