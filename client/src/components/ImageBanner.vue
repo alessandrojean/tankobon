@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { getFullImageUrl } from '@/modules/api'
-import type { ImageCollection } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { ImageDetailsAttributes } from '@/types/tankobon-image-details'
 
 export interface ImageBannerProps {
   alt: string | undefined
-  collection: ImageCollection
   image: ImageDetailsAttributes | null | undefined
   loading?: boolean
 }
@@ -15,15 +13,14 @@ const props = withDefaults(defineProps<ImageBannerProps>(), {
   loading: false,
 })
 
-const { collection, image, loading } = toRefs(props)
+const { image, loading } = toRefs(props)
 
 const bannerUrl = computed(() => {
   if (!image.value) {
     return ''
   }
 
-  return getFullImageUrl({
-    collection: collection.value,
+  return createImageUrl({
     fileName: image.value?.fileName,
     timeHex: image.value?.timeHex,
   }) ?? ''

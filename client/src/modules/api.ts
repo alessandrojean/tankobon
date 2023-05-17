@@ -31,17 +31,15 @@ function createInstance() {
 
 export const api = createInstance()
 
-export type ImageCollection = 'avatars' | 'covers' | 'people' | 'publishers' | 'series'
 export interface GetFullImageUrlParams {
-  collection: ImageCollection
   fileName?: string
   timeHex?: string
 }
 
-export function getFullImageUrl({ collection, fileName, timeHex }: GetFullImageUrlParams) {
+export function createImageUrl({ fileName, timeHex }: GetFullImageUrlParams) {
   if (!fileName || fileName.length === 0) {
     return null
   }
 
-  return `/images/${collection}/${fileName}?${timeHex}`
+  return `/images/${fileName}?${timeHex}`
 }

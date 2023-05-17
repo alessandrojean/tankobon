@@ -2,7 +2,7 @@
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { helpers, required } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { ContributorRoleEntity } from '@/types/tankobon-contributor-role'
 import type { ImageDetailsAttributes } from '@/types/tankobon-image-details'
 import type { PersonEntity } from '@/types/tankobon-person'
@@ -111,8 +111,7 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
             <Avatar
               size="xs"
               :picture-url="
-                getFullImageUrl({
-                  collection: 'people',
+                createImageUrl({
                   fileName: personPicture?.versions['128'],
                   timeHex: personPicture?.timeHex,
                 })
@@ -126,8 +125,7 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
               class="-ml-0.5 shrink-0"
               size="xs"
               :picture-url="
-                getFullImageUrl({
-                  collection: 'people',
+                createImageUrl({
                   fileName: getPersonPicture(option)?.attributes?.versions['128'],
                   timeHex: getPersonPicture(option)?.attributes?.timeHex,
                 })

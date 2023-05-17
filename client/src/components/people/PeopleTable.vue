@@ -8,7 +8,7 @@ import type { PersonEntity, PersonSort } from '@/types/tankobon-person'
 import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import Avatar from '@/components/Avatar.vue'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 
 export interface PeopleTableProps {
   libraryId: string
@@ -85,8 +85,7 @@ const columns = [
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
-            pictureUrl: getFullImageUrl({
-              collection: 'people',
+            pictureUrl: createImageUrl({
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),

@@ -2,7 +2,7 @@
 import { EnvelopeIcon } from '@heroicons/vue/20/solid'
 import { PencilIcon, PhotoIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import { BuildingLibraryIcon } from '@heroicons/vue/24/outline'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { UserUpdate } from '@/types/tankobon-user'
 import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 import { getRelationship } from '@/utils/api'
@@ -115,8 +115,7 @@ function handleAvatar(avatar: ImageResult) {
           size="lg"
           :loading="isLoading"
           :picture-url="
-            getFullImageUrl({
-              collection: 'avatars',
+            createImageUrl({
               fileName: avatar?.attributes?.versions['128'],
               timeHex: avatar?.attributes?.timeHex,
             })
@@ -227,8 +226,7 @@ function handleAvatar(avatar: ImageResult) {
       :description="$t('users.edit-avatar-description')"
       :is-open="showAvatarDialog"
       :current-image-url="
-        getFullImageUrl({
-          collection: 'avatars',
+        createImageUrl({
           fileName: avatar?.attributes?.versions['128'],
           timeHex: avatar?.attributes?.timeHex,
         })

@@ -3,7 +3,7 @@ import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import { UserCircleIcon } from '@heroicons/vue/20/solid'
 import type { PersonUpdate } from '@/types/tankobon-person'
 import { getRelationship } from '@/utils/api'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 
 const { t } = useI18n()
@@ -104,8 +104,7 @@ function handleImage(image: ImageResult) {
           size="lg"
           :loading="isLoading"
           :picture-url="
-            getFullImageUrl({
-              collection: 'people',
+            createImageUrl({
               fileName: picture?.attributes?.versions['128'],
               timeHex: picture?.attributes?.timeHex,
             })
@@ -172,8 +171,7 @@ function handleImage(image: ImageResult) {
       :description="$t('picture-upload.description')"
       :is-open="showImageDialog"
       :current-image-url="
-        getFullImageUrl({
-          collection: 'people',
+        createImageUrl({
           fileName: picture?.attributes?.versions['128'],
           timeHex: picture?.attributes?.timeHex,
         })

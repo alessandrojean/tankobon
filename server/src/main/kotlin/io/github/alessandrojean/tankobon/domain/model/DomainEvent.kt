@@ -47,23 +47,23 @@ sealed class DomainEvent : Serializable {
   data class ReadProgressUpdated(val readProgress: ReadProgress) : DomainEvent()
   data class ReadProgressDeleted(val readProgress: ReadProgress) : DomainEvent()
 
-  data class BookCoverAdded(val imageDetails: ImageDetails) : DomainEvent()
-  data class BookCoverUpdated(val imageDetails: ImageDetails) : DomainEvent()
-  data class BookCoverDeleted(val imageDetails: ImageDetails) : DomainEvent()
+  data class BookCoverAdded(val imageDetails: Image) : DomainEvent()
+  data class BookCoverUpdated(val imageDetails: Image) : DomainEvent()
+  data class BookCoverDeleted(val imageDetails: Image) : DomainEvent()
 
-  data class UserAvatarAdded(val imageDetails: ImageDetails) : DomainEvent()
-  data class UserAvatarUpdated(val imageDetails: ImageDetails) : DomainEvent()
-  data class UserAvatarDeleted(val imageDetails: ImageDetails) : DomainEvent()
+  data class UserAvatarAdded(val imageDetails: Image) : DomainEvent()
+  data class UserAvatarUpdated(val imageDetails: Image) : DomainEvent()
+  data class UserAvatarDeleted(val imageDetails: Image) : DomainEvent()
 
-  data class PersonPictureAdded(val imageDetails: ImageDetails) : DomainEvent()
-  data class PersonPictureUpdated(val imageDetails: ImageDetails) : DomainEvent()
-  data class PersonPictureDeleted(val imageDetails: ImageDetails) : DomainEvent()
+  data class PersonPictureAdded(val imageDetails: Image) : DomainEvent()
+  data class PersonPictureUpdated(val imageDetails: Image) : DomainEvent()
+  data class PersonPictureDeleted(val imageDetails: Image) : DomainEvent()
 
-  data class PublisherPictureAdded(val imageDetails: ImageDetails) : DomainEvent()
-  data class PublisherPictureUpdated(val imageDetails: ImageDetails) : DomainEvent()
-  data class PublisherPictureDeleted(val imageDetails: ImageDetails) : DomainEvent()
+  data class PublisherPictureAdded(val imageDetails: Image) : DomainEvent()
+  data class PublisherPictureUpdated(val imageDetails: Image) : DomainEvent()
+  data class PublisherPictureDeleted(val imageDetails: Image) : DomainEvent()
 
-  data class SeriesCoverAdded(val imageDetails: ImageDetails) : DomainEvent()
-  data class SeriesCoverUpdated(val imageDetails: ImageDetails) : DomainEvent()
-  data class SeriesCoverDeleted(val imageDetails: ImageDetails) : DomainEvent()
+  data class SeriesCoverAdded(val imageDetails: Image) : DomainEvent()
+  data class SeriesCoverUpdated(val imageDetails: Image) : DomainEvent()
+  data class SeriesCoverDeleted(val imageDetails: Image) : DomainEvent()
 }

@@ -2,7 +2,8 @@ package io.github.alessandrojean.tankobon.infrastructure.image
 
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
-import io.github.alessandrojean.tankobon.domain.model.ImageDetails
+import io.github.alessandrojean.tankobon.domain.model.Image
+import io.github.alessandrojean.tankobon.domain.persistence.ImageRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.infrastructure.configuration.TankobonProperties
 import org.springframework.stereotype.Component
@@ -14,8 +15,9 @@ class PublisherPictureLifecycle(
   properties: TankobonProperties,
   imageConverter: ImageConverter,
   eventPublisher: EventPublisher,
+  imageRepository: ImageRepository,
   private val publisherRepository: PublisherRepository,
-) : EntityImageLifecycle("publisher", eventPublisher, imageConverter) {
+) : EntityImageLifecycle("publisher", eventPublisher, imageConverter, imageRepository) {
 
   companion object {
     private const val PICTURES_DIR = "publishers"
@@ -28,7 +30,7 @@ class PublisherPictureLifecycle(
     return publisherRepository.findByIdOrNull(entityId) != null
   }
 
-  override fun createEvent(imageDetails: ImageDetails, type: PublishEventType) = when (type) {
+  override fun createEvent(imageDetails: Image, type: PublishEventType) = when (type) {
     PublishEventType.CREATED -> DomainEvent.PublisherPictureAdded(imageDetails)
     PublishEventType.UPDATED -> DomainEvent.PublisherPictureUpdated(imageDetails)
     else -> DomainEvent.PublisherPictureDeleted(imageDetails)

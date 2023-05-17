@@ -49,6 +49,7 @@ import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_CONTRIBUTOR as TableBo
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_PUBLISHER as TableBookPublisher
 import io.github.alessandrojean.tankobon.jooq.Tables.BOOK_TAG as TableBookTag
 import io.github.alessandrojean.tankobon.jooq.Tables.COLLECTION as TableCollection
+import io.github.alessandrojean.tankobon.jooq.Tables.IMAGE as TableImage
 
 @Component
 class BookDtoDao(
@@ -445,10 +446,12 @@ class BookDtoDao(
         .fetch()
         .associate { it[TableBook.ID] to RelationDto(it[TableCollection.LIBRARY_ID], ReferenceExpansionBook.LIBRARY) }
 
-      covers = bookIds
-        .associateWith { bookCoverLifecycle.hasImage(it) }
-        .filterValues { it }
-        .mapValues { RelationDto(it.key, ReferenceExpansionBook.COVER_ART) }
+      covers = dsl
+        .select(TableImage.ID)
+        .from(TableImage)
+        .where(TableImage.ID.`in`(dsl.selectTempStrings()))
+        .fetch()
+        .associate { it[TableImage.ID] to RelationDto(it[TableImage.ID], ReferenceExpansionBook.COVER_ART) }
     }
 
     return map { book ->

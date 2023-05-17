@@ -65,7 +65,6 @@ useHead({ title: () => series.value?.attributes.name ?? '' })
   >
     <div class="absolute inset-x-0 top-0">
       <ImageBanner
-        collection="series"
         :alt="series?.attributes.name ?? ''"
         :loading="isLoading"
         :image="getRelationship(series, 'SERIES_COVER')?.attributes"
@@ -76,7 +75,6 @@ useHead({ title: () => series.value?.attributes.name ?? '' })
       <div class="series-grid">
         <ImageCover
           class="series-cover"
-          collection="series"
           version="256"
           :icon="Square2StackIcon"
           :loading="isLoading"

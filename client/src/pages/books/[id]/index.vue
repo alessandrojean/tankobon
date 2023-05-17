@@ -180,7 +180,6 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
   >
     <div class="absolute inset-x-0 top-0">
       <ImageBanner
-        collection="covers"
         :alt="book?.attributes.title ?? ''"
         :loading="!showBookInfo"
         :image="getRelationship(book, 'COVER_ART')?.attributes"
@@ -196,7 +195,6 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
       >
         <ImageCover
           class="book-cover"
-          collection="covers"
           version="256"
           :loading="!showBookInfo"
           :image="getRelationship(book, 'COVER_ART')?.attributes"

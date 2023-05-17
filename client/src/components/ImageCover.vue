@@ -5,13 +5,11 @@ import {
   ExclamationCircleIcon,
   MagnifyingGlassPlusIcon,
 } from '@heroicons/vue/24/outline'
-import type { ImageCollection } from '@/modules/api'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { ImageDetailsAttributes } from '@/types/tankobon-image-details'
 
 export interface ImageCoverProps {
   alt: string
-  collection: ImageCollection
   icon?: Component
   image: ImageDetailsAttributes | null | undefined
   loading?: boolean
@@ -25,15 +23,14 @@ const props = withDefaults(defineProps<ImageCoverProps>(), {
   version: 'original',
 })
 
-const { collection, image, loading, version } = toRefs(props)
+const { image, loading, version } = toRefs(props)
 
 function getCoverUrl(as: string) {
   if (!image.value || !image.value.versions[as]) {
     return ''
   }
 
-  return getFullImageUrl({
-    collection: collection.value,
+  return createImageUrl({
     fileName: version.value === 'original'
       ? image.value.fileName
       : image.value.versions[as],

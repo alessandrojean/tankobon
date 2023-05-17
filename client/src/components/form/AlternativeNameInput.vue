@@ -111,11 +111,9 @@ function blurBothFields() {
         :model-value="language === '' ? 'null' : language"
         :options="languages"
         :option-text="getOriginalLanguageName"
-        :option-value="(l: string) => l"
-        :option-value-select="(l: string) => l === null ? 'null' : l"
+        :option-value="l => l"
         :disabled-options="[0]"
         @update:model-value="handleLanguageChange"
-        @update:model-value-select="handleLanguageChange"
       >
         <template #listbox-button>
           <ListboxButton

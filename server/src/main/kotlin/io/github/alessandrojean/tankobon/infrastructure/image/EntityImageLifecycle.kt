@@ -3,7 +3,8 @@ package io.github.alessandrojean.tankobon.infrastructure.image
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
-import io.github.alessandrojean.tankobon.domain.model.ImageDetails
+import io.github.alessandrojean.tankobon.domain.model.Image
+import io.github.alessandrojean.tankobon.domain.persistence.ImageRepository
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_EVENTS
 import io.github.alessandrojean.tankobon.infrastructure.jms.TOPIC_FACTORY
 import io.trbl.blurhash.BlurHash
@@ -17,10 +18,11 @@ import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.nio.file.attribute.BasicFileAttributes
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.imageio.ImageIO
 import kotlin.io.path.extension
-import kotlin.io.path.notExists
+import kotlin.io.path.inputStream
 import kotlin.io.path.readBytes
 
 private val logger = KotlinLogging.logger {}
@@ -29,6 +31,7 @@ abstract class EntityImageLifecycle(
   protected val entityName: String,
   protected val eventPublisher: EventPublisher,
   protected val imageConverter: ImageConverter,
+  protected val imageRepository: ImageRepository,
 ) {
 
   /**
@@ -50,7 +53,7 @@ abstract class EntityImageLifecycle(
 
   protected abstract fun entityExistsById(entityId: String): Boolean
 
-  protected abstract fun createEvent(imageDetails: ImageDetails, type: PublishEventType): DomainEvent
+  protected abstract fun createEvent(imageDetails: Image, type: PublishEventType): DomainEvent
 
   protected abstract fun isDeleteEvent(event: DomainEvent): Boolean
 
@@ -72,7 +75,7 @@ abstract class EntityImageLifecycle(
     val updating = hasImage(entityId)
 
     val resizedFile = file.let {
-      val (width, height) = it.getWidthAndHeight()
+      val (width, height) = file.getWidthAndHeight()
 
       if (width < maxSize && height < maxSize) {
         return@let imageConverter.convertImage(it, "jpeg")
@@ -90,7 +93,37 @@ abstract class EntityImageLifecycle(
       }
     }
 
-    Files.copy(resizedFile.inputStream(), entityId.toImageFilePath(), StandardCopyOption.REPLACE_EXISTING)
+    val destination = entityId.toImageFilePath()
+
+    Files.copy(resizedFile.inputStream(), destination, StandardCopyOption.REPLACE_EXISTING)
+
+    val image = ImageIO.read(destination.inputStream())
+    val folderName = imagesDirectoryPath.fileNameString()
+    val imageDomain = Image(
+      id = entityId,
+      fileName = "$folderName/${destination.fileNameString()}",
+      width = image.width,
+      height = image.height,
+      aspectRatio = image.aspectRatio(),
+      format = destination.extension,
+      mimeType = URLConnection.guessContentTypeFromName(destination.fileNameString()),
+      timeHex = LocalDateTime.now()
+        .atZone(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
+        .toString(16),
+      blurHash = BlurHash.encode(image),
+    )
+
+    if (updating) {
+      val existingImage = getImageDetails(entityId)!!
+
+      imageRepository.update(
+        imageDomain.copy(createdAt = existingImage.createdAt)
+      )
+    } else {
+      imageRepository.insert(imageDomain)
+    }
 
     createThumbnails(entityId)
     getImageDetails(entityId)?.let {
@@ -108,49 +141,40 @@ abstract class EntityImageLifecycle(
 
     thumbnailSizes.forEach { size -> Files.deleteIfExists(entityId.toThumbnailFilePath(size)) }
 
+    imageRepository.delete(entityId)
+
     details?.let { eventPublisher.publishEvent(createEvent(it, PublishEventType.DELETED)) }
   }
 
   @Throws(IOException::class)
-  fun hasImage(entityId: String): Boolean = Files.exists(entityId.toImageFilePath())
+  fun hasImage(entityId: String): Boolean = imageRepository.findByIdOrNull(entityId) != null
 
   @Throws(IOException::class)
-  fun getImageDetails(entityId: String): ImageDetails? {
-    val imageFilePath = entityId.toImageFilePath()
+  fun getEntitiesWithImages(entityIds: Collection<String>): Map<String, Boolean> {
+    val images = imageRepository.findAllByIds(entityIds).map { it.id }.toHashSet()
 
-    if (Files.notExists(imageFilePath)) {
-      return null
-    }
+    return entityIds.associateWith { it in images }
+  }
 
-    val image = ImageIO.read(imageFilePath.toFile())
-    val attributes = Files.readAttributes(imageFilePath, BasicFileAttributes::class.java)
+  @Throws(IOException::class)
+  fun getImageDetails(entityId: String): Image? {
+    val image = imageRepository.findByIdOrNull(entityId)
+      ?: return null
 
-    return ImageDetails(
-      id = entityId,
-      fileName = imageFilePath.fileNameString(),
+    return image.copy(
       versions = mapOf(
-        "original" to imageFilePath.fileNameString(),
-        *thumbnailSizes.map { it.toString() to entityId.toThumbnailFilePath(it).fileNameString() }.toTypedArray(),
-      ),
-      width = image.width,
-      height = image.height,
-      aspectRatio = image.aspectRatio(),
-      format = imageFilePath.extension,
-      mimeType = URLConnection.guessContentTypeFromName(imageFilePath.fileNameString()),
-      timeHex = attributes.lastModifiedTime().toMillis().toString(16),
-      blurHash = BlurHash.encode(image)
+        "original" to image.fileName,
+        *thumbnailSizes
+          .map { size ->
+            val sizeString = size.toString()
+            sizeString to image.fileName.replace(".", ".$sizeString.")
+          }
+          .toTypedArray()
+      )
     )
   }
 
-  fun count(): Long {
-    if (imagesDirectoryPath.notExists()) {
-      return 0L
-    }
-
-    return Files.list(imagesDirectoryPath)
-      .filter { it.toFile().isFile && !it.fileNameString().matches(THUMBNAIL_REGEX) }
-      .count()
-  }
+  fun count(): Long = imageRepository.countByFolderName(imagesDirectoryPath.fileNameString())
 
   @JmsListener(destination = TOPIC_EVENTS, containerFactory = TOPIC_FACTORY)
   fun consumeEvents(event: DomainEvent) {
@@ -181,7 +205,7 @@ abstract class EntityImageLifecycle(
   private fun greatestCommonDivisor(a: Int, b: Int): Int =
     if (b == 0) a else greatestCommonDivisor(b, a % b)
 
-  private fun BufferedImage.aspectRatio(): String {
+  fun BufferedImage.aspectRatio(): String {
     val gcd = greatestCommonDivisor(width, height)
 
     return "${width / gcd} / ${height / gcd}"

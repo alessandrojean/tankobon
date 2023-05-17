@@ -7,7 +7,7 @@ import { positiveDecimal } from '@/utils/validation'
 import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
 import type { SeriesEntity } from '@/types/tankobon-series'
 import type { PublisherEntity } from '@/types/tankobon-publisher'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 
 export interface BookMetadataFormProps {
   disabled?: boolean
@@ -249,8 +249,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
             size="xxs"
             :empty-icon="BuildingOffice2Icon"
             :picture-url="
-              getFullImageUrl({
-                collection: 'publishers',
+              createImageUrl({
                 fileName: getPublisherPicture(publisherMap[option])?.versions['64'],
                 timeHex: getPublisherPicture(publisherMap[option])?.timeHex,
               })
@@ -282,8 +281,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
             size="xs"
             :empty-icon="BuildingOffice2Icon"
             :picture-url="
-              getFullImageUrl({
-                collection: 'publishers',
+              createImageUrl({
                 fileName: getPublisherPicture(option)?.versions['128'],
                 timeHex: getPublisherPicture(option)?.timeHex,
               })

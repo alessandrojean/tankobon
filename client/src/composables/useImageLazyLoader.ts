@@ -3,7 +3,7 @@ import type { ComponentPublicInstance, Ref } from 'vue'
 import type { _RouterLinkI } from 'vue-router'
 
 export default function useImageLazyLoader(
-  imageUrl: Ref<string | undefined>,
+  imageUrl: Ref<string | undefined | null>,
   elRef: Ref<
     ComponentPublicInstance | InstanceType<_RouterLinkI> | Element | undefined
   >,

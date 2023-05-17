@@ -82,7 +82,7 @@ class SeriesController(
     )
 
     val series = referenceExpansion.expand(
-      entities = seriesPage.content.map { it.toDto().withCoverIfExists() },
+      entities = seriesPage.content.map { it.toDto() }.withCoverIfExists(),
       relationsToExpand = includes,
     )
 
@@ -128,7 +128,7 @@ class SeriesController(
     )
 
     val series = referenceExpansion.expand(
-      entities = seriesPage.content.map { it.toDto().withCoverIfExists() },
+      entities = seriesPage.content.map { it.toDto() }.withCoverIfExists(),
       relationsToExpand = includes,
     )
 
@@ -287,5 +287,22 @@ class SeriesController(
     return copy(
       relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionSeries.SERIES_COVER))
     )
+  }
+
+  private fun List<SeriesEntityDto>.withCoverIfExists(): List<SeriesEntityDto> {
+    val entitiesWithImages = seriesCoverLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionSeries.SERIES_COVER)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
+        )
+      )
+    }
   }
 }

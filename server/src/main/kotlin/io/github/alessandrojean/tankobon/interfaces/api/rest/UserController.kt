@@ -25,6 +25,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.UserUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -299,11 +300,13 @@ class UserController(
       sort,
     )
 
-    val users = userRepository.findAll(pageRequest).map { it.toDto().withAvatarIfExists() }
-    val expanded = referenceExpansion.expand(users.content, includes)
+    val usersPage = userRepository.findAll(pageRequest)
+    val users = referenceExpansion.expand(
+      entities = usersPage.content.map { it.toDto() }.withAvatarIfExists(),
+      relationsToExpand = includes
+    )
 
-    return PageImpl(expanded, users.pageable, users.totalElements)
-      .toSuccessCollectionResponseDto()
+    return SuccessPaginatedCollectionResponseDto(users, usersPage.toPaginationDto())
   }
 
   @GetMapping("{userId}")
@@ -438,6 +441,23 @@ class UserController(
     return copy(
       relationships = listOf(RelationDto(id = id, type = ReferenceExpansionUser.AVATAR))
     )
+  }
+
+  private fun List<UserEntityDto>.withAvatarIfExists(): List<UserEntityDto> {
+    val entitiesWithImages = userAvatarLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionUser.AVATAR)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
+        )
+      )
+    }
   }
 
   @GetMapping("{userId}/authentication-activity/latest")

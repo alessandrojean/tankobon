@@ -36,7 +36,7 @@ const dateFormatter = computed(() => {
   })
 })
 
-const { data: publishers, isLoading } = useLibraryBooksQuery({
+const { data: books, isLoading } = useLibraryBooksQuery({
   libraryId,
   search,
   page: computed(() => pagination.value.pageIndex),
@@ -47,11 +47,12 @@ const { data: publishers, isLoading } = useLibraryBooksQuery({
       direction: sort.desc ? 'desc' : 'asc',
     }))
   }),
+  includes: ['cover_art'],
   enabled: computed(() => libraryId.value !== undefined),
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('publishers.fetch-failure'),
+      title: t('books.fetch-failure'),
       body: error.message,
     })
   },
@@ -117,14 +118,21 @@ const columns = [
 </script>
 
 <template>
+  <div class="grid grid-cols-5 my-6">
+    <BookCard
+      :loading="isLoading"
+      :book="books?.data?.[0]"
+    />
+  </div>
+
   <Table
     v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
     v-model:sorting="sorting"
-    :data="publishers?.data"
+    :data="books?.data"
     :columns="columns"
-    :page-count="publishers?.pagination?.totalPages"
-    :items-count="publishers?.pagination?.totalElements"
+    :page-count="books?.pagination?.totalPages"
+    :items-count="books?.pagination?.totalElements"
     :loading="isLoading"
   >
     <template #empty>

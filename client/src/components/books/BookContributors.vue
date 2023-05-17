@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FocusKeys } from '@primer/behaviors'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { ContributorEntity } from '@/types/tankobon-contributor'
 import { getRelationship } from '@/utils/api'
 
@@ -62,8 +62,7 @@ useFocusZone({
           empty-style="letter"
           class="relative z-10 shrink-0"
           :picture-url="
-            getFullImageUrl({
-              collection: 'people',
+            createImageUrl({
               fileName: pictures[idx]?.attributes?.versions?.['128'],
               timeHex: pictures[idx]?.attributes?.timeHex,
             })

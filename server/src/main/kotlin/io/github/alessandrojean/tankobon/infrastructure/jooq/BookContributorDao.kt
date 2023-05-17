@@ -5,9 +5,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.BookContributorRepos
 import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBookContributor
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPerson
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookContributorRecord
@@ -79,8 +77,9 @@ class BookContributorDao(
             personId = record[TablePerson.ID],
             personName = record[TablePerson.NAME]
           )
-        ).withPictureIfExists()
+        )
       }
+      .withPictureIfExists()
 
   override fun findAllByBookId(bookId: String): Collection<BookContributor> =
     dsl.selectFrom(TableBookContributor)
@@ -108,8 +107,9 @@ class BookContributorDao(
             personId = record[TablePerson.ID],
             personName = record[TablePerson.NAME]
           )
-        ).withPictureIfExists()
+        )
       }
+      .withPictureIfExists()
 
   @Transactional
   override fun insert(bookContributor: BookContributor) {
@@ -181,6 +181,23 @@ class BookContributorDao(
     return copy(
       relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = ReferenceExpansionBookContributor.PERSON_PICTURE))
     )
+  }
+
+  private fun List<BookContributorEntityDto>.withPictureIfExists(): List<BookContributorEntityDto> {
+    val entitiesWithImages = personPictureLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionBookContributor.PERSON_PICTURE)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
+        )
+      )
+    }
   }
 
 }

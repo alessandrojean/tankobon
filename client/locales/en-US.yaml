@@ -489,6 +489,7 @@ books:
   organization: Organization
   relationships: Relationships
   untitled: Untitled
+  single: Single volume
   volume: 'Volume #{0}'
   information: Information
   reading: Reading

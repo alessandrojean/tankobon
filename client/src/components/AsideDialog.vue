@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
-import type { AsideMenuProps } from '@/components/AsideMenu.vue'
 
-export interface DashboardAsideDialogProps extends AsideMenuProps {
+export interface AsideDialogProps {
+  collapsible?: boolean
+  dark?: boolean
   isOpen?: boolean
   isAdmin?: boolean
 }
 
-const props = withDefaults(defineProps<DashboardAsideDialogProps>(), {
+const props = withDefaults(defineProps<AsideDialogProps>(), {
   isAdmin: false,
   isOpen: false,
   libraryGroups: () => [],

@@ -9,7 +9,7 @@ import BookOrganizationForm from '@/components/books/BookOrganizationForm.vue'
 import { getRelationship, getRelationships } from '@/utils/api'
 import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
 import type { CoverArt } from '@/components/books/BookCoverArtForm.vue'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
 import type { TankobonApiError } from '@/types/tankobon-response'
 
@@ -360,8 +360,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
               ref="coverArtForm"
               v-model:cover-art="coverArt"
               :current-image-url="
-                getFullImageUrl({
-                  collection: 'covers',
+                createImageUrl({
                   fileName: bookCover?.attributes?.versions?.['256'],
                   timeHex: bookCover?.attributes?.timeHex,
                 })

@@ -18,7 +18,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPerson
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -83,7 +82,7 @@ class PersonController(
     )
 
     val people = referenceExpansion.expand(
-      entities = peoplePage.content.map { it.toDto().withPictureIfExists() },
+      entities = peoplePage.content.map { it.toDto() }.withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -129,7 +128,7 @@ class PersonController(
     )
 
     val people = referenceExpansion.expand(
-      entities = peoplePage.content.map { it.toDto().withPictureIfExists() },
+      entities = peoplePage.content.map { it.toDto() }.withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -276,5 +275,22 @@ class PersonController(
     return copy(
       relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPerson.PERSON_PICTURE))
     )
+  }
+
+  private fun List<PersonEntityDto>.withPictureIfExists(): List<PersonEntityDto> {
+    val entitiesWithImages = personPictureLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionPerson.PERSON_PICTURE)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
+        )
+      )
+    }
   }
 }

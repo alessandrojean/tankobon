@@ -2,7 +2,7 @@
 import { BuildingOffice2Icon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import { PhotoIcon } from '@heroicons/vue/20/solid'
 import type { PublisherUpdate } from '@/types/tankobon-publisher'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import { getRelationship } from '@/utils/api'
 import type { ImageResult } from '@/components/entity/EntityImageDialog.vue'
 
@@ -106,8 +106,7 @@ function handleImage(image: ImageResult) {
           :empty-icon="BuildingOffice2Icon"
           :loading="isLoading"
           :picture-url="
-            getFullImageUrl({
-              collection: 'publishers',
+            createImageUrl({
               fileName: picture?.attributes?.versions['128'],
               timeHex: picture?.attributes?.timeHex,
             })
@@ -174,8 +173,7 @@ function handleImage(image: ImageResult) {
       :description="$t('picture-upload.description')"
       :is-open="showImageDialog"
       :current-image-url="
-        getFullImageUrl({
-          collection: 'publishers',
+        createImageUrl({
           fileName: picture?.attributes?.versions['128'],
           timeHex: picture?.attributes?.timeHex,
         })

@@ -8,7 +8,7 @@ import {
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import type { UserEntity, UserSort } from '@/types/tankobon-user'
 import type { Sort } from '@/types/tankobon-api'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import Avatar from '@/components/Avatar.vue'
 import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
@@ -88,8 +88,7 @@ const columns = [
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
-            pictureUrl: getFullImageUrl({
-              collection: 'avatars',
+            pictureUrl: createImageUrl({
               fileName: avatar?.attributes?.versions?.['64'],
               timeHex: avatar?.attributes?.timeHex,
             }),

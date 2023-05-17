@@ -6,7 +6,7 @@ import {
 } from '@heroicons/vue/20/solid'
 import { RouterLink } from 'vue-router'
 import type { NavigationFailure } from 'vue-router'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 
 export interface ProfileMenuProps {
   light?: boolean
@@ -26,8 +26,7 @@ const avatar = computed(() => userStore.avatar)
 const me = computed(() => userStore.me)
 
 const avatarUrl = computed(() => {
-  return getFullImageUrl({
-    collection: 'avatars',
+  return createImageUrl({
     fileName: avatar.value?.attributes?.versions?.['64'],
     timeHex: avatar.value?.attributes?.timeHex,
   })

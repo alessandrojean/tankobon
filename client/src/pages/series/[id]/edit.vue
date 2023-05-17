@@ -3,7 +3,7 @@ import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import { v4 as uuid } from 'uuid'
 import { getRelationship } from '@/utils/api'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import type { SeriesUpdate } from '@/types/tankobon-series'
 import type { Cover } from '@/components/series/SeriesCoverForm.vue'
@@ -261,8 +261,7 @@ const seriesCover = computed(() => getRelationship(series.value, 'SERIES_COVER')
               ref="coverForm"
               v-model:cover="cover"
               :current-image-url="
-                getFullImageUrl({
-                  collection: 'series',
+                createImageUrl({
                   fileName: seriesCover?.attributes?.versions?.['256'],
                   timeHex: seriesCover?.attributes?.timeHex,
                 })

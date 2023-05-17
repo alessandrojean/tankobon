@@ -17,9 +17,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherCreati
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PublisherUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionPublisher
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -84,7 +82,7 @@ class PublisherController(
     )
 
     val publishers = referenceExpansion.expand(
-      entities = publishersPage.content.map { it.toDto().withPictureIfExists() },
+      entities = publishersPage.content.map { it.toDto() }.withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -130,7 +128,7 @@ class PublisherController(
     )
 
     val publishers = referenceExpansion.expand(
-      entities = publishersPage.content.map { it.toDto().withPictureIfExists() },
+      entities = publishersPage.content.map { it.toDto() }.withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -278,5 +276,22 @@ class PublisherController(
     return copy(
       relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE))
     )
+  }
+
+  private fun List<PublisherEntityDto>.withPictureIfExists(): List<PublisherEntityDto> {
+    val entitiesWithImages = publisherPictureLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
+        )
+      )
+    }
   }
 }

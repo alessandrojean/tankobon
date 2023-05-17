@@ -8,7 +8,7 @@ import Button from '@/components/form/Button.vue'
 import type { PublisherEntity, PublisherSort } from '@/types/tankobon-publisher'
 import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
-import { getFullImageUrl } from '@/modules/api'
+import { createImageUrl } from '@/modules/api'
 
 export interface PublishersTableProps {
   libraryId: string
@@ -87,8 +87,7 @@ const columns = [
           h(Avatar, {
             square: true,
             emptyIcon: BuildingOffice2Icon,
-            pictureUrl: getFullImageUrl({
-              collection: 'publishers',
+            pictureUrl: createImageUrl({
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),

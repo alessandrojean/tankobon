@@ -2,7 +2,8 @@ package io.github.alessandrojean.tankobon.infrastructure.image
 
 import io.github.alessandrojean.tankobon.application.events.EventPublisher
 import io.github.alessandrojean.tankobon.domain.model.DomainEvent
-import io.github.alessandrojean.tankobon.domain.model.ImageDetails
+import io.github.alessandrojean.tankobon.domain.model.Image
+import io.github.alessandrojean.tankobon.domain.persistence.ImageRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.infrastructure.configuration.TankobonProperties
 import org.springframework.stereotype.Component
@@ -14,8 +15,9 @@ class UserAvatarLifecycle(
   properties: TankobonProperties,
   imageConverter: ImageConverter,
   eventPublisher: EventPublisher,
+  imageRepository: ImageRepository,
   private val userRepository: TankobonUserRepository,
-) : EntityImageLifecycle("user", eventPublisher, imageConverter) {
+) : EntityImageLifecycle("user", eventPublisher, imageConverter, imageRepository) {
 
   companion object {
     private const val AVATARS_DIR = "avatars"
@@ -28,7 +30,7 @@ class UserAvatarLifecycle(
     return userRepository.findByIdOrNull(entityId) != null
   }
 
-  override fun createEvent(imageDetails: ImageDetails, type: PublishEventType) = when (type) {
+  override fun createEvent(imageDetails: Image, type: PublishEventType) = when (type) {
     PublishEventType.CREATED -> DomainEvent.UserAvatarAdded(imageDetails)
     PublishEventType.UPDATED -> DomainEvent.UserAvatarUpdated(imageDetails)
     else -> DomainEvent.UserAvatarDeleted(imageDetails)

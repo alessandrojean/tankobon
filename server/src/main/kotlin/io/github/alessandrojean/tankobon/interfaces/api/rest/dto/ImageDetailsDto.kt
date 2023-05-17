@@ -1,6 +1,6 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
-import io.github.alessandrojean.tankobon.domain.model.ImageDetails
+import io.github.alessandrojean.tankobon.domain.model.Image
 
 data class ImageDetailsAttributesDto(
   val fileName: String,
@@ -14,7 +14,7 @@ data class ImageDetailsAttributesDto(
   val blurHash: String,
 ) : EntityAttributesDto()
 
-fun ImageDetails.toAttributesDto() = ImageDetailsAttributesDto(
+fun Image.toAttributesDto() = ImageDetailsAttributesDto(
   fileName = fileName,
   versions = versions,
   width = width,
