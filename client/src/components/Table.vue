@@ -7,11 +7,14 @@ import {
   getCoreRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/20/solid'
+import { ChevronUpIcon } from '@heroicons/vue/20/solid'
+import { ColumnOrderState } from '@tanstack/vue-table'
 
 export interface TableProps {
   data?: any[]
   columns: ColumnDef<any, any>[]
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
   pageCount?: number
   itemsCount?: number
   pagination?: PaginationState
@@ -27,6 +30,8 @@ export interface TableEmits {
 }
 
 const props = withDefaults(defineProps<TableProps>(), {
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
   data: () => [],
   pageCount: -1,
   itemsCount: -1,
@@ -41,6 +46,8 @@ const emit = defineEmits<TableEmits>()
 const {
   data,
   columns,
+  columnOrder,
+  columnVisibility,
   pageCount,
   itemsCount,
   pagination,
@@ -68,6 +75,12 @@ const table = useVueTable({
     get sorting() {
       return sorting.value
     },
+    get columnOrder() {
+      return columnOrder.value
+    },
+    get columnVisibility() {
+      return columnVisibility.value
+    }
   },
   onPaginationChange: (updaterOrValue) => {
     emit(

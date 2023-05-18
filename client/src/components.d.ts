@@ -108,6 +108,9 @@ declare module '@vue/runtime-core' {
     PersonCreateDialog: typeof import('./components/people/PersonCreateDialog.vue')['default']
     PersonEditDialog: typeof import('./components/people/PersonEditDialog.vue')['default']
     PersonForm: typeof import('./components/people/PersonForm.vue')['default']
+    Popover: typeof import('@headlessui/vue')['Popover']
+    PopoverButton: typeof import('@headlessui/vue')['PopoverButton']
+    PopoverPanel: typeof import('@headlessui/vue')['PopoverPanel']
     ProfileMenu: typeof import('./components/ProfileMenu.vue')['default']
     PublisherCreateDialog: typeof import('./components/publishers/PublisherCreateDialog.vue')['default']
     PublisherEditDialog: typeof import('./components/publishers/PublisherEditDialog.vue')['default']
@@ -137,6 +140,7 @@ declare module '@vue/runtime-core' {
     SeriesName: typeof import('./components/series/SeriesName.vue')['default']
     SeriesTable: typeof import('./components/series/SeriesTable.vue')['default']
     SeriesTitle: typeof import('./components/series/SeriesTitle.vue')['default']
+    SixDotsVerticalIcon: typeof import('./components/icons/SixDotsVerticalIcon.vue')['default']
     SortControls: typeof import('./components/SortControls.vue')['default']
     StatisticCard: typeof import('./components/StatisticCard.vue')['default']
     StoreCreateDialog: typeof import('./components/stores/StoreCreateDialog.vue')['default']
@@ -146,6 +150,7 @@ declare module '@vue/runtime-core' {
     Tab: typeof import('@headlessui/vue')['Tab']
     TabGroup: typeof import('@headlessui/vue')['TabGroup']
     Table: typeof import('./components/Table.vue')['default']
+    TableColumnsControls: typeof import('./components/TableColumnsControls.vue')['default']
     TableControls: typeof import('./components/TableControls.vue')['default']
     TabList: typeof import('@headlessui/vue')['TabList']
     TabPanel: typeof import('@headlessui/vue')['TabPanel']
@@ -166,6 +171,7 @@ declare module '@vue/runtime-core' {
     UserEditDialog: typeof import('./components/users/UserEditDialog.vue')['default']
     UserForm: typeof import('./components/users/UserForm.vue')['default']
     UsersTable: typeof import('./components/users/UsersTable.vue')['default']
+    ViewControls: typeof import('./components/ViewControls.vue')['default']
     ViewModeSelector: typeof import('./components/ViewModeSelector.vue')['default']
   }
 }

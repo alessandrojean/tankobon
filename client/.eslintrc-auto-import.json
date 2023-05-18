@@ -389,6 +389,7 @@
     "useUserLibrariesByUserQuery": true,
     "useUserLibrariesQuery": true,
     "useUserMedia": true,
+    "useUserPreference": true,
     "useUserPreferencesQuery": true,
     "useUserQuery": true,
     "useUserStore": true,

@@ -384,6 +384,7 @@ declare global {
   const useUserLibrariesByUserQuery: typeof import('./queries/library/useUserLibrariesByUserQuery')['default']
   const useUserLibrariesQuery: typeof import('./queries/library/useUserLibrariesQuery')['default']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
+  const useUserPreference: typeof import('./composables/useUserPreference')['default']
   const useUserPreferencesQuery: typeof import('./queries/user/useUserPreferencesQuery')['default']
   const useUserQuery: typeof import('./queries/user/useUserQuery')['default']
   const useUserStore: typeof import('./stores/user')['useUserStore']
@@ -810,6 +811,7 @@ declare module 'vue' {
     readonly useUserLibrariesByUserQuery: UnwrapRef<typeof import('./queries/library/useUserLibrariesByUserQuery')['default']>
     readonly useUserLibrariesQuery: UnwrapRef<typeof import('./queries/library/useUserLibrariesQuery')['default']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
+    readonly useUserPreference: UnwrapRef<typeof import('./composables/useUserPreference')['default']>
     readonly useUserPreferencesQuery: UnwrapRef<typeof import('./queries/user/useUserPreferencesQuery')['default']>
     readonly useUserQuery: UnwrapRef<typeof import('./queries/user/useUserQuery')['default']>
     readonly useUserStore: UnwrapRef<typeof import('./stores/user')['useUserStore']>

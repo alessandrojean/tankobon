@@ -76,6 +76,7 @@ common-actions:
   add: Add
   show-options: Show options
   sort: Sort
+  columns: Columns
 
 common-values:
   true-value: 'True'

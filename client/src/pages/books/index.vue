@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { SortPropertyOption } from '@/components/SortControls.vue'
+import { TableColumn } from '@/components/TableColumnsControls.vue'
 import type { ViewMode } from '@/components/ViewModeSelector.vue'
 import Button from '@/components/form/Button.vue'
 import { Sort, SortDirection } from '@/types/tankobon-api'
 import { BookSort } from '@/types/tankobon-book'
 import { safeNumber } from '@/utils/route'
 import { ArrowDownOnSquareIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { ColumnOrderState } from '@tanstack/vue-table'
 
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library!.id)
@@ -44,7 +46,7 @@ const sort = computed(() => {
 const { data: books, isLoading } = useLibraryBooksQuery({
   libraryId,
   search,
-  includes: ['cover_art', 'collection'],
+  includes: ['cover_art', 'collection', 'series', 'publisher'],
   page,
   size,
   sort: computed(() => sort.value ? [sort.value] : undefined),
@@ -110,6 +112,46 @@ const sortProperties = computed(() => {
 
   return properties.sort((a, b) => a.text.localeCompare(b.text, locale.value))
 })
+
+const tableColumns = computed(() => {
+  const columns: TableColumn[] = [
+    { id: 'title', text: t('common-fields.title'), disabled: true },
+    { id: 'collection', text: t('common-fields.collection') },
+    { id: 'series', text: t('common-fields.series') },
+    { id: 'boughtAt', text: t('common-fields.bought-at') },
+    { id: 'billedAt', text: t('common-fields.billed-at') },
+    { id: 'arrivedAt', text: t('common-fields.arrived-at') },
+    { id: 'createdAt', text: t('common-fields.created-at') },
+    { id: 'modifiedAt', text: t('common-fields.modified-at') },
+    { id: 'weightKg', text: t('common-fields.weight-kg') },
+    { id: 'publishers', text: t('entities.publishers') },
+    { id: 'number', text: t('common-fields.number') }
+  ]
+
+  const disabled = columns.filter(c => c.disabled)
+  const enabled = columns.filter(c => !c.disabled)
+
+  return [
+    ...disabled,
+    ...enabled.sort((a, b) => a.text.localeCompare(b.text, locale.value))
+  ]
+})
+
+const { preference: columnVisibility } = useUserPreference<Record<string, boolean>>('books_column_visibility', {
+  collection: true,
+  series: false,
+  createdAt: true,
+  modifiedAt: false,
+  boughtAt: false,
+  billedAt: false,
+  arrivedAt: false,
+  weightKg: false,
+  publishers: false,
+  title: true,
+  number: false,
+})
+
+const { preference: columnOrder } = useUserPreference<ColumnOrderState>('books_column_order', [])
 </script>
 
 <route lang="yaml">
@@ -145,7 +187,7 @@ meta:
     </Header>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6">
-      <TableControls>
+      <ViewControls>
         <div>
           <label class="sr-only" for="search-publisher">
             {{ $t('publishers.search') }}
@@ -163,21 +205,33 @@ meta:
             </template>
           </BasicTextInput>
         </div>
+        
+        <div class="md:ml-auto flex flex-col-reverse sm:flex-row gap-4 items-center justify-center md:justify-normal">
+          <FadeTransition>
+            <TableColumnsControls
+              v-if="viewMode === 'table'"
+              v-model:column-visibility="columnVisibility"
+              v-model:column-order="columnOrder"
+              :columns="tableColumns"
+            />
+          </FadeTransition>
 
-        <SortControls
-          class="ml-auto"
-          :properties="sortProperties"
-          :property="sort?.property"
-          :direction="sort?.direction"
-          @update:property="handleSortPropertyChange"
-          @update:direction="handleSortDirectionChange"
-        />
+          <div class="flex gap-6 items-center justify-between md:justify-normal">
+            <SortControls
+              :properties="sortProperties"
+              :property="sort?.property"
+              :direction="sort?.direction"
+              @update:property="handleSortPropertyChange"
+              @update:direction="handleSortDirectionChange"
+            />
 
-        <ViewModeSelector
-          :preference-key="BOOKS_VIEW_MODE_KEY"
-          :loading="isLoading"
-        />
-      </TableControls>
+            <ViewModeSelector
+              :preference-key="BOOKS_VIEW_MODE_KEY"
+              :loading="isLoading"
+            />
+          </div>
+        </div>
+      </ViewControls>
 
       <FadeTransition>
         <BooksTable
@@ -189,6 +243,8 @@ meta:
           :sort="sort ? [sort] : []"
           :page="page"
           :size="size"
+          :column-visibility="columnVisibility"
+          :column-order="columnOrder"
           @update:page="handlePageChange"
           @update:size="handleSizeChange"
           @update:sort="handleSortChange"

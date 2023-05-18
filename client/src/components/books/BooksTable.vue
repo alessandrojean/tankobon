@@ -1,19 +1,22 @@
 <script lang="ts" setup>
 import type { PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { BookEntity, BookSort } from '@/types/tankobon-book'
 import type { Sort } from '@/types/tankobon-api'
 import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { PaginatedResponse } from '@/types/tankobon-response'
-import { getRelationship } from '@/utils/api'
+import { getRelationship, getRelationships } from '@/utils/api'
 import Avatar from '../Avatar.vue'
 import { createImageUrl } from '@/modules/api'
+import { ColumnOrderState } from '@tanstack/vue-table'
 
 export interface BooksTableProps {
   books?: PaginatedResponse<BookEntity>
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
   loading?: boolean
   page: number
   search?: string
@@ -23,6 +26,8 @@ export interface BooksTableProps {
 
 const props = withDefaults(defineProps<BooksTableProps>(), {
   books: undefined,
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
   loading: false,
   search: '',
 })
@@ -34,7 +39,7 @@ const emit = defineEmits<{
 }>()
 
 const { page, search, size, sort } = toRefs(props)
-const { t, d } = useI18n()
+const { t, d, n, locale } = useI18n()
 
 const pagination = computed<PaginationState>(() => ({
   pageIndex: page.value,
@@ -49,6 +54,13 @@ const sorting = computed<SortingState>(() => {
 const rowSelection = ref<Record<string, boolean>>({})
 
 const columnHelper = createColumnHelper<BookEntity>()
+
+const listFormatter = computed(() => {
+  return new Intl.ListFormat(locale.value, {
+    style: 'long',
+    type: 'conjunction',
+  })
+})
 
 const columns = [
   columnHelper.display({
@@ -114,11 +126,66 @@ const columns = [
       cellClass: 'text-right',
     },
   }),
+  columnHelper.accessor(book => getRelationship(book, 'SERIES'), {
+    id: 'series',
+    header: () => t('common-fields.series'),
+    cell: info => info.getValue()?.attributes?.name,
+  }),
+  columnHelper.accessor(book => getRelationships(book, 'PUBLISHER'), {
+    id: 'publishers',
+    header: () => t('entities.publishers'),
+    cell: info => listFormatter.value.format(info.getValue()?.map(p => p.attributes!.name) ?? []),
+  }),
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',
     header: () => t('common-fields.created-at'),
     cell: info => d(new Date(info.getValue()), 'dateTime'),
     meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.modifiedAt', {
+    id: 'modifiedAt',
+    header: () => t('common-fields.modified-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.boughtAt', {
+    id: 'boughtAt',
+    header: () => t('common-fields.bought-at'),
+    cell: info => info.getValue() ? d(new Date(info.getValue()!), 'dateTime') : t('date.unknown-short'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.billedAt', {
+    id: 'billedAt',
+    header: () => t('common-fields.billed-at'),
+    cell: info => info.getValue() ? d(new Date(info.getValue()!), 'dateTime') : t('date.unknown-short'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.arrivedAt', {
+    id: 'arrivedAt',
+    header: () => t('common-fields.arrived-at'),
+    cell: info => info.getValue() ? d(new Date(info.getValue()!), 'dateTime') : t('date.unknown-short'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.number', {
+    id: 'number',
+    header: () => t('common-fields.number'),
+    cell: info => info.getValue(),
+    meta: {
+      tabular: true,
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+    },
+  }),
+  columnHelper.accessor('attributes.weightKg', {
+    id: 'weightKg',
+    header: () => t('common-fields.weight-kg'),
+    // @ts-expect-error The signature is wrong at the library
+    cell: info => n(info.getValue(), 'unit', { unit: 'kilogram' }),
+    meta: {
+      tabular: true,
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+    },
   }),
   columnHelper.display({
     id: 'actions',
@@ -169,6 +236,8 @@ function handleSortingChange(sorting: SortingState) {
     :page-count="books?.pagination?.totalPages"
     :items-count="books?.pagination?.totalElements"
     :loading="loading"
+    :column-order="['select', ...columnOrder, 'actions']"
+    :column-visibility="columnVisibility"
     @update:pagination="handlePaginationChange"
     @update:sorting="handleSortingChange"
   >

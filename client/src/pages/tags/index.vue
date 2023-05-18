@@ -55,7 +55,7 @@ meta:
     </Header>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6">
-      <TableControls v-if="library">
+      <ViewControls v-if="library">
         <div>
           <label class="sr-only" for="search-tag">
             {{ $t('tags.search') }}
@@ -73,7 +73,7 @@ meta:
             </template>
           </BasicTextInput>
         </div>
-      </TableControls>
+      </ViewControls>
 
       <TagsTable
         v-if="library"

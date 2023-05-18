@@ -23,7 +23,7 @@ function toggleSortDirection() {
 </script>
 
 <template>
-  <div class="flex gap-1">
+  <div class="flex">
     <BasicListbox
       size="small"
       v-model="property"

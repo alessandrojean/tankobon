@@ -540,6 +540,7 @@ class BookDtoDao(
     source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
     sourceBookId = sourceBookId,
     subtitle = subtitle,
+    weightKg = weightKg,
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

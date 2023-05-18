@@ -16,8 +16,11 @@ export default function useSetPreferencesMutation() {
         persisted.map(({ attributes }) => [attributes.key, attributes.value]),
       )
     },
-    onSuccess() {
-      queryClient.invalidateQueries(['preferences'])
+    onSuccess(_, preferences) {
+      queryClient.setQueryData<Preferences>(['preferences'], (old) => ({
+        ...old,
+        ...preferences,
+      }))
     },
   })
 }
