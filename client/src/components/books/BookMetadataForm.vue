@@ -353,7 +353,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
             showMaskOnFocus: false,
           }"
           :placeholder="$t('common-placeholders.book-weight')"
-          :label-text="$t('common-fields.weight')"
+          :label-text="$t('common-fields.weight-kg')"
           :invalid="v$.weight.$error"
           :errors="v$.weight.$errors"
           @blur="v$.weight.$touch()"

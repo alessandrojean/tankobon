@@ -80,7 +80,7 @@ async function handleSignIn() {
       if (userLibraries.value?.length === 0) {
         await router.push({ name: 'welcome' })
       } else if (route.query.redirect) {
-        await router.push({ path: route.query.redirect.toString() })
+        await router.push(String(route.query.redirect))
       } else {
         await router.push({ name: 'index' })
       }

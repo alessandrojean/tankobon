@@ -44,7 +44,8 @@ common-fields:
   started-at: Started at
   finished-at: Finished at
   page: Page
-  weight: Weight
+  weight-kg: Weight
+  modified-at: Modified at
 
 common-actions:
   sign-in: Sign in
@@ -74,6 +75,7 @@ common-actions:
   back: Go back
   add: Add
   show-options: Show options
+  sort: Sort
 
 common-values:
   true-value: 'True'
@@ -284,6 +286,7 @@ upload:
 
 preferences:
   theme-failure: There was an error while getting the theme
+  view-mode-failure: There was an error while getting the view mode
 
 metrics:
   header: Metrics
@@ -567,3 +570,14 @@ original-language:
   unknown: Unknown
   romanized: Romanized
   
+view-mode:
+  label: View mode
+  grid-comfortable: Comfortable grid
+  grid-compact: Compact grid
+  table: Table
+
+sort:
+  direction: Sort direction
+  asc: Sort by ascending
+  desc: Sort by descending
+  none: None

@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
-import { ArrowSmallDownIcon, ArrowSmallUpIcon } from '@heroicons/vue/20/solid'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/20/solid'
 
 export interface TableProps {
   data?: any[]
@@ -118,8 +118,9 @@ watch(data, () => emit('update:row-selection', {}))
             v-for="header in headerGroup.headers"
             :key="header.id"
             :colspan="header.colSpan"
-            class="bg-gray-50 dark:bg-gray-900 py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300 text-left"
             :class="[
+              'py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300',
+              'text-left dark:bg-gray-900',
               header.column.getCanSort() ? 'cursor-pointer select-none' : '',
               header.column.columnDef.meta?.headerClass,
             ]"
@@ -127,7 +128,7 @@ watch(data, () => emit('update:row-selection', {}))
           >
             <div
               v-if="!header.isPlaceholder"
-              class="flex items-center"
+              class="flex items-center group/header"
               :class="[
                 header.column.columnDef.meta?.headerContainerClass,
               ]"
@@ -137,11 +138,24 @@ watch(data, () => emit('update:row-selection', {}))
                 :props="header.getContext()"
               />
 
-              <Component
-                :is="header.column.getIsSorted() === 'asc' ? ArrowSmallUpIcon : ArrowSmallDownIcon"
-                v-if="header.column.getIsSorted()"
-                class="w-5 h-5 inline-block text-gray-500 dark:text-gray-400"
-              />
+              <FadeTransition>
+                <div
+                  v-if="header.column.getIsSorted()"
+                  :class="[
+                    'bg-gray-100 dark:bg-gray-800 w-5 h-5',
+                    'flex items-center justify-center rounded ml-2',
+                    'group-hover/header:bg-gray-200 dark:group-hover/header:bg-gray-700'
+                  ]"
+                >
+                  <ChevronUpIcon
+                    :class="[
+                      'w-5 h-5 inline-block text-gray-800 dark:text-gray-100',
+                      'motion-safe:transition-transform',
+                      { 'rotate-180': header.column.getIsSorted() === 'desc' }
+                    ]"
+                  />
+                </div>
+              </FadeTransition>
             </div>
           </th>
         </tr>

@@ -40,6 +40,7 @@ declare module '@vue/runtime-core' {
     BookReadProgressButtons: typeof import('./components/books/BookReadProgressButtons.vue')['default']
     BookReadProgresses: typeof import('./components/books/BookReadProgresses.vue')['default']
     BookRelationshipsForm: typeof import('./components/books/BookRelationshipsForm.vue')['default']
+    BooksGrid: typeof import('./components/books/BooksGrid.vue')['default']
     BooksTable: typeof import('./components/books/BooksTable.vue')['default']
     BookTagFormCard: typeof import('./components/books/BookTagFormCard.vue')['default']
     BookTags: typeof import('./components/books/BookTags.vue')['default']
@@ -86,6 +87,7 @@ declare module '@vue/runtime-core' {
     LibrarySelectorDialog: typeof import('./components/libraries/LibrarySelectorDialog.vue')['default']
     Listbox: typeof import('@headlessui/vue')['Listbox']
     ListboxButton: typeof import('@headlessui/vue')['ListboxButton']
+    ListboxLabel: typeof import('@headlessui/vue')['ListboxLabel']
     ListboxOption: typeof import('@headlessui/vue')['ListboxOption']
     ListboxOptions: typeof import('@headlessui/vue')['ListboxOptions']
     LoadingIndicator: typeof import('./components/LoadingIndicator.vue')['default']
@@ -135,6 +137,7 @@ declare module '@vue/runtime-core' {
     SeriesName: typeof import('./components/series/SeriesName.vue')['default']
     SeriesTable: typeof import('./components/series/SeriesTable.vue')['default']
     SeriesTitle: typeof import('./components/series/SeriesTitle.vue')['default']
+    SortControls: typeof import('./components/SortControls.vue')['default']
     StatisticCard: typeof import('./components/StatisticCard.vue')['default']
     StoreCreateDialog: typeof import('./components/stores/StoreCreateDialog.vue')['default']
     StoreEditDialog: typeof import('./components/stores/StoreEditDialog.vue')['default']
@@ -163,5 +166,6 @@ declare module '@vue/runtime-core' {
     UserEditDialog: typeof import('./components/users/UserEditDialog.vue')['default']
     UserForm: typeof import('./components/users/UserForm.vue')['default']
     UsersTable: typeof import('./components/users/UsersTable.vue')['default']
+    ViewModeSelector: typeof import('./components/ViewModeSelector.vue')['default']
   }
 }

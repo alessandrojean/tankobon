@@ -31,8 +31,8 @@ useFocusZone({
 </script>
 
 <template>
-  <Block as="section" :title="$t('entities.book-contributors')">
-    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 gap-6">
+  <Block as="section" :title="$t('entities.book-contributors')" class="@container">
+    <div v-if="loading" class="grid grid-cols-1 @md:grid-cols-2 @2xl:grid-cols-3 @3xl:grid-cols-4 gap-6">
       <div
         v-for="i in 5"
         :key="i"
@@ -50,7 +50,7 @@ useFocusZone({
     <ul
       v-else
       ref="container"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-2 gap-6"
+      class="grid grid-cols-1 @md:grid-cols-2 @2xl:grid-cols-3 @3xl:grid-cols-4 gap-6"
     >
       <li
         v-for="(contributor, idx) in contributors"
@@ -73,7 +73,11 @@ useFocusZone({
         />
         <div class="text-sm grow min-w-0">
           <RouterLink
-            class="block font-medium dark:text-gray-200 focus:outline-none truncate"
+            :class="[
+              'block font-medium dark:text-gray-200 focus:outline-none truncate',
+              'motion-safe:transition',
+              'rounded focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
+            ]"
             :to="{ name: 'people-id', params: { id: contributor.attributes.person.id } }"
             :title="$t('common-actions.go-to-page', [contributor.attributes.person.name])"
           >
@@ -85,7 +89,7 @@ useFocusZone({
           </span>
         </div>
         <div
-          class="absolute -inset-2 scale-95 bg-gray-200/50 dark:bg-gray-800 motion-safe:transition opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 group-hover:scale-100 group-focus-within:scale-100 rounded-lg group-focus-within:ring-2 group-focus-within:ring-black dark:group-focus-within:ring-white/90"
+          class="absolute -inset-2 scale-95 bg-gray-200/50 dark:bg-gray-800 motion-safe:transition opacity-0 group-hover:opacity-100 group-hover:scale-100 rounded-lg"
         />
       </li>
     </ul>

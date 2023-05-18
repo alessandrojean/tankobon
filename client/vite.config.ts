@@ -36,6 +36,9 @@ export default defineConfig({
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-vue
     Vue({
+      script: {
+        defineModel: true,
+      },
       template: {
         compilerOptions: {
           isCustomElement: tag => tag !== 'i18n-t' && tag.includes('-'),

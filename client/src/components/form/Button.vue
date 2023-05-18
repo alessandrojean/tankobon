@@ -78,10 +78,13 @@ const button = cva(
         'pill-tab': [
           'border-transparent bg-transparent',
           'text-gray-500 not-disabled:hocus:text-gray-800',
-          'aria-selected:bg-primary-100 aria-selected:text-primary-600',
+          'aria-selected:text-primary-600',
+          'aria-checked:text-primary-600',
           'not-disabled:hocus:aria-selected:text-primary-600',
+          'not-disabled:hocus:aria-checked:text-primary-600',
           'dark:text-gray-400 dark:not-disabled:hocus:text-gray-100',
-          'dark:aria-selected:bg-primary-900 dark:aria-selected:text-primary-50',
+          'dark:aria-selected:text-primary-50',
+          'dark:aria-checked:text-primary-50',
           'focus-visible:ring-black dark:focus-visible:ring-white/90',
         ],
         'underline-tab': [

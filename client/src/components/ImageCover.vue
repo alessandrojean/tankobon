@@ -10,20 +10,24 @@ import type { ImageDetailsAttributes } from '@/types/tankobon-image-details'
 
 export interface ImageCoverProps {
   alt: string
+  aspectRatio?: string
   icon?: Component
   image: ImageDetailsAttributes | null | undefined
   loading?: boolean
   version?: string
+  zoomable?: boolean
 }
 
 const props = withDefaults(defineProps<ImageCoverProps>(), {
+  aspectRatio: undefined,
   icon: BookOpenIcon,
   image: undefined,
   loading: false,
   version: 'original',
+  zoomable: true,
 })
 
-const { image, loading, version } = toRefs(props)
+const { aspectRatio, image, loading, version } = toRefs(props)
 
 function getCoverUrl(as: string) {
   if (!image.value || !image.value.versions[as]) {
@@ -74,6 +78,10 @@ const figure = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 
 const imageAspectRatio = computed(() => {
+  if (aspectRatio.value) {
+    return aspectRatio.value
+  }
+
   return image.value ? image.value.aspectRatio : '2 / 3'
 })
 
@@ -125,14 +133,16 @@ whenever(image, async (image) => {
     </FadeTransition>
 
     <canvas
-      ref="canvas" class="w-full h-full motion-safe:transition-opacity motion-safe:duration-500 motion-safe:animate-pulse"
+      ref="canvas"
       :class="[
+        'w-full h-full motion-safe:transition-opacity',
+        'motion-safe:duration-500 motion-safe:animate-pulse',
         { 'opacity-0': showCoverImage || loading || coverUrl.length === 0 },
       ]"
     />
 
     <button
-      v-if="showCoverImage"
+      v-if="showCoverImage && zoomable"
       :class="[
         'z-10 bg-gray-900/60 flex items-center justify-center',
         'absolute inset-0 w-full h-full opacity-0 rounded-xl',
@@ -148,10 +158,10 @@ whenever(image, async (image) => {
       <MagnifyingGlassPlusIcon class="w-8 h-8 text-white" />
     </button>
 
-    <slot />
+    <slot :image-has-error="imageHasError" :image-loading="imageLoading" />
 
     <BookCoverDialog
-      v-if="showCoverImage && showCover"
+      v-if="showCoverImage && showCover && zoomable"
       :cover-url="coverOriginalUrl"
       :aspect-ratio="image?.aspectRatio"
       :open="dialogOpen"

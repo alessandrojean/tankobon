@@ -5,7 +5,7 @@ import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import type { AnchorAlignment } from '@primer/behaviors'
 import Button from './Button.vue'
 
-export interface BasicListboxProps {
+export interface SearchableComboboxProps {
   align?: AnchorAlignment
   disabledOptions?: number[]
   errors?: ErrorObject[]
@@ -21,7 +21,7 @@ export interface BasicListboxProps {
   placeholder?: string
 }
 
-const props = withDefaults(defineProps<BasicListboxProps>(), {
+const props = withDefaults(defineProps<SearchableComboboxProps>(), {
   align: 'start',
   disabledOptions: () => [],
   errors: undefined,

@@ -150,7 +150,7 @@ const colorIsLight = computed(() => {
     </div>
     <img
       v-else
-      class="w-full h-full object-contain"
+      class="w-full h-full object-cover"
       :alt="alt"
       :src="pictureUrl ?? undefined"
     >

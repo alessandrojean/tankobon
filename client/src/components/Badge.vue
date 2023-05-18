@@ -6,32 +6,36 @@ withDefaults(defineProps<BadgeProps>(), {
 
 const badge = cva(
   [
-    'px-2 py-0.5 inline-flex items-center gap-1 text-xs leading-5',
-    'font-medium dark:border font-sans-safe',
+    'px-2 py-1 inline-flex items-center gap-1 text-xs',
+    'font-medium ring-1 ring-inset font-sans-safe',
   ],
   {
     variants: {
       color: {
         gray: [
-          'bg-gray-200 dark:bg-gray-800 text-gray-800',
-          'dark:text-gray-300 dark:border-gray-700',
+          'bg-gray-50 dark:bg-gray-400/10',
+          'text-gray-600 dark:text-gray-400',
+          'ring-gray-500/10 dark:ring-gray-400/20',
         ],
         green: [
-          'bg-emerald-100 dark:bg-emerald-900/50',
-          'text-emerald-800 dark:text-emerald-300 dark:border-emerald-500/40',
+          'bg-green-50 dark:bg-green-500/10',
+          'text-green-700 dark:text-green-400',
+          'ring-green-600/20 dark:ring-green-500/20'
         ],
         red: [
-          'bg-red-100 dark:bg-red-900/40',
-          'text-red-800 dark:text-red-300 dark:border-red-400/25',
+          'bg-red-100 dark:bg-red-400/10',
+          'text-red-700 dark:text-red-400',
+          'ring-red-600/10 dark:ring-red-400/20'
         ],
         blue: [
-          'bg-blue-100 dark:bg-blue-800/40',
-          'text-blue-700 dark:text-blue-300 dark:border-blue-400/40',
+          'bg-blue-50 dark:bg-blue-400/10',
+          'text-blue-700 dark:text-blue-400',
+          'ring-blue-700/10 dark:ring-blue-400/30',
         ],
       },
       rounded: {
         true: 'rounded-full',
-        false: 'rounded',
+        false: 'rounded-md',
       },
     },
     defaultVariants: {

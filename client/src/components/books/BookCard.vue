@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { BookOpenIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
-import { createImageUrl } from '@/modules/api'
 import type { BookEntity } from '@/types/tankobon-book'
 import { getRelationship } from '@/utils/api'
 
@@ -23,34 +21,7 @@ const props = withDefaults(defineProps<BookCardProps>(), {
 const { book, loading, mode } = toRefs(props)
 const { t } = useI18n()
 
-const card = ref<HTMLDivElement>()
-
 const coverArt = computed(() => getRelationship(book.value, 'COVER_ART')?.attributes)
-const coverUrl = computed(() => {
-  return createImageUrl({
-    fileName: coverArt.value?.versions['256'],
-    timeHex: coverArt.value?.timeHex,
-  })
-})
-
-const {
-  imageHasError,
-  imageLoading,
-  setupObserver,
-  observerCreated,
-} = useImageLazyLoader(coverUrl, card)
-
-onMounted(() => {
-  if (!loading.value && book.value) {
-    setupObserver()
-  }
-})
-
-watch(loading, (newValue) => {
-  if (!newValue && !observerCreated.value) {
-    setupObserver()
-  }
-})
 
 const volume = computed(() => {
   if (!book.value) {
@@ -73,67 +44,46 @@ const volume = computed(() => {
       <div class="skeleton h-3 w-1/2 rounded" />
     </div>
   </div>
-  <div
-    v-else
-    ref="card"
-  >
-    <div
+  <div v-else class="relative group/book-card">
+    <ImageCover
+      v-slot="{ imageHasError }"
       :class="[
-        'relative shadow rounded-xl overflow-hidden block',
-        'bg-gray-200 dark:bg-gray-800 aspect-[2/3]',
-        'motion-safe:transition-all will-change-[transform,box-shadow]',
+        'motion-safe:transition ring-1 ring-black/5',
+        'will-change-[transform,box-shadow]',
+        'group-hover/book-card:-translate-y-1',
+        'group-hover/book-card:shadow-lg',
       ]"
+      aspect-ratio="2/3"
+      version="256"
+      :zoomable="false"
+      :loading="loading"
+      :image="coverArt"
+      :alt="book?.attributes?.title ?? ''"
     >
-      <FadeTransition>
-        <div
-          v-if="imageLoading || imageHasError"
-          class="w-full h-full flex justify-center items-center"
-          aria-hidden="true"
-        >
-          <BookOpenIcon
-            v-if="loading || imageLoading || coverUrl?.length === 0"
-            :class="[
-              { 'motion-safe:animate-pulse': imageLoading },
-              'w-10 h-10 text-gray-400 dark:text-gray-500',
-            ]"
-          />
-          <ExclamationCircleIcon
-            v-else
-            class="w-10 h-10 text-gray-400 dark:text-gray-500"
-          />
-        </div>
-        <div
-          v-else
-          class="w-full h-full overflow-hidden"
-        >
-          <img
-            class="w-full h-full object-cover"
-            :src="coverUrl ?? undefined"
-            :alt="book?.attributes.title ?? ''"
-          >
-        </div>
-      </FadeTransition>
-
       <FadeTransition>
         <div
           v-if="(mode === 'compact' && !imageOnly) || (imageOnly && imageHasError)"
           :class="[
             'absolute top-0 left-0 w-full h-full flex justify-end',
             'py-2 px-2 lg:pb-3 lg:px-3',
-            'bg-gradient-to-b from-black/70 via-60%',
+            'bg-gradient-to-t from-black/70 via-60%',
             imageOnly && imageHasError ? 'items-start' : 'items-end',
           ]"
         >
           <div class="flex text-white w-full items-center">
             <div class="flex flex-col grow min-w-0">
-              <span
+              <RouterLink
+                :to="{ name: 'books-id', params: { id: book?.id } }"
                 :class="[
-                  'font-semibold font-sans-safe text-[0.8rem]',
-                  'sm:text-sm truncate max-w-full',
+                  'font-semibold font-sans-safe text-[0.8rem] rounded',
+                  'sm:text-sm truncate max-w-full focus:outline-none',
+                  'motion-safe:transition',
+                  'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
                 ]"
               >
-                {{ book?.attributes.title }}
-              </span>
+                <span class="absolute inset-0 z-20 rounded-xl" />
+                <span>{{ book?.attributes.title }}</span>
+              </RouterLink>
               <span class="font-medium text-xxs sm:text-xs">
                 {{ volume }}
               </span>
@@ -141,7 +91,7 @@ const volume = computed(() => {
           </div>
         </div>
       </FadeTransition>
-    </div>
+    </ImageCover>
 
     <div
       v-if="$slots.actions"
@@ -154,14 +104,18 @@ const volume = computed(() => {
       v-if="mode === 'comfortable' && !imageOnly"
       class="mt-3"
     >
-      <span
+      <RouterLink
+        :to="{ name: 'books-id', params: { id: book?.id } }"
         :class="[
-          'text-[0.8rem] sm:text-sm font-sans-safe font-semibold',
-          'truncate text-gray-900 dark:text-gray-200 block',
+          'text-[0.8rem] sm:text-sm font-sans-safe font-semibold rounded',
+          'truncate text-gray-900 dark:text-gray-200 block focus:outline-none',
+          'motion-safe:transition',
+          'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
         ]"
       >
-        {{ book?.attributes.title }}
-      </span>
+        <span class="absolute inset-0 z-20 rounded-xl" />
+        <span>{{ book?.attributes.title }}</span>
+      </RouterLink>
       <span
         :class="[
           'block text-xxs sm:text-xs font-medium truncate',

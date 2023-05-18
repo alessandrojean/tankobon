@@ -7,6 +7,7 @@ import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
 import typographyPlugin from '@tailwindcss/typography'
 import formsPlugin from '@tailwindcss/forms'
 import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
+import containerQueriesPlugin from '@tailwindcss/container-queries'
 import headlessUiPlugin from '@headlessui/tailwindcss'
 import type { PluginUtils } from 'tailwindcss/types/config'
 
@@ -135,6 +136,7 @@ export default {
     typographyPlugin,
     formsPlugin,
     aspectRatioPlugin,
+    containerQueriesPlugin,
     headlessUiPlugin,
 
     /** Base theme */

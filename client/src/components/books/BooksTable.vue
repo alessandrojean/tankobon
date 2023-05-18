@@ -1,62 +1,53 @@
 <script lang="ts" setup>
-import type { ColumnSort, PaginationState, SortingState } from '@tanstack/vue-table'
+import type { PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { BookEntity, BookSort } from '@/types/tankobon-book'
 import type { Sort } from '@/types/tankobon-api'
+import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { PaginatedResponse } from '@/types/tankobon-response'
+import { getRelationship } from '@/utils/api'
+import Avatar from '../Avatar.vue'
+import { createImageUrl } from '@/modules/api'
 
 export interface BooksTableProps {
-  libraryId: string
+  books?: PaginatedResponse<BookEntity>
+  loading?: boolean
+  page: number
   search?: string
+  size: number
+  sort: Sort<BookSort>[]
 }
 
 const props = withDefaults(defineProps<BooksTableProps>(), {
-  search: undefined,
+  books: undefined,
+  loading: false,
+  search: '',
 })
-const { libraryId, search } = toRefs(props)
-const notificator = useToaster()
-const { t, locale } = useI18n()
 
-const defaultSorting: ColumnSort = { id: 'title', desc: false }
-const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
-const sorting = ref<SortingState>([defaultSorting])
+const emit = defineEmits<{
+  (e: 'update:page', page: number): void
+  (e: 'update:size', size: number): void
+  (e: 'update:sort', sort: Sort<BookSort>[]): void
+}>()
+
+const { page, search, size, sort } = toRefs(props)
+const { t, d } = useI18n()
+
+const pagination = computed<PaginationState>(() => ({
+  pageIndex: page.value,
+  pageSize: size.value,
+}))
+const sorting = computed<SortingState>(() => {
+  return sort.value.map(sorting => ({
+    id: sorting.property,
+    desc: sorting.direction === 'desc',
+  }))
+})
 const rowSelection = ref<Record<string, boolean>>({})
 
-const dateFormatter = computed(() => {
-  return new Intl.DateTimeFormat(locale.value, {
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
-})
-
-const { data: books, isLoading } = useLibraryBooksQuery({
-  libraryId,
-  search,
-  page: computed(() => pagination.value.pageIndex),
-  size: computed(() => pagination.value.pageSize),
-  sort: computed<Sort<BookSort>[]>(() => {
-    return sorting.value.map(sort => ({
-      property: sort.id as BookSort,
-      direction: sort.desc ? 'desc' : 'asc',
-    }))
-  }),
-  includes: ['cover_art'],
-  enabled: computed(() => libraryId.value !== undefined),
-  keepPreviousData: true,
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('books.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
 const columnHelper = createColumnHelper<BookEntity>()
 
 const columns = [
@@ -81,15 +72,52 @@ const columns = [
       cellClass: 'align-middle',
     },
   }),
-  columnHelper.accessor('attributes.title', {
-    id: 'title',
-    header: () => t('common-fields.book'),
-    cell: info => info.getValue(),
+  columnHelper.accessor(
+    book => ({
+      title: book.attributes.title,
+      subtitle: book.attributes.subtitle,
+      coverArt: getRelationship(book, 'COVER_ART'),
+    }),
+    {
+      id: 'title',
+      header: () => t('common-fields.title'),
+      cell: (info) => {
+        const { title, subtitle, coverArt } = info.getValue()
+
+        return h('div', { class: 'flex items-center space-x-3' }, [
+          h(Avatar, {
+            pictureUrl: createImageUrl({
+              fileName: coverArt?.attributes?.versions?.['256'],
+              timeHex: coverArt?.attributes?.timeHex,
+            }),
+            square: true,
+            emptyIcon: BookOpenIcon,
+          }),
+          h('div', { class: 'flex flex-col' }, [
+            h('span', { innerText: title, class: 'font-medium' }),
+            subtitle.length > 0 ? h('span', { innerText: subtitle, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
+          ])
+        ])
+      },
+      meta: {
+        headerClass: 'pl-0',
+        cellClass: 'pl-0',
+      },
+    },
+  ),
+  columnHelper.accessor(book => getRelationship(book, 'COLLECTION'), {
+    id: 'collection',
+    header: () => t('common-fields.collection'),
+    cell: info => info.getValue()?.attributes?.name,
+    meta: {
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+    },
   }),
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',
     header: () => t('common-fields.created-at'),
-    cell: info => dateFormatter.value.format(new Date(info.getValue())),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
     meta: { tabular: true },
   }),
   columnHelper.display({
@@ -115,28 +143,58 @@ const columns = [
     },
   }),
 ]
+
+function handlePaginationChange(pagination: PaginationState) {
+  emit('update:page', pagination.pageIndex)
+  emit('update:size', pagination.pageSize)
+}
+
+function handleSortingChange(sorting: SortingState) {
+  const sortToEmit = sorting.map<Sort<BookSort>>(sort => ({
+    property: sort.id as BookSort,
+    direction: sort.desc ? 'desc' : 'asc',
+  }))
+
+  emit('update:sort', sortToEmit)
+}
 </script>
 
 <template>
-  <div class="grid grid-cols-5 my-6">
-    <BookCard
-      :loading="isLoading"
-      :book="books?.data?.[0]"
-    />
-  </div>
-
   <Table
-    v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
+    :pagination="pagination"
+    :sorting="sorting"
     :data="books?.data"
     :columns="columns"
     :page-count="books?.pagination?.totalPages"
     :items-count="books?.pagination?.totalElements"
-    :loading="isLoading"
+    :loading="loading"
+    @update:pagination="handlePaginationChange"
+    @update:sorting="handleSortingChange"
   >
     <template #empty>
-      <slot name="empty" />
+      <slot name="empty">
+        <EmptyState
+            :icon="search?.length ? MagnifyingGlassIcon : BookOpenIcon"
+            :title="$t('books.empty-header')"
+            :description="
+              search?.length
+                ? $t('books.empty-search-description', [search])
+                : $t('books.empty-description')
+            "
+          >
+            <template v-if="!search?.length" #actions>
+              <Button
+                kind="primary"
+                is-router-link
+                :to="{ name: 'books-new' }"
+              >
+                <PlusIcon class="w-5 h-5" />
+                <span>{{ $t('books.new') }}</span>
+              </Button>
+            </template>
+          </EmptyState>
+      </slot>
     </template>
   </Table>
 </template>

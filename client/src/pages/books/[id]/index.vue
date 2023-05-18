@@ -4,6 +4,7 @@ import Button from '@/components/form/Button.vue'
 import { isIsbnCode } from '@/types/tankobon-book'
 import { createEmptyCollectionResponse, getRelationship, getRelationships } from '@/utils/api'
 import type { ReadProgressCreation, ReadProgressEntity, ReadProgressUpdate } from '@/types/tankobon-read-progress'
+import { TabList } from '@headlessui/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -169,6 +170,25 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
     },
   })
 }
+
+const tabList = ref<InstanceType<typeof TabList>>()
+const tabBackground = reactive({ left: 0, width: 0 })
+const mounted = ref(false)
+
+async function calculateTabBackground() {
+  await nextTick()
+  const tabListElement = tabList.value?.$el as HTMLDivElement
+  const activeTabElement = tabListElement?.querySelector<HTMLButtonElement>('[aria-selected=true]')
+
+  tabBackground.left = activeTabElement?.offsetLeft ?? 0
+  tabBackground.width = activeTabElement?.offsetWidth ?? 0
+}
+
+watch(activeTab, calculateTabBackground, { immediate: true })
+onMounted(() => {
+  calculateTabBackground()
+  setTimeout(() => { mounted.value = true }, 250)
+})
 </script>
 
 <template>
@@ -218,7 +238,20 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
         />
 
         <div class="book-buttons pt-1.5 flex items-center justify-between">
-          <TabList class="hidden md:flex items-center gap-2">
+          <TabList ref="tabList" class="hidden md:flex items-center gap-2 relative">
+            <div
+              aria-hidden="true"
+              :class="[
+                'w-[--width] h-full rounded-md bg-primary-100 dark:bg-primary-900',
+                'absolute left-0 top-0 motion-safe:transition-[width,transform]',
+                'translate-x-[--offset]',
+                { 'motion-safe:duration-0': !mounted }
+              ]"
+              :style="{
+                '--offset': `${tabBackground.left}px`,
+                '--width': `${tabBackground.width}px`
+              }"
+            />
             <Tab
               v-for="tab in tabs"
               :key="String(tab.key)"
@@ -263,7 +296,7 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
         </div>
 
         <TabPanels class="book-tabs">
-          <TabPanel class="information-grid -mb-4 sm:mb-0">
+          <TabPanel class="information-grid -mb-4 sm:mb-0" :unmount="false">
             <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
               <BookNavigator
                 :loading="!showBookInfo"

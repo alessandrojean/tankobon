@@ -32,9 +32,9 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const { errorsLanguage, errorsName } = toRefs(props)
 
-function getOriginalLanguageName(language: string) {
+function getOriginalLanguageName(language: string | undefined) {
   return getLanguageName({
-    language: language === 'null' ? null : language,
+    language: (language === 'null' || !language) ? null : language,
     locale: locale.value,
     romanizedLabel: t('original-language.romanized'),
     unknownLabel: t('original-language.unknown'),

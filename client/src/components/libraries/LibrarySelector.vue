@@ -15,7 +15,8 @@ export interface LibrarySelectorEmits {
 const props = withDefaults(defineProps<LibrarySelectorProps>(), {
   size: 'normal',
 })
-const emit = defineEmits<LibrarySelectorEmits>()
+
+defineEmits<LibrarySelectorEmits>()
 
 const { modelValue: library, options: libraries } = toRefs(props)
 
@@ -39,14 +40,6 @@ function sharedText(library: LibraryEntity) {
     ? t('libraries.yours')
     : `${t('libraries.shared')} · ${owner.attributes!.name}`
 }
-
-function handleUpdate(libraryId: string) {
-  const library = libraries.value.find(l => l.id === libraryId)
-
-  if (library) {
-    emit('update:model-value', library)
-  }
-}
 </script>
 
 <template>
@@ -55,9 +48,9 @@ function handleUpdate(libraryId: string) {
     :size="size"
     :model-value="library"
     :options="libraries ?? []"
-    :option-value="(library: LibraryEntity) => library.id"
-    :option-text="(library: LibraryEntity) => library.attributes?.name ?? ''"
-    @update:model-value="handleUpdate"
+    :option-value="(library) => library"
+    :option-text="(library) => library?.attributes?.name ?? ''"
+    @update:model-value="$emit('update:model-value', $event)"
   >
     <template #button>
       <div>

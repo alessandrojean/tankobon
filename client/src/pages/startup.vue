@@ -20,7 +20,7 @@ onBeforeMount(async () => {
     await userStore.checkSession()
 
     if (route.query.redirect) {
-      await router.replace({ path: route.query.redirect.toString() })
+      await router.replace(String(route.query.redirect))
     } else {
       await router.replace({ name: 'index' })
     }

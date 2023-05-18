@@ -53,7 +53,7 @@ export type BookIncludes = 'contributor' | 'collection' | 'publisher'
 | 'series' | 'store' | 'tag' | 'library' | 'cover_art'
 | 'previous_book' | 'next_book'
 export type BookSort = 'title' | 'createdAt' | 'modifiedAt' |
-'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount'
+'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount' | 'weightKg'
 
 export interface BookUpdate {
   id: string
