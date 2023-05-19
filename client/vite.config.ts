@@ -103,7 +103,15 @@ export default defineConfig({
       '/images': 'http://localhost:8080',
     },
     watch: {
-      ignored: ['**/src/tests/**'],
+      ignored: ['**/tests/**'],
     },
+  },
+
+  test: {
+    include: ['test/**/*.test.ts'],
+    environment: 'jsdom',
+    deps: {
+      inline: ['@vue', '@vueuse', 'vue-demi'],
+    }
   },
 })

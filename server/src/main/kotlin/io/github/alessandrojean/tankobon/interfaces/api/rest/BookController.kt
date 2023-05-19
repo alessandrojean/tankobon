@@ -12,6 +12,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.service.BookLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
@@ -19,7 +20,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionBook
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
@@ -155,6 +155,7 @@ class BookController(
 
     val sort = when {
       page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
       else -> Sort.unsorted()
     }
 
@@ -164,6 +165,47 @@ class BookController(
       userId = principal.user.id
     )
     val pageRequest = PageRequest.of(page.pageNumber, page.pageSize, sort)
+    val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
+    val books = referenceExpansion.expand(booksPage.content, includes)
+
+    return PageImpl(books, booksPage.pageable, booksPage.totalElements)
+      .toSuccessCollectionResponseDto { it }
+  }
+
+  @GetMapping("v1/series/{seriesId}/books")
+  @PageableAsQueryParam
+  @Operation(summary = "Get all books from a series", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllBooksFromSeries(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
+  ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
+    val series = seriesRepository.findByIdOrNull(seriesId)
+      ?: throw IdDoesNotExistException("Series not found")
+
+    val library = libraryRepository.findById(series.libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      else -> Sort.unsorted()
+    }
+
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
+    }
+
+    val bookSearch = BookSearch(
+      seriesIds = listOf(seriesId),
+      userId = principal.user.id
+    )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
     val books = referenceExpansion.expand(booksPage.content, includes)
 

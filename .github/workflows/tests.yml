@@ -10,7 +10,7 @@ on:
       - 'dependabot/**'
 
 jobs:
-  test:
+  test-server:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,3 +42,25 @@ jobs:
           name: test-reports-jdk-${{ matrix.java }}
           path: server/build/reports/tests/
 
+  test-client:
+    runs-on: ubuntu-latest
+    name: Test client
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '19'
+          cache: 'pnpm'
+          cache-dependency-path: |
+            client/pnpm-lock.json
+      - name: Install dependencies
+        working-directory: client
+        run: pnpm install
+      - name: Run build
+        working-directory: client
+        run: pnpm build
+      - name: Run tests
+        working-directory: client
+        run: pnpm test
