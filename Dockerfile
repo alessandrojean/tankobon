@@ -8,6 +8,9 @@ RUN apt install zulu17-jdk -y
 RUN curl -sL https://deb.nodesource.com/setup_19.x -o /tmp/nodesource_setup.sh
 RUN bash /tmp/nodesource_setup.sh
 RUN apt install nodejs -y
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="${PATH}:${PNPM_HOME}"
+RUN npm install --global pnpm
 
 FROM tankobon-base AS tankobon-build
 ENV DOCKER_PIPELINE=true

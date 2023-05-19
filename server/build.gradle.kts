@@ -129,33 +129,32 @@ tasks {
     }
   }
 
-  register<Exec>("npmInstall") {
+  register<Exec>("pnpmInstall") {
     group = "client"
     workingDir(client)
     inputs.file("$client/package.json")
     outputs.dir("$client/node_modules")
     commandLine(
-      if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm",
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) "pnpm.cmd" else "pnpm",
       "install",
     )
   }
   
-  register<Exec>("npmBuild") {
+  register<Exec>("pnpmBuild") {
     group = "client"
-    dependsOn("npmInstall")
+    dependsOn("pnpmInstall")
     workingDir(client)
     inputs.dir(client)
     outputs.dir("$client/dist")
     commandLine(
-      if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm",
-      "run",
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) "pnpm.cmd" else "pnpm",
       "build",
     )
   }
   
   register<Sync>("copyWebDist") {
     group = "client"
-    dependsOn("npmBuild")
+    dependsOn("pnpmBuild")
     from("$client/dist/")
     into("$projectDir/src/main/resources/public/")
   }
