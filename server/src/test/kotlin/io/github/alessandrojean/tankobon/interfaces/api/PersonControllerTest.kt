@@ -106,6 +106,15 @@ class PersonControllerTest(
         {
           "name": "${person.name.lowercase()}",
           "description": "",
+          "links": {
+            "website": null,
+            "twitter": null,
+            "instagram": null,
+            "facebook": null,
+            "pixiv": null,
+            "deviantArt": null,
+            "youTube": null,
+          },
           "library": "${library.id}"
         }
       """.trimIndent()

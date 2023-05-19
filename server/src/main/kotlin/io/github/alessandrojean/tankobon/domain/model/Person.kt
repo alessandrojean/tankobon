@@ -10,6 +10,7 @@ data class Person(
   val id: String = UUID.randomUUID().toString(),
   override val libraryId: String = "",
   val description: String = "",
+  val links: PersonLinks = PersonLinks(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

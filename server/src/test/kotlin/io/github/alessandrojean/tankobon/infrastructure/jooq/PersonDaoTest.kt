@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonLinks
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -52,6 +53,7 @@ class PersonDaoTest(
       name = "Person",
       description = "Person description",
       libraryId = library.id,
+      links = PersonLinks(twitter = "person"),
     )
 
     personDao.insert(person)
@@ -62,6 +64,7 @@ class PersonDaoTest(
       assertThat(modifiedAt).isCloseTo(now, offset)
       assertThat(name).isEqualTo(person.name)
       assertThat(description).isEqualTo(person.description)
+      assertThat(links.twitter).isEqualTo(person.links.twitter)
       assertThat(libraryId).isEqualTo(person.libraryId)
     }
   }
@@ -72,6 +75,7 @@ class PersonDaoTest(
       name = "Person",
       description = "Person description",
       libraryId = library.id,
+      links = PersonLinks(twitter = "person"),
     )
     personDao.insert(person)
 
@@ -79,7 +83,8 @@ class PersonDaoTest(
 
     val updated = personDao.findById(person.id).copy(
       name = "PersonUpdated",
-      description = "PersonUpdated description"
+      description = "PersonUpdated description",
+      links = PersonLinks(twitter = "person_"),
     )
 
     personDao.update(updated)
@@ -93,6 +98,7 @@ class PersonDaoTest(
         .isNotEqualTo(updated.modifiedAt)
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
+      assertThat(links.twitter).isEqualTo(updated.links.twitter)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

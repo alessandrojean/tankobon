@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonLinks
 import io.github.alessandrojean.tankobon.domain.model.PersonSearch
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
@@ -140,6 +141,13 @@ class PersonDao(
       .set(TablePerson.NAME, person.name)
       .set(TablePerson.DESCRIPTION, person.description)
       .set(TablePerson.LIBRARY_ID, person.libraryId)
+      .set(TablePerson.WEBSITE, person.links.website)
+      .set(TablePerson.TWITTER, person.links.twitter)
+      .set(TablePerson.INSTAGRAM, person.links.instagram)
+      .set(TablePerson.FACEBOOK, person.links.facebook)
+      .set(TablePerson.PIXIV, person.links.pixiv)
+      .set(TablePerson.DEVIANTART, person.links.deviantArt)
+      .set(TablePerson.YOUTUBE, person.links.youTube)
       .execute()
   }
 
@@ -150,6 +158,13 @@ class PersonDao(
       .set(TablePerson.NAME, person.name)
       .set(TablePerson.DESCRIPTION, person.description)
       .set(TablePerson.LIBRARY_ID, person.libraryId)
+      .set(TablePerson.WEBSITE, person.links.website)
+      .set(TablePerson.TWITTER, person.links.twitter)
+      .set(TablePerson.INSTAGRAM, person.links.instagram)
+      .set(TablePerson.FACEBOOK, person.links.facebook)
+      .set(TablePerson.PIXIV, person.links.pixiv)
+      .set(TablePerson.DEVIANTART, person.links.deviantArt)
+      .set(TablePerson.YOUTUBE, person.links.youTube)
       .set(TablePerson.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TablePerson.ID.eq(person.id))
       .execute()
@@ -196,6 +211,15 @@ class PersonDao(
   private fun PersonRecord.toDomain(): Person = Person(
     name = name,
     description = description,
+    links = PersonLinks(
+      website = website,
+      twitter = twitter,
+      instagram = instagram,
+      facebook = facebook,
+      pixiv = pixiv,
+      deviantArt = deviantart,
+      youTube = youtube,
+    ),
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),
