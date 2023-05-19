@@ -34,6 +34,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-validation")
+  implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.data:spring-data-commons")
@@ -120,7 +121,14 @@ tasks {
   getByName<Jar>("jar") {
     enabled = false
   }
-  
+
+  // Use a known archive name for Docker builds
+  if (System.getenv("DOCKER_PIPELINE").toBoolean()) {
+    bootJar.configure {
+      archiveFileName.set("tankobon.jar")
+    }
+  }
+
   register<Exec>("npmInstall") {
     group = "client"
     workingDir(client)

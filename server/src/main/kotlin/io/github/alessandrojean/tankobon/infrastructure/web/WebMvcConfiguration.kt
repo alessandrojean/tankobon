@@ -1,16 +1,18 @@
 package io.github.alessandrojean.tankobon.infrastructure.web
 
 import io.github.alessandrojean.tankobon.infrastructure.configuration.TankobonProperties
+import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
+import kotlin.io.path.absolutePathString
 import mu.KotlinLogging
 import org.springframework.boot.convert.ApplicationConversionService
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
+import org.springframework.http.CacheControl
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.mvc.WebContentInterceptor
-import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
 
 private val logger = KotlinLogging.logger {}
 
@@ -20,6 +22,30 @@ class WebMvcConfiguration(
 ) : WebMvcConfigurer {
 
   override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+    registry
+      .addResourceHandler(
+        "/index.html",
+        "/favicon.svg",
+      )
+      .addResourceLocations(
+        "classpath:public/index.html",
+        "classpath:public/favicon.svg",
+      )
+      .setCacheControl(CacheControl.noStore())
+
+    registry
+      .addResourceHandler(
+        "/fonts/**",
+        "/assets/**",
+        "/flags/**",
+      )
+      .addResourceLocations(
+        "classpath:public/fonts/",
+        "classpath:public/assets/",
+        "classpath:public/flags/",
+      )
+      .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic())
+
     if (!registry.hasMappingForPattern("/webjars/**")) {
       registry
         .addResourceHandler("/webjars/**")

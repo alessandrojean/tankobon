@@ -52,9 +52,11 @@ class SecurityConfiguration(
             "/css/**",
             "/img/**",
             "/js/**",
-            "/favicon.ico",
+            "/favicon.svg",
             "/",
             "/index.html",
+            "/fonts/**",
+            "/assets/**",
           )
           .permitAll()
 
