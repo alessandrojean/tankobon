@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlan
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 
 data class PublisherEntityDto(
@@ -28,12 +29,16 @@ data class PublisherLinksDto(
   @get:NullOrNotBlank
   val store: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "twitter.com")
   val twitter: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "instagram.com")
   val instagram: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "facebook.com")
   val facebook: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "youtube.com")
   val youTube: String? = null,
 )
 

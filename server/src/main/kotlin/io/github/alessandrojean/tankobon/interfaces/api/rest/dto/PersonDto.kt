@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlan
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 
 data class PersonEntityDto(
@@ -24,18 +25,25 @@ data class PersonAttributesDto(
 
 data class PersonLinksDto(
   @get:NullOrNotBlank
+  @get:URL
   val website: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "twitter.com")
   val twitter: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "instagram.com")
   val instagram: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "facebook.com")
   val facebook: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "pixiv.net")
   val pixiv: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "deviantart.com")
   val deviantArt: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "youtube.com")
   val youTube: String? = null,
 )
 

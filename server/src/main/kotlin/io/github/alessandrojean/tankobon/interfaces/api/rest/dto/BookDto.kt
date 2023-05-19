@@ -8,12 +8,14 @@ import io.github.alessandrojean.tankobon.infrastructure.parser.toIsbnInformation
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.github.alessandrojean.tankobon.infrastructure.validation.PositiveAmount
+import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.annotation.Nullable
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 import org.hibernate.validator.constraints.UniqueElements
 import java.time.LocalDateTime
@@ -52,12 +54,18 @@ data class BookAttributesDto(
 
 data class BookLinksDto(
   @get:NullOrNotBlank
+  @get:UrlMultipleHosts(
+    allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn"]
+  )
   val amazon: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "openlibrary.org")
   val openLibrary: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "skoob.com.br")
   val skoob: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "goodreads.com")
   val goodreads: String? = null,
 )
 

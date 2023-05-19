@@ -10,6 +10,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlan
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 import org.hibernate.validator.constraints.UniqueElements
 import java.time.LocalDateTime
@@ -47,14 +48,19 @@ data class SeriesLinksDto(
   @get:NullOrNotBlank
   val website: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "myanimelist.net")
   val myAnimeList: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "kitsu.io")
   val kitsu: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "anilist.co")
   val aniList: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "twitter.com")
   val twitter: String? = null,
   @get:NullOrNotBlank
+  @get:URL(host = "instagram.com")
   val instagram: String? = null,
 )
 
