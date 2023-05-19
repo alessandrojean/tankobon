@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreLinks
 import io.github.alessandrojean.tankobon.domain.model.StoreSearch
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -11,9 +12,7 @@ import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.StoreLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionSeries
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionStore
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreUpdateDto
@@ -169,6 +168,13 @@ class StoreController(
       Store(
         name = store.name,
         description = store.description,
+        links = StoreLinks(
+          website = store.links.website,
+          twitter = store.links.twitter,
+          instagram = store.links.instagram,
+          facebook = store.links.facebook,
+          youTube = store.links.youTube,
+        ),
         libraryId = store.library
       )
     )
@@ -216,6 +222,13 @@ class StoreController(
     val toUpdate = existing.copy(
       name = store.name,
       description = store.description,
+      links = StoreLinks(
+        website = store.links.website,
+        twitter = store.links.twitter,
+        instagram = store.links.instagram,
+        facebook = store.links.facebook,
+        youTube = store.links.youTube,
+      ),
     )
 
     storeLifecycle.updateStore(toUpdate)

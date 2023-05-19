@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.domain.model.PersonLinks
 import io.github.alessandrojean.tankobon.domain.model.PersonSearch
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
@@ -177,6 +178,15 @@ class PersonController(
       Person(
         name = person.name,
         description = person.description,
+        links = PersonLinks(
+          website = person.links.website,
+          twitter = person.links.twitter,
+          instagram = person.links.instagram,
+          facebook = person.links.facebook,
+          pixiv = person.links.pixiv,
+          deviantArt = person.links.deviantArt,
+          youTube = person.links.youTube,
+        ),
         libraryId = person.library,
       )
     )
@@ -262,6 +272,15 @@ class PersonController(
     val toUpdate = existing.copy(
       name = person.name,
       description = person.description,
+      links = PersonLinks(
+        website = person.links.website,
+        twitter = person.links.twitter,
+        instagram = person.links.instagram,
+        facebook = person.links.facebook,
+        pixiv = person.links.pixiv,
+        deviantArt = person.links.deviantArt,
+        youTube = person.links.youTube,
+      ),
     )
 
     personLifecycle.updatePerson(toUpdate)

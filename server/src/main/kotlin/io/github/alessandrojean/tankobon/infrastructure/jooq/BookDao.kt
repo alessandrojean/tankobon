@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Book
+import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
@@ -138,6 +139,10 @@ class BookDao(
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
       .set(TableBook.WEIGHT_KG, book.weightKg)
+      .set(TableBook.AMAZON, book.links.amazon)
+      .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
+      .set(TableBook.SKOOB, book.links.skoob)
+      .set(TableBook.GOODREADS, book.links.goodreads)
       .execute()
   }
 
@@ -168,6 +173,10 @@ class BookDao(
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
       .set(TableBook.WEIGHT_KG, book.weightKg)
+      .set(TableBook.AMAZON, book.links.amazon)
+      .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
+      .set(TableBook.SKOOB, book.links.skoob)
+      .set(TableBook.GOODREADS, book.links.goodreads)
       .set(TableBook.MODIFIED_AT, LocalDateTime.now(ZoneId.of("UTC")))
       .where(TableBook.ID.eq(book.id))
       .execute()
@@ -206,6 +215,12 @@ class BookDao(
     sourceBookId = sourceBookId,
     subtitle = subtitle,
     weightKg = weightKg,
+    links = BookLinks(
+      amazon = amazon,
+      openLibrary = openLibrary,
+      skoob = skoob,
+      goodreads = goodreads,
+    ),
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

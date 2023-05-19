@@ -151,7 +151,13 @@ class BookControllerTest(
               "synopsis": "Synopsis",
               "tags": ["$TAG_ID"],
               "title": "Akira #01",
-              "subtitle": "Part 1 - Tetsuo"
+              "subtitle": "Part 1 - Tetsuo",
+              "links": {
+                "amazon": null,
+                "openLibrary": null,
+                "skoob": null,
+                "goodreads": null
+              }
             }
           """.trimIndent()
         }
@@ -214,7 +220,13 @@ class BookControllerTest(
               "synopsis": "Synopsis",
               "tags": ["$TAG_ID"],
               "title": "Akira #01",
-              "subtitle": "Part 1 - Tetsuo"
+              "subtitle": "Part 1 - Tetsuo",
+              "links": {
+                "amazon": null,
+                "openLibrary": null,
+                "skoob": null,
+                "goodreads": null
+              }
             }
           """.trimIndent()
         }

@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.BookContributor
 import io.github.alessandrojean.tankobon.domain.model.BookLibraryChangedException
+import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.BookSearch
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
@@ -357,6 +358,12 @@ class BookDtoDao(
     billedAt = billedAt,
     arrivedAt = arrivedAt,
     weightKg = weightKg,
+    links = BookLinks(
+      amazon = links.amazon,
+      openLibrary = links.openLibrary,
+      skoob = links.skoob,
+      goodreads = links.goodreads,
+    )
   )
 
   private fun Book.toDto(): BookEntityDto {
@@ -541,6 +548,12 @@ class BookDtoDao(
     sourceBookId = sourceBookId,
     subtitle = subtitle,
     weightKg = weightKg,
+    links = BookLinks(
+      amazon = amazon,
+      openLibrary = openLibrary,
+      skoob = skoob,
+      goodreads = goodreads,
+    ),
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),
     arrivedAt = arrivedAt?.toCurrentTimeZone(),

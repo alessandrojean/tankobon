@@ -120,7 +120,7 @@ class SeriesControllerTest(
             "kitsu": null,
             "aniList": null,
             "twitter": null,
-            "instagram": null,
+            "instagram": null
           },
         }
       """.trimIndent()

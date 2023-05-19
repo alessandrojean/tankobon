@@ -113,7 +113,7 @@ class PersonControllerTest(
             "facebook": null,
             "pixiv": null,
             "deviantArt": null,
-            "youTube": null,
+            "youTube": null
           },
           "library": "${library.id}"
         }

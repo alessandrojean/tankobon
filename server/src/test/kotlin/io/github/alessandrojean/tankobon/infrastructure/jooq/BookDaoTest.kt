@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Book
+import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
@@ -65,6 +66,7 @@ class BookDaoTest(
       labelPrice = FastMoney.of(9.99f, "USD"),
       dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
       weightKg = 0.2f,
+      links = BookLinks(amazon = "amazon.com"),
       collectionId = collection.id,
       barcode = "12345",
       boughtAt = now.toUtcTimeZone(),
@@ -90,6 +92,7 @@ class BookDaoTest(
       assertThat(arrivedAt).isEqualToIgnoringNanos(now)
       assertThat(title).isEqualTo(book.title)
       assertThat(subtitle).isEqualTo(book.subtitle)
+      assertThat(links.amazon).isEqualTo(book.links.amazon)
       assertThat(createdAt).isCloseTo(now, offset)
       assertThat(modifiedAt).isCloseTo(now, offset)
     }
@@ -108,6 +111,7 @@ class BookDaoTest(
       weightKg = 0.2f,
       collectionId = collection.id,
       barcode = "12345",
+      links = BookLinks(amazon = "amazon.com"),
       boughtAt = now.toUtcTimeZone(),
       billedAt = now.toUtcTimeZone(),
       arrivedAt = now.toUtcTimeZone(),
@@ -124,7 +128,8 @@ class BookDaoTest(
         boughtAt = modificationDate.toUtcTimeZone(),
         billedAt = modificationDate.toUtcTimeZone(),
         arrivedAt = modificationDate.toUtcTimeZone(),
-        paidPrice = FastMoney.of(5.99f, "USD")
+        paidPrice = FastMoney.of(5.99f, "USD"),
+        links = BookLinks(amazon = "amazon.com.br"),
       )
     }
 
@@ -143,6 +148,7 @@ class BookDaoTest(
       assertThat(title).isEqualTo(updated.title)
       assertThat(subtitle).isEqualTo(updated.subtitle)
       assertThat(weightKg).isEqualTo(updated.weightKg)
+      assertThat(links.amazon).isEqualTo(updated.links.amazon)
       assertThat(createdAt).isEqualTo(updated.createdAt)
       assertThat(modifiedAt)
         .isCloseTo(modificationDate, offset)

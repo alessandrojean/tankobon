@@ -42,12 +42,24 @@ data class BookAttributesDto(
   val pageCount: Int,
   val synopsis: String,
   val notes: String,
+  val links: BookLinksDto,
   val boughtAt: LocalDateTime?,
   val billedAt: LocalDateTime?,
   val arrivedAt: LocalDateTime?,
   val createdAt: LocalDateTime?,
   val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
+
+data class BookLinksDto(
+  @get:NullOrNotBlank
+  val amazon: String? = null,
+  @get:NullOrNotBlank
+  val openLibrary: String? = null,
+  @get:NullOrNotBlank
+  val skoob: String? = null,
+  @get:NullOrNotBlank
+  val goodreads: String? = null,
+)
 
 enum class ReferenceExpansionBook : ReferenceExpansionEnum {
   CONTRIBUTOR,
@@ -112,6 +124,12 @@ fun Book.toAttributesDto() = BookAttributesDto(
   pageCount = pageCount,
   synopsis = synopsis,
   notes = notes,
+  links = BookLinksDto(
+    amazon = links.amazon,
+    openLibrary = links.openLibrary,
+    skoob = links.skoob,
+    goodreads = links.goodreads,
+  ),
   boughtAt = boughtAt?.toUtcTimeZone(),
   billedAt = billedAt?.toUtcTimeZone(),
   arrivedAt = arrivedAt?.toUtcTimeZone(),
@@ -172,6 +190,8 @@ data class BookCreationDto(
   @get:NotNull
   @get:Schema(description = "Personal user notes about the book")
   val notes: String,
+  @get:NotNull
+  val links: BookLinksDto,
   @get:Nullable val boughtAt: LocalDateTime? = null,
   @get:Nullable
   @get:Schema(description = "Date of payment, useful for pre-orders like Amazon ones")

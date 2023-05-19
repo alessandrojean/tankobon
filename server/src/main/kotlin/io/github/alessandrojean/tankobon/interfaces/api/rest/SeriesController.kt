@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
+import io.github.alessandrojean.tankobon.domain.model.SeriesLinks
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -183,6 +184,14 @@ class SeriesController(
         },
         lastNumber = series.lastNumber,
         originalLanguage = series.originalLanguage,
+        links = SeriesLinks(
+          website = series.links.website,
+          myAnimeList = series.links.myAnimeList,
+          kitsu = series.links.kitsu,
+          aniList = series.links.aniList,
+          twitter = series.links.twitter,
+          instagram = series.links.instagram,
+        ),
         libraryId = series.library
       )
     )
@@ -274,6 +283,14 @@ class SeriesController(
       },
       lastNumber = series.lastNumber,
       originalLanguage = series.originalLanguage,
+      links = SeriesLinks(
+        website = series.links.website,
+        myAnimeList = series.links.myAnimeList,
+        kitsu = series.links.kitsu,
+        aniList = series.links.aniList,
+        twitter = series.links.twitter,
+        instagram = series.links.instagram,
+      ),
     )
 
     seriesLifecycle.updateSeries(toUpdate)

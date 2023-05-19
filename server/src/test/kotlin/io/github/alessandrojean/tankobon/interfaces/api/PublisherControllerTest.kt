@@ -112,7 +112,7 @@ class PublisherControllerTest(
             "twitter": null,
             "instagram": null,
             "facebook": null,
-            "youTube": null,
+            "youTube": null
           },
           "library": "${library.id}"
         }

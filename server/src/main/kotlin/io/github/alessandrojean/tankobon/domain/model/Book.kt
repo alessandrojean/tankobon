@@ -30,6 +30,7 @@ data class Book(
 
   val subtitle: String = "",
   val weightKg: Float = 0f,
+  val links: BookLinks = BookLinks(),
 
   /**
    * Assumed to be in the UTC timezone.

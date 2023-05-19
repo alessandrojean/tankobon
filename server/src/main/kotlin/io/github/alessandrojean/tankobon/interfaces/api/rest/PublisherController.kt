@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.domain.model.PublisherLinks
 import io.github.alessandrojean.tankobon.domain.model.PublisherSearch
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
@@ -177,6 +178,14 @@ class PublisherController(
       Publisher(
         name = publisher.name,
         description = publisher.description,
+        links = PublisherLinks(
+          website = publisher.links.website,
+          store = publisher.links.store,
+          twitter = publisher.links.twitter,
+          instagram = publisher.links.instagram,
+          facebook = publisher.links.facebook,
+          youTube = publisher.links.youTube,
+        ),
         libraryId = publisher.library
       )
     )
@@ -263,6 +272,14 @@ class PublisherController(
     val toUpdate = existing.copy(
       name = publisher.name,
       description = publisher.description,
+      links = PublisherLinks(
+        website = publisher.links.website,
+        store = publisher.links.store,
+        twitter = publisher.links.twitter,
+        instagram = publisher.links.instagram,
+        facebook = publisher.links.facebook,
+        youTube = publisher.links.youTube,
+      ),
     )
 
     publisherLifecycle.updatePublisher(toUpdate)
