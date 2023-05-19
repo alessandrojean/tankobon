@@ -1,49 +1,63 @@
 <script lang="ts" setup>
-import type { ColumnSort, PaginationState, SortingState } from '@tanstack/vue-table'
+import type { PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { SeriesEntity, SeriesSort } from '@/types/tankobon-series'
 import type { Sort } from '@/types/tankobon-api'
+import { getRelationship } from '@/utils/api'
+import Avatar from '@/components/Avatar.vue'
+import { createImageUrl } from '@/modules/api'
+import { MagnifyingGlassIcon, Square2StackIcon } from '@heroicons/vue/24/outline'
+import { getLanguageName } from '@/utils/language'
+import Flag from '@/components/Flag.vue'
+import { PaginatedResponse } from '@/types/tankobon-response'
+import { ColumnOrderState } from '@tanstack/vue-table'
+import { getOriginalName } from '@/services/tankobon-series'
 
 export interface SeriesTableProps {
-  libraryId: string
+  series?: PaginatedResponse<SeriesEntity>
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
+  loading?: boolean
+  page: number
   search?: string
+  size: number
+  sort: Sort<SeriesSort>[]
 }
 
 const props = withDefaults(defineProps<SeriesTableProps>(), {
-  search: undefined,
+  series: undefined,
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
+  loading: false,
+  search: '',
 })
-const { libraryId, search } = toRefs(props)
-const notificator = useToaster()
-const { t } = useI18n()
 
-const defaultSorting: ColumnSort = { id: 'name', desc: false }
-const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
-const sorting = ref<SortingState>([defaultSorting])
+const emit = defineEmits<{
+  (e: 'update:page', page: number): void
+  (e: 'update:size', size: number): void
+  (e: 'update:sort', sort: Sort<SeriesSort>[]): void
+}>()
+
+const { page, search, size, sort } = toRefs(props)
+const { t, d, locale } = useI18n()
+
+const pagination = computed<PaginationState>(() => ({
+  pageIndex: page.value,
+  pageSize: size.value,
+}))
+
+const sorting = computed<SortingState>(() => {
+  return sort.value.map(sorting => ({
+    id: sorting.property,
+    desc: sorting.direction === 'desc',
+  }))
+})
+
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: series, isLoading } = useLibrarySeriesQuery({
-  libraryId,
-  search,
-  page: computed(() => pagination.value.pageIndex),
-  size: computed(() => pagination.value.pageSize),
-  sort: computed<Sort<SeriesSort>[]>(() => {
-    return sorting.value.map(sort => ({
-      property: sort.id as SeriesSort,
-      direction: sort.desc ? 'desc' : 'asc',
-    }))
-  }),
-  enabled: computed(() => libraryId.value !== undefined),
-  keepPreviousData: true,
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('series.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
 const columnHelper = createColumnHelper<SeriesEntity>()
 
 const columns = [
@@ -68,11 +82,41 @@ const columns = [
       cellClass: 'align-middle',
     },
   }),
-  columnHelper.accessor('attributes.name', {
-    id: 'name',
-    header: () => t('common-fields.name'),
-    cell: info => info.getValue(),
-  }),
+  columnHelper.accessor(
+    series => ({
+      name: series.attributes.name,
+      series: series,
+      originalLanguage: series.attributes.originalLanguage,
+      cover: getRelationship(series, 'SERIES_COVER'),
+    }),
+    {
+      id: 'name',
+      header: () => t('common-fields.name'),
+      cell: (info) => {
+        const { name, series, originalLanguage, cover } = info.getValue()
+        const originalName = getOriginalName(series)
+
+        return h('div', { class: 'flex items-center space-x-3' }, [
+          h(Avatar, {
+            pictureUrl: createImageUrl({
+              fileName: cover?.attributes?.versions?.['256'],
+              timeHex: cover?.attributes?.timeHex,
+            }),
+            square: true,
+            emptyIcon: Square2StackIcon,
+          }),
+          h('div', { class: 'flex flex-col' }, [
+            h('span', { innerText: name, class: 'font-medium' }),
+            originalName ? h('span', { lang: originalLanguage, innerText: originalName.name, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
+          ])
+        ])
+      },
+      meta: {
+        headerClass: 'pl-0',
+        cellClass: 'pl-0',
+      },
+    },
+  ),
   columnHelper.accessor('attributes.type', {
     id: 'type',
     header: () => t('series.type'),
@@ -86,6 +130,49 @@ const columns = [
       headerContainerClass: 'justify-end',
       cellClass: 'text-right',
     },
+  }),
+  columnHelper.accessor('attributes.originalLanguage', {
+    id: 'originalLanguage',
+    header: () => t('original-language.label'),
+    cell: (info) => {
+      const originalLanguage = info.getValue()
+      const parts = originalLanguage?.split('-') ?? []
+      const region = parts[parts.length - 1]
+
+      return h('div', { class: 'flex items-center gap-3' }, [
+        h(Flag, { region }),
+        h('span', {
+          innerText: getLanguageName({
+            language: info.getValue(),
+            locale: locale.value,
+            romanizedLabel: t('original-language.romanized'),
+            unknownLabel: t('original-language.unknown'),
+          })
+        })
+      ])
+    },
+  }),
+  columnHelper.accessor('attributes.lastNumber', {
+    id: 'lastNumber',
+    header: () => t('series.last-number'),
+    cell: (info) => info.getValue(),
+    meta: {
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+      tabular: true
+    },
+  }),
+  columnHelper.accessor('attributes.createdAt', {
+    id: 'createdAt',
+    header: () => t('common-fields.created-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.modifiedAt', {
+    id: 'modifiedAt',
+    header: () => t('common-fields.modified-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
   }),
   columnHelper.display({
     id: 'actions',
@@ -110,21 +197,60 @@ const columns = [
     },
   }),
 ]
+
+function handlePaginationChange(pagination: PaginationState) {
+  emit('update:page', pagination.pageIndex)
+  emit('update:size', pagination.pageSize)
+}
+
+function handleSortingChange(sorting: SortingState) {
+  const sortToEmit = sorting.map<Sort<SeriesSort>>(sort => ({
+    property: sort.id as SeriesSort,
+    direction: sort.desc ? 'desc' : 'asc',
+  }))
+
+  emit('update:sort', sortToEmit)
+}
 </script>
 
 <template>
   <Table
-    v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
+    :pagination="pagination"
+    :sorting="sorting"
     :data="series?.data"
     :columns="columns"
     :page-count="series?.pagination?.totalPages"
     :items-count="series?.pagination?.totalElements"
-    :loading="isLoading"
+    :loading="loading"
+    :column-order="['select', ...columnOrder, 'actions']"
+    :column-visibility="columnVisibility"
+    @update:pagination="handlePaginationChange"
+    @update:sorting="handleSortingChange"
   >
     <template #empty>
-      <slot name="empty" />
+      <slot name="empty">
+        <EmptyState
+            :icon="search?.length ? MagnifyingGlassIcon : Square2StackIcon"
+            :title="$t('series.empty-header')"
+            :description="
+              search?.length
+                ? $t('series.empty-search-description', [search])
+                : $t('series.empty-description')
+            "
+          >
+            <template v-if="!search?.length" #actions>
+              <Button
+                kind="primary"
+                is-router-link
+                :to="{ name: 'series-new' }"
+              >
+                <PlusIcon class="w-5 h-5" />
+                <span>{{ $t('series.new') }}</span>
+              </Button>
+            </template>
+          </EmptyState>
+      </slot>
     </template>
   </Table>
 </template>

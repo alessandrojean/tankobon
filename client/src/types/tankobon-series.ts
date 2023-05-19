@@ -12,6 +12,8 @@ export interface SeriesAttributes {
   alternativeNames: AlternativeName[]
   lastNumber: string | null
   originalLanguage: string | null
+  createdAt: string
+  modifiedAt: string
 }
 
 export type SeriesType = 'MANGA' | 'MANHWA' | 'MANHUA' | 'COMIC'

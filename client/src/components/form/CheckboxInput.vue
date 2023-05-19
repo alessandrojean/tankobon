@@ -14,7 +14,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-2 min-w-0">
     <input
       :class="[
         'rounded w-4 h-4 dark:bg-gray-950 border-gray-300 dark:border-gray-600',
@@ -34,7 +34,7 @@ defineEmits<{
       @change="$emit('update:modelValue', ($event.target! as HTMLInputElement).checked)"
     >
     <label
-      class="text-gray-700 dark:text-gray-300 font-medium select-none text-sm grow"
+      class="text-gray-700 dark:text-gray-300 font-medium select-none text-sm grow min-w-0"
       :for="String(id)"
       v-if="labelText"
     >

@@ -5,8 +5,6 @@ interface UseUserPreferenceOptions {
 }
 
 export default function useUserPreference<PValue>(key: string, defaultValue: PValue, options: UseUserPreferenceOptions = {}) {
-  const localPreference = useLocalStorage<PValue>(key, defaultValue)
-
   function encodeValue(value: PValue): string {
     if (typeof value === 'object') {
       return JSON.stringify(value)
@@ -24,21 +22,16 @@ export default function useUserPreference<PValue>(key: string, defaultValue: PVa
   }
 
   const { data: preference } = useUserPreferencesQuery({
-    select: preferences => decodeValue(preferences[key]) ?? localPreference.value,
+    select: preferences => preferences[key] ? decodeValue(preferences[key]) : defaultValue,
     onError: (error) => options?.onError?.(error),
   })
 
-  const { mutateAsync: setPreferences } = useSetPreferencesMutation()
+  const { mutate: setPreferences } = useSetPreferencesMutation()
 
-  watch(localPreference, async (newValue) => {
-    if (encodeValue(newValue) !== encodeValue(preference.value)) {
-      await setPreferences({ [key]: encodeValue(newValue) })
-    }
-  })
-
-  watch(preference, (newValue) => {
-    localPreference.value = newValue
-  })
-
-  return { preference: localPreference }
+  return {
+    preference: computed<PValue>({
+      get: () => preference.value,
+      set: (newValue) => setPreferences({ [key]: encodeValue(newValue) })
+    })
+  }
 }

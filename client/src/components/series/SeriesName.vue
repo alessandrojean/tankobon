@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import groupBy from 'lodash.groupby'
 import type { SeriesEntity } from '@/types/tankobon-series'
+import { getOriginalName } from '@/services/tankobon-series'
 
 export interface SeriesNameProps {
   series?: SeriesEntity | null
@@ -15,59 +15,7 @@ const props = withDefaults(defineProps<SeriesNameProps>(), {
 const { t } = useI18n()
 const { series, loading } = toRefs(props)
 
-const alternativeNames = computed(() => {
-  return groupBy(series.value?.attributes.alternativeNames ?? [], 'language')
-})
-
-function getFirstKeyAvailable(...keys: string[]) {
-  const names = keys.map(key => alternativeNames.value[key]?.[0])
-
-  return names.find(name => name !== undefined && name.name.length > 0)
-}
-
-// https://unicode.org/iso15924/iso15924-codes.html
-const possibleOriginalName = computed(() => {
-  if (!series.value) {
-    return undefined
-  }
-
-  const type = series.value.attributes.type
-
-  if (type === 'MANGA' || type === 'LIGHT_NOVEL') {
-    return getFirstKeyAvailable('ja-JP', 'ja-Latn-JP')
-  } else if (type === 'MANHWA') {
-    return getFirstKeyAvailable('ko-KR', 'ko-KP', 'ko-Latn-KR', 'ko-Latn-KP')
-  } else if (type === 'MANHUA') {
-    return getFirstKeyAvailable('zh-CN', 'zh-TW', 'zh-HK', 'zh-Hant-TW', 'zh-Hans-CN', 'zh-Latn-CN', 'zh-Latn-TW')
-  } else {
-    return series.value.attributes.alternativeNames[0]
-  }
-})
-
-const originalName = computed(() => {
-  if (!series.value) {
-    return undefined
-  }
-
-  const { originalLanguage } = series.value.attributes
-
-  if (!originalLanguage) {
-    return possibleOriginalName.value
-  }
-
-  if (alternativeNames.value[originalLanguage]) {
-    return alternativeNames.value[originalLanguage][0]
-  }
-
-  const [language] = originalLanguage.split('-')
-  const firstLanguage = Object
-    .keys(alternativeNames.value)
-    .find(key => key.startsWith(language))
-
-  return firstLanguage
-    ? alternativeNames.value[firstLanguage][0]
-    : series.value.attributes.alternativeNames[0]
-})
+const originalName = computed(() => getOriginalName(series.value))
 
 const typeName = computed(() => {
   const type = series.value?.attributes.type

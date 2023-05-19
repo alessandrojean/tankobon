@@ -82,19 +82,13 @@ function handleSortDirectionChange(newSortDirection: SortDirection) {
 
 const BOOKS_VIEW_MODE_KEY = 'books_view_mode'
 
-const { data: viewMode } = useUserPreferencesQuery({
-  select: (preferences) => {
-    return preferences[BOOKS_VIEW_MODE_KEY]
-      ? preferences[BOOKS_VIEW_MODE_KEY] as ViewMode
-      : 'grid-comfortable'
-  },
-  initialData: { [BOOKS_VIEW_MODE_KEY]: 'grid-comfortable' },
-  onError: async (error) => {
-    await notificator.failure({
+const { preference: viewMode } = useUserPreference<ViewMode>(BOOKS_VIEW_MODE_KEY, 'grid-comfortable', {
+  onError: (error) => {
+    notificator.failure({
       title: t('preferences.view-mode-failure'),
       body: error.message,
     })
-  },
+  }
 })
 
 const sortProperties = computed(() => {
@@ -151,7 +145,7 @@ const { preference: columnVisibility } = useUserPreference<Record<string, boolea
   number: false,
 })
 
-const { preference: columnOrder } = useUserPreference<ColumnOrderState>('books_column_order', [])
+const { preference: columnOrder } = useUserPreference<ColumnOrderState>('books_column_order', ['title', 'collection', 'createdAt'])
 </script>
 
 <route lang="yaml">

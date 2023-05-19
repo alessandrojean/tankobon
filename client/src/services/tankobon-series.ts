@@ -16,6 +16,8 @@ import type {
   SeriesUpdate,
 } from '@/types/tankobon-series'
 import type { Paginated } from '@/types/tankobon-api'
+import groupBy from 'lodash.groupby'
+import { AlternativeName } from '@/types/tankobon-alternative-name'
 
 type SeriesOnly = EntityResponse<SeriesEntity>
 type SeriesPaginated = PaginatedResponse<SeriesEntity>
@@ -147,4 +149,55 @@ export async function deleteSeriesCover(seriesId: string): Promise<void> {
 
     throw e
   }
+}
+
+function getFirstKeyAvailable(alternativeNames: Record<string, AlternativeName[]>, ...keys: string[]) {
+  const names = keys.map(key => alternativeNames[key]?.[0])
+
+  return names.find(name => name !== undefined && name.name.length > 0)
+}
+
+// https://unicode.org/iso15924/iso15924-codes.html
+export function getPossibleOriginalName(series: SeriesEntity | undefined | null, alternativeNames: Record<string, AlternativeName[]>) {
+  if (!series) {
+    return undefined
+  }
+
+  const type = series.attributes.type
+  
+  if (type === 'MANGA' || type === 'LIGHT_NOVEL') {
+    return getFirstKeyAvailable(alternativeNames, 'ja-JP', 'ja-Latn-JP')
+  } else if (type === 'MANHWA') {
+    return getFirstKeyAvailable(alternativeNames, 'ko-KR', 'ko-KP', 'ko-Latn-KR', 'ko-Latn-KP')
+  } else if (type === 'MANHUA') {
+    return getFirstKeyAvailable(alternativeNames, 'zh-CN', 'zh-TW', 'zh-HK', 'zh-Hant-TW', 'zh-Hans-CN', 'zh-Latn-CN', 'zh-Latn-TW')
+  } else {
+    return series.attributes.alternativeNames[0]
+  }
+}
+
+export function getOriginalName(series: SeriesEntity | undefined | null) {
+  if (!series) {
+    return undefined
+  }
+
+  const { originalLanguage } = series.attributes
+  const alternativeNames = groupBy(series.attributes.alternativeNames ?? [], 'language')
+
+  if (!originalLanguage) {
+    return getPossibleOriginalName(series, alternativeNames)
+  }
+
+  if (alternativeNames[originalLanguage]) {
+    return alternativeNames[originalLanguage][0]
+  }
+
+  const [language] = originalLanguage.split('-')
+  const firstLanguage = Object
+    .keys(alternativeNames)
+    .find(key => key.startsWith(language))
+
+  return firstLanguage
+    ? alternativeNames[firstLanguage][0]
+    : series.attributes.alternativeNames[0]
 }

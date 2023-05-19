@@ -87,7 +87,7 @@ useFocusZone({
         ref="popoverPanel"
         as="div"
         :class="[
-          'absolute top-[--top] left-[--left] min-w-[12rem] max-w-[25rem] z-20 p-2',
+          'absolute top-[--top] left-[--left] min-w-[12rem] max-w-[20rem] z-20 p-2',
           'space-y-1 bg-white dark:bg-gray-800',
           'shadow-primer-overlay dark:shadow-primer-overlay-dark',
           'rounded-xl mt-0.5 origin-top-right ring-1',
@@ -101,7 +101,7 @@ useFocusZone({
         <Draggable
           ref="options"
           tag="ul"
-          class="max-h-[18rem] overflow-y-auto rounded-lg"
+          class="max-h-[18rem] w-full min-w-0 overflow-y-auto rounded-lg"
           ghost-class="opacity-50"
           drag-class="cursor-grabbing"
           handle=".grabber"
@@ -117,11 +117,11 @@ useFocusZone({
               :class="[
                 'select-none pl-2 pr-1 py-1.5 text-sm',
                 'rounded-lg flex gap-1 items-center',
-                'dark:text-gray-300',
+                'dark:text-gray-300 w-full min-w-0',
               ]"
             >
               <CheckboxInput
-                class="!gap-3.5 grow"
+                class="!gap-3.5 grow min-w-0 [&_label]:truncate"
                 disabled
                 :id="`column-${column.id}`"
                 :model-value="columnVisibility[column.id] ?? false"
@@ -133,12 +133,12 @@ useFocusZone({
             <li
               :class="[
                 'select-none pl-2 pr-1 py-1.5 text-sm',
-                'rounded-lg flex gap-1 items-center',
-                'dark:text-gray-300 relative',
+                'rounded-lg flex gap-3 items-center',
+                'dark:text-gray-300 relative w-full min-w-0',
               ]"
             >
               <CheckboxInput
-                class="!gap-3.5 grow"
+                class="!gap-3.5 grow min-w-0 [&_label]:truncate"
                 :disabled="columnMap[columnId].disabled"
                 :id="`column-${columnId}`"
                 :model-value="columnVisibility[columnId] ?? false"
