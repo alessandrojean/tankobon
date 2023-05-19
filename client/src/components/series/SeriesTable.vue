@@ -105,7 +105,7 @@ const columns = [
             emptyIcon: Square2StackSolidIcon,
           }),
           h('div', { class: 'flex flex-col' }, [
-            h('span', { innerText: name, class: 'font-medium' }),
+            h('span', { innerText: name, class: 'font-medium', title: name }),
             originalName ? h('span', { lang: originalLanguage, innerText: originalName.name, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
           ]),
         ])

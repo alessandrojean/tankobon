@@ -81,7 +81,10 @@ const volume = computed(() => {
                   'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
                 ]"
               >
-                <span :title="`${book?.attributes.title}`" class="absolute inset-0 z-20 rounded-xl" />
+                <span
+                  :title="book?.attributes.title"
+                  class="absolute inset-0 z-20 rounded-xl"
+                />
                 <span>{{ book?.attributes.title }}</span>
               </RouterLink>
               <span class="font-medium text-xxs sm:text-xs">
@@ -113,7 +116,10 @@ const volume = computed(() => {
           'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
         ]"
       >
-        <span :title="`${book?.attributes.title}`" class="absolute inset-0 z-20 rounded-xl" />
+        <span
+          :title="book?.attributes.title"
+          class="absolute inset-0 z-20 rounded-xl"
+        />
         <span>{{ book?.attributes.title }}</span>
       </RouterLink>
       <span

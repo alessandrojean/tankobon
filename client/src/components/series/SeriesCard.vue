@@ -69,7 +69,10 @@ const cover = computed(() => getRelationship(series.value, 'SERIES_COVER')?.attr
                   'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
                 ]"
               >
-                <span class="absolute inset-0 z-20 rounded-xl" />
+                <span
+                  :title="series?.attributes.name"
+                  class="absolute inset-0 z-20 rounded-xl"
+                />
                 <span>{{ series?.attributes.name }}</span>
               </RouterLink>
             </div>
@@ -98,7 +101,10 @@ const cover = computed(() => getRelationship(series.value, 'SERIES_COVER')?.attr
           'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
         ]"
       >
-        <span class="absolute inset-0 z-20 rounded-xl" />
+        <span
+          :title="series?.attributes.name"
+          class="absolute inset-0 z-20 rounded-xl"
+        />
         <span>{{ series?.attributes.name }}</span>
       </RouterLink>
     </div>
