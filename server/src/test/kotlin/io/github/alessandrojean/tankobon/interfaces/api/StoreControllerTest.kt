@@ -106,6 +106,13 @@ class StoreControllerTest(
         {
           "name": "${store.name.lowercase()}",
           "description": "",
+          "links": {
+            "website": null,
+            "twitter": null,
+            "instagram": null,
+            "facebook": null,
+            "youTube": null,
+          },
           "library": "${library.id}"
         }
       """.trimIndent()

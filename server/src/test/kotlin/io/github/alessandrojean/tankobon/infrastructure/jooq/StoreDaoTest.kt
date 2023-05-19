@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreLinks
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -51,6 +52,7 @@ class StoreDaoTest(
     val store = Store(
       name = "Store",
       description = "Store description",
+      links = StoreLinks(twitter = "store"),
       libraryId = library.id,
     )
 
@@ -62,6 +64,7 @@ class StoreDaoTest(
       assertThat(modifiedAt).isCloseTo(now, offset)
       assertThat(name).isEqualTo(store.name)
       assertThat(description).isEqualTo(store.description)
+      assertThat(links.twitter).isEqualTo(store.links.twitter)
       assertThat(libraryId).isEqualTo(store.libraryId)
     }
   }
@@ -71,6 +74,7 @@ class StoreDaoTest(
     val store = Store(
       name = "Store",
       description = "Store description",
+      links = StoreLinks(twitter = "store"),
       libraryId = library.id,
     )
     storeDao.insert(store)
@@ -79,7 +83,8 @@ class StoreDaoTest(
 
     val updated = storeDao.findById(store.id).copy(
       name = "StoreUpdated",
-      description = "StoreUpdated description"
+      description = "StoreUpdated description",
+      links = StoreLinks(twitter = "store_"),
     )
 
     storeDao.update(updated)
@@ -93,6 +98,7 @@ class StoreDaoTest(
         .isNotEqualTo(updated.modifiedAt)
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
+      assertThat(links.twitter).isEqualTo(updated.links.twitter)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

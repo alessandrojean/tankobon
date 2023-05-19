@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreLinks
 import io.github.alessandrojean.tankobon.domain.model.StoreSearch
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
@@ -122,6 +123,11 @@ class StoreDao(
       .set(TableStore.ID, store.id)
       .set(TableStore.NAME, store.name)
       .set(TableStore.DESCRIPTION, store.description)
+      .set(TableStore.WEBSITE, store.links.website)
+      .set(TableStore.TWITTER, store.links.twitter)
+      .set(TableStore.INSTAGRAM, store.links.instagram)
+      .set(TableStore.FACEBOOK, store.links.facebook)
+      .set(TableStore.YOUTUBE, store.links.youTube)
       .set(TableStore.LIBRARY_ID, store.libraryId)
       .execute()
   }
@@ -132,6 +138,11 @@ class StoreDao(
       .set(TableStore.ID, store.id)
       .set(TableStore.NAME, store.name)
       .set(TableStore.DESCRIPTION, store.description)
+      .set(TableStore.WEBSITE, store.links.website)
+      .set(TableStore.TWITTER, store.links.twitter)
+      .set(TableStore.INSTAGRAM, store.links.instagram)
+      .set(TableStore.FACEBOOK, store.links.facebook)
+      .set(TableStore.YOUTUBE, store.links.youTube)
       .set(TableStore.LIBRARY_ID, store.libraryId)
       .set(TableStore.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TableStore.ID.eq(store.id))
@@ -179,6 +190,13 @@ class StoreDao(
   private fun StoreRecord.toDomain(): Store = Store(
     name = name,
     description = description,
+    links = StoreLinks(
+      website = website,
+      twitter = twitter,
+      instagram = instagram,
+      facebook = facebook,
+      youTube = youtube,
+    ),
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),
