@@ -10,6 +10,7 @@ data class Publisher(
   val id: String = UUID.randomUUID().toString(),
   override val libraryId: String = "",
   val description: String = "",
+  val links: PublisherLinks = PublisherLinks(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

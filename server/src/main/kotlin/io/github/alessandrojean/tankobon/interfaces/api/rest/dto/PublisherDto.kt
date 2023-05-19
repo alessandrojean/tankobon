@@ -1,8 +1,10 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.UUID
 
 data class PublisherEntityDto(
@@ -17,7 +19,23 @@ data class PublisherEntityDto(
 data class PublisherAttributesDto(
   val name: String,
   val description: String,
+  val links: PublisherLinksDto,
 ) : EntityAttributesDto()
+
+data class PublisherLinksDto(
+  @get:NullOrNotBlank
+  val website: String? = null,
+  @get:NullOrNotBlank
+  val store: String? = null,
+  @get:NullOrNotBlank
+  val twitter: String? = null,
+  @get:NullOrNotBlank
+  val instagram: String? = null,
+  @get:NullOrNotBlank
+  val facebook: String? = null,
+  @get:NullOrNotBlank
+  val youTube: String? = null,
+)
 
 enum class ReferenceExpansionPublisher : ReferenceExpansionEnum {
   LIBRARY,
@@ -36,11 +54,24 @@ fun Publisher.toDto(libraryAttributes: LibraryAttributesDto? = null) = Publisher
   )
 )
 
-fun Publisher.toAttributesDto() = PublisherAttributesDto(name, description)
+fun Publisher.toAttributesDto() = PublisherAttributesDto(
+  name = name,
+  description = description,
+  links = PublisherLinksDto(
+    website = links.website,
+    store = links.store,
+    twitter = links.twitter,
+    instagram = links.instagram,
+    facebook = links.facebook,
+    youTube = links.youTube,
+  )
+)
 
 data class PublisherCreationDto(
   @get:NotBlank val name: String,
   val description: String,
+  @get:NotNull
+  val links: PublisherLinksDto,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
@@ -49,4 +80,6 @@ data class PublisherCreationDto(
 data class PublisherUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
+  @get:NotNull
+  val links: PublisherLinksDto,
 )

@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.domain.model.PublisherLinks
 import io.github.alessandrojean.tankobon.domain.model.PublisherSearch
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
@@ -129,6 +130,12 @@ class PublisherDao(
       .set(TablePublisher.ID, publisher.id)
       .set(TablePublisher.NAME, publisher.name)
       .set(TablePublisher.DESCRIPTION, publisher.description)
+      .set(TablePublisher.WEBSITE, publisher.links.website)
+      .set(TablePublisher.STORE, publisher.links.store)
+      .set(TablePublisher.TWITTER, publisher.links.twitter)
+      .set(TablePublisher.INSTAGRAM, publisher.links.instagram)
+      .set(TablePublisher.FACEBOOK, publisher.links.facebook)
+      .set(TablePublisher.YOUTUBE, publisher.links.youTube)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .execute()
   }
@@ -139,6 +146,12 @@ class PublisherDao(
       .set(TablePublisher.ID, publisher.id)
       .set(TablePublisher.NAME, publisher.name)
       .set(TablePublisher.DESCRIPTION, publisher.description)
+      .set(TablePublisher.WEBSITE, publisher.links.website)
+      .set(TablePublisher.STORE, publisher.links.store)
+      .set(TablePublisher.TWITTER, publisher.links.twitter)
+      .set(TablePublisher.INSTAGRAM, publisher.links.instagram)
+      .set(TablePublisher.FACEBOOK, publisher.links.facebook)
+      .set(TablePublisher.YOUTUBE, publisher.links.youTube)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .set(TablePublisher.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TablePublisher.ID.eq(publisher.id))
@@ -186,6 +199,14 @@ class PublisherDao(
   private fun PublisherRecord.toDomain(): Publisher = Publisher(
     name = name,
     description = description,
+    links = PublisherLinks(
+      website = website,
+      store = store,
+      twitter = twitter,
+      instagram = instagram,
+      facebook = facebook,
+      youTube = youtube,
+    ),
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),

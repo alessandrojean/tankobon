@@ -106,6 +106,14 @@ class PublisherControllerTest(
         {
           "name": "${publisher.name.lowercase()}",
           "description": "",
+          "links": {
+            "website": null,
+            "store": null,
+            "twitter": null,
+            "instagram": null,
+            "facebook": null,
+            "youTube": null,
+          },
           "library": "${library.id}"
         }
       """.trimIndent()

@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.domain.model.PublisherLinks
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -51,6 +52,7 @@ class PublisherDaoTest(
     val publisher = Publisher(
       name = "Publisher",
       description = "Publisher description",
+      links = PublisherLinks(twitter = "publisher"),
       libraryId = library.id,
     )
 
@@ -62,6 +64,7 @@ class PublisherDaoTest(
       assertThat(modifiedAt).isCloseTo(now, offset)
       assertThat(name).isEqualTo(publisher.name)
       assertThat(description).isEqualTo(publisher.description)
+      assertThat(links.twitter).isEqualTo(publisher.links.twitter)
       assertThat(libraryId).isEqualTo(publisher.libraryId)
     }
   }
@@ -71,6 +74,7 @@ class PublisherDaoTest(
     val publisher = Publisher(
       name = "Publisher",
       description = "Publisher description",
+      links = PublisherLinks(twitter = "publisher"),
       libraryId = library.id,
     )
     publisherDao.insert(publisher)
@@ -79,7 +83,8 @@ class PublisherDaoTest(
 
     val updated = publisherDao.findById(publisher.id).copy(
       name = "PublisherUpdated",
-      description = "PublisherUpdated description"
+      description = "PublisherUpdated description",
+      links = PublisherLinks(twitter = "publisher_"),
     )
 
     publisherDao.update(updated)
@@ -93,6 +98,7 @@ class PublisherDaoTest(
         .isNotEqualTo(updated.modifiedAt)
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
+      assertThat(links.twitter).isEqualTo(updated.links.twitter)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

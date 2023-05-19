@@ -67,7 +67,7 @@ data class StoreCreationDto(
   @get:NotBlank val name: String,
   val description: String,
   @get:NotNull
-  val links: PersonLinksDto,
+  val links: StoreLinksDto,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
@@ -77,5 +77,5 @@ data class StoreUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
   @get:NotNull
-  val links: PersonLinksDto,
+  val links: StoreLinksDto,
 )
