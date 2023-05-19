@@ -15,7 +15,6 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
-import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 import org.hibernate.validator.constraints.UniqueElements
 import java.time.LocalDateTime
@@ -59,13 +58,13 @@ data class BookLinksDto(
   )
   val amazon: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "openlibrary.org")
+  @get:UrlMultipleHosts(allowedHosts = ["openlibrary.org"])
   val openLibrary: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "skoob.com.br")
+  @get:UrlMultipleHosts(allowedHosts = ["skoob.com.br"])
   val skoob: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "goodreads.com")
+  @get:UrlMultipleHosts(allowedHosts = ["goodreads.com"])
   val goodreads: String? = null,
 )
 

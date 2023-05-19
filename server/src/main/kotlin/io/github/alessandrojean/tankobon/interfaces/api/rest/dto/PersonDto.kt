@@ -2,10 +2,10 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
+import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 
 data class PersonEntityDto(
@@ -25,25 +25,25 @@ data class PersonAttributesDto(
 
 data class PersonLinksDto(
   @get:NullOrNotBlank
-  @get:URL
+  @get:UrlMultipleHosts
   val website: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "twitter.com")
+  @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
   val twitter: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "instagram.com")
+  @get:UrlMultipleHosts(allowedHosts = ["instagram.com"])
   val instagram: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "facebook.com")
+  @get:UrlMultipleHosts(allowedHosts = ["facebook.com"])
   val facebook: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "pixiv.net")
+  @get:UrlMultipleHosts(allowedHosts = ["pixiv.net"])
   val pixiv: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "deviantart.com")
+  @get:UrlMultipleHosts(allowedHosts = ["deviantart.com"])
   val deviantArt: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "youtube.com")
+  @get:UrlMultipleHosts(allowedHosts = ["youtube.com"])
   val youTube: String? = null,
 )
 

@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
+import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -25,20 +26,22 @@ data class PublisherAttributesDto(
 
 data class PublisherLinksDto(
   @get:NullOrNotBlank
+  @get:URL
   val website: String? = null,
   @get:NullOrNotBlank
+  @get:URL
   val store: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "twitter.com")
+  @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
   val twitter: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "instagram.com")
+  @get:UrlMultipleHosts(allowedHosts = ["instagram.com"])
   val instagram: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "facebook.com")
+  @get:UrlMultipleHosts(allowedHosts = ["facebook.com"])
   val facebook: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "youtube.com")
+  @get:UrlMultipleHosts(allowedHosts = ["youtube.com"])
   val youTube: String? = null,
 )
 

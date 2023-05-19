@@ -17,10 +17,10 @@ annotation class UrlMultipleHosts(
 )
 
 class UrlMultipleHostsValidator : ConstraintValidator<UrlMultipleHosts, String?> {
-  private lateinit var allowedHosts: Array<String>
+  private lateinit var allowedHosts: List<String>
 
   override fun initialize(constraintAnnotation: UrlMultipleHosts) {
-    allowedHosts = constraintAnnotation.allowedHosts
+    allowedHosts = constraintAnnotation.allowedHosts.map { it.removePrefix("www.").lowercase() }
   }
 
   override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
@@ -30,8 +30,9 @@ class UrlMultipleHostsValidator : ConstraintValidator<UrlMultipleHosts, String?>
 
     val urlResult = runCatching { URL(value) }
     val url = urlResult.getOrNull() ?: return false
+    val host = url.host.removePrefix("www.").lowercase()
 
-    if (allowedHosts.isNotEmpty() && url.host !in allowedHosts) {
+    if (allowedHosts.isNotEmpty() && host !in allowedHosts) {
       return false
     }
 

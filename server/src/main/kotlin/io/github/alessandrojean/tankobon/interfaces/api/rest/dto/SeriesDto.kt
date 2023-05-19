@@ -7,6 +7,7 @@ import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.Bcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrBcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
+import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -46,21 +47,22 @@ data class SeriesAlternativeNameDto(
 
 data class SeriesLinksDto(
   @get:NullOrNotBlank
+  @get:URL
   val website: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "myanimelist.net")
+  @get:UrlMultipleHosts(allowedHosts = ["myanimelist.net"])
   val myAnimeList: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "kitsu.io")
+  @get:UrlMultipleHosts(allowedHosts = ["kitsu.io"])
   val kitsu: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "anilist.co")
+  @get:UrlMultipleHosts(allowedHosts = ["anilist.co"])
   val aniList: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "twitter.com")
+  @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
   val twitter: String? = null,
   @get:NullOrNotBlank
-  @get:URL(host = "instagram.com")
+  @get:UrlMultipleHosts(allowedHosts = ["instagram.com"])
   val instagram: String? = null,
 )
 
