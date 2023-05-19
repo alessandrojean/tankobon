@@ -14,6 +14,7 @@ data class Series(
   val alternativeNames: List<SeriesAlternativeName> = emptyList(),
   val lastNumber: String? = null,
   val originalLanguage: String? = null,
+  val links: SeriesLinks = SeriesLinks(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

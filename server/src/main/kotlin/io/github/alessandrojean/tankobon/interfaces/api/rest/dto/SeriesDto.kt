@@ -30,6 +30,7 @@ data class SeriesAttributesDto(
   val alternativeNames: List<SeriesAlternativeNameDto>,
   val lastNumber: String?,
   val originalLanguage: String?,
+  val links: SeriesLinksDto,
   val createdAt: LocalDateTime?,
   val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
@@ -40,6 +41,21 @@ data class SeriesAlternativeNameDto(
   @get:Bcp47
   @get:Schema(format = "bcp-47")
   val language: String,
+)
+
+data class SeriesLinksDto(
+  @get:NullOrNotBlank
+  val website: String? = null,
+  @get:NullOrNotBlank
+  val myAnimeList: String? = null,
+  @get:NullOrNotBlank
+  val kitsu: String? = null,
+  @get:NullOrNotBlank
+  val aniList: String? = null,
+  @get:NullOrNotBlank
+  val twitter: String? = null,
+  @get:NullOrNotBlank
+  val instagram: String? = null,
 )
 
 enum class ReferenceExpansionSeries : ReferenceExpansionEnum {
@@ -68,6 +84,14 @@ fun Series.toAttributesDto(alternativeNames: List<SeriesAlternativeName>) = Seri
   alternativeNames = alternativeNames.map(SeriesAlternativeName::toDto),
   lastNumber = lastNumber,
   originalLanguage = originalLanguage,
+  links = SeriesLinksDto(
+    website = links.website,
+    myAnimeList = links.myAnimeList,
+    kitsu = links.kitsu,
+    aniList = links.aniList,
+    twitter = links.twitter,
+    instagram = links.instagram,
+  ),
   createdAt = createdAt.toUtcTimeZone(),
   modifiedAt = modifiedAt.toUtcTimeZone(),
 )
@@ -86,6 +110,8 @@ data class SeriesCreationDto(
   @get:NullOrBcp47
   @get:Schema(format = "bcp-47")
   val originalLanguage: String?,
+  @get:NotNull
+  val links: SeriesLinksDto,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
@@ -105,4 +131,6 @@ data class SeriesUpdateDto(
   @get:NullOrBcp47
   @get:Schema(format = "bcp-47")
   val originalLanguage: String?,
+  @get:NotNull
+  val links: SeriesLinksDto,
 )

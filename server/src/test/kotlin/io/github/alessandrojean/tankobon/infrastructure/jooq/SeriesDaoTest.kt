@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
+import io.github.alessandrojean.tankobon.domain.model.SeriesLinks
 import io.github.alessandrojean.tankobon.domain.model.SeriesType
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
@@ -57,6 +58,7 @@ class SeriesDaoTest(
       alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
       lastNumber = "2",
       originalLanguage = "en-US",
+      links = SeriesLinks(twitter = "series"),
       libraryId = library.id,
     )
 
@@ -74,6 +76,7 @@ class SeriesDaoTest(
       assertThat(alternativeNames).hasSize(series.alternativeNames.size)
       assertThat(alternativeNames[0].name).isEqualTo(series.alternativeNames[0].name)
       assertThat(alternativeNames[0].language).isEqualTo(series.alternativeNames[0].language)
+      assertThat(links.twitter).isEqualTo(series.links.twitter)
       assertThat(libraryId).isEqualTo(series.libraryId)
     }
   }
@@ -87,6 +90,7 @@ class SeriesDaoTest(
       alternativeNames = listOf(SeriesAlternativeName("The series", "en-US")),
       lastNumber = "2",
       originalLanguage = "en-US",
+      links = SeriesLinks(twitter = "series"),
       libraryId = library.id,
     )
     seriesDao.insert(series)
@@ -100,6 +104,7 @@ class SeriesDaoTest(
       alternativeNames = emptyList(),
       lastNumber = "3",
       originalLanguage = "en-UK",
+      links = SeriesLinks(twitter = "series_"),
     )
 
     seriesDao.update(updated)
@@ -117,6 +122,7 @@ class SeriesDaoTest(
       assertThat(lastNumber).isEqualTo(updated.lastNumber)
       assertThat(originalLanguage).isEqualTo(updated.originalLanguage)
       assertThat(alternativeNames).hasSize(updated.alternativeNames.size)
+      assertThat(links.twitter).isEqualTo(updated.links.twitter)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

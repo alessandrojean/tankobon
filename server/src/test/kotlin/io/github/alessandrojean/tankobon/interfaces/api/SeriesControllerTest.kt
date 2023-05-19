@@ -113,7 +113,15 @@ class SeriesControllerTest(
           "type": "MANGA",
           "alternativeNames": [],
           "originalLanguage": "en-US",
-          "lastNumber": "1"
+          "lastNumber": "1",
+          "links": {
+            "website": null,
+            "myAnimeList": null,
+            "kitsu": null,
+            "aniList": null,
+            "twitter": null,
+            "instagram": null,
+          },
         }
       """.trimIndent()
 

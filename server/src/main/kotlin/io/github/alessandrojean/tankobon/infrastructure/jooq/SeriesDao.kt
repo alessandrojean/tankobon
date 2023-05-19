@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
+import io.github.alessandrojean.tankobon.domain.model.SeriesLinks
 import io.github.alessandrojean.tankobon.domain.model.SeriesSearch
 import io.github.alessandrojean.tankobon.domain.model.SeriesType
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
@@ -168,6 +169,12 @@ class SeriesDao(
       .set(TableSeries.TYPE, series.type?.ordinal)
       .set(TableSeries.LAST_NUMBER, series.lastNumber)
       .set(TableSeries.ORIGINAL_LANGUAGE, series.originalLanguage)
+      .set(TableSeries.WEBSITE, series.links.website)
+      .set(TableSeries.MY_ANIME_LIST, series.links.myAnimeList)
+      .set(TableSeries.KITSU, series.links.kitsu)
+      .set(TableSeries.ANILIST, series.links.aniList)
+      .set(TableSeries.TWITTER, series.links.twitter)
+      .set(TableSeries.INSTAGRAM, series.links.instagram)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .execute()
 
@@ -182,6 +189,12 @@ class SeriesDao(
       .set(TableSeries.TYPE, series.type?.ordinal)
       .set(TableSeries.LAST_NUMBER, series.lastNumber)
       .set(TableSeries.ORIGINAL_LANGUAGE, series.originalLanguage)
+      .set(TableSeries.WEBSITE, series.links.website)
+      .set(TableSeries.MY_ANIME_LIST, series.links.myAnimeList)
+      .set(TableSeries.KITSU, series.links.kitsu)
+      .set(TableSeries.ANILIST, series.links.aniList)
+      .set(TableSeries.TWITTER, series.links.twitter)
+      .set(TableSeries.INSTAGRAM, series.links.instagram)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
       .set(TableSeries.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TableSeries.ID.eq(series.id))
@@ -263,6 +276,14 @@ class SeriesDao(
     alternativeNames = alternativeNames,
     lastNumber = lastNumber,
     originalLanguage = originalLanguage,
+    links = SeriesLinks(
+      website = website,
+      myAnimeList = myAnimeList,
+      kitsu = kitsu,
+      aniList = anilist,
+      twitter = twitter,
+      instagram = instagram,
+    ),
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),
