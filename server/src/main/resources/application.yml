@@ -28,6 +28,8 @@ spring:
     mixed: true
   mvc:
     throw-exception-if-no-handler-found: true
+  thymeleaf:
+    prefix: classpath:/public/
   artemis:
     broker-url: tcp://localhost:18515
     embedded:
