@@ -119,7 +119,8 @@ const tableColumns = computed(() => {
     { id: 'modifiedAt', text: t('common-fields.modified-at') },
     { id: 'weightKg', text: t('common-fields.weight-kg') },
     { id: 'publishers', text: t('entities.publishers') },
-    { id: 'number', text: t('common-fields.number') }
+    { id: 'number', text: t('common-fields.number') },
+    { id: 'pageCount', text: t('common-fields.page-count') }
   ]
 
   const disabled = columns.filter(c => c.disabled)
@@ -143,6 +144,7 @@ const { preference: columnVisibility } = useUserPreference<Record<string, boolea
   publishers: false,
   title: true,
   number: false,
+  pageCount: false,
 })
 
 const { preference: columnOrder } = useUserPreference<ColumnOrderState>('books_column_order', ['title', 'collection', 'createdAt'])

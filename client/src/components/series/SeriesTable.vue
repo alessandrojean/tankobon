@@ -126,6 +126,7 @@ const columns = [
 
       return t(`series-types.${typeKey}`)
     },
+    enableSorting: false,
     meta: {
       headerContainerClass: 'justify-end',
       cellClass: 'text-right',
@@ -151,6 +152,7 @@ const columns = [
         })
       ])
     },
+    enableSorting: false,
   }),
   columnHelper.accessor('attributes.lastNumber', {
     id: 'lastNumber',
@@ -161,6 +163,7 @@ const columns = [
       cellClass: 'text-right',
       tabular: true
     },
+    enableSorting: false,
   }),
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',

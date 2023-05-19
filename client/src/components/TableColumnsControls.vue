@@ -53,7 +53,12 @@ const safeColumnOrder = computed(() => {
       .map(c => c.id)
   }
 
-  return columnOrder.value.filter(c => !columnMap.value[c].disabled)
+  const order = columnOrder.value.filter(c => !columnMap.value[c].disabled)
+  const newItems = columns.value
+    .filter(c => !c.disabled && !order.includes(c.id))
+    .map(c => c.id)
+
+  return [...order, ...newItems]
 })
 
 function handleDragAndDrop(newOrder: ColumnOrderState) {

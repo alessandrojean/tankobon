@@ -125,16 +125,19 @@ const columns = [
       headerContainerClass: 'justify-end',
       cellClass: 'text-right',
     },
+    enableSorting: false,
   }),
   columnHelper.accessor(book => getRelationship(book, 'SERIES'), {
     id: 'series',
     header: () => t('common-fields.series'),
     cell: info => info.getValue()?.attributes?.name,
+    enableSorting: false,
   }),
   columnHelper.accessor(book => getRelationships(book, 'PUBLISHER'), {
     id: 'publishers',
     header: () => t('entities.publishers'),
     cell: info => listFormatter.value.format(info.getValue()?.map(p => p.attributes!.name) ?? []),
+    enableSorting: false,
   }),
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',
@@ -170,6 +173,16 @@ const columns = [
     id: 'number',
     header: () => t('common-fields.number'),
     cell: info => info.getValue(),
+    meta: {
+      tabular: true,
+      headerContainerClass: 'justify-end',
+      cellClass: 'text-right',
+    },
+  }),
+  columnHelper.accessor('attributes.pageCount', {
+    id: 'pageCount',
+    header: () => t('common-fields.page-count'),
+    cell: info => n(info.getValue(), 'integer'),
     meta: {
       tabular: true,
       headerContainerClass: 'justify-end',
