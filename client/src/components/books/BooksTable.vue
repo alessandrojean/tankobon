@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import type { PaginationState, SortingState } from '@tanstack/vue-table'
+import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import Avatar from '../Avatar.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { BookEntity, BookSort } from '@/types/tankobon-book'
 import type { Sort } from '@/types/tankobon-api'
-import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
-import { PaginatedResponse } from '@/types/tankobon-response'
+import type { PaginatedResponse } from '@/types/tankobon-response'
 import { getRelationship, getRelationships } from '@/utils/api'
-import Avatar from '../Avatar.vue'
 import { createImageUrl } from '@/modules/api'
-import { ColumnOrderState } from '@tanstack/vue-table'
 
 export interface BooksTableProps {
   books?: PaginatedResponse<BookEntity>
@@ -22,6 +21,7 @@ export interface BooksTableProps {
   search?: string
   size: number
   sort: Sort<BookSort>[]
+  unpaged?: boolean
 }
 
 const props = withDefaults(defineProps<BooksTableProps>(), {
@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<BooksTableProps>(), {
   columnVisibility: () => ({}),
   loading: false,
   search: '',
+  unpaged: false,
 })
 
 const emit = defineEmits<{
@@ -108,7 +109,7 @@ const columns = [
           h('div', { class: 'flex flex-col' }, [
             h('span', { innerText: title, class: 'font-medium' }),
             subtitle.length > 0 ? h('span', { innerText: subtitle, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
-          ])
+          ]),
         ])
       },
       meta: {
@@ -251,31 +252,32 @@ function handleSortingChange(sorting: SortingState) {
     :loading="loading"
     :column-order="['select', ...columnOrder, 'actions']"
     :column-visibility="columnVisibility"
+    :unpaged="unpaged"
     @update:pagination="handlePaginationChange"
     @update:sorting="handleSortingChange"
   >
     <template #empty>
       <slot name="empty">
         <EmptyState
-            :icon="search?.length ? MagnifyingGlassIcon : BookOpenIcon"
-            :title="$t('books.empty-header')"
-            :description="
-              search?.length
-                ? $t('books.empty-search-description', [search])
-                : $t('books.empty-description')
-            "
-          >
-            <template v-if="!search?.length" #actions>
-              <Button
-                kind="primary"
-                is-router-link
-                :to="{ name: 'books-new' }"
-              >
-                <PlusIcon class="w-5 h-5" />
-                <span>{{ $t('books.new') }}</span>
-              </Button>
-            </template>
-          </EmptyState>
+          :icon="search?.length ? MagnifyingGlassIcon : BookOpenIcon"
+          :title="$t('books.empty-header')"
+          :description="
+            search?.length
+              ? $t('books.empty-search-description', [search])
+              : $t('books.empty-description')
+          "
+        >
+          <template v-if="!search?.length" #actions>
+            <Button
+              kind="primary"
+              is-router-link
+              :to="{ name: 'books-new' }"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('books.new') }}</span>
+            </Button>
+          </template>
+        </EmptyState>
       </slot>
     </template>
   </Table>

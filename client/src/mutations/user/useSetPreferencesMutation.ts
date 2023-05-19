@@ -17,7 +17,7 @@ export default function useSetPreferencesMutation() {
       )
     },
     onSuccess(_, preferences) {
-      queryClient.setQueryData<Preferences>(['preferences'], (old) => ({
+      queryClient.setQueryData<Preferences>(['preferences'], old => ({
         ...old,
         ...preferences,
       }))

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { ArrowsUpDownIcon, Bars3BottomLeftIcon, BarsArrowDownIcon, BarsArrowUpIcon } from '@heroicons/vue/20/solid'
 import Button from '@/components/form/Button.vue'
 import type { SortDirection } from '@/types/tankobon-api'
-import { ArrowsUpDownIcon, Bars3BottomLeftIcon, BarsArrowDownIcon, BarsArrowUpIcon } from '@heroicons/vue/20/solid';
 
 export interface SortPropertyOption {
   property: string
@@ -25,8 +25,8 @@ function toggleSortDirection() {
 <template>
   <div class="flex">
     <BasicListbox
-      size="small"
       v-model="property"
+      size="small"
       fit-width
       unselect-on-click
       :label-text="$t('common-actions.sort')"

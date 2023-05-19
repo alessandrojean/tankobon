@@ -54,12 +54,14 @@ const selected = computed(() => {
 
 <template>
   <Listbox
-    :model-value="(modelValue as TValue)"
+    :model-value="modelValue as TValue"
     as="div"
     class="relative"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <ListboxLabel v-if="labelText" class="sr-only">{{ labelText }}</ListboxLabel>
+    <ListboxLabel v-if="labelText" class="sr-only">
+      {{ labelText }}
+    </ListboxLabel>
     <div ref="listboxButton">
       <slot
         name="listbox-button"
@@ -110,7 +112,7 @@ const selected = computed(() => {
         <ul class="max-h-[18rem] overflow-y-auto rsounded-lg">
           <ListboxOption
             v-for="(option, i) of options"
-            v-slot="{ active, selected }"
+            v-slot="{ active, selected: optionSelected }"
             :key="String(optionValue(option))"
             :value="optionValue(option)"
             :disabled="disabledOptions.includes(i)"
@@ -129,20 +131,20 @@ const selected = computed(() => {
             <slot
               name="option"
               :active="active"
-              :selected="selected"
+              :selected="optionSelected"
               :option="option"
             >
               <span
                 class="block truncate"
                 :class="[
-                  selected ? 'font-medium' : 'font-normal',
+                  optionSelected ? 'font-medium' : 'font-normal',
                 ]"
               >
                 {{ optionText(option, i) }}
               </span>
             </slot>
             <span
-              v-if="selected && checkIcon"
+              v-if="optionSelected && checkIcon"
               class="absolute inset-y-0 left-2 flex items-center text-primary-600"
               :class="[
                 active ? 'dark:text-primary-200' : 'dark:text-primary-400',

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import type { PaginationState, SortingState } from '@tanstack/vue-table'
+import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon, Square2StackIcon as Square2StackSolidIcon } from '@heroicons/vue/20/solid'
+import { MagnifyingGlassIcon, Square2StackIcon } from '@heroicons/vue/24/outline'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { SeriesEntity, SeriesSort } from '@/types/tankobon-series'
@@ -9,12 +10,9 @@ import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import Avatar from '@/components/Avatar.vue'
 import { createImageUrl } from '@/modules/api'
-import { Square2StackIcon as Square2StackSolidIcon } from '@heroicons/vue/20/solid'
-import { MagnifyingGlassIcon, Square2StackIcon } from '@heroicons/vue/24/outline'
 import { getLanguageName } from '@/utils/language'
 import Flag from '@/components/Flag.vue'
-import { PaginatedResponse } from '@/types/tankobon-response'
-import { ColumnOrderState } from '@tanstack/vue-table'
+import type { PaginatedResponse } from '@/types/tankobon-response'
 import { getOriginalName } from '@/services/tankobon-series'
 
 export interface SeriesTableProps {
@@ -86,7 +84,7 @@ const columns = [
   columnHelper.accessor(
     series => ({
       name: series.attributes.name,
-      series: series,
+      series,
       originalLanguage: series.attributes.originalLanguage,
       cover: getRelationship(series, 'SERIES_COVER'),
     }),
@@ -109,7 +107,7 @@ const columns = [
           h('div', { class: 'flex flex-col' }, [
             h('span', { innerText: name, class: 'font-medium' }),
             originalName ? h('span', { lang: originalLanguage, innerText: originalName.name, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
-          ])
+          ]),
         ])
       },
       meta: {
@@ -149,8 +147,8 @@ const columns = [
             locale: locale.value,
             romanizedLabel: t('original-language.romanized'),
             unknownLabel: t('original-language.unknown'),
-          })
-        })
+          }),
+        }),
       ])
     },
     enableSorting: false,
@@ -158,11 +156,11 @@ const columns = [
   columnHelper.accessor('attributes.lastNumber', {
     id: 'lastNumber',
     header: () => t('series.last-number'),
-    cell: (info) => info.getValue(),
+    cell: info => info.getValue(),
     meta: {
       headerContainerClass: 'justify-end',
       cellClass: 'text-right',
-      tabular: true
+      tabular: true,
     },
     enableSorting: false,
   }),
@@ -235,25 +233,25 @@ function handleSortingChange(sorting: SortingState) {
     <template #empty>
       <slot name="empty">
         <EmptyState
-            :icon="search?.length ? MagnifyingGlassIcon : Square2StackIcon"
-            :title="$t('series.empty-header')"
-            :description="
-              search?.length
-                ? $t('series.empty-search-description', [search])
-                : $t('series.empty-description')
-            "
-          >
-            <template v-if="!search?.length" #actions>
-              <Button
-                kind="primary"
-                is-router-link
-                :to="{ name: 'series-new' }"
-              >
-                <PlusIcon class="w-5 h-5" />
-                <span>{{ $t('series.new') }}</span>
-              </Button>
-            </template>
-          </EmptyState>
+          :icon="search?.length ? MagnifyingGlassIcon : Square2StackIcon"
+          :title="$t('series.empty-header')"
+          :description="
+            search?.length
+              ? $t('series.empty-search-description', [search])
+              : $t('series.empty-description')
+          "
+        >
+          <template v-if="!search?.length" #actions>
+            <Button
+              kind="primary"
+              is-router-link
+              :to="{ name: 'series-new' }"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('series.new') }}</span>
+            </Button>
+          </template>
+        </EmptyState>
       </slot>
     </template>
   </Table>

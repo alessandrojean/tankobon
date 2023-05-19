@@ -308,6 +308,7 @@
     "useScroll": true,
     "useScrollLock": true,
     "useSeoMeta": true,
+    "useSeriesBooksQuery": true,
     "useSeriesQuery": true,
     "useServerBodyAttrs": true,
     "useServerClaimStatusQuery": true,

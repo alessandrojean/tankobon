@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SeriesEntity } from '@/types/tankobon-series'
+import type { SeriesEntity } from '@/types/tankobon-series'
 import { getLanguageName } from '@/utils/language'
 
 export interface SeriesAttributesProps {
@@ -15,10 +15,9 @@ const props = withDefaults(defineProps<SeriesAttributesProps>(), {
 const { series, loading } = toRefs(props)
 const { t, locale } = useI18n()
 
-
 const metadata = computed(() => {
   const attributes = series.value?.attributes
-  const typeKey = attributes?.type 
+  const typeKey = attributes?.type
     ? attributes.type.toLowerCase().replace(/_/g, '-')
     : 'unknown'
 

@@ -76,7 +76,7 @@ useFocusZone({
             :class="[
               'block font-medium dark:text-gray-200 focus:outline-none truncate',
               'motion-safe:transition',
-              'rounded focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
+              'rounded focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
             ]"
             :to="{ name: 'people-id', params: { id: contributor.attributes.person.id } }"
             :title="$t('common-actions.go-to-page', [contributor.attributes.person.name])"

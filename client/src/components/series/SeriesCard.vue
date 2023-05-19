@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { SeriesEntity } from '@/types/tankobon-series'
-import { getRelationship } from '@/utils/api'
 import { Square2StackIcon } from '@heroicons/vue/24/outline'
+import type { SeriesEntity } from '@/types/tankobon-series'
+import { getRelationship } from '@/utils/api'
 
 export interface SeriesCardProps {
   series?: SeriesEntity
@@ -66,7 +66,7 @@ const cover = computed(() => getRelationship(series.value, 'SERIES_COVER')?.attr
                   'font-semibold font-sans-safe text-[0.8rem] rounded',
                   'sm:text-sm truncate max-w-full focus:outline-none',
                   'motion-safe:transition',
-                  'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
+                  'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
                 ]"
               >
                 <span class="absolute inset-0 z-20 rounded-xl" />
@@ -95,7 +95,7 @@ const cover = computed(() => getRelationship(series.value, 'SERIES_COVER')?.attr
           'text-[0.8rem] sm:text-sm font-sans-safe font-semibold rounded',
           'truncate text-gray-900 dark:text-gray-200 block focus:outline-none',
           'motion-safe:transition',
-          'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90'
+          'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white/90',
         ]"
       >
         <span class="absolute inset-0 z-20 rounded-xl" />

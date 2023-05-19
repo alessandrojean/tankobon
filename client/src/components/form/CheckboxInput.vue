@@ -16,6 +16,7 @@ defineEmits<{
 <template>
   <div class="flex items-center gap-2 min-w-0">
     <input
+      :id="String(id)"
       :class="[
         'rounded w-4 h-4 dark:bg-gray-950 border-gray-300 dark:border-gray-600',
         'shadow-sm text-primary-500 focus:border-primary-500',
@@ -30,13 +31,12 @@ defineEmits<{
       type="checkbox"
       :checked="modelValue"
       :disabled="disabled"
-      :id="String(id)"
       @change="$emit('update:modelValue', ($event.target! as HTMLInputElement).checked)"
     >
     <label
+      v-if="labelText"
       class="text-gray-700 dark:text-gray-300 font-medium select-none text-sm grow min-w-0"
       :for="String(id)"
-      v-if="labelText"
     >
       {{ labelText }}
     </label>

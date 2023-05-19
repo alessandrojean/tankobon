@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Button from '@/components/form/Button.vue'
 import { Squares2X2Icon, SquaresPlusIcon, TableCellsIcon } from '@heroicons/vue/20/solid'
+import Button from '@/components/form/Button.vue'
 
 export interface ViewModeSelectorProps {
   disabled?: boolean
-  loading?: boolean,
+  loading?: boolean
   preferenceKey: string
 }
 
@@ -67,9 +67,9 @@ async function setViewMode(viewMode: ViewMode) {
         :class="[
           'w-9 h-9 rounded-md bg-primary-100 dark:bg-primary-900',
           'absolute left-0 top-0 motion-safe:transition-transform',
-          'translate-x-[--offset]'
+          'translate-x-[--offset]',
         ]"
-        :style="{ '--offset': `${2.5 * selectedIndex}rem`}"
+        :style="{ '--offset': `${2.5 * selectedIndex}rem` }"
       />
       <RadioGroupOption
         v-for="option in options"

@@ -303,6 +303,7 @@ declare global {
   const useScroll: typeof import('@vueuse/core')['useScroll']
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
+  const useSeriesBooksQuery: typeof import('./queries/book/useSeriesBooksQuery')['default']
   const useSeriesQuery: typeof import('./queries/series/useSeriesQuery')['default']
   const useServerBodyAttrs: typeof import('@unhead/vue')['useServerBodyAttrs']
   const useServerClaimStatusQuery: typeof import('./queries/server/useServerClaimStatusQuery')['default']
@@ -730,6 +731,7 @@ declare module 'vue' {
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>
+    readonly useSeriesBooksQuery: UnwrapRef<typeof import('./queries/book/useSeriesBooksQuery')['default']>
     readonly useSeriesQuery: UnwrapRef<typeof import('./queries/series/useSeriesQuery')['default']>
     readonly useServerBodyAttrs: UnwrapRef<typeof import('@unhead/vue')['useServerBodyAttrs']>
     readonly useServerClaimStatusQuery: UnwrapRef<typeof import('./queries/server/useServerClaimStatusQuery')['default']>

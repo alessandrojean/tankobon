@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { BookEntity } from '@/types/tankobon-book'
-import { PaginatedResponse } from '@/types/tankobon-response'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { FocusKeys } from '@primer/behaviors'
+import type { PaginatedResponse } from '@/types/tankobon-response'
+import type { BookEntity } from '@/types/tankobon-book'
 
 export interface BooksGridProps {
   books?: PaginatedResponse<BookEntity>
@@ -12,6 +12,7 @@ export interface BooksGridProps {
   page: number
   search?: string
   size: number
+  unpaged?: boolean
 }
 
 const props = withDefaults(defineProps<BooksGridProps>(), {
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<BooksGridProps>(), {
   loading: false,
   mode: 'comfortable',
   search: '',
+  unpaged: false,
 })
 
 defineEmits<{
@@ -26,10 +28,13 @@ defineEmits<{
   (e: 'update:size', size: number): void
 }>()
 
-const { books, loading } = toRefs(props)
+const { books, loading, unpaged } = toRefs(props)
 
 const showFooter = computed(() => {
-  return books.value && books.value.pagination.totalElements >= 10 && books.value.data.length > 0
+  return books.value && 
+    books.value.pagination.totalElements >= 10 &&
+    books.value.data.length > 0 &&
+    !unpaged.value
 })
 
 const container = ref<HTMLUListElement>()
@@ -39,7 +44,7 @@ useFocusZone({
   bindKeys: FocusKeys.ArrowAll | FocusKeys.HomeAndEnd,
   focusInStrategy: 'closest',
   focusOutBehavior: 'wrap',
-  disabled: loading
+  disabled: loading,
 })
 </script>
 

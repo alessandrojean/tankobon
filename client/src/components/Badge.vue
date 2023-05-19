@@ -20,12 +20,12 @@ const badge = cva(
         green: [
           'bg-green-50 dark:bg-green-500/10',
           'text-green-700 dark:text-green-400',
-          'ring-green-600/20 dark:ring-green-500/20'
+          'ring-green-600/20 dark:ring-green-500/20',
         ],
         red: [
           'bg-red-100 dark:bg-red-400/10',
           'text-red-700 dark:text-red-400',
-          'ring-red-600/10 dark:ring-red-400/20'
+          'ring-red-600/10 dark:ring-red-400/20',
         ],
         blue: [
           'bg-blue-50 dark:bg-blue-400/10',

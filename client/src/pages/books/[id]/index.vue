@@ -4,7 +4,8 @@ import Button from '@/components/form/Button.vue'
 import { isIsbnCode } from '@/types/tankobon-book'
 import { createEmptyCollectionResponse, getRelationship, getRelationships } from '@/utils/api'
 import type { ReadProgressCreation, ReadProgressEntity, ReadProgressUpdate } from '@/types/tankobon-read-progress'
-import { TabList } from '@headlessui/vue'
+import { PillTab } from '@/components/PillTabsList.vue'
+import { safeNumber } from '@/utils/route'
 
 const route = useRoute()
 const router = useRouter()
@@ -97,12 +98,19 @@ const regionCode = computed(() => {
 
 useHead({ title: () => book.value?.attributes?.title ?? '' })
 
-const tabs = [
+const tabs: PillTab[] = [
   { key: '0', text: 'books.information', icon: InformationCircleIcon },
   { key: '1', text: 'books.reading', icon: BookmarkIcon },
 ]
 
-const activeTab = ref(tabs[0])
+const activeTabHash = useRouteQuery('tab', '0', { transform: v => safeNumber(v, 0, { min: 0, max: tabs.length - 1 })})
+const activeTab = computed({
+  get: () => {
+    const index = Number(activeTabHash.value)
+    return tabs[index] ?? tabs[0]
+  },
+  set: (newTab) => activeTabHash.value = Number(newTab.key)
+})
 
 const showCreateReadProgressDialog = ref(false)
 const { mutate: createReadProgress, isLoading: isCreatingReadProgress } = useCreateReadProgressMutation()
@@ -170,25 +178,6 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
     },
   })
 }
-
-const tabList = ref<InstanceType<typeof TabList>>()
-const tabBackground = reactive({ left: 0, width: 0 })
-const mounted = ref(false)
-
-async function calculateTabBackground() {
-  await nextTick()
-  const tabListElement = tabList.value?.$el as HTMLDivElement
-  const activeTabElement = tabListElement?.querySelector<HTMLButtonElement>('[aria-selected=true]')
-
-  tabBackground.left = activeTabElement?.offsetLeft ?? 0
-  tabBackground.width = activeTabElement?.offsetWidth ?? 0
-}
-
-watch(activeTab, calculateTabBackground, { immediate: true })
-onMounted(() => {
-  calculateTabBackground()
-  setTimeout(() => { mounted.value = true }, 250)
-})
 </script>
 
 <template>
@@ -238,39 +227,9 @@ onMounted(() => {
         />
 
         <div class="book-buttons pt-1.5 flex items-center justify-between">
-          <TabList ref="tabList" class="hidden md:flex items-center gap-2 relative">
-            <div
-              aria-hidden="true"
-              :class="[
-                'w-[--width] h-full rounded-md bg-primary-100 dark:bg-primary-900',
-                'absolute left-0 top-0 motion-safe:transition-[width,transform]',
-                'translate-x-[--offset]',
-                { 'motion-safe:duration-0': !mounted }
-              ]"
-              :style="{
-                '--offset': `${tabBackground.left}px`,
-                '--width': `${tabBackground.width}px`
-              }"
-            />
-            <Tab
-              v-for="tab in tabs"
-              :key="String(tab.key)"
-              :as="Button"
-              kind="pill-tab"
-              size="pill-tab"
-              :disabled="!showBookInfo"
-            >
-              <component :is="tab.icon" class="w-5 h-5" />
-              <span>{{ $t(tab.text) }}</span>
-            </Tab>
-          </TabList>
-
-          <BasicSelect
+          <PillTabsList
             v-model="activeTab"
-            class="md:hidden h-12"
-            :options="tabs"
-            :option-text="(tab: any) => $t(tab.text)"
-            :option-value="(tab: any) => tab.key"
+            :tabs="tabs"
             :disabled="!showBookInfo"
           />
 
@@ -296,7 +255,7 @@ onMounted(() => {
         </div>
 
         <TabPanels class="book-tabs">
-          <TabPanel class="information-grid -mb-4 sm:mb-0" :unmount="false">
+          <TabPanel class="book-information-grid -mb-4 sm:mb-0" :unmount="false">
             <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
               <BookNavigator
                 :loading="!showBookInfo"
@@ -396,7 +355,7 @@ meta:
 </route>
 
 <style lang="postcss">
-.information-grid {
+.book-information-grid {
   display: grid;
   gap: 1rem;
   grid-template-areas:

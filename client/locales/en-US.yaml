@@ -343,6 +343,8 @@ series:
   cover: Cover
   last-number: Last number
   last-number-unknown: Unknown
+  information: Information
+  volumes: Volumes
 
 series-types:
   unknown: Unknown
@@ -571,7 +573,7 @@ original-language:
   label: Original language
   unknown: Unknown
   romanized: Romanized
-  
+
 view-mode:
   label: View mode
   grid-comfortable: Comfortable grid

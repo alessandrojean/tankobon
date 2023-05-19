@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Draggable from 'vuedraggable'
-import Button from '@/components/form/Button.vue'
 import { Popover, PopoverPanel } from '@headlessui/vue'
 import { ViewColumnsIcon } from '@heroicons/vue/20/solid'
-import { ColumnOrderState } from '@tanstack/vue-table'
+import type { ColumnOrderState } from '@tanstack/vue-table'
 import { FocusKeys } from '@primer/behaviors'
+import Button from '@/components/form/Button.vue'
 
 export interface TableColumn {
   id: string
@@ -76,7 +76,7 @@ useFocusZone({
 </script>
 
 <template>
-  <Popover class="relative" ref="popover">
+  <Popover ref="popover" class="relative">
     <PopoverButton
       :as="Button"
       class="h-9"
@@ -126,9 +126,9 @@ useFocusZone({
               ]"
             >
               <CheckboxInput
+                :id="`column-${column.id}`"
                 class="!gap-3.5 grow min-w-0 [&_label]:truncate"
                 disabled
-                :id="`column-${column.id}`"
                 :model-value="columnVisibility[column.id] ?? false"
                 :label-text="column.text"
               />
@@ -143,9 +143,9 @@ useFocusZone({
               ]"
             >
               <CheckboxInput
+                :id="`column-${columnId}`"
                 class="!gap-3.5 grow min-w-0 [&_label]:truncate"
                 :disabled="columnMap[columnId].disabled"
-                :id="`column-${columnId}`"
                 :model-value="columnVisibility[columnId] ?? false"
                 :label-text="columnMap[columnId].text"
                 @update:model-value="handleColumnVisibilityChange(columnMap[columnId], $event)"
@@ -155,7 +155,7 @@ useFocusZone({
                     :class="[
                       'hidden peer-focus-visible/checkbox:block',
                       'absolute inset-0 pointer-events-none',
-                      'rounded-md ring-2 ring-inset ring-black dark:ring-white/90'
+                      'rounded-md ring-2 ring-inset ring-black dark:ring-white/90',
                     ]"
                   />
                 </template>

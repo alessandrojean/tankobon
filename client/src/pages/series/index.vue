@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { SortPropertyOption } from '@/components/SortControls.vue';
-import { TableColumn } from '@/components/TableColumnsControls.vue';
-import { ViewMode } from '@/components/ViewModeSelector.vue';
-import { Sort, SortDirection } from '@/types/tankobon-api';
-import { SeriesSort } from '@/types/tankobon-series';
-import { safeNumber } from '@/utils/route';
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { ColumnOrderState } from '@tanstack/vue-table';
+import type { ColumnOrderState } from '@tanstack/vue-table'
+import type { SortPropertyOption } from '@/components/SortControls.vue'
+import type { TableColumn } from '@/components/TableColumnsControls.vue'
+import type { ViewMode } from '@/components/ViewModeSelector.vue'
+import type { Sort, SortDirection } from '@/types/tankobon-api'
+import type { SeriesSort } from '@/types/tankobon-series'
+import { safeNumber } from '@/utils/route'
 
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library!.id)
@@ -21,11 +21,11 @@ useHead({ title: () => t('entities.series') })
 
 const size = useRouteQuery('size', '20', {
   mode: 'push',
-  transform: v => safeNumber(v, 20, { min: 10 })
+  transform: v => safeNumber(v, 20, { min: 10 }),
 })
-const page = useRouteQuery('page', '0', { 
+const page = useRouteQuery('page', '0', {
   mode: 'push',
-  transform: v => safeNumber(v, 0, { min: 0 })
+  transform: v => safeNumber(v, 0, { min: 0 }),
 })
 const sortQuery = useRouteQuery<string | null>('sort')
 
@@ -87,14 +87,14 @@ const { preference: viewMode } = useUserPreference<ViewMode>(SERIES_VIEW_MODE_KE
       title: t('preferences.view-mode-failure'),
       body: error.message,
     })
-  }
+  },
 })
 
 const sortProperties = computed(() => {
   const properties: SortPropertyOption[] = [
-    { property: 'name', text: t(`common-fields.name`) },
-    { property: 'createdAt', text: t(`common-fields.created-at`) },
-    { property: 'modifiedAt', text: t(`common-fields.modified-at`) },
+    { property: 'name', text: t('common-fields.name') },
+    { property: 'createdAt', text: t('common-fields.created-at') },
+    { property: 'modifiedAt', text: t('common-fields.modified-at') },
   ]
 
   return properties.sort((a, b) => a.text.localeCompare(b.text, locale.value))
@@ -115,7 +115,7 @@ const tableColumns = computed(() => {
 
   return [
     ...disabled,
-    ...enabled.sort((a, b) => a.text.localeCompare(b.text, locale.value))
+    ...enabled.sort((a, b) => a.text.localeCompare(b.text, locale.value)),
   ]
 })
 
@@ -173,7 +173,7 @@ meta:
             </template>
           </BasicTextInput>
         </div>
-        
+
         <div class="md:ml-auto flex flex-col-reverse sm:flex-row gap-4 items-center justify-center md:justify-normal">
           <FadeTransition>
             <TableColumnsControls

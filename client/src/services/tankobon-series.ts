@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios'
+import groupBy from 'lodash.groupby'
 import { api } from '@/modules/api'
 import {
   TankobonApiError,
@@ -16,8 +17,7 @@ import type {
   SeriesUpdate,
 } from '@/types/tankobon-series'
 import type { Paginated } from '@/types/tankobon-api'
-import groupBy from 'lodash.groupby'
-import { AlternativeName } from '@/types/tankobon-alternative-name'
+import type { AlternativeName } from '@/types/tankobon-alternative-name'
 
 type SeriesOnly = EntityResponse<SeriesEntity>
 type SeriesPaginated = PaginatedResponse<SeriesEntity>
@@ -164,7 +164,7 @@ export function getPossibleOriginalName(series: SeriesEntity | undefined | null,
   }
 
   const type = series.attributes.type
-  
+
   if (type === 'MANGA' || type === 'LIGHT_NOVEL') {
     return getFirstKeyAvailable(alternativeNames, 'ja-JP', 'ja-Latn-JP')
   } else if (type === 'MANHWA') {

@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import {
-  type ColumnDef,
   FlexRender,
-  type PaginationState,
-  type SortingState,
   getCoreRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
+import type {
+  ColumnDef,
+  ColumnOrderState,
+  PaginationState,
+  SortingState,
+} from '@tanstack/vue-table'
 import { ChevronUpIcon } from '@heroicons/vue/20/solid'
-import { ColumnOrderState } from '@tanstack/vue-table'
 
 export interface TableProps {
   data?: any[]
@@ -21,6 +23,7 @@ export interface TableProps {
   rowSelection?: Record<string, boolean>
   sorting?: SortingState
   loading?: boolean
+  unpaged?: boolean
 }
 
 export interface TableEmits {
@@ -39,6 +42,7 @@ const props = withDefaults(defineProps<TableProps>(), {
   rowSelection: undefined,
   sorting: undefined,
   loading: false,
+  unpaged: false,
 })
 
 const emit = defineEmits<TableEmits>()
@@ -53,6 +57,7 @@ const {
   pagination,
   sorting,
   rowSelection,
+  unpaged,
 } = toRefs(props)
 
 const table = useVueTable({
@@ -80,7 +85,7 @@ const table = useVueTable({
     },
     get columnVisibility() {
       return columnVisibility.value
-    }
+    },
   },
   onPaginationChange: (updaterOrValue) => {
     emit(
@@ -112,7 +117,7 @@ const table = useVueTable({
 })
 
 const showFooter = computed(() => {
-  return itemsCount.value >= 10 && pagination.value
+  return itemsCount.value >= 10 && pagination.value && !unpaged.value
 })
 
 watch(data, () => emit('update:row-selection', {}))
@@ -157,14 +162,14 @@ watch(data, () => emit('update:row-selection', {}))
                   :class="[
                     'bg-gray-100 dark:bg-gray-800 w-5 h-5',
                     'flex items-center justify-center rounded ml-2',
-                    'group-hover/header:bg-gray-200 dark:group-hover/header:bg-gray-700'
+                    'group-hover/header:bg-gray-200 dark:group-hover/header:bg-gray-700',
                   ]"
                 >
                   <ChevronUpIcon
                     :class="[
                       'w-5 h-5 inline-block text-gray-800 dark:text-gray-100',
                       'motion-safe:transition-transform',
-                      { 'rotate-180': header.column.getIsSorted() === 'desc' }
+                      { 'rotate-180': header.column.getIsSorted() === 'desc' },
                     ]"
                   />
                 </div>

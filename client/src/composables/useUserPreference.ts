@@ -8,7 +8,7 @@ export default function useUserPreference<PValue>(key: string, defaultValue: PVa
   function encodeValue(value: PValue): string {
     if (typeof value === 'object') {
       return JSON.stringify(value)
-    } else { 
+    } else {
       return String(value)
     }
   }
@@ -23,7 +23,7 @@ export default function useUserPreference<PValue>(key: string, defaultValue: PVa
 
   const { data: preference } = useUserPreferencesQuery({
     select: preferences => preferences[key] ? decodeValue(preferences[key]) : defaultValue,
-    onError: (error) => options?.onError?.(error),
+    onError: error => options?.onError?.(error),
   })
 
   const { mutate: setPreferences } = useSetPreferencesMutation()
@@ -31,7 +31,7 @@ export default function useUserPreference<PValue>(key: string, defaultValue: PVa
   return {
     preference: computed<PValue>({
       get: () => preference.value,
-      set: (newValue) => setPreferences({ [key]: encodeValue(newValue) })
-    })
+      set: newValue => setPreferences({ [key]: encodeValue(newValue) }),
+    }),
   }
 }

@@ -1,7 +1,7 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
 import { TankobonApiError } from '@/types/tankobon-response'
-import type { EntityResponse, type ErrorResponse, PaginatedResponse } from '@/types/tankobon-response'
+import type { EntityResponse, ErrorResponse, PaginatedResponse } from '@/types/tankobon-response'
 import type { EmailAvailability, UserCreation, UserEntity, UserIncludes, UserSort, UserSuccessResponse, UserUpdate } from '@/types/tankobon-user'
 import type { Paginated } from '@/types/tankobon-api'
 import type { AuthenticationActivityEntity, AuthenticationActivitySort } from '@/types/tankobon-authentication-activity'
