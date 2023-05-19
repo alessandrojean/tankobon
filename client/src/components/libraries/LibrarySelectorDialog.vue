@@ -18,12 +18,14 @@ const { t } = useI18n()
 const { isOpen } = toRefs(props)
 const notificator = useToaster()
 const userStore = useUserStore()
+const userId = computed(() => userStore.me?.id)
 const libraryStore = useLibraryStore()
 
 const { data: libraries } = useUserLibrariesByUserQuery({
-  userId: computed(() => userStore.me!.id),
+  userId: userId as ComputedRef<string>,
   includes: ['owner'],
   includeShared: true,
+  enabled: computed(() => userStore.isAuthenticated),
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),

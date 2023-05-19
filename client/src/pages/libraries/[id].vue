@@ -7,13 +7,15 @@ const router = useRouter()
 const libraryId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 const userStore = useUserStore()
+const userId = computed(() => userStore.me?.id)
 
 const { mutate: deleteLibrary, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteLibraryMutation()
 const { mutate: editLibrary, isLoading: isEditing } = useUpdateLibraryMutation()
 
 const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
-  userId: computed(() => userStore.me!.id),
+  userId: userId as ComputedRef<string>,
   includeShared: false,
+  enabled: computed(() => userStore.isAuthenticated),
   select: libraries => libraries.length > 1,
   initialData: [],
 })

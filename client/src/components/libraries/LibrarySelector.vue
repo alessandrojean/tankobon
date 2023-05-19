@@ -25,7 +25,7 @@ const userStore = useUserStore()
 
 const hasShared = computed(() => {
   return libraries.value?.some((l) => {
-    return getRelationship(l, 'OWNER')?.id !== userStore.me!.id
+    return getRelationship(l, 'OWNER')?.id !== userStore.me?.id
   })
 })
 
@@ -36,7 +36,7 @@ function sharedText(library: LibraryEntity) {
 
   const owner = getRelationship(library, 'OWNER')!
 
-  return owner.id === userStore.me!.id
+  return owner.id === userStore.me?.id
     ? t('libraries.yours')
     : `${t('libraries.shared')} · ${owner.attributes!.name}`
 }

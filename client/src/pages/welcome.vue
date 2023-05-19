@@ -6,12 +6,14 @@ import { BookOpenIcon } from '@heroicons/vue/24/solid'
 import type { LibraryCreation } from '@/types/tankobon-library'
 
 const userStore = useUserStore()
+const userId = computed(() => userStore.me?.id)
 const router = useRouter()
 const notificator = useToaster()
 const { t } = useI18n()
 
 const { data: libraries, refetch: refetchLibraries } = useUserLibrariesByUserQuery({
-  userId: computed(() => userStore.me!.id),
+  userId: userId as ComputedRef<string>,
+  enabled: computed(() => userStore.isAuthenticated),
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),
@@ -51,6 +53,7 @@ const rules = {
 }
 
 const v$ = useVuelidate(rules, formState)
+const libraryStore = useLibraryStore()
 
 async function handleCreateLibrary() {
   const isFormValid = await v$.value.$validate()
@@ -62,7 +65,10 @@ async function handleCreateLibrary() {
   const library = toRaw<LibraryCreation>(formState)
 
   createLibrary(library, {
-    onSuccess: async () => await router.replace({ name: 'index' }),
+    onSuccess: async (libraryCreated) => {
+      libraryStore.setLibrary(libraryCreated)
+      await router.replace({ name: 'index' })
+    },
   })
 }
 </script>

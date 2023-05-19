@@ -8,20 +8,22 @@ import type { LibraryEntity } from '@/types/tankobon-library'
 import { getRelationship } from '@/utils/api'
 
 export interface LibrariesTableProps {
-  userId: string
+  userId?: string
 }
 
-const props = defineProps<LibrariesTableProps>()
+const props = withDefaults(defineProps<LibrariesTableProps>(), { userId: undefined })
 const { userId } = toRefs(props)
 const notificator = useToaster()
+const userStore = useUserStore()
 const { t } = useI18n()
 
 const rowSelection = ref<Record<string, boolean>>({})
 
 const { data: libraries, isLoading } = useUserLibrariesByUserQuery({
-  userId,
+  userId: userId as Ref<string>,
   includeShared: true,
   includes: ['owner'],
+  enabled: computed(() => userStore.isAuthenticated),
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),

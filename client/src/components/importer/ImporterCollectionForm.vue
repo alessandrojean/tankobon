@@ -20,10 +20,12 @@ const { collectionId } = toRefs(props)
 const { t } = useI18n()
 const notificator = useToaster()
 const userStore = useUserStore()
+const userId = computed(() => userStore.me?.id)
 const library = ref<LibraryEntity | undefined>()
 
 const { data: libraries, isLoading: loadingLibraries } = useUserLibrariesByUserQuery({
-  userId: computed(() => userStore.me!.id),
+  enabled: computed(() => userStore.isAuthenticated),
+  userId: userId as ComputedRef<string>,
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),

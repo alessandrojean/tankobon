@@ -6,7 +6,7 @@ const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const libraryStore = useLibraryStore()
-const userId = computed(() => userStore.me!.id)
+const userId = computed(() => userStore.me?.id)
 const notificator = useToaster()
 
 const showCreateDialog = ref(false)
@@ -19,8 +19,8 @@ function handleCreateLibrary(library: LibraryCreation) {
       notificator.success({ title: t('libraries.created-with-success') })
       await router.push({ name: 'libraries-id', params: { id } })
 
-      if (libraryStore.library === null) {
-        await libraryStore.fetchAndSelectFirstStore(userId.value)
+      if (libraryStore.library === null && userStore.isAuthenticated) {
+        await libraryStore.fetchAndSelectFirstStore(userId.value!)
       }
     },
     onError: async (error) => {

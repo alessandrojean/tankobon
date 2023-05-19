@@ -9,9 +9,10 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const isAdmin = computed(() => userStore.isAdmin)
-const userId = computed(() => userStore.me!.id)
+const userId = computed(() => userStore.me?.id)
 const { data: hasNoLibraries } = useUserLibrariesByUserQuery({
-  userId,
+  enabled: computed(() => userStore.isAuthenticated),
+  userId: userId as ComputedRef<string>,
   select: libraries => libraries.length === 0,
 })
 

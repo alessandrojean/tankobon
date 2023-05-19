@@ -111,11 +111,11 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
             >
               <Avatar class="shrink-0" :picture-url="avatarUrl" kind="gray" />
               <div class="min-w-0 grow">
-                <p class="font-medium truncate">{{ me!.attributes.name }}</p>
+                <p class="font-medium truncate">{{ me?.attributes.name ?? '' }}</p>
                 <p
                   class="text-xs text-gray-600 dark:text-gray-400 truncate ui-active:text-primary-600 dark:ui-active:text-primary-200"
                 >
-                  {{ me!.attributes.email }}
+                  {{ me?.attributes.email ?? '' }}
                 </p>
               </div>
             </a>

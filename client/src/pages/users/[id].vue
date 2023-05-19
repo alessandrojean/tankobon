@@ -39,7 +39,7 @@ const { data: user, isLoading } = useUserQuery({
 
 const avatar = computed(() => getRelationship(user.value, 'AVATAR'))
 const isAdmin = computed(() => user.value?.attributes.roles.includes('ROLE_ADMIN'))
-const isMe = computed(() => user.value?.id === userStore.me!.id)
+const isMe = computed(() => user.value?.id === userStore.me?.id)
 
 function handleDelete() {
   deleteUser(userId.value!, {

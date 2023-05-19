@@ -30,11 +30,13 @@ function closeLibrarySelector() {
 }
 
 const userStore = useUserStore()
+const userId = computed(() => userStore.me?.id)
 const libraryStore = useLibraryStore()
 
 const library = computed(() => libraryStore.library)
 const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
-  userId: computed(() => userStore.me!.id),
+  enabled: computed(() => userStore.isAuthenticated),
+  userId: userId as ComputedRef<string>,
   select: libraries => libraries.length > 1,
   initialData: [],
 })
