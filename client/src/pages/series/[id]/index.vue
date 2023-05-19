@@ -132,6 +132,14 @@ useHead({ title: () => series.value?.attributes.name ?? '' })
           </Toolbar>
         </div>
 
+        <div class="series-attributes">
+          <SeriesAttributes
+            class="sm:sticky sm:top-24"
+            :loading="isLoading"
+            :series="series"
+          />
+        </div>
+
         <div class="series-description">
           <BlockMarkdown
             :loading="isLoading"
@@ -165,7 +173,7 @@ meta:
     'buttons buttons'
     'description description'
     'names names'
-    'statistics statistics';
+    'attributes attributes';
   grid-template-columns: 6rem 1fr;
 
   @media (min-width: theme('screens.sm')) {
@@ -174,8 +182,8 @@ meta:
       'cover title'
       'cover buttons'
       'cover padding'
-      'statistics description'
-      'statistics names';
+      'attributes description'
+      'attributes names';
     grid-template-columns: 14rem 1fr;
   }
 
@@ -199,8 +207,8 @@ meta:
     grid-area: names / names / names / names;
   }
 
-  .series-statistics {
-    grid-area: statistics / statistics / statistics / statistics;
+  .series-attributes {
+    grid-area: attributes / attributes / attributes / attributes;
   }
 }
 </style>

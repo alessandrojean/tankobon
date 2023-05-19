@@ -49,7 +49,7 @@ export function getFlagScriptCode(language: string) {
 }
 
 export interface GetLanguageNameOptions {
-  language: string | null
+  language: string | null | undefined
   locale: string
   romanizedLabel: string
   unknownLabel: string
@@ -65,7 +65,7 @@ const omitRegionExceptions = [
 // The tag will always have the language and country code.
 // The script code is optional.
 export function getLanguageName({ language, locale, romanizedLabel, unknownLabel }: GetLanguageNameOptions) {
-  if (language === null) {
+  if (!language) {
     return unknownLabel
   }
 

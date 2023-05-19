@@ -342,6 +342,7 @@ series:
   metadata: Metadata
   cover: Cover
   last-number: Last number
+  last-number-unknown: Unknown
 
 series-types:
   unknown: Unknown

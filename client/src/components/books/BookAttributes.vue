@@ -261,21 +261,3 @@ const metadata = computed(() => {
     </div>
   </Block>
 </template>
-
-<style lang="postcss" scoped>
-.search-link {
-  @apply rounded font-medium
-    text-gray-800 dark:text-gray-300
-    underline underline-offset-1 decoration-2
-    decoration-primary-600/60 dark:decoration-primary-400/80;
-
-  &:hover {
-    @apply decoration-primary-600 dark:decoration-primary-400
-      text-gray-900 dark:text-gray-200;
-  }
-
-  &:focus-visible {
-    @apply dark:ring-offset-gray-800 md:dark:ring-offset-gray-900;
-  }
-}
-</style>

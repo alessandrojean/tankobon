@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 import io.github.alessandrojean.tankobon.domain.model.Series
 import io.github.alessandrojean.tankobon.domain.model.SeriesAlternativeName
 import io.github.alessandrojean.tankobon.domain.model.SeriesType
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.Bcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrBcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.UUID
 import org.hibernate.validator.constraints.UniqueElements
+import java.time.LocalDateTime
 
 data class SeriesEntityDto(
   override val id: String,
@@ -27,7 +29,9 @@ data class SeriesAttributesDto(
   val type: SeriesType?,
   val alternativeNames: List<SeriesAlternativeNameDto>,
   val lastNumber: String?,
-  val originalLanguage: String?
+  val originalLanguage: String?,
+  val createdAt: LocalDateTime?,
+  val modifiedAt: LocalDateTime?
 ) : EntityAttributesDto()
 
 data class SeriesAlternativeNameDto(
@@ -64,6 +68,8 @@ fun Series.toAttributesDto(alternativeNames: List<SeriesAlternativeName>) = Seri
   alternativeNames = alternativeNames.map(SeriesAlternativeName::toDto),
   lastNumber = lastNumber,
   originalLanguage = originalLanguage,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 data class SeriesCreationDto(
