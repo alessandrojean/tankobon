@@ -9,6 +9,7 @@ import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import Avatar from '@/components/Avatar.vue'
 import { createImageUrl } from '@/modules/api'
+import { Square2StackIcon as Square2StackSolidIcon } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon, Square2StackIcon } from '@heroicons/vue/24/outline'
 import { getLanguageName } from '@/utils/language'
 import Flag from '@/components/Flag.vue'
@@ -103,7 +104,7 @@ const columns = [
               timeHex: cover?.attributes?.timeHex,
             }),
             square: true,
-            emptyIcon: Square2StackIcon,
+            emptyIcon: Square2StackSolidIcon,
           }),
           h('div', { class: 'flex flex-col' }, [
             h('span', { innerText: name, class: 'font-medium' }),
