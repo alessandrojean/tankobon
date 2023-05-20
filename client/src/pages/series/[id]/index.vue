@@ -181,14 +181,17 @@ const activeTab = computed({
         </div>
 
         <TabPanels class="series-tabs">
-          <TabPanel class="series-information-grid -mb-4 sm:mb-0">
-            <div class="series-description">
-              <BlockMarkdown
-                :loading="isLoading"
-                :markdown="series?.attributes?.description"
-                :title="$t('common-fields.description')"
-              />
-            </div>
+          <TabPanel class="flex flex-col gap-4 sm:gap-6 -mb-4 sm:mb-0">
+            <BlockMarkdown
+              :loading="isLoading"
+              :markdown="series?.attributes?.description"
+              :title="$t('common-fields.description')"
+            />
+
+            <EntityExternalLinks
+              :links="(series?.attributes?.links as Record<string, string | null> | undefined)"
+              :loading="isLoading"
+            />
 
             <SeriesAlternativeNames
               class="series-names"
@@ -283,28 +286,6 @@ meta:
 
   .series-attributes {
     grid-area: attributes / attributes / attributes / attributes;
-  }
-}
-
-.series-information-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-areas:
-    'description description'
-    'names names';
-  grid-template-columns: 6rem 1fr;
-
-  @media (min-width: theme('screens.sm')) {
-    gap: 1.5rem;
-    grid-template-columns: 14rem 1fr;
-  }
-
-  .series-description {
-    grid-area: description / description / description / description;
-  }
-
-  .series-names {
-    grid-area: names / names / names / names;
   }
 }
 </style>

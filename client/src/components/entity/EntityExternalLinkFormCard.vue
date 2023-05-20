@@ -1,0 +1,92 @@
+<script setup lang="ts">
+import { XMarkIcon } from '@heroicons/vue/20/solid'
+import { helpers, required, url as urlValidator } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
+
+export interface EntityExternalLinkFormCardProps {
+  disabled?: boolean
+  disabledTypes?: string[]
+  index: number
+  invalid?: boolean
+  type: string
+  types: string[]
+  url: string
+}
+
+const props = withDefaults(defineProps<EntityExternalLinkFormCardProps>(), {
+  disabled: false,
+  disabledTypes: () => [],
+  invalid: false,
+})
+
+defineEmits<{
+  (e: 'update:type', type: string): void
+  (e: 'update:url', url: string): void
+  (e: 'click:remove'): void
+}>()
+
+const { type, url } = toRefs(props)
+const { t } = useI18n()
+
+function notNullValue(value: string) {
+  return value !== 'null'
+}
+
+const rules = computed(() => {
+  const messageRequired = helpers.withMessage(t('validation.required'), required)
+  const messageNotNull = helpers.withMessage(t('validation.not-unknown'), notNullValue)
+  const messageUrl = helpers.withMessage(t('validation.url'), urlValidator)
+
+  return {
+    type: { messageRequired, messageNotNull },
+    url: { messageRequired, messageUrl },
+  }
+})
+
+const v$ = useVuelidate(rules, { type, url })
+
+defineExpose({ v$ })
+</script>
+
+<template>
+  <fieldset
+    :disabled="disabled"
+    :class="[
+      'py-4 md:py-3 px-4 rounded-xl',
+      'flex items-start gap-4',
+      'motion-safe:transition',
+      'bg-gray-100 dark:bg-gray-900',
+      {
+        'ring-2 ring-red-600 dark:ring-red-500/60': invalid,
+      },
+    ]"
+  >
+    <ExternalLinkInput
+      class="grow -mr-2"
+      :index="index"
+      :url="url"
+      :type="type"
+      :types="types"
+      :invalid-type="v$.type.$error"
+      :invalid-url="v$.url.$error"
+      :errors-type="v$.type.$errors"
+      :errors-url="v$.url.$errors"
+      :disabled-types="disabledTypes"
+      @blur:url="v$.url.$touch()"
+      @blur:type="v$.type.$touch()"
+      @update:url="$emit('update:url', $event)"
+      @update:type="$emit('update:type', $event)"
+    />
+
+    <Button
+      class="shrink-0 w-10 h-10 -mr-2 mt-px"
+      kind="ghost-alt"
+      size="small"
+      :title="$t('common-actions.remove')"
+      @click="$emit('click:remove')"
+    >
+      <span class="sr-only">{{ $t('common-actions.remove') }}</span>
+      <XMarkIcon class="w-5 h-5" />
+    </Button>
+  </fieldset>
+</template>

@@ -5,12 +5,14 @@ import { v4 as uuid } from 'uuid'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { SeriesUpdate } from '@/types/tankobon-series'
+import { SeriesLinks, SeriesUpdate } from '@/types/tankobon-series'
 import type { Cover } from '@/components/series/SeriesCoverForm.vue'
 import SeriesCoverForm from '@/components/series/SeriesCoverForm.vue'
 import SeriesMetadataForm from '@/components/series/SeriesMetadataForm.vue'
 import SeriesAlternativeNamesForm from '@/components/series/SeriesAlternativeNamesForm.vue'
 import type { FormAlternativeName } from '@/types/tankobon-alternative-name'
+import { FormExternalLink } from '@/types/tankobon-external-link'
+import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -41,26 +43,31 @@ const { data: series, isLoading } = useSeriesQuery({
 
 const metadataForm = ref<InstanceType<typeof SeriesMetadataForm>>()
 const alternativeNamesForm = ref<InstanceType<typeof SeriesAlternativeNamesForm>>()
+const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
 const coverForm = ref<InstanceType<typeof SeriesCoverForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const alternativeNamesInvalid = computed(() => alternativeNamesForm.value?.v$.$error ?? false)
+const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
 const coverInvalid = computed(() => coverForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'series.metadata' },
   { key: '1', text: 'alternative-names.title' },
-  { key: '2', text: 'series.cover' },
+  { key: '2', text: 'external-links.title' },
+  { key: '4', text: 'series.cover' },
 ]
 
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   alternativeNamesInvalid.value,
+  externalLinksInvalid.value,
   coverInvalid.value,
 ])
 
-interface CustomSeriesUpdate extends Omit<SeriesUpdate, 'alternativeNames'> {
+interface CustomSeriesUpdate extends Omit<SeriesUpdate, 'alternativeNames' | 'links'> {
   alternativeNames: FormAlternativeName[]
+  links: FormExternalLink[]
 }
 
 const updatedSeries = reactive<CustomSeriesUpdate>({
@@ -71,14 +78,7 @@ const updatedSeries = reactive<CustomSeriesUpdate>({
   alternativeNames: [],
   lastNumber: null,
   originalLanguage: null,
-  links: {
-    website: null,
-    myAnimeList: null,
-    kitsu: null,
-    aniList: null,
-    twitter: null,
-    instagram: null,
-  },
+  links: [],
 })
 
 const initialSeriesToEdit = ref('')
@@ -96,14 +96,9 @@ whenever(series, (loadedSeries) => {
     })),
     lastNumber: loadedSeries.attributes.lastNumber,
     originalLanguage: loadedSeries.attributes.originalLanguage,
-    links: {
-      website: loadedSeries.attributes.links.website,
-      myAnimeList: loadedSeries.attributes.links.myAnimeList,
-      kitsu: loadedSeries.attributes.links.kitsu,
-      aniList: loadedSeries.attributes.links.aniList,
-      twitter: loadedSeries.attributes.links.twitter,
-      instagram: loadedSeries.attributes.links.instagram,
-    },
+    links: Object.entries(loadedSeries.attributes.links)
+      .filter(([_, url]) => url !== null && url.length > 0)
+      .map(([type, url]) => ({ type, url })),
   } satisfies CustomSeriesUpdate)
 
   initialSeriesToEdit.value = JSON.stringify(toRaw(updatedSeries))
@@ -131,9 +126,10 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidAlternativeNames = await alternativeNamesForm.value!.v$.$validate()
+  const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
   const isValidCover = await coverForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidAlternativeNames || !isValidCover) {
+  if (!isValidMetadata || !isValidAlternativeNames || !isValidExternalLinks || !isValidCover) {
     return
   }
 
@@ -147,6 +143,19 @@ async function handleSubmit() {
         name: fan.name,
         language: fan.language,
       })),
+    links: Object.assign(
+      { 
+        website: null, 
+        myAnimeList: null,
+        kitsu: null,
+        aniList: null,
+        twitter: null,
+        instagram: null
+      } satisfies SeriesLinks,
+      Object.fromEntries(
+        updatedSeries.links.map(l => [l.type, nullOrNotBlank(l.url)])
+      )
+    ),
   }
 
   try {
@@ -269,6 +278,14 @@ const seriesCover = computed(() => getRelationship(series.value, 'SERIES_COVER')
             <SeriesAlternativeNamesForm
               ref="alternativeNamesForm"
               v-model:alternative-names="updatedSeries.alternativeNames"
+              :disabled="isLoading || isEditing"
+            />
+          </TabPanel>
+          <TabPanel :unmount="false">
+            <EntityExternalLinksForm
+              ref="externalLinksForm"
+              v-model:external-links="updatedSeries.links"
+              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'twitter', 'instagram']"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>
