@@ -184,7 +184,7 @@ class BookContributorDao(
   }
 
   private fun List<BookContributorEntityDto>.withPictureIfExists(): List<BookContributorEntityDto> {
-    val entitiesWithImages = personPictureLifecycle.getEntitiesWithImages(map { it.id })
+    val entitiesWithImages = personPictureLifecycle.getEntitiesWithImages(map { it.attributes.person.id })
 
     if (entitiesWithImages.isEmpty()) {
       return this
@@ -193,7 +193,7 @@ class BookContributorDao(
     return map {
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
-          RelationDto(id = it.id, type = ReferenceExpansionBookContributor.PERSON_PICTURE)
+          RelationDto(id = it.attributes.person.id, type = ReferenceExpansionBookContributor.PERSON_PICTURE)
             .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
         )
       )
