@@ -276,6 +276,11 @@ function handleDeleteReadProgress(readProgress: ReadProgressEntity) {
                 :contributors="contributors"
               />
 
+              <EntityExternalLinks
+                :links="(book?.attributes?.links as Record<string, string | null> | undefined)"
+                :loading="!showBookInfo"
+              />
+
               <BookTags
                 class="2xl:hidden"
                 :tags="getRelationships(book, 'TAG')"

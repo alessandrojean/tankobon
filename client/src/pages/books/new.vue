@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
-import type { BookUpdate } from '@/types/tankobon-book'
+import type { BookLinks, BookUpdate } from '@/types/tankobon-book'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import BookMetadataForm from '@/components/books/BookMetadataForm.vue'
@@ -10,6 +10,8 @@ import BookContributorsForm from '@/components/books/BookContributorsForm.vue'
 import type { CoverArt } from '@/components/books/BookCoverArtForm.vue'
 import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
 import type { TankobonApiError } from '@/types/tankobon-response'
+import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
+import { FormExternalLink } from '@/types/tankobon-external-link'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -25,17 +27,20 @@ const metadataForm = ref<InstanceType<typeof BookMetadataForm>>()
 const contributorsForm = ref<InstanceType<typeof BookContributorsForm>>()
 const coverArtForm = ref<InstanceType<typeof BookCoverArtForm>>()
 const organizationForm = ref<InstanceType<typeof BookOrganizationForm>>()
+const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const contributorsInvalid = computed(() => contributorsForm.value?.v$.$error ?? false)
 const coverArtInvalid = computed(() => coverArtForm.value?.v$.$error ?? false)
 const organizationInvalid = computed(() => organizationForm.value?.v$.$error ?? false)
+const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'books.metadata' },
   { key: '1', text: 'entities.book-contributors' },
   { key: '2', text: 'books.cover-art' },
   { key: '3', text: 'books.organization' },
+  { key: '4', text: 'external-links.title' },
 ]
 
 const invalidTabs = computed(() => [
@@ -43,14 +48,16 @@ const invalidTabs = computed(() => [
   contributorsInvalid.value,
   coverArtInvalid.value,
   organizationInvalid.value,
+  externalLinksInvalid.value,
 ])
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
+interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
   dimensions: DimensionsString
   labelPrice: MonetaryAmountString
   paidPrice: MonetaryAmountString
   pageCount: string
   weightKg: string
+  links: FormExternalLink[]
 }
 
 const newBook = reactive<CustomBookUpdate>({
@@ -86,12 +93,7 @@ const newBook = reactive<CustomBookUpdate>({
   tags: [],
   title: '',
   weightKg: '0',
-  links: {
-    amazon: null,
-    openLibrary: null,
-    skoob: null,
-    goodreads: null,
-  },
+  links: [],
 })
 
 const coverArt = ref<CoverArt>({
@@ -119,12 +121,14 @@ async function handleSubmit() {
   const isValidContributors = await contributorsForm.value!.v$.$validate()
   const isValidCoverArt = await coverArtForm.value!.v$.$validate()
   const isValidOrganization = await organizationForm.value!.v$.$validate()
+  const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
 
   if (
     !isValidMetadata
     || !isValidContributors
     || !isValidOrganization
     || !isValidCoverArt
+    || !isValidExternalLinks
   ) {
     return
   }
@@ -149,6 +153,17 @@ async function handleSubmit() {
       widthCm: validNumber(newBook.dimensions.widthCm),
       heightCm: validNumber(newBook.dimensions.heightCm),
     },
+    links: Object.assign(
+      { 
+        amazon: null, 
+        openLibrary: null,
+        skoob: null,
+        goodreads: null,
+      } satisfies BookLinks,
+      Object.fromEntries(
+        newBook.links.map(l => [l.type, nullOrNotBlank(l.url)])
+      )
+    ),
   }
 
   try {
@@ -291,6 +306,14 @@ useBeforeUnload({
               v-model:store="newBook.store"
               v-model:collection="newBook.collection"
               v-model:tags="newBook.tags"
+              :disabled="isCreating"
+            />
+          </TabPanel>
+          <TabPanel :unmount="false">
+            <EntityExternalLinksForm
+              ref="externalLinksForm"
+              v-model:external-links="newBook.links"
+              :types="['amazon', 'openLibrary', 'skoob', 'goodreads']"
               :disabled="isCreating"
             />
           </TabPanel>

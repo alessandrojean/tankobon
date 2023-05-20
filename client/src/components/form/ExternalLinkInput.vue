@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { ErrorObject } from '@vuelidate/core'
-import Button from './Button.vue'
+import Button from '@/components/form/Button.vue'
 import { BuildingStorefrontIcon } from '@heroicons/vue/20/solid'
 import AniListIcon from '@/components/icons/AniListIcon.vue'
 import InstagramIcon from '@/components/icons/InstagramIcon.vue'
@@ -9,6 +9,10 @@ import MyAnimeListIcon from '@/components/icons/MyAnimeListIcon.vue'
 import TwitterIcon from '@/components/icons/TwitterIcon.vue'
 import UnknownWebsiteIcon from '@/components/icons/UnknownWebsiteIcon.vue'
 import WebsiteIcon from '@/components/icons/WebsiteIcon.vue'
+import AmazonIcon from '@/components/icons/AmazonIcon.vue'
+import OpenLibraryIcon from '@/components/icons/OpenLibraryIcon.vue'
+import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
+import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
 export interface TextInputProps {
   disabledTypes?: string[]
@@ -81,6 +85,10 @@ const typeNames = computed<Record<string, string>>(() => ({
   aniList: 'AniList',
   twitter: 'Twitter',
   instagram: 'Instagram',
+  amazon: 'Amazon',
+  openLibrary: 'Open Library',
+  goodreads: 'Goodreads',
+  skoob: 'Skoob',
 }))
 
 const typeIcons: Record<string, Component> = {
@@ -92,6 +100,10 @@ const typeIcons: Record<string, Component> = {
   aniList: AniListIcon,
   twitter: TwitterIcon,
   instagram: InstagramIcon,
+  amazon: AmazonIcon,
+  openLibrary: OpenLibraryIcon,
+  goodreads: GoodreadsIcon,
+  skoob: SkoobIcon,
 }
 
 const disabledIndexes = computed(() => {
