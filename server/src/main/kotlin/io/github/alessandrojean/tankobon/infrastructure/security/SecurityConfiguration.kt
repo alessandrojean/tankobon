@@ -57,6 +57,7 @@ class SecurityConfiguration(
             "/index.html",
             "/fonts/**",
             "/assets/**",
+            "/flags/**",
           )
           .permitAll()
 
