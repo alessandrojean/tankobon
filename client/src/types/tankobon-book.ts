@@ -25,6 +25,7 @@ export interface BookAttributes {
   synopsis: string
   title: string
   weightKg: number
+  links: BookLinks
 }
 
 export interface BookContributor {
@@ -48,6 +49,15 @@ export type BookCodeIsbn = { type: 'ISBN_13' | 'ISBN_10' } & BookCode & {
 export function isIsbnCode(code: BookCode | BookCodeIsbn | undefined): code is BookCodeIsbn {
   return code?.type === 'ISBN_10' || code?.type === 'ISBN_13'
 }
+
+export interface BookLinks {
+  amazon: string | null
+  openLibrary: string | null
+  skoob: string | null
+  goodreads: string | null
+}
+
+export type BookLinkType = keyof BookLinks
 
 export type BookIncludes = 'contributor' | 'collection' | 'publisher'
 | 'series' | 'store' | 'tag' | 'library' | 'cover_art'
@@ -79,6 +89,7 @@ export interface BookUpdate {
   tags?: string[] | null
   title: string
   weightKg: number
+  links: BookLinks
 }
 
 export interface BookContributorCreateUpdate {

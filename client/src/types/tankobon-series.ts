@@ -12,12 +12,24 @@ export interface SeriesAttributes {
   alternativeNames: AlternativeName[]
   lastNumber: string | null
   originalLanguage: string | null
+  links: SeriesLinks
   createdAt: string
   modifiedAt: string
 }
 
 export type SeriesType = 'MANGA' | 'MANHWA' | 'MANHUA' | 'COMIC'
 | 'BOOK' | 'NOVEL' | 'DATABOOK' | 'ARTBOOK' | 'LIGHT_NOVEL'
+
+export interface SeriesLinks {
+  website: string | null
+  myAnimeList: string | null
+  kitsu: string | null
+  aniList: string | null
+  twitter: string | null
+  instagram: string | null
+}
+
+export type SeriesLinkType = keyof SeriesLinks
 
 export interface SeriesCreation {
   name: string
@@ -26,6 +38,7 @@ export interface SeriesCreation {
   alternativeNames: AlternativeName[]
   lastNumber: string | null
   originalLanguage: string | null
+  links: SeriesLinks
   library: string
 }
 
