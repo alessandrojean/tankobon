@@ -2,12 +2,14 @@
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { SeriesCreation } from '@/types/tankobon-series'
+import type { SeriesCreation, SeriesLinks } from '@/types/tankobon-series'
 import type { Cover } from '@/components/series/SeriesCoverForm.vue'
 import SeriesCoverForm from '@/components/series/SeriesCoverForm.vue'
 import SeriesMetadataForm from '@/components/series/SeriesMetadataForm.vue'
 import SeriesAlternativeNamesForm from '@/components/series/SeriesAlternativeNamesForm.vue'
 import type { FormAlternativeName } from '@/types/tankobon-alternative-name'
+import { FormExternalLink } from '@/types/tankobon-external-link'
+import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -23,26 +25,31 @@ const isCreating = logicOr(isCreatingSeries, isUploadingCover)
 
 const metadataForm = ref<InstanceType<typeof SeriesMetadataForm>>()
 const alternativeNamesForm = ref<InstanceType<typeof SeriesAlternativeNamesForm>>()
+const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
 const coverForm = ref<InstanceType<typeof SeriesCoverForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const alternativeNamesInvalid = computed(() => alternativeNamesForm.value?.v$.$error ?? false)
+const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
 const coverInvalid = computed(() => coverForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'series.metadata' },
   { key: '1', text: 'alternative-names.title' },
-  { key: '2', text: 'series.cover' },
+  { key: '2', text: 'external-links.title' },
+  { key: '3', text: 'series.cover' },
 ]
 
 const invalidTabs = computed(() => [
   metadataInvalid.value,
   alternativeNamesInvalid.value,
+  externalLinksInvalid.value,
   coverInvalid.value,
 ])
 
-interface CustomSeriesUpdate extends Omit<SeriesCreation, 'alternativeNames'> {
+interface CustomSeriesUpdate extends Omit<SeriesCreation, 'alternativeNames' | 'links'> {
   alternativeNames: FormAlternativeName[]
+  links: FormExternalLink[]
 }
 
 const newSeries = reactive<CustomSeriesUpdate>({
@@ -53,14 +60,7 @@ const newSeries = reactive<CustomSeriesUpdate>({
   alternativeNames: [],
   lastNumber: null,
   originalLanguage: null,
-  links: {
-    website: null,
-    myAnimeList: null,
-    kitsu: null,
-    aniList: null,
-    twitter: null,
-    instagram: null,
-  },
+  links: [],
 })
 
 whenever(libraryId, libraryId => newSeries.library = libraryId)
@@ -83,9 +83,10 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidAlternativeNames = await alternativeNamesForm.value!.v$.$validate()
+  const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
   const isValidCover = await coverForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidAlternativeNames || !isValidCover) {
+  if (!isValidMetadata || !isValidAlternativeNames || !isValidExternalLinks || !isValidCover) {
     return
   }
 
@@ -99,6 +100,19 @@ async function handleSubmit() {
         name: fan.name,
         language: fan.language,
       })),
+    links: Object.assign(
+      { 
+        website: null, 
+        myAnimeList: null,
+        kitsu: null,
+        aniList: null,
+        twitter: null,
+        instagram: null
+      } satisfies SeriesLinks,
+      Object.fromEntries(
+        newSeries.links.map(l => [l.type, nullOrNotBlank(l.url)])
+      )
+    ),
   }
 
   try {
@@ -210,6 +224,14 @@ useBeforeUnload({
             <SeriesAlternativeNamesForm
               ref="alternativeNamesForm"
               v-model:alternative-names="newSeries.alternativeNames"
+              :disabled="isCreating"
+            />
+          </TabPanel>
+          <TabPanel :unmount="false">
+            <EntityExternalLinksForm
+              ref="externalLinksForm"
+              v-model:external-links="newSeries.links"
+              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'twitter', 'instagram']"
               :disabled="isCreating"
             />
           </TabPanel>

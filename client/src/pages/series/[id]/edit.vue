@@ -55,7 +55,7 @@ const tabs = [
   { key: '0', text: 'series.metadata' },
   { key: '1', text: 'alternative-names.title' },
   { key: '2', text: 'external-links.title' },
-  { key: '4', text: 'series.cover' },
+  { key: '3', text: 'series.cover' },
 ]
 
 const invalidTabs = computed(() => [
