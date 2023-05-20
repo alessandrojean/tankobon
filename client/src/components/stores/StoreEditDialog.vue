@@ -22,6 +22,13 @@ const store = reactive<StoreUpdate>({
   id: '',
   name: '',
   description: '',
+  links: {
+    website: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    youTube: null,
+  },
 })
 
 const storeForm = ref<InstanceType<typeof StoreForm> | null>(null)
@@ -31,6 +38,13 @@ whenever(isOpen, () => {
     id: storeEntity.value.id,
     name: storeEntity.value.attributes.name,
     description: storeEntity.value.attributes.description,
+    links: {
+      website: storeEntity.value.attributes.links.website,
+      twitter: storeEntity.value.attributes.links.twitter,
+      instagram: storeEntity.value.attributes.links.instagram,
+      facebook: storeEntity.value.attributes.links.facebook,
+      youTube: storeEntity.value.attributes.links.youTube,
+    },
   })
 
   storeForm.value?.v$.$reset()

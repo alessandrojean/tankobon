@@ -114,6 +114,12 @@ const updatedBook = reactive<CustomBookUpdate>({
   tags: [],
   title: '',
   weightKg: '0',
+  links: {
+    amazon: null,
+    openLibrary: null,
+    skoob: null,
+    goodreads: null,
+  },
 })
 
 const initialBookToEdit = ref('')
@@ -156,6 +162,12 @@ whenever(book, (loadedBook) => {
     series: getRelationship(loadedBook, 'SERIES')?.id ?? null,
     store: getRelationship(loadedBook, 'STORE')?.id ?? null,
     weightKg: String(loadedBook.attributes.weightKg),
+    links: {
+      amazon: loadedBook.attributes.links.amazon,
+      openLibrary: loadedBook.attributes.links.openLibrary,
+      skoob: loadedBook.attributes.links.skoob,
+      goodreads: loadedBook.attributes.links.goodreads,
+    },
   } satisfies CustomBookUpdate)
 
   initialBookToEdit.value = JSON.stringify(toRaw(updatedBook))

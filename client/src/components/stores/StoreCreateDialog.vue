@@ -21,6 +21,13 @@ const { isOpen, libraryId } = toRefs(props)
 const store = reactive<StoreCreation>({
   name: '',
   description: '',
+  links: {
+    website: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    youTube: null,
+  },
   library: '',
 })
 

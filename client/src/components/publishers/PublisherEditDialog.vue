@@ -22,6 +22,14 @@ const publisher = reactive<PublisherUpdate>({
   id: '',
   name: '',
   description: '',
+  links: {
+    website: null,
+    store: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    youTube: null,
+  },
 })
 
 const publisherForm = ref<InstanceType<typeof PublisherForm> | null>(null)
@@ -31,6 +39,14 @@ whenever(isOpen, () => {
     id: publisherEntity.value.id,
     name: publisherEntity.value.attributes.name,
     description: publisherEntity.value.attributes.description,
+    links: {
+      website: publisherEntity.value.attributes.links.website,
+      store: publisherEntity.value.attributes.links.store,
+      twitter: publisherEntity.value.attributes.links.twitter,
+      instagram: publisherEntity.value.attributes.links.instagram,
+      facebook: publisherEntity.value.attributes.links.facebook,
+      youTube: publisherEntity.value.attributes.links.youTube,
+    },
   })
 
   publisherForm.value?.v$.$reset()

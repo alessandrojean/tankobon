@@ -22,6 +22,14 @@ const publisher = reactive<PublisherCreation>({
   name: '',
   description: '',
   library: '',
+  links: {
+    website: null,
+    store: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    youTube: null,
+  },
 })
 
 const publisherForm = ref<InstanceType<typeof PublisherForm> | null>(null)

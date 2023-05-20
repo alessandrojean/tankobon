@@ -22,6 +22,15 @@ const person = reactive<PersonUpdate>({
   id: '',
   name: '',
   description: '',
+  links: {
+    website: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    pixiv: null,
+    deviantArt: null,
+    youTube: null,
+  },
 })
 
 const personForm = ref<InstanceType<typeof PersonForm> | null>(null)
@@ -31,6 +40,15 @@ whenever(isOpen, () => {
     id: personEntity.value.id,
     name: personEntity.value.attributes.name,
     description: personEntity.value.attributes.description,
+    links: {
+      website: personEntity.value.attributes.links.website,
+      twitter: personEntity.value.attributes.links.twitter,
+      instagram: personEntity.value.attributes.links.instagram,
+      facebook: personEntity.value.attributes.links.facebook,
+      pixiv: personEntity.value.attributes.links.pixiv,
+      deviantArt: personEntity.value.attributes.links.deviantArt,
+      youTube: personEntity.value.attributes.links.youTube,
+    },
   })
 
   personForm.value?.v$.$reset()

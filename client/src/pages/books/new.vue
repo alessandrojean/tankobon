@@ -86,6 +86,12 @@ const newBook = reactive<CustomBookUpdate>({
   tags: [],
   title: '',
   weightKg: '0',
+  links: {
+    amazon: null,
+    openLibrary: null,
+    skoob: null,
+    goodreads: null,
+  },
 })
 
 const coverArt = ref<CoverArt>({

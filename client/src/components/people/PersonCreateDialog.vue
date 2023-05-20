@@ -21,6 +21,15 @@ const { isOpen, libraryId } = toRefs(props)
 const person = reactive<PersonCreation>({
   name: '',
   description: '',
+  links: {
+    website: null,
+    twitter: null,
+    instagram: null,
+    facebook: null,
+    pixiv: null,
+    deviantArt: null,
+    youTube: null,
+  },
   library: '',
 })
 

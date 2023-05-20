@@ -53,6 +53,14 @@ const newSeries = reactive<CustomSeriesUpdate>({
   alternativeNames: [],
   lastNumber: null,
   originalLanguage: null,
+  links: {
+    website: null,
+    myAnimeList: null,
+    kitsu: null,
+    aniList: null,
+    twitter: null,
+    instagram: null,
+  },
 })
 
 whenever(libraryId, libraryId => newSeries.library = libraryId)

@@ -71,6 +71,14 @@ const updatedSeries = reactive<CustomSeriesUpdate>({
   alternativeNames: [],
   lastNumber: null,
   originalLanguage: null,
+  links: {
+    website: null,
+    myAnimeList: null,
+    kitsu: null,
+    aniList: null,
+    twitter: null,
+    instagram: null,
+  },
 })
 
 const initialSeriesToEdit = ref('')
@@ -88,6 +96,14 @@ whenever(series, (loadedSeries) => {
     })),
     lastNumber: loadedSeries.attributes.lastNumber,
     originalLanguage: loadedSeries.attributes.originalLanguage,
+    links: {
+      website: loadedSeries.attributes.links.website,
+      myAnimeList: loadedSeries.attributes.links.myAnimeList,
+      kitsu: loadedSeries.attributes.links.kitsu,
+      aniList: loadedSeries.attributes.links.aniList,
+      twitter: loadedSeries.attributes.links.twitter,
+      instagram: loadedSeries.attributes.links.instagram,
+    },
   } satisfies CustomSeriesUpdate)
 
   initialSeriesToEdit.value = JSON.stringify(toRaw(updatedSeries))
