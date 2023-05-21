@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.annotation.security.RolesAllowed
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import org.hibernate.validator.constraints.UUID
 import org.springdoc.core.converters.models.PageableAsQueryParam
@@ -58,7 +59,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import javax.validation.Valid
 
 @Validated
 @RestController

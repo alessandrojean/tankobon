@@ -15,12 +15,9 @@ plugins {
 
 group = "io.github.alessandrojean"
 
-repositories {
-  mavenCentral()
-}
-
 java {
   sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -65,7 +62,6 @@ dependencies {
   testImplementation("com.ninja-squad:springmockk:4.0.0")
   testImplementation("io.mockk:mockk:1.13.4")
 
-  compileOnly("javax.validation:validation-api:2.0.1.Final")
   compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
   
   implementation("com.ibm.icu:icu4j:72.1")
@@ -74,18 +70,15 @@ dependencies {
   implementation("org.javamoney:moneta:1.4.2")
   implementation("org.zalando:jackson-datatype-money:1.3.0")
 
-  run {
-    val springdocVersion = "2.0.2"
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:$springdocVersion")
-    implementation("org.springdoc:springdoc-openapi-starter-common:$springdocVersion")
-  }
+  val springdocVersion = "2.0.2"
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:$springdocVersion")
+  implementation("org.springdoc:springdoc-openapi-starter-common:$springdocVersion")
 
-  run {
-    val luceneVersion = "9.5.0"
-    implementation("org.apache.lucene:lucene-core:$luceneVersion")
-    implementation("org.apache.lucene:lucene-analysis-common:$luceneVersion")
-    implementation("org.apache.lucene:lucene-queryparser:$luceneVersion")
-  }
+  val luceneVersion = "9.5.0"
+  implementation("org.apache.lucene:lucene-core:$luceneVersion")
+  implementation("org.apache.lucene:lucene-analysis-common:$luceneVersion")
+  implementation("org.apache.lucene:lucene-queryparser:$luceneVersion")
+
 }
 
 val client = "$rootDir/client"
@@ -97,13 +90,8 @@ tasks {
         "-Xjsr305=strict",
         "-opt-in=kotlin.time.ExperimentalTime"
       )
-      jvmTarget = "17"
+      jvmTarget = JavaVersion.VERSION_17.toString()
     }
-  }
-
-  withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
   }
 
   withType<Test> {
