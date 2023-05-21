@@ -103,6 +103,8 @@ fun Series.toAttributesDto(alternativeNames: List<SeriesAlternativeName>) = Seri
     myAnimeList = links.myAnimeList,
     kitsu = links.kitsu,
     aniList = links.aniList,
+    mangaUpdates = links.mangaUpdates,
+    guiaDosQuadrinhos = links.guiaDosQuadrinhos,
     twitter = links.twitter,
     instagram = links.instagram,
   ),

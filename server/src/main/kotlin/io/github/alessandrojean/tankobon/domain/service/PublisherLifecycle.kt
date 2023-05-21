@@ -23,7 +23,7 @@ class PublisherLifecycle(
   fun addPublisher(publisher: Publisher): Publisher {
     logger.info { "Adding new publisher: $publisher" }
 
-    if (publisherRepository.existsByNameInLibrary(publisher.name, publisher.libraryId)) {
+    if (publisherRepository.existsByNameInLibrary(publisher.name, publisher.legalName, publisher.libraryId)) {
       throw DuplicateNameException("Publisher name already exists in the library specified")
     }
 
@@ -41,7 +41,7 @@ class PublisherLifecycle(
 
     if (
       !existing.name.equals(toUpdate.name, true) &&
-      publisherRepository.existsByNameInLibrary(toUpdate.name, toUpdate.libraryId)
+      publisherRepository.existsByNameInLibrary(toUpdate.name, toUpdate.legalName, toUpdate.libraryId)
     ) {
       throw DuplicateNameException("Publisher name already exists in the library specified")
     }

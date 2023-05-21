@@ -43,6 +43,9 @@ dependencies:
   blurhash:
     specifier: 2.0.5
     version: 2.0.5
+  countries-list:
+    specifier: ^2.6.1
+    version: 2.6.1
   cva:
     specifier: npm:class-variance-authority
     version: /class-variance-authority@0.6.0(typescript@5.0.4)
@@ -2009,6 +2012,10 @@ packages:
       semver: 7.5.0
       well-known-symbols: 2.0.0
     dev: true
+
+  /countries-list@2.6.1:
+    resolution: {integrity: sha512-jXM1Nv3U56dPQ1DsUSsEaGmLHburo4fnB7m+1yhWDUVvx5gXCd1ok/y3gXCjXzhqyawG+igcPYcAl4qjkvopaQ==}
+    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}

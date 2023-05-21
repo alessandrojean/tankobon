@@ -1,21 +1,20 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="TValue extends string | number | boolean | object | null | undefined, TItem">
 import type { ErrorObject } from '@vuelidate/core'
 
-export interface BasicSelectProps {
+const props = withDefaults(defineProps<{
   disabled?: boolean
   disabledOptions?: number[]
   errors?: ErrorObject[]
+  id: string
   invalid?: boolean
-  modelValue: any
-  options: any[]
-  optionText?: (value: any) => string
-  optionValue?: (value: any) => string
+  modelValue: TValue
+  options: TItem[]
+  optionText?: (value: TItem, index: number) => string
+  optionValue?: (value: TItem) => string
   placeholder?: string
   required?: boolean
   size?: 'normal' | 'small'
-}
-
-const props = withDefaults(defineProps<BasicSelectProps>(), {
+}>(), {
   disabled: false,
   disabledOptions: () => [],
   errors: undefined,
@@ -34,7 +33,7 @@ const { optionValue, options } = toRefs(props)
 
 function handleChange(event: Event) {
   const newValue = (event.target! as HTMLSelectElement).value
-  const toEmit = options.value.find(option => optionValue.value(option) === newValue)
+  const toEmit = options.value.find((option: TItem) => optionValue.value(option) === newValue)
 
   emit('update:modelValue', toEmit)
 }
@@ -56,6 +55,7 @@ export default { inheritAttrs: false }
           : 'border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
       ]"
       v-bind="$attrs"
+      :id="id"
       :placeholder="placeholder"
       :required="required"
       :disabled="disabled"
@@ -63,12 +63,12 @@ export default { inheritAttrs: false }
     >
       <option
         v-for="(option, i) of options"
-        :key="optionValue ? optionValue(option) : option"
+        :key="i"
         :value="optionValue ? optionValue(option) : option"
-        :selected="optionValue(modelValue) === optionValue(option)"
+        :selected="modelValue === optionValue(option)"
         :disabled="disabledOptions.includes(i)"
       >
-        {{ optionText(option) }}
+        {{ optionText(option, i) }}
       </option>
     </select>
     <div

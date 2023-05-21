@@ -1,35 +1,13 @@
 <script lang="ts" setup>
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { BuildingOffice2Icon, MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
-import type { PublisherCreation } from '@/types/tankobon-publisher'
-
-const { t } = useI18n()
-const router = useRouter()
-const notificator = useToaster()
 
 const showCreateDialog = ref(false)
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
 
-const { mutate } = useCreatePublisherMutation()
-
 const libraryStore = useLibraryStore()
 const library = computed(() => libraryStore.library!)
-
-function handleCreatePublisher(publisher: PublisherCreation) {
-  mutate(publisher, {
-    onSuccess: async ({ id }) => {
-      notificator.success({ title: t('publishers.created-with-success') })
-      await router.push({ name: 'publishers-id', params: { id } })
-    },
-    onError: async (error) => {
-      await notificator.failure({
-        title: t('publishers.created-with-failure'),
-        body: error.message,
-      })
-    },
-  })
-}
 </script>
 
 <route lang="yaml">
@@ -46,7 +24,8 @@ meta:
       <template #actions>
         <Button
           kind="primary"
-          @click="showCreateDialog = true"
+          is-router-link
+          :to="{ name: 'publishers-new' }"
         >
           <PlusIcon class="w-5 h-5" />
           <span>{{ $t('publishers.new') }}</span>
@@ -104,13 +83,5 @@ meta:
         </template>
       </PublishersTable>
     </div>
-
-    <PublisherCreateDialog
-      v-if="library"
-      :library-id="library.id"
-      :is-open="showCreateDialog"
-      @submit="handleCreatePublisher"
-      @close="showCreateDialog = false"
-    />
   </div>
 </template>

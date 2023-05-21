@@ -111,10 +111,10 @@ class PublisherDao(
       .fetchInto(TablePublisher)
       .map { it.toDomain() }
 
-  override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
+  override fun existsByNameInLibrary(name: String, legalName: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TablePublisher)
-        .where(TablePublisher.NAME.equalIgnoreCase(name))
+        .where(TablePublisher.NAME.equalIgnoreCase(name).or(TablePublisher.LEGAL_NAME.equalIgnoreCase(legalName)))
         .and(TablePublisher.LIBRARY_ID.eq(libraryId))
     )
 
@@ -136,6 +136,8 @@ class PublisherDao(
       .set(TablePublisher.INSTAGRAM, publisher.links.instagram)
       .set(TablePublisher.FACEBOOK, publisher.links.facebook)
       .set(TablePublisher.YOUTUBE, publisher.links.youTube)
+      .set(TablePublisher.LEGAL_NAME, publisher.legalName)
+      .set(TablePublisher.LOCATION, publisher.location)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .execute()
   }
@@ -152,6 +154,8 @@ class PublisherDao(
       .set(TablePublisher.INSTAGRAM, publisher.links.instagram)
       .set(TablePublisher.FACEBOOK, publisher.links.facebook)
       .set(TablePublisher.YOUTUBE, publisher.links.youTube)
+      .set(TablePublisher.LEGAL_NAME, publisher.legalName)
+      .set(TablePublisher.LOCATION, publisher.location)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .set(TablePublisher.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TablePublisher.ID.eq(publisher.id))
@@ -207,6 +211,8 @@ class PublisherDao(
       facebook = facebook,
       youTube = youtube,
     ),
+    legalName = legalName,
+    location = location,
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),

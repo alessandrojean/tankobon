@@ -1,27 +1,26 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="TValue extends string | number | boolean | object | null | undefined, TItem">
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import type { ErrorObject } from '@vuelidate/core'
 import { Combobox, ComboboxInput, ComboboxOptions } from '@headlessui/vue'
 import type { AnchorAlignment } from '@primer/behaviors'
 import Button from './Button.vue'
 
-export interface SearchableComboboxProps {
+const props = withDefaults(defineProps<{
   align?: AnchorAlignment
   disabledOptions?: number[]
   errors?: ErrorObject[]
-  filter?: (query: string, option: any) => boolean
+  filter?: (query: string, option: TItem) => boolean
+  id: string
   invalid?: boolean
   kind?: 'basic' | 'fancy'
   labelText?: string
-  modelValue: any
-  options: any[]
-  optionText?: (value: any) => string
-  optionValue?: (value: any) => any
-  optionValueSelect?: (value: any) => any
+  modelValue: TValue
+  options: TItem[]
+  optionText?: (value: TItem | undefined, index: number) => string
+  optionValue?: (value: TItem) => TValue
+  optionValueSelect?: (value: TItem) => string
   placeholder?: string
-}
-
-const props = withDefaults(defineProps<SearchableComboboxProps>(), {
+}>(), {
   align: 'start',
   disabledOptions: () => [],
   errors: undefined,
@@ -29,9 +28,9 @@ const props = withDefaults(defineProps<SearchableComboboxProps>(), {
   invalid: false,
   kind: 'basic',
   size: 'normal',
-  optionText: (value: any) => String(value),
-  optionValue: (value: any) => String(value),
-  optionValueSelect: (value: any) => String(value),
+  optionText: (value: TItem | undefined) => String(value),
+  optionValue: (value: TItem) => String(value) as TValue,
+  optionValueSelect: (value: TItem) => String(value),
 })
 
 const emit = defineEmits<{
@@ -45,7 +44,7 @@ const { optionValue, optionText, options, filter, errors, align } = toRefs(props
 const query = ref('')
 
 const filterFunction = computed(() => {
-  return filter.value ?? ((query: string, option: any) => {
+  return filter.value ?? ((query: string, option: TItem) => {
     return optionText.value(option).toLowerCase().includes(query)
   })
 })
@@ -55,7 +54,7 @@ const filteredOptions = computed(() => {
     return options.value
   }
 
-  return options.value.filter((option) => {
+  return options.value.filter((option: TItem) => {
     return filterFunction.value(query.value.toLowerCase(), option)
   })
 })
@@ -72,15 +71,22 @@ const { position } = useAnchoredPosition({
   align,
   allowOutOfBounds: false,
 })
+
+const selected = computed(() => {
+  const index = props.options.findIndex(v => optionValue.value(v) === props.modelValue)
+
+  return { index, option: options.value[index] }
+})
 </script>
 
 <template>
   <fieldset>
     <BasicSelect
       class="md:hidden"
+      :id="`${id}-select`"
       :errors="errors"
       :invalid="invalid"
-      :model-value="modelValue"
+      :model-value="(modelValue as TValue)"
       :options="options"
       :option-text="optionText"
       :option-value="optionValueSelect"
@@ -91,7 +97,7 @@ const { position } = useAnchoredPosition({
     <Combobox
       as="div"
       class="relative hidden md:block"
-      :model-value="optionValue ? optionValue(modelValue) : modelValue"
+      :model-value="(modelValue as TValue)"
       @update:model-value="emit('update:model-value', $event)"
     >
       <div class="relative">
@@ -122,7 +128,7 @@ const { position } = useAnchoredPosition({
               : 'border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
           ]"
           :placeholder="placeholder"
-          :display-value="optionText"
+          :display-value="() => optionText(selected.option, selected.index)"
           @blur="$emit('blur')"
           @change="query = $event.target.value"
         />
@@ -177,7 +183,7 @@ const { position } = useAnchoredPosition({
               ]"
             >
               <slot name="option" :option="option" :active="active" :selected="selected">
-                {{ optionText(option) }}
+                {{ optionText(option, i) }}
               </slot>
             </ComboboxOption>
           </ul>

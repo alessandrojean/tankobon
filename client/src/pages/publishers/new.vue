@@ -2,14 +2,11 @@
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { SeriesCreation, SeriesLinks } from '@/types/tankobon-series'
-import type { Cover } from '@/components/series/SeriesCoverForm.vue'
-import SeriesCoverForm from '@/components/series/SeriesCoverForm.vue'
-import SeriesMetadataForm from '@/components/series/SeriesMetadataForm.vue'
-import SeriesAlternativeNamesForm from '@/components/series/SeriesAlternativeNamesForm.vue'
-import type { FormAlternativeName } from '@/types/tankobon-alternative-name'
+import PublisherPictureForm, { Picture } from '@/components/publishers/PublisherPictureForm.vue'
+import PublisherMetadataForm from '@/components/publishers/PublisherMetadataForm.vue'
 import { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
+import { PublisherLinks, PublisherCreation } from '@/types/tankobon-publisher'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -18,54 +15,45 @@ const notificator = useToaster()
 const libraryStory = useLibraryStore()
 const libraryId = computed(() => libraryStory.library!.id)
 
-const { mutateAsync: createSeries, isLoading: isCreatingSeries } = useCreateSeriesMutation()
-const { mutateAsync: uploadCover, isLoading: isUploadingCover } = useUploadSeriesCoverMutation()
+const { mutateAsync: createPublisher, isLoading: isCreatingPublisher } = useCreatePublisherMutation()
+const { mutateAsync: uploadPicture, isLoading: isUploadingPicture } = useUploadPublisherPictureMutation()
 
-const isCreating = logicOr(isCreatingSeries, isUploadingCover)
+const isCreating = logicOr(isCreatingPublisher, isUploadingPicture)
 
-const metadataForm = ref<InstanceType<typeof SeriesMetadataForm>>()
-const alternativeNamesForm = ref<InstanceType<typeof SeriesAlternativeNamesForm>>()
+const metadataForm = ref<InstanceType<typeof PublisherMetadataForm>>()
 const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
-const coverForm = ref<InstanceType<typeof SeriesCoverForm>>()
+const pictureForm = ref<InstanceType<typeof PublisherPictureForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
-const alternativeNamesInvalid = computed(() => alternativeNamesForm.value?.v$.$error ?? false)
 const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
-const coverInvalid = computed(() => coverForm.value?.v$.$error ?? false)
+const pictureInvalid = computed(() => pictureForm.value?.v$.$error ?? false)
 
 const tabs = [
   { key: '0', text: 'series.metadata' },
-  { key: '1', text: 'alternative-names.title' },
-  { key: '2', text: 'external-links.title' },
-  { key: '3', text: 'series.cover' },
+  { key: '1', text: 'external-links.title' },
+  { key: '2', text: 'publishers.picture' },
 ]
 
 const invalidTabs = computed(() => [
   metadataInvalid.value,
-  alternativeNamesInvalid.value,
   externalLinksInvalid.value,
-  coverInvalid.value,
+  pictureInvalid.value,
 ])
 
-interface CustomSeriesUpdate extends Omit<SeriesCreation, 'alternativeNames' | 'links'> {
-  alternativeNames: FormAlternativeName[]
+interface CustomPublisherCreation extends Omit<PublisherCreation, 'links'> {
   links: FormExternalLink[]
 }
 
-const newSeries = reactive<CustomSeriesUpdate>({
+const newPublisher = reactive<CustomPublisherCreation>({
   library: libraryId.value,
   name: '',
   description: '',
-  type: null,
-  alternativeNames: [],
-  lastNumber: null,
-  originalLanguage: null,
   links: [],
+  legalName: '',
+  location: null,
 })
 
-whenever(libraryId, libraryId => newSeries.library = libraryId)
-
-const cover = ref<Cover>({
+const picture = ref<Picture>({
   removeExisting: false,
   file: null,
 })
@@ -73,7 +61,7 @@ const cover = ref<Cover>({
 const activeTab = ref(tabs[0])
 
 const headerTitle = computed(() => {
-  return newSeries.name.length > 0 ? newSeries.name : t('series.new')
+  return newPublisher.name.length > 0 ? newPublisher.name : t('publishers.new')
 })
 
 function nullOrNotBlank(value: string | null | undefined): string | null {
@@ -82,60 +70,49 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
 
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
-  const isValidAlternativeNames = await alternativeNamesForm.value!.v$.$validate()
   const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
-  const isValidCover = await coverForm.value!.v$.$validate()
+  const isValidPicture = await pictureForm.value!.v$.$validate()
 
-  if (!isValidMetadata || !isValidAlternativeNames || !isValidExternalLinks || !isValidCover) {
+  if (!isValidMetadata || !isValidExternalLinks || !isValidPicture) {
     return
   }
 
-  const seriesToCreate: SeriesCreation = {
-    ...toRaw(newSeries),
-    lastNumber: nullOrNotBlank(newSeries.lastNumber),
-    originalLanguage: nullOrNotBlank(newSeries.originalLanguage),
-    alternativeNames: newSeries.alternativeNames
-      .filter(fan => fan.language !== 'null' && fan.name.length > 0)
-      .map(fan => ({
-        name: fan.name,
-        language: fan.language,
-      })),
+  const publisherToCreate: PublisherCreation = {
+    ...toRaw(newPublisher),
     links: Object.assign(
       { 
         website: null, 
-        myAnimeList: null,
-        kitsu: null,
-        aniList: null,
-        mangaUpdates: null,
-        guiaDosQuadrinhos: null,
+        store: null,
         twitter: null,
-        instagram: null
-      } satisfies SeriesLinks,
+        instagram: null,
+        facebook: null,
+        youTube: null,
+      } satisfies PublisherLinks,
       Object.fromEntries(
-        newSeries.links.map(l => [l.type, nullOrNotBlank(l.url)])
+        newPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)])
       )
     ),
   }
 
   try {
-    const { id } = await createSeries(seriesToCreate)
+    const { id } = await createPublisher(publisherToCreate)
 
-    if (cover.value.file) {
-      await uploadCover({ seriesId: id, cover: cover.value.file })
+    if (picture.value.file) {
+      await uploadPicture({ publisherId: id, picture: picture.value.file })
     }
 
-    notificator.success({ title: t('series.created-with-success') })
-    await router.replace({ name: 'series-id', params: { id } })
+    await router.replace({ name: 'publishers-id', params: { id } })
+    await notificator.success({ title: t('publishers.created-with-success') })
   } catch (error) {
     await notificator.failure({
-      title: t('series.created-with-failure'),
+      title: t('publishers.created-with-failure'),
       body: (error as TankobonApiError | Error).message,
     })
   }
 }
 
 useBeforeUnload({
-  enabled: computed(() => route.name === 'series-new'),
+  enabled: computed(() => route.name === 'publishers-new'),
 })
 </script>
 
@@ -201,7 +178,7 @@ useBeforeUnload({
           <BasicSelect
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tab"
+            id="tabs"
             :disabled="isCreating"
             :options="tabs"
             :option-text="tab => $t(tab.text)"
@@ -212,36 +189,27 @@ useBeforeUnload({
       <div class="max-w-7xl mx-auto p-4 sm:p-6">
         <TabPanels>
           <TabPanel :unmount="false">
-            <SeriesMetadataForm
+            <PublisherMetadataForm
               ref="metadataForm"
-              v-model:name="newSeries.name"
-              v-model:description="newSeries.description"
-              v-model:type="newSeries.type"
-              v-model:original-language="newSeries.originalLanguage"
-              v-model:alternative-names="newSeries.alternativeNames"
-              v-model:last-number="newSeries.lastNumber"
-              :disabled="isCreating"
-            />
-          </TabPanel>
-          <TabPanel :unmount="false">
-            <SeriesAlternativeNamesForm
-              ref="alternativeNamesForm"
-              v-model:alternative-names="newSeries.alternativeNames"
+              v-model:name="newPublisher.name"
+              v-model:description="newPublisher.description"
+              v-model:legal-name="newPublisher.legalName"
+              v-model:location="newPublisher.location"
               :disabled="isCreating"
             />
           </TabPanel>
           <TabPanel :unmount="false">
             <EntityExternalLinksForm
               ref="externalLinksForm"
-              v-model:external-links="newSeries.links"
-              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'mangaUpdates', 'guiaDosQuadrinhos', 'twitter', 'instagram']"
+              v-model:external-links="newPublisher.links"
+              :types="['website', 'store', 'twitter', 'instagram', 'facebook', 'youTube']"
               :disabled="isCreating"
             />
           </TabPanel>
           <TabPanel :unmount="false">
-            <SeriesCoverForm
-              ref="coverForm"
-              v-model:cover="cover"
+            <PublisherPictureForm
+              ref="pictureForm"
+              v-model:picture="picture"
               :disabled="isCreating"
             />
           </TabPanel>

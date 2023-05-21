@@ -54,7 +54,7 @@ const selected = computed(() => {
 
 <template>
   <Listbox
-    :model-value="modelValue as TValue"
+    :model-value="(modelValue as TValue)"
     as="div"
     class="relative"
     @update:model-value="emit('update:modelValue', $event)"

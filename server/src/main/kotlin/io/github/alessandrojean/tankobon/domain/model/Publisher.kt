@@ -11,6 +11,8 @@ data class Publisher(
   override val libraryId: String = "",
   val description: String = "",
   val links: PublisherLinks = PublisherLinks(),
+  val legalName: String = "",
+  val location: String? = null,
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

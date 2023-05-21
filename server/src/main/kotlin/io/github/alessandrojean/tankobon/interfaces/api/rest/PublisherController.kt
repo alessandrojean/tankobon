@@ -186,6 +186,8 @@ class PublisherController(
           facebook = publisher.links.facebook,
           youTube = publisher.links.youTube,
         ),
+        legalName = publisher.legalName,
+        location = publisher.location,
         libraryId = publisher.library
       )
     )
@@ -280,6 +282,8 @@ class PublisherController(
         facebook = publisher.links.facebook,
         youTube = publisher.links.youTube,
       ),
+      legalName = publisher.legalName,
+      location = publisher.location,
     )
 
     publisherLifecycle.updatePublisher(toUpdate)

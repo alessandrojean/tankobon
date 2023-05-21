@@ -53,6 +53,8 @@ class PublisherDaoTest(
       name = "Publisher",
       description = "Publisher description",
       links = PublisherLinks(twitter = "publisher"),
+      legalName = "Publisher LLC",
+      location = "Location",
       libraryId = library.id,
     )
 
@@ -65,6 +67,8 @@ class PublisherDaoTest(
       assertThat(name).isEqualTo(publisher.name)
       assertThat(description).isEqualTo(publisher.description)
       assertThat(links.twitter).isEqualTo(publisher.links.twitter)
+      assertThat(legalName).isEqualTo(publisher.legalName)
+      assertThat(location).isEqualTo(publisher.location)
       assertThat(libraryId).isEqualTo(publisher.libraryId)
     }
   }
@@ -75,6 +79,8 @@ class PublisherDaoTest(
       name = "Publisher",
       description = "Publisher description",
       links = PublisherLinks(twitter = "publisher"),
+      legalName = "Publisher LLC",
+      location = "Location",
       libraryId = library.id,
     )
     publisherDao.insert(publisher)
@@ -85,6 +91,8 @@ class PublisherDaoTest(
       name = "PublisherUpdated",
       description = "PublisherUpdated description",
       links = PublisherLinks(twitter = "publisher_"),
+      legalName = "Publisher Inc",
+      location = "Another location",
     )
 
     publisherDao.update(updated)
@@ -99,6 +107,8 @@ class PublisherDaoTest(
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
       assertThat(links.twitter).isEqualTo(updated.links.twitter)
+      assertThat(legalName).isEqualTo(updated.legalName)
+      assertThat(location).isEqualTo(updated.location)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

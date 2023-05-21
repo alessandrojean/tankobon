@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
@@ -22,6 +23,8 @@ data class PublisherAttributesDto(
   val name: String,
   val description: String,
   val links: PublisherLinksDto,
+  val legalName: String,
+  val location: String?,
 ) : EntityAttributesDto()
 
 data class PublisherLinksDto(
@@ -72,14 +75,22 @@ fun Publisher.toAttributesDto() = PublisherAttributesDto(
     instagram = links.instagram,
     facebook = links.facebook,
     youTube = links.youTube,
-  )
+  ),
+  legalName = legalName,
+  location = location,
 )
 
 data class PublisherCreationDto(
-  @get:NotBlank val name: String,
+  @get:NotBlank
+  val name: String,
+  @get:NotNull
   val description: String,
   @get:NotNull
   val links: PublisherLinksDto,
+  @get:NotNull
+  val legalName: String,
+  @get:NullOrIso3166
+  val location: String?,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
@@ -90,4 +101,8 @@ data class PublisherUpdateDto(
   val description: String,
   @get:NotNull
   val links: PublisherLinksDto,
+  @get:NotNull
+  val legalName: String,
+  @get:NullOrIso3166
+  val location: String?,
 )

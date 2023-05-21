@@ -139,6 +139,7 @@ fun Book.toAttributesDto() = BookAttributesDto(
     openLibrary = links.openLibrary,
     skoob = links.skoob,
     goodreads = links.goodreads,
+    guiaDosQuadrinhos = links.guiaDosQuadrinhos,
   ),
   boughtAt = boughtAt?.toUtcTimeZone(),
   billedAt = billedAt?.toUtcTimeZone(),

@@ -251,10 +251,11 @@ useBeforeUnload({
           <BasicSelect
             v-model="activeTab"
             class="md:hidden mb-4"
+            id="tabs"
             :disabled="isCreating"
             :options="tabs"
-            :option-text="(tab: any) => $t(tab.text)"
-            :option-value="(tab: any) => tab.key"
+            :option-text="tab => $t(tab.text)"
+            :option-value="tab => tab.key"
           />
         </template>
       </Header>

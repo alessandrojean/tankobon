@@ -422,6 +422,7 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "usePublisherBooksQuery": true
   }
 }

@@ -5,9 +5,8 @@ import MonetaryAmountInput from '../form/MonetaryAmountInput.vue'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import { convertLocalTimeZoneToUtc, convertUtcToLocalTimeZone } from '@/utils/date'
 import { positiveDecimal } from '@/utils/validation'
-import type { StoreEntity } from '@/types/tankobon-store'
+import type { StoreEntity, StoreLinks } from '@/types/tankobon-store'
 import { createEmptyPaginatedResponse } from '@/utils/api'
-import type { CollectionEntity } from '@/types/tankobon-collection'
 import type { TagEntity } from '@/types/tankobon-tag'
 
 export interface BookMetadataFormProps {
@@ -136,6 +135,7 @@ const nullStore = computed<StoreEntity>(() => ({
   attributes: {
     name: t('stores.unknown'),
     description: '',
+    links: {} as StoreLinks,
   },
   relationships: [],
 }))
@@ -164,13 +164,14 @@ const tagMap = computed(() => {
     <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <SearchableCombobox
         kind="fancy"
+        id="collection"
         :placeholder="$t('common-placeholders.book-collection')"
         :label-text="$t('common-fields.collection')"
         :model-value="collectionValue"
         :options="collections ?? []"
-        :option-text="(r: CollectionEntity) => r?.attributes?.name"
-        :option-value="(r: CollectionEntity) => r"
-        :option-value-select="(r: CollectionEntity) => r?.id"
+        :option-text="r => r?.attributes?.name ?? ''"
+        :option-value="r => r"
+        :option-value-select="r => r?.id"
         :invalid="v$.collection.$error"
         :errors="v$.collection.$errors"
         @blur="v$.collection.$touch()"
@@ -214,13 +215,14 @@ const tagMap = computed(() => {
         <SearchableCombobox
           kind="fancy"
           class="lg:col-span-2 xl:col-span-4"
+          id="store"
           :placeholder="$t('common-placeholders.book-store')"
           :label-text="$t('common-fields.store')"
           :model-value="storeValue"
           :options="storeOptions ?? []"
-          :option-text="(r: StoreEntity) => r?.attributes?.name"
-          :option-value="(r: StoreEntity) => r"
-          :option-value-select="(r: StoreEntity) => r?.id"
+          :option-text="r => r?.attributes?.name ?? ''"
+          :option-value="r => r"
+          :option-value-select="r => r?.id ?? 'null'"
           @update:model-value="$emit('update:store', $event?.id === 'null' ? null : $event?.id)"
           @update:model-value-select="$emit('update:store', $event === 'null' ? null : $event)"
         />

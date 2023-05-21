@@ -63,8 +63,8 @@ const types: ('null' | SeriesType)[] = [
   'LIGHT_NOVEL',
 ]
 
-function getSeriesTypeName(type: 'null' | SeriesType) {
-  if (type === 'null') {
+function getSeriesTypeName(type: 'null' | SeriesType | undefined) {
+  if (!type || type === 'null') {
     return t('series-types.unknown')
   }
 
@@ -74,7 +74,7 @@ function getSeriesTypeName(type: 'null' | SeriesType) {
 
 const originalLanguageOptions = ['null', ...BCP47_OPTIONS.filter(l => !l.includes('Latn'))]
 
-function getOriginalLanguageName(language: string) {
+function getOriginalLanguageName(language: string | undefined) {
   return getLanguageName({
     language: language === 'null' ? null : language,
     locale: locale.value,
@@ -101,26 +101,28 @@ function getOriginalLanguageName(language: string) {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <SearchableCombobox
         kind="fancy"
+        id="type"
         :placeholder="$t('common-placeholders.series-type')"
         :label-text="$t('series.type')"
         :model-value="type === null ? 'null' : type"
         :options="types"
         :option-text="getSeriesTypeName"
-        :option-value="(t: 'null' | SeriesType) => t"
-        :option-value-select="(t: 'null' | SeriesType) => t === null ? 'null' : t"
+        :option-value="t => t"
+        :option-value-select="t => t === null ? 'null' : t"
         @update:model-value="$emit('update:type', $event === 'null' ? null : $event)"
         @update:model-value-select="$emit('update:type', $event === 'null' ? null : $event)"
       />
 
       <SearchableCombobox
         kind="fancy"
+        id="original-language"
         :placeholder="$t('common-placeholders.series-original-language')"
         :label-text="$t('original-language.label')"
         :model-value="originalLanguage === null ? 'null' : originalLanguage"
         :options="originalLanguageOptions"
         :option-text="getOriginalLanguageName"
-        :option-value="(l: string) => l"
-        :option-value-select="(l: string) => l === null ? 'null' : l"
+        :option-value="l => l"
+        :option-value-select="l => l === null ? 'null' : l"
         @update:model-value="$emit('update:originalLanguage', $event === 'null' ? null : $event)"
         @update:model-value-select="$emit('update:originalLanguage', $event === 'null' ? null : $event)"
       >

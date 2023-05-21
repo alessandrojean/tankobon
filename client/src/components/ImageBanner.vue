@@ -6,14 +6,18 @@ export interface ImageBannerProps {
   alt: string | undefined
   image: ImageDetailsAttributes | null | undefined
   loading?: boolean
+  kind?: 'normal' | 'repeated'
+  size?: string
 }
 
 const props = withDefaults(defineProps<ImageBannerProps>(), {
   image: undefined,
   loading: false,
+  kind: 'normal',
+  size: 'original',
 })
 
-const { image, loading } = toRefs(props)
+const { image, loading, size } = toRefs(props)
 
 const bannerUrl = computed(() => {
   if (!image.value) {
@@ -21,7 +25,7 @@ const bannerUrl = computed(() => {
   }
 
   return createImageUrl({
-    fileName: image.value?.fileName,
+    fileName: image.value?.versions[size.value],
     timeHex: image.value?.timeHex,
   }) ?? ''
 })
@@ -52,11 +56,22 @@ onMounted(() => {
   >
     <FadeTransition>
       <img
-        v-if="showImage"
+        v-if="showImage && kind === 'normal'"
         :src="bannerUrl"
         :alt="alt ?? ''"
-        class="w-full h-full scale-105 object-cover filter blur"
+        class="w-full h-full scale-105 object-cover blur"
       >
+      <div
+        v-else-if="showImage && kind === 'repeated'"
+        :class="[
+          'w-full h-full overflow-hidden relative',
+          'before:content-[\'\'] before:absolute',
+          'before:w-[110%] before:h-[110%] before:left-1/2 before:top-1/2',
+          'before:bg-[image:--background] before:blur',
+          'before:-translate-x-1/2 before:-translate-y-1/2',
+        ]"
+        :style="{ '--background': `url('${bannerUrl}')` }"
+      />
       <div v-else class="relative w-full h-full">
         <img
           src="@/assets/library-unsplash.jpg"

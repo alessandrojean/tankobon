@@ -8,6 +8,8 @@ export interface PublisherAttributes {
   name: string
   description: string
   links: PublisherLinks
+  legalName: string
+  location: string | null
 }
 
 export interface PublisherLinks {
@@ -25,6 +27,8 @@ export interface PublisherCreation {
   name: string
   description: string
   links: PublisherLinks
+  legalName: string
+  location: string | null
   library: string
 }
 
@@ -33,6 +37,8 @@ export interface PublisherUpdate {
   name: string
   description: string
   links: PublisherLinks
+  legalName: string
+  location: string | null
 }
 
 export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt'

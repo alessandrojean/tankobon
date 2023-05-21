@@ -5,7 +5,7 @@ import { BuildingOffice2Icon, XMarkIcon } from '@heroicons/vue/20/solid'
 import type { DimensionsString } from '@/types/tankobon-dimensions'
 import { positiveDecimal } from '@/utils/validation'
 import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
-import type { SeriesEntity } from '@/types/tankobon-series'
+import type { SeriesEntity, SeriesLinks } from '@/types/tankobon-series'
 import type { PublisherEntity } from '@/types/tankobon-publisher'
 import { createImageUrl } from '@/modules/api'
 
@@ -120,6 +120,9 @@ const nullSeries = computed<SeriesEntity>(() => ({
     type: null,
     lastNumber: '',
     alternativeNames: [],
+    links: {} as SeriesLinks,
+    createdAt: '',
+    modifiedAt: '',
   },
   relationships: [],
 }))
@@ -205,13 +208,14 @@ function getPublisherPicture(publisher: PublisherEntity) {
       <SearchableCombobox
         kind="fancy"
         class="lg:col-span-2"
+        id="type"
         :placeholder="$t('common-placeholders.book-series')"
         :label-text="$t('common-fields.series')"
         :model-value="seriesValue"
         :options="seriesOptions ?? []"
-        :option-text="(r: SeriesEntity) => r?.attributes?.name"
-        :option-value="(r: SeriesEntity) => r"
-        :option-value-select="(r: SeriesEntity) => r?.id"
+        :option-text="r => r?.attributes?.name ?? ''"
+        :option-value="r => r"
+        :option-value-select="r => r?.id ?? 'null'"
         @update:model-value="$emit('update:series', $event?.id === 'null' ? null : $event?.id)"
         @update:model-value-select="$emit('update:series', $event === 'null' ? null : $event)"
       />

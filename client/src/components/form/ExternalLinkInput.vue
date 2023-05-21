@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ErrorObject } from '@vuelidate/core'
 import Button from '@/components/form/Button.vue'
-import { BuildingStorefrontIcon } from '@heroicons/vue/20/solid'
 import AniListIcon from '@/components/icons/AniListIcon.vue'
 import InstagramIcon from '@/components/icons/InstagramIcon.vue'
 import KitsuIcon from '@/components/icons/KitsuIcon.vue'
@@ -13,8 +12,11 @@ import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import OpenLibraryIcon from '@/components/icons/OpenLibraryIcon.vue'
 import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
-import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
 import GuiaDosQuadrinhosIcon from '@/components/icons/GuiaDosQuadrinhosIcon.vue'
+import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
+import FacebookIcon from '@/components/icons/FacebookIcon.vue'
+import YouTubeIcon from '@/components/icons/YouTubeIcon.vue'
+import StoreIcon from '@/components/icons/StoreIcon.vue'
 
 export interface TextInputProps {
   disabledTypes?: string[]
@@ -87,6 +89,8 @@ const typeNames = computed<Record<string, string>>(() => ({
   aniList: 'AniList',
   twitter: 'Twitter',
   instagram: 'Instagram',
+  facebook: 'Facebook',
+  youTube: 'YouTube',
   amazon: 'Amazon',
   openLibrary: 'Open Library',
   goodreads: 'Goodreads',
@@ -98,12 +102,14 @@ const typeNames = computed<Record<string, string>>(() => ({
 const typeIcons: Record<string, Component> = {
   null: UnknownWebsiteIcon,
   website: WebsiteIcon,
-  store: BuildingStorefrontIcon,
+  store: StoreIcon,
   myAnimeList: MyAnimeListIcon,
   kitsu: KitsuIcon,
   aniList: AniListIcon,
   twitter: TwitterIcon,
   instagram: InstagramIcon,
+  facebook: FacebookIcon,
+  youTube: YouTubeIcon,
   amazon: AmazonIcon,
   openLibrary: OpenLibraryIcon,
   goodreads: GoodreadsIcon,

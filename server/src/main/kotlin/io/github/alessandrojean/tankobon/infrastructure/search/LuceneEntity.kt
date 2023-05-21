@@ -80,6 +80,7 @@ fun Collection.toDocument() = Document().apply {
 
 fun Publisher.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
+  add(TextField("legal-name", legalName, Field.Store.NO))
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Publisher.type, Field.Store.NO))
   add(StringField(LuceneEntity.Publisher.id, id, Field.Store.YES))
 }

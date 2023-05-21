@@ -286,6 +286,7 @@ declare global {
   const usePreferredReducedMotion: typeof import('@vueuse/core')['usePreferredReducedMotion']
   const usePrevious: typeof import('@vueuse/core')['usePrevious']
   const useProjection: typeof import('@vueuse/math')['useProjection']
+  const usePublisherBooksQuery: typeof import('./queries/book/usePublisherBooksQuery')['default']
   const usePublisherQuery: typeof import('./queries/publisher/usePublisherQuery')['default']
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
   const useReadProgressQuery: typeof import('./queries/read-progress/useReadProgressQuery')['default']
@@ -714,6 +715,7 @@ declare module 'vue' {
     readonly usePreferredReducedMotion: UnwrapRef<typeof import('@vueuse/core')['usePreferredReducedMotion']>
     readonly usePrevious: UnwrapRef<typeof import('@vueuse/core')['usePrevious']>
     readonly useProjection: UnwrapRef<typeof import('@vueuse/math')['useProjection']>
+    readonly usePublisherBooksQuery: UnwrapRef<typeof import('./queries/book/usePublisherBooksQuery')['default']>
     readonly usePublisherQuery: UnwrapRef<typeof import('./queries/publisher/usePublisherQuery')['default']>
     readonly useRafFn: UnwrapRef<typeof import('@vueuse/core')['useRafFn']>
     readonly useReadProgressQuery: UnwrapRef<typeof import('./queries/read-progress/useReadProgressQuery')['default']>

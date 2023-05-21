@@ -114,6 +114,8 @@ class PublisherControllerTest(
             "facebook": null,
             "youTube": null
           },
+          "legalName": "",
+          "location": "",
           "library": "${library.id}"
         }
       """.trimIndent()

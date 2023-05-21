@@ -81,9 +81,10 @@ const disabledTabs = computed(() => {
     <BasicSelect
       v-model="activeTab"
       class="md:hidden h-12"
+      id="tab-select"
       :options="tabs"
-      :option-text="(tab: any) => $t(tab.text)"
-      :option-value="(tab: any) => tab.key"
+      :option-text="tab => $t(tab.text)"
+      :option-value="tab => tab.key"
       :disabled="disabled"
       :disabled-options="disabledTabs"
     />

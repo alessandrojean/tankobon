@@ -46,6 +46,8 @@ common-fields:
   page: Page
   weight-kg: Weight
   modified-at: Modified at
+  location: Location
+  legal-name: Legal name
 
 common-actions:
   sign-in: Sign in
@@ -99,6 +101,8 @@ common-placeholders:
   series-type: Manga
   publisher-name: VIZ Media
   publisher-description: VIZ Media is an American entertainment company…
+  publisher-legal-name: VIZ Media, LLC
+  publisher-location: United States
   person-name: Katsuhiro Otomo
   person-description: Katsuhiro Otomo is a japanese manga artist…
   tag-name: Hardcover
@@ -378,6 +382,8 @@ publishers:
   empty-search-description: Matches not found for “{0}”
   search: Search into publishers
   publisher: 'Publisher | Publishers'
+  information: Information
+  picture: Picture
 
 people:
   fetch-failure: There was an error while fetching the person
@@ -594,3 +600,6 @@ external-links:
   type-unknown: Unknown
   website: Website
   store: Store
+
+location:
+  unknown: Unknown

@@ -12,8 +12,10 @@ import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 import GuiaDosQuadrinhosIcon from '@/components/icons/GuiaDosQuadrinhosIcon.vue'
 import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
+import FacebookIcon from '@/components/icons/FacebookIcon.vue'
+import YouTubeIcon from '@/components/icons/YouTubeIcon.vue'
+import StoreIcon from '@/components/icons/StoreIcon.vue'
 import { FormExternalLink } from '@/types/tankobon-external-link'
-import { BuildingStorefrontIcon } from '@heroicons/vue/20/solid'
 
 export interface EntityExternalLinksProps {
   links?: Record<string, string | null>
@@ -36,6 +38,8 @@ const typeNames = computed<Record<string, string>>(() => ({
   aniList: 'AniList',
   twitter: 'Twitter',
   instagram: 'Instagram',
+  facebook: 'Facebook',
+  youTube: 'YouTube',
   amazon: 'Amazon',
   openLibrary: 'Open Library',
   goodreads: 'Goodreads',
@@ -47,12 +51,14 @@ const typeNames = computed<Record<string, string>>(() => ({
 const typeIcons: Record<string, Component> = {
   null: UnknownWebsiteIcon,
   website: WebsiteIcon,
-  store: BuildingStorefrontIcon,
+  store: StoreIcon,
   myAnimeList: MyAnimeListIcon,
   kitsu: KitsuIcon,
   aniList: AniListIcon,
   twitter: TwitterIcon,
   instagram: InstagramIcon,
+  facebook: FacebookIcon,
+  youTube: YouTubeIcon,
   amazon: AmazonIcon,
   openLibrary: OpenLibraryIcon,
   goodreads: GoodreadsIcon,
