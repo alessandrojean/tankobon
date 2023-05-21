@@ -1,10 +1,10 @@
 package io.github.alessandrojean.tankobon.domain.model
 
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
 
 const val ROLE_USER = "USER"
 const val ROLE_ADMIN = "ADMIN"

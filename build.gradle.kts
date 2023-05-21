@@ -7,12 +7,6 @@ plugins {
   }
 }
 
-allprojects {
-  repositories {
-    mavenCentral()
-  }
-}
-
 tasks.wrapper {
   gradleVersion = "7.6.1"
   distributionType = Wrapper.DistributionType.ALL
