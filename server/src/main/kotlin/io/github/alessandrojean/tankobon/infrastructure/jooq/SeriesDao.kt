@@ -173,6 +173,8 @@ class SeriesDao(
       .set(TableSeries.MY_ANIME_LIST, series.links.myAnimeList)
       .set(TableSeries.KITSU, series.links.kitsu)
       .set(TableSeries.ANILIST, series.links.aniList)
+      .set(TableSeries.MANGA_UPDATES, series.links.mangaUpdates)
+      .set(TableSeries.GUIA_DOS_QUADRINHOS, series.links.guiaDosQuadrinhos)
       .set(TableSeries.TWITTER, series.links.twitter)
       .set(TableSeries.INSTAGRAM, series.links.instagram)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
@@ -193,6 +195,8 @@ class SeriesDao(
       .set(TableSeries.MY_ANIME_LIST, series.links.myAnimeList)
       .set(TableSeries.KITSU, series.links.kitsu)
       .set(TableSeries.ANILIST, series.links.aniList)
+      .set(TableSeries.MANGA_UPDATES, series.links.mangaUpdates)
+      .set(TableSeries.GUIA_DOS_QUADRINHOS, series.links.guiaDosQuadrinhos)
       .set(TableSeries.TWITTER, series.links.twitter)
       .set(TableSeries.INSTAGRAM, series.links.instagram)
       .set(TableSeries.LIBRARY_ID, series.libraryId)
@@ -281,6 +285,8 @@ class SeriesDao(
       myAnimeList = myAnimeList,
       kitsu = kitsu,
       aniList = anilist,
+      mangaUpdates = mangaUpdates,
+      guiaDosQuadrinhos = guiaDosQuadrinhos,
       twitter = twitter,
       instagram = instagram,
     ),

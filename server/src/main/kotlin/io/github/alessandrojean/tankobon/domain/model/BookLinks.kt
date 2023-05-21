@@ -7,4 +7,5 @@ data class BookLinks(
   val openLibrary: String? = null,
   val skoob: String? = null,
   val goodreads: String? = null,
+  val guiaDosQuadrinhos: String? = null,
 ) : Serializable

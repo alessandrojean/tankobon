@@ -225,7 +225,8 @@ class BookControllerTest(
                 "amazon": null,
                 "openLibrary": null,
                 "skoob": null,
-                "goodreads": null
+                "goodreads": null,
+                "guiaDosQuadrinhos": null
               }
             }
           """.trimIndent()

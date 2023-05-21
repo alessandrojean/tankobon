@@ -119,6 +119,8 @@ class SeriesControllerTest(
             "myAnimeList": null,
             "kitsu": null,
             "aniList": null,
+            "mangaUpdates": null,
+            "guiaDosQuadrinhos": null,
             "twitter": null,
             "instagram": null
           },

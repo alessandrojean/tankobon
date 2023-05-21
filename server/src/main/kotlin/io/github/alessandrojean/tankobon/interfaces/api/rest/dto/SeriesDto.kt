@@ -59,6 +59,12 @@ data class SeriesLinksDto(
   @get:UrlMultipleHosts(allowedHosts = ["anilist.co"])
   val aniList: String? = null,
   @get:NullOrNotBlank
+  @get:UrlMultipleHosts(allowedHosts = ["mangaupdates.com"])
+  val mangaUpdates: String? = null,
+  @get:NullOrNotBlank
+  @get:UrlMultipleHosts(allowedHosts = ["guiadosquadrinhos.com"])
+  val guiaDosQuadrinhos: String? = null,
+  @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
   val twitter: String? = null,
   @get:NullOrNotBlank

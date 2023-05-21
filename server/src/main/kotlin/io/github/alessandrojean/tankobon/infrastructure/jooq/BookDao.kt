@@ -143,6 +143,7 @@ class BookDao(
       .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
       .set(TableBook.SKOOB, book.links.skoob)
       .set(TableBook.GOODREADS, book.links.goodreads)
+      .set(TableBook.GUIA_DOS_QUADRINHOS, book.links.guiaDosQuadrinhos)
       .execute()
   }
 
@@ -177,6 +178,7 @@ class BookDao(
       .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
       .set(TableBook.SKOOB, book.links.skoob)
       .set(TableBook.GOODREADS, book.links.goodreads)
+      .set(TableBook.GUIA_DOS_QUADRINHOS, book.links.guiaDosQuadrinhos)
       .set(TableBook.MODIFIED_AT, LocalDateTime.now(ZoneId.of("UTC")))
       .where(TableBook.ID.eq(book.id))
       .execute()
@@ -220,6 +222,7 @@ class BookDao(
       openLibrary = openLibrary,
       skoob = skoob,
       goodreads = goodreads,
+      guiaDosQuadrinhos = guiaDosQuadrinhos,
     ),
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),

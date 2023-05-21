@@ -363,6 +363,7 @@ class BookDtoDao(
       openLibrary = links.openLibrary,
       skoob = links.skoob,
       goodreads = links.goodreads,
+      guiaDosQuadrinhos = links.guiaDosQuadrinhos,
     )
   )
 
@@ -553,6 +554,7 @@ class BookDtoDao(
       openLibrary = openLibrary,
       skoob = skoob,
       goodreads = goodreads,
+      guiaDosQuadrinhos = guiaDosQuadrinhos,
     ),
     boughtAt = boughtAt?.toCurrentTimeZone(),
     billedAt = billedAt?.toCurrentTimeZone(),

@@ -7,6 +7,8 @@ data class SeriesLinks(
   val myAnimeList: String? = null,
   val kitsu: String? = null,
   val aniList: String? = null,
+  val mangaUpdates: String? = null,
+  val guiaDosQuadrinhos: String? = null,
   val twitter: String? = null,
   val instagram: String? = null,
 ) : Serializable

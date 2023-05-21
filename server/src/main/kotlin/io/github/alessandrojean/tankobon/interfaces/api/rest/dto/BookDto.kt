@@ -66,6 +66,9 @@ data class BookLinksDto(
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["goodreads.com"])
   val goodreads: String? = null,
+  @get:NullOrNotBlank
+  @get:UrlMultipleHosts(allowedHosts = ["guiadosquadrinhos.com"])
+  val guiaDosQuadrinhos: String? = null,
 )
 
 enum class ReferenceExpansionBook : ReferenceExpansionEnum {
