@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import InputMask from 'inputmask'
+import { countries as regions } from 'countries-list'
 import type { ErrorObject } from '@vuelidate/core'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
+import { ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
 
 export interface DimensionsInputProps {
   errorsAmount?: ErrorObject[]
@@ -58,7 +60,17 @@ const focusedLabelText: Record<Focused, string> = {
   currency: 'common-fields.currency',
 }
 
-const currencyInput = ref<HTMLInputElement>()
+const currencyInput = ref<InstanceType<typeof ComboboxInput>>()
+const currencyOptions = ref<InstanceType<typeof ComboboxOptions>>()
+
+const { position } = useAnchoredPosition({
+  anchorElementRef: computed(() => currencyInput.value?.$el),
+  floatingElementRef: computed(() => currencyOptions.value?.$el),
+  side: 'outside-bottom',
+  align: 'start',
+  allowOutOfBounds: false,
+})
+
 const amountInput = ref<HTMLInputElement>()
 const inputMaskAmount = ref<InputMask.Instance>()
 const inputMask: InputMask.Options = {
@@ -118,8 +130,6 @@ function handleFocus({ event, type }: EventHandler) {
   }
 }
 
-// TODO: Show all currencies.
-const DEFAULT_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'BRL', 'JPY']
 const { locale } = useI18n()
 
 const currencyNames = computed(() => new Intl.DisplayNames([locale.value], {
@@ -136,27 +146,20 @@ function getCurrencyName(currency: string) {
   }
 }
 
-const query = ref('')
-
-const queryCurrency = computed(() => {
-  return query.value === '' ? null : query.value
+const currencies = computed(() => {
+  return [...new Set(Object.values(regions).flatMap(r => r.currency.split(',')))]
+    .map(code => ({ code, name: getCurrencyName(code) }))
+    .filter(({ name }) => name !== null)
+    .sort((a, b) => a.name!.localeCompare(b.name!, locale.value))
 })
 
+const query = ref('')
+
 const filteredCurrencies = computed(() => {
-  let filtered = DEFAULT_CURRENCIES
-    .map<[string, string | null]>(cc => [cc, getCurrencyName(cc)])
-    .filter(([cc, name]) => {
-      return cc.toLowerCase().includes(query.value.toLowerCase())
-        || query.value.toLowerCase().includes(name ?? '')
-    })
-    .map(([cc]) => cc)
-    .sort((a, b) => a.localeCompare(b, locale.value))
-
-  if (filtered.length === 0 && queryCurrency.value && queryCurrency.value.length === 3) {
-    filtered = [queryCurrency.value]
-  }
-
-  return filtered
+  return currencies.value.filter(({ code, name }) => {
+    return code.toLowerCase().includes(query.value.toLowerCase())
+      || query.value.toLowerCase().includes(name ?? '')
+  })
 })
 
 function handleCurrency(newCurrency: string) {
@@ -199,6 +202,7 @@ function handleCurrency(newCurrency: string) {
           @focus="handleFocus({ event: $event, type: 'amount' })"
           @blur="handleBlur({ event: $event, type: 'amount' })"
         >
+
         <Combobox
           as="div"
           class="relative"
@@ -223,39 +227,52 @@ function handleCurrency(newCurrency: string) {
           />
           <MenuTransition>
             <ComboboxOptions
-              v-if="filteredCurrencies.length > 0"
+              ref="currencyOptions"
+              as="div"
               :class="[
-                'absolute top-full left-0 min-w-[14rem] z-10 p-2',
+                'absolute top-[--top] left-[--left] min-w-[20rem] max-w-[25rem] z-10 p-2',
                 'space-y-1 bg-white dark:bg-gray-800',
                 'shadow-primer-overlay dark:shadow-primer-overlay-dark',
                 'rounded-xl mt-0.5 origin-top-right ring-1',
                 'ring-black/5 dark:ring-gray-700',
               ]"
+              :style="{
+                '--top': position?.top !== undefined ? `${position.top}px` : '100%',
+                '--left': position?.left !== undefined ? `${position.left}px` : '0px',
+              }"
             >
-              <ComboboxOption
-                v-for="currencyOption of filteredCurrencies"
-                :key="currencyOption"
-                :value="currencyOption"
-                :class="[
-                  'select-none px-2 py-1.5 cursor-pointer text-sm',
-                  'rounded-lg flex gap-1 items-center',
-                  'ui-active:bg-primary-100 dark:ui-active:bg-primary-600',
-                  'dark:text-gray-300 ui-active:text-primary-700 dark:ui-active:dark:text-primary-100',
-                ]"
+              <div
+                v-if="filteredCurrencies.length === 0"
+                class="px-2 text-sm py-0.5"
               >
-                <span class="block grow">
-                  {{ getCurrencyName(currencyOption) ?? $t('monetary-amount-input.unknown-currency') }}
-                </span>
-                <span
+                {{ $t('searchable-combobox.no-results-found') }}
+              </div>
+              <ul v-else class="max-h-[18rem] overflow-y-auto rounded-lg">
+                <ComboboxOption
+                  v-for="currencyOption of filteredCurrencies"
+                  :key="currencyOption.code"
+                  :value="currencyOption.code"
                   :class="[
-                    'block shrink-0 font-mono text-xs h-3.5',
-                    'text-gray-600 ui-active:text-primary-600',
-                    'dark:text-gray-500 dark:ui-active:text-primary-200',
+                    'select-none px-2 py-1.5 cursor-pointer text-sm',
+                    'rounded-lg flex gap-1 items-center',
+                    'ui-active:bg-primary-100 dark:ui-active:bg-primary-600',
+                    'dark:text-gray-300 ui-active:text-primary-700 dark:ui-active:dark:text-primary-100',
                   ]"
                 >
-                  {{ currencyOption }}
-                </span>
-              </ComboboxOption>
+                  <span class="block grow">
+                    {{ getCurrencyName(currencyOption.code) ?? $t('monetary-amount-input.unknown-currency') }}
+                  </span>
+                  <span
+                    :class="[
+                      'block shrink-0 font-mono text-xs h-3.5',
+                      'text-gray-600 ui-active:text-primary-600',
+                      'dark:text-gray-500 dark:ui-active:text-primary-200',
+                    ]"
+                  >
+                    {{ currencyOption.code }}
+                  </span>
+                </ComboboxOption>
+              </ul>
             </ComboboxOptions>
           </MenuTransition>
         </Combobox>

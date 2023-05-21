@@ -49,7 +49,7 @@ const filterFunction = computed(() => {
   })
 })
 
-const filteredOptions = computed(() => {
+const filteredOptions = computed<TItem[]>(() => {
   if (query.value.length === 0) {
     return options.value
   }
@@ -171,8 +171,8 @@ const selected = computed(() => {
             <ComboboxOption
               v-for="(option, i) of filteredOptions"
               v-slot="{ active, selected }"
-              :key="optionValue ? optionValue(option) : option"
-              :value="optionValue ? optionValue(option) : option"
+              :key="i"
+              :value="optionValue ? optionValue(option) : String(option)"
               :disabled="disabledOptions.includes(i)"
               :class="[
                 'select-none px-2 py-1.5 cursor-pointer text-sm',
