@@ -25,6 +25,8 @@ export interface SeriesLinks {
   myAnimeList: string | null
   kitsu: string | null
   aniList: string | null
+  mangaUpdates: string | null
+  guiaDosQuadrinhos: string | null
   twitter: string | null
   instagram: string | null
 }

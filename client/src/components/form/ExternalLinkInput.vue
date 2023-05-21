@@ -13,6 +13,8 @@ import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import OpenLibraryIcon from '@/components/icons/OpenLibraryIcon.vue'
 import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
+import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
+import GuiaDosQuadrinhosIcon from '@/components/icons/GuiaDosQuadrinhosIcon.vue'
 
 export interface TextInputProps {
   disabledTypes?: string[]
@@ -89,6 +91,8 @@ const typeNames = computed<Record<string, string>>(() => ({
   openLibrary: 'Open Library',
   goodreads: 'Goodreads',
   skoob: 'Skoob',
+  mangaUpdates: 'MangaUpdates',
+  guiaDosQuadrinhos: 'Guia dos Quadrinhos',
 }))
 
 const typeIcons: Record<string, Component> = {
@@ -104,6 +108,8 @@ const typeIcons: Record<string, Component> = {
   openLibrary: OpenLibraryIcon,
   goodreads: GoodreadsIcon,
   skoob: SkoobIcon,
+  mangaUpdates: MangaUpdatesIcon,
+  guiaDosQuadrinhos: GuiaDosQuadrinhosIcon,
 }
 
 const disabledIndexes = computed(() => {

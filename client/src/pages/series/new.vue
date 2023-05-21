@@ -106,6 +106,8 @@ async function handleSubmit() {
         myAnimeList: null,
         kitsu: null,
         aniList: null,
+        mangaUpdates: null,
+        guiaDosQuadrinhos: null,
         twitter: null,
         instagram: null
       } satisfies SeriesLinks,
@@ -231,7 +233,7 @@ useBeforeUnload({
             <EntityExternalLinksForm
               ref="externalLinksForm"
               v-model:external-links="newSeries.links"
-              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'twitter', 'instagram']"
+              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'mangaUpdates', 'guiaDosQuadrinhos', 'twitter', 'instagram']"
               :disabled="isCreating"
             />
           </TabPanel>

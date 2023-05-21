@@ -239,6 +239,7 @@ async function handleSubmit() {
         openLibrary: null,
         skoob: null,
         goodreads: null,
+        guiaDosQuadrinhos: null,
       } satisfies BookLinks,
       Object.fromEntries(
         updatedBook.links.map(l => [l.type, nullOrNotBlank(l.url)])
@@ -411,7 +412,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
             <EntityExternalLinksForm
               ref="externalLinksForm"
               v-model:external-links="updatedBook.links"
-              :types="['amazon', 'openLibrary', 'skoob', 'goodreads']"
+              :types="['amazon', 'openLibrary', 'skoob', 'goodreads', 'guiaDosQuadrinhos']"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

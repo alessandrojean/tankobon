@@ -10,6 +10,8 @@ import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import OpenLibraryIcon from '@/components/icons/OpenLibraryIcon.vue'
 import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
+import GuiaDosQuadrinhosIcon from '@/components/icons/GuiaDosQuadrinhosIcon.vue'
+import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
 import { FormExternalLink } from '@/types/tankobon-external-link'
 import { BuildingStorefrontIcon } from '@heroicons/vue/20/solid'
 
@@ -38,6 +40,8 @@ const typeNames = computed<Record<string, string>>(() => ({
   openLibrary: 'Open Library',
   goodreads: 'Goodreads',
   skoob: 'Skoob',
+  mangaUpdates: 'MangaUpdates',
+  guiaDosQuadrinhos: 'Guia dos Quadrinhos',
 }))
 
 const typeIcons: Record<string, Component> = {
@@ -53,6 +57,8 @@ const typeIcons: Record<string, Component> = {
   openLibrary: OpenLibraryIcon,
   goodreads: GoodreadsIcon,
   skoob: SkoobIcon,
+  mangaUpdates: MangaUpdatesIcon,
+  guiaDosQuadrinhos: GuiaDosQuadrinhosIcon,
 }
 
 const presentLinks = computed(() => {

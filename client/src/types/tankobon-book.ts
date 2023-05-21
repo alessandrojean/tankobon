@@ -55,6 +55,7 @@ export interface BookLinks {
   openLibrary: string | null
   skoob: string | null
   goodreads: string | null
+  guiaDosQuadrinhos: string | null
 }
 
 export type BookLinkType = keyof BookLinks

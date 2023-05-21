@@ -149,6 +149,8 @@ async function handleSubmit() {
         myAnimeList: null,
         kitsu: null,
         aniList: null,
+        mangaUpdates: null,
+        guiaDosQuadrinhos: null,
         twitter: null,
         instagram: null
       } satisfies SeriesLinks,
@@ -285,7 +287,7 @@ const seriesCover = computed(() => getRelationship(series.value, 'SERIES_COVER')
             <EntityExternalLinksForm
               ref="externalLinksForm"
               v-model:external-links="updatedSeries.links"
-              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'twitter', 'instagram']"
+              :types="['website', 'myAnimeList', 'kitsu', 'aniList', 'mangaUpdates', 'guiaDosQuadrinhos', 'twitter', 'instagram']"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

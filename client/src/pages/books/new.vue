@@ -159,6 +159,7 @@ async function handleSubmit() {
         openLibrary: null,
         skoob: null,
         goodreads: null,
+        guiaDosQuadrinhos: null,
       } satisfies BookLinks,
       Object.fromEntries(
         newBook.links.map(l => [l.type, nullOrNotBlank(l.url)])
@@ -313,7 +314,7 @@ useBeforeUnload({
             <EntityExternalLinksForm
               ref="externalLinksForm"
               v-model:external-links="newBook.links"
-              :types="['amazon', 'openLibrary', 'skoob', 'goodreads']"
+              :types="['amazon', 'openLibrary', 'skoob', 'goodreads', 'guiaDosQuadrinhos']"
               :disabled="isCreating"
             />
           </TabPanel>
