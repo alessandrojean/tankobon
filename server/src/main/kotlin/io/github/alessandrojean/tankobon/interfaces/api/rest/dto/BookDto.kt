@@ -11,6 +11,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.PositiveAmoun
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.annotation.Nullable
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -202,6 +203,7 @@ data class BookCreationDto(
   @get:Schema(description = "Personal user notes about the book")
   val notes: String,
   @get:NotNull
+  @get:Valid
   val links: BookLinksDto,
   @get:Nullable val boughtAt: LocalDateTime? = null,
   @get:Nullable

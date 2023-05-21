@@ -6,6 +6,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
@@ -92,6 +93,7 @@ data class PublisherCreationDto(
   @get:NotNull
   val description: String,
   @get:NotNull
+  @get:Valid
   val links: PublisherLinksDto,
   @get:NotNull
   val legalName: String,
@@ -106,6 +108,7 @@ data class PublisherUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
   @get:NotNull
+  @get:Valid
   val links: PublisherLinksDto,
   @get:NotNull
   val legalName: String,

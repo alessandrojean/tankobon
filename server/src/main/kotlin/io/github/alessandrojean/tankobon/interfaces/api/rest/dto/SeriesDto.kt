@@ -9,6 +9,7 @@ import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrBcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
@@ -127,6 +128,7 @@ data class SeriesCreationDto(
   @get:Schema(format = "bcp-47")
   val originalLanguage: String?,
   @get:NotNull
+  @get:Valid
   val links: SeriesLinksDto,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
@@ -148,5 +150,6 @@ data class SeriesUpdateDto(
   @get:Schema(format = "bcp-47")
   val originalLanguage: String?,
   @get:NotNull
+  @get:Valid
   val links: SeriesLinksDto,
 )

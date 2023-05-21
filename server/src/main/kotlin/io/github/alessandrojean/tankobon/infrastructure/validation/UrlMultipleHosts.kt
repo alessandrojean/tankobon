@@ -32,10 +32,6 @@ class UrlMultipleHostsValidator : ConstraintValidator<UrlMultipleHosts, String?>
     val url = urlResult.getOrNull() ?: return false
     val host = url.host.removePrefix("www.").lowercase()
 
-    if (allowedHosts.isNotEmpty() && !allowedHosts.contains(host)) {
-      return false
-    }
-
-    return true
+    return allowedHosts.contains(host)
   }
 }

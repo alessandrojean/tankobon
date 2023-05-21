@@ -4,6 +4,7 @@ import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.UUID
@@ -82,6 +83,7 @@ data class PersonCreationDto(
   @get:NotBlank val name: String,
   val description: String,
   @get:NotNull
+  @get:Valid
   val links: PersonLinksDto,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
@@ -92,5 +94,6 @@ data class PersonUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
   @get:NotNull
+  @get:Valid
   val links: PersonLinksDto,
 )
