@@ -33,8 +33,8 @@ data class SeriesAttributesDto(
   val lastNumber: String?,
   val originalLanguage: String?,
   val links: SeriesLinksDto,
-  val createdAt: LocalDateTime?,
-  val modifiedAt: LocalDateTime?
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 data class SeriesAlternativeNameDto(

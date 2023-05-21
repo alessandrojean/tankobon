@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Publisher
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
+import java.time.LocalDateTime
 
 data class PublisherEntityDto(
   override val id: String,
@@ -25,6 +27,8 @@ data class PublisherAttributesDto(
   val links: PublisherLinksDto,
   val legalName: String,
   val location: String?,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 data class PublisherLinksDto(
@@ -78,6 +82,8 @@ fun Publisher.toAttributesDto() = PublisherAttributesDto(
   ),
   legalName = legalName,
   location = location,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 data class PublisherCreationDto(

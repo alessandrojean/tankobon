@@ -31,6 +31,8 @@ class PublisherDao(
 ) : PublisherRepository {
 
   private val sorts = mapOf(
+    "location" to TablePublisher.LOCATION,
+    "legalName" to TablePublisher.LEGAL_NAME.collate(SqliteUdfDataSource.collationUnicode3),
     "name" to TablePublisher.NAME.collate(SqliteUdfDataSource.collationUnicode3),
     "createdAt" to TablePublisher.CREATED_AT,
     "modifiedAt" to TablePublisher.MODIFIED_AT,

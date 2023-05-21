@@ -10,6 +10,8 @@ export interface PublisherAttributes {
   links: PublisherLinks
   legalName: string
   location: string | null
+  createdAt: string
+  modifiedAt: string
 }
 
 export interface PublisherLinks {
@@ -41,5 +43,5 @@ export interface PublisherUpdate {
   location: string | null
 }
 
-export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt'
+export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt' | 'legalName' | 'location'
 export type PublisherIncludes = 'library' | 'publisher_picture'

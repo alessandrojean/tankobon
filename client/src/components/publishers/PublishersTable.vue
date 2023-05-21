@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { ColumnSort, PaginationState, SortingState } from '@tanstack/vue-table'
+import type { PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { BuildingOffice2Icon, EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, BuildingOffice2Icon as BuildingOffice2SolidIcon } from '@heroicons/vue/20/solid'
 import Avatar from '../Avatar.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
@@ -9,46 +9,59 @@ import type { PublisherEntity, PublisherSort } from '@/types/tankobon-publisher'
 import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
+import { PaginatedResponse } from '@/types/tankobon-response'
+import { ColumnOrderState } from '@tanstack/vue-table'
+import Flag from '../Flag.vue'
+import { MagnifyingGlassIcon, BuildingOffice2Icon } from '@heroicons/vue/24/outline'
 
 export interface PublishersTableProps {
-  libraryId: string
+  publishers?: PaginatedResponse<PublisherEntity>
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
+  loading?: boolean
+  page: number
   search?: string
+  size: number
+  sort: Sort<PublisherSort>[]
 }
 
 const props = withDefaults(defineProps<PublishersTableProps>(), {
-  search: undefined,
+  publishers: undefined,
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
+  loading: false,
+  search: '',
 })
-const { libraryId, search } = toRefs(props)
-const notificator = useToaster()
-const { t } = useI18n()
 
-const defaultSorting: ColumnSort = { id: 'name', desc: false }
-const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
-const sorting = ref<SortingState>([defaultSorting])
+const emit = defineEmits<{
+  (e: 'update:page', page: number): void
+  (e: 'update:size', size: number): void
+  (e: 'update:sort', sort: Sort<PublisherSort>[]): void
+}>()
+
+const { page, search, size, sort } = toRefs(props)
+const { t, d, locale } = useI18n()
+
+const pagination = computed<PaginationState>(() => ({
+  pageIndex: page.value,
+  pageSize: size.value,
+}))
+
+const sorting = computed<SortingState>(() => {
+  return sort.value.map(sorting => ({
+    id: sorting.property,
+    desc: sorting.direction === 'desc',
+  }))
+})
+
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: publishers, isLoading } = useLibraryPublishersQuery({
-  libraryId,
-  search,
-  includes: ['publisher_picture'],
-  page: computed(() => pagination.value.pageIndex),
-  size: computed(() => pagination.value.pageSize),
-  sort: computed<Sort<PublisherSort>[]>(() => {
-    return sorting.value.map(sort => ({
-      property: sort.id as PublisherSort,
-      direction: sort.desc ? 'desc' : 'asc',
-    }))
-  }),
-  enabled: computed(() => libraryId.value !== undefined),
-  keepPreviousData: true,
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('publishers.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
 const columnHelper = createColumnHelper<PublisherEntity>()
+
+const regionNames = computed(() => new Intl.DisplayNames(locale.value, {
+  type: 'region',
+  style: 'long',
+}))
 
 const columns = [
   columnHelper.display({
@@ -86,7 +99,7 @@ const columns = [
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
             square: true,
-            emptyIcon: BuildingOffice2Icon,
+            emptyIcon: BuildingOffice2SolidIcon,
             pictureUrl: createImageUrl({
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
@@ -102,11 +115,38 @@ const columns = [
       },
     },
   ),
-  columnHelper.accessor('attributes.description', {
-    id: 'description',
-    enableSorting: false,
-    header: () => t('common-fields.description'),
-    cell: info => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
+  columnHelper.accessor('attributes.legalName', {
+    id: 'legalName',
+    header: () => t('common-fields.legal-name'),
+    cell: info => info.getValue() ?? t('publishers.legal-name-unknown'),
+  }),
+  columnHelper.accessor('attributes.location', {
+    id: 'location',
+    header: () => t('common-fields.location'),
+    cell: (info) => {
+      const location = info.getValue()
+
+      return h('div', { class: 'flex items-center gap-3' }, [
+        h(Flag, { region: location }),
+        h('span', {
+          innerText: location
+            ? (regionNames.value.of(location) ?? t('location.unknown'))
+            : t('location.unknown'),
+        }),
+      ])
+    },
+  }),
+  columnHelper.accessor('attributes.createdAt', {
+    id: 'createdAt',
+    header: () => t('common-fields.created-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.modifiedAt', {
+    id: 'modifiedAt',
+    header: () => t('common-fields.modified-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
   }),
   columnHelper.display({
     id: 'actions',
@@ -131,21 +171,60 @@ const columns = [
     },
   }),
 ]
+
+function handlePaginationChange(pagination: PaginationState) {
+  emit('update:page', pagination.pageIndex)
+  emit('update:size', pagination.pageSize)
+}
+
+function handleSortingChange(sorting: SortingState) {
+  const sortToEmit = sorting.map<Sort<PublisherSort>>(sort => ({
+    property: sort.id as PublisherSort,
+    direction: sort.desc ? 'desc' : 'asc',
+  }))
+
+  emit('update:sort', sortToEmit)
+}
 </script>
 
 <template>
   <Table
-    v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
+    :pagination="pagination"
+    :sorting="sorting"
     :data="publishers?.data"
     :columns="columns"
     :page-count="publishers?.pagination?.totalPages"
     :items-count="publishers?.pagination?.totalElements"
-    :loading="isLoading"
+    :loading="loading"
+    :column-order="['select', ...columnOrder, 'actions']"
+    :column-visibility="columnVisibility"
+    @update:pagination="handlePaginationChange"
+    @update:sorting="handleSortingChange"
   >
     <template #empty>
-      <slot name="empty" />
+      <slot name="empty">
+        <EmptyState
+          :icon="search?.length ? MagnifyingGlassIcon : BuildingOffice2Icon"
+          :title="$t('publishers.empty-header')"
+          :description="
+            search?.length
+              ? $t('publishers.empty-search-description', [search])
+              : $t('publishers.empty-description')
+          "
+        >
+          <template v-if="!search?.length" #actions>
+            <Button
+              kind="primary"
+              is-router-link
+              :to="{ name: 'publishers-new' }"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('publishers.new') }}</span>
+            </Button>
+          </template>
+        </EmptyState>
+      </slot>
     </template>
   </Table>
 </template>

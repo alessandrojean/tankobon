@@ -384,6 +384,7 @@ publishers:
   publisher: 'Publisher | Publishers'
   information: Information
   picture: Picture
+  legal-name-unknown: Unknown
 
 people:
   fetch-failure: There was an error while fetching the person
