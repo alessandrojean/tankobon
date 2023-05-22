@@ -20,11 +20,13 @@ const { active, item, href } = toRefs(props)
   <a
     :href="href"
     :target="item.external ? '_blank' : undefined"
-    class="group flex items-center flex-nowrap text-sm rounded-lg w-full font-medium dark:focus-visible:ring-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
     :class="[
+      'group flex items-center flex-nowrap text-sm rounded-lg w-full',
+      'font-medium dark:focus-visible:ring-white/90 focus:outline-none',
+      'focus-visible:ring-2 focus-visible:ring-black',
       item.icon ? 'h-10' : 'h-9',
       active
-        ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-gray-800'
+        ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-primary-400/10'
         : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 dark:hocus:bg-gray-800',
     ]"
     :title="item.label"
