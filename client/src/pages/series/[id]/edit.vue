@@ -5,13 +5,13 @@ import { v4 as uuid } from 'uuid'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { SeriesLinks, SeriesUpdate } from '@/types/tankobon-series'
+import type { SeriesLinks, SeriesUpdate } from '@/types/tankobon-series'
 import type { Cover } from '@/components/series/SeriesCoverForm.vue'
 import SeriesCoverForm from '@/components/series/SeriesCoverForm.vue'
 import SeriesMetadataForm from '@/components/series/SeriesMetadataForm.vue'
 import SeriesAlternativeNamesForm from '@/components/series/SeriesAlternativeNamesForm.vue'
 import type { FormAlternativeName } from '@/types/tankobon-alternative-name'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 
 const { t } = useI18n()
@@ -144,19 +144,19 @@ async function handleSubmit() {
         language: fan.language,
       })),
     links: Object.assign(
-      { 
-        website: null, 
+      {
+        website: null,
         myAnimeList: null,
         kitsu: null,
         aniList: null,
         mangaUpdates: null,
         guiaDosQuadrinhos: null,
         twitter: null,
-        instagram: null
+        instagram: null,
       } satisfies SeriesLinks,
       Object.fromEntries(
-        updatedSeries.links.map(l => [l.type, nullOrNotBlank(l.url)])
-      )
+        updatedSeries.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+      ),
     ),
   }
 
@@ -253,9 +253,9 @@ const seriesCover = computed(() => getRelationship(series.value, 'SERIES_COVER')
             </Tab>
           </TabList>
           <BasicSelect
+            id="tabs"
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tabs"
             :disabled="isLoading || isEditing"
             :options="tabs"
             :option-text="tab => $t(tab.text)"

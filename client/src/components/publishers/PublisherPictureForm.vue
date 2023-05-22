@@ -2,9 +2,9 @@
 import useVuelidate from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { TrashIcon } from '@heroicons/vue/20/solid'
+import { BuildingOffice2Icon } from '@heroicons/vue/24/outline'
 import { maxFileSize } from '@/utils/validation'
 import { ACCEPTED_IMAGE_FORMATS } from '@/utils/api'
-import { BuildingOffice2Icon } from '@heroicons/vue/24/outline'
 
 export interface PublisherPictureFormProps {
   currentImageUrl?: string | undefined | null

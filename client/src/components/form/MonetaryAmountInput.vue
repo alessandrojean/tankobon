@@ -2,8 +2,8 @@
 import InputMask from 'inputmask'
 import { countries as regions } from 'countries-list'
 import type { ErrorObject } from '@vuelidate/core'
-import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import { ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
+import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 
 export interface DimensionsInputProps {
   errorsAmount?: ErrorObject[]

@@ -121,7 +121,7 @@ const typeIcons: Record<string, Component> = {
 
 const disabledIndexes = computed(() => {
   return types.value
-    .map((t, i) => disabledTypes.value.includes(t) && t !== type.value ? i : -1)
+    .map((t, i) => (disabledTypes.value.includes(t) && t !== type.value) ? i : -1)
     .filter(i => i !== -1)
 })
 
@@ -176,8 +176,8 @@ async function detectTypeFromUrl(event: ClipboardEvent) {
       {{ $t('external-links.label-url', [index + 1]) }}
     </label>
     <input
-      type="url"
       :id="`url-input-${index}`"
+      type="url"
       :class="[
         'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md',
         'dark:text-gray-200 focus:ring focus:ring-opacity-50',

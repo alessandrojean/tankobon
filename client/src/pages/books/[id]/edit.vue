@@ -12,7 +12,7 @@ import type { CoverArt } from '@/components/books/BookCoverArtForm.vue'
 import { createImageUrl } from '@/modules/api'
 import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 
 const { t, n } = useI18n()
@@ -234,16 +234,16 @@ async function handleSubmit() {
       heightCm: validNumber(updatedBook.dimensions.heightCm),
     },
     links: Object.assign(
-      { 
-        amazon: null, 
+      {
+        amazon: null,
         openLibrary: null,
         skoob: null,
         goodreads: null,
         guiaDosQuadrinhos: null,
       } satisfies BookLinks,
       Object.fromEntries(
-        updatedBook.links.map(l => [l.type, nullOrNotBlank(l.url)])
-      )
+        updatedBook.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+      ),
     ),
   }
 
@@ -340,9 +340,9 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
             </Tab>
           </TabList>
           <BasicSelect
+            id="tabs"
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tabs"
             :disabled="isLoading || isEditing"
             :options="tabs"
             :option-text="tab => $t(tab.text)"

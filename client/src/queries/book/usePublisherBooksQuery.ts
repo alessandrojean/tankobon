@@ -1,7 +1,8 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
 import type { BookEntity } from '@/types/tankobon-book'
-import { GetAllBooksByPublisherParameters, getAllBooksByPublisher } from '@/services/tankobon-books'
+import type { GetAllBooksByPublisherParameters } from '@/services/tankobon-books'
+import { getAllBooksByPublisher } from '@/services/tankobon-books'
 import type { MaybeRefDeep } from '@/types/reactivity'
 
 type UsePublisherBooksQueryOptions<S = PaginatedResponse<BookEntity>> =

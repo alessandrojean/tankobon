@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { SortPropertyOption } from '@/components/SortControls.vue'
-import { TableColumn } from '@/components/TableColumnsControls.vue'
-import { Sort } from '@/types/tankobon-api'
-import { PublisherSort } from '@/types/tankobon-publisher'
-import { safeNumber } from '@/utils/route'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { ColumnOrderState } from '@tanstack/vue-table'
-import { SortDirection } from '@tanstack/vue-table'
+import type { ColumnOrderState, SortDirection } from '@tanstack/vue-table'
+import type { SortPropertyOption } from '@/components/SortControls.vue'
+import type { TableColumn } from '@/components/TableColumnsControls.vue'
+import type { Sort } from '@/types/tankobon-api'
+import type { PublisherSort } from '@/types/tankobon-publisher'
+import { safeNumber } from '@/utils/route'
 
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library!.id)
@@ -83,7 +82,7 @@ const sortProperties = computed(() => {
   const properties: SortPropertyOption[] = [
     { property: 'location', text: t('common-fields.location') },
     { property: 'legalName', text: t('common-fields.legal-name') },
-    
+
     { property: 'name', text: t('common-fields.name') },
     { property: 'foundingYear', text: t('common-fields.founding-year') },
     { property: 'dissolutionYear', text: t('common-fields.dissolution-year') },

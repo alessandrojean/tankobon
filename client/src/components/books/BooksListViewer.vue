@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { ColumnOrderState } from '@tanstack/vue-table'
+import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
+import type { TableColumn } from '../TableColumnsControls.vue'
+import type { SortPropertyOption } from '../SortControls.vue'
 import type { ViewMode } from '@/components/ViewModeSelector.vue'
-import { TableColumn } from '../TableColumnsControls.vue';
-import { SortPropertyOption } from '../SortControls.vue';
-import { ColumnOrderState } from '@tanstack/vue-table';
-import { PaginatedResponse } from '@/types/tankobon-response';
-import { BookEntity, BookSort } from '@/types/tankobon-book';
-import { Sort, SortDirection } from '@/types/tankobon-api';
-import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
+import type { PaginatedResponse } from '@/types/tankobon-response'
+import type { BookEntity, BookSort } from '@/types/tankobon-book'
+import type { Sort, SortDirection } from '@/types/tankobon-api'
 
 export interface BooksListViewerProps {
   books?: PaginatedResponse<BookEntity>
@@ -149,7 +149,8 @@ function handleSortChange(newSort: Sort<BookSort>[]) {
         :class="[
           'md:ml-auto flex flex-col-reverse sm:flex-row gap-4 items-center',
           'justify-center md:justify-normal',
-        ]">
+        ]"
+      >
         <FadeTransition>
           <TableColumnsControls
             v-if="viewMode === 'table'"
@@ -179,9 +180,9 @@ function handleSortChange(newSort: Sort<BookSort>[]) {
     <FadeTransition>
       <BooksTable
         v-if="viewMode === 'table'"
-        class="mt-4 sm:mt-6"
         v-model:page="page"
         v-model:size="size"
+        class="mt-4 sm:mt-6"
         :books="books"
         :loading="loading"
         :search="searchTerm"
@@ -194,9 +195,9 @@ function handleSortChange(newSort: Sort<BookSort>[]) {
 
       <BooksGrid
         v-else
-        class="mt-4 sm:mt-6"
         v-model:page="page"
         v-model:size="size"
+        class="mt-4 sm:mt-6"
         :books="books"
         :loading="loading"
         :search="searchTerm"

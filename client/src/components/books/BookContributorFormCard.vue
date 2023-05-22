@@ -153,8 +153,8 @@ function getDisabledRolesIndexes(person: PersonEntity | undefined): number[] {
         {{ $t('people.role-as') }}
       </span>
       <SearchableCombobox
-        class="grow"
         :id="`role-input-${index}`"
+        class="grow"
         :placeholder="$t('common-placeholders.book-contributor-role')"
         :label-text="$t('common-fields.role')"
         :model-value="role"

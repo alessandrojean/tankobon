@@ -2,11 +2,12 @@
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import PublisherPictureForm, { Picture } from '@/components/publishers/PublisherPictureForm.vue'
+import type { Picture } from '@/components/publishers/PublisherPictureForm.vue'
+import PublisherPictureForm from '@/components/publishers/PublisherPictureForm.vue'
 import PublisherMetadataForm from '@/components/publishers/PublisherMetadataForm.vue'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
-import { PublisherLinks, PublisherCreation } from '@/types/tankobon-publisher'
+import type { PublisherCreation, PublisherLinks } from '@/types/tankobon-publisher'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -91,8 +92,8 @@ async function handleSubmit() {
     foundingYear: validNumber(newPublisher.foundingYear),
     dissolutionYear: validNumber(newPublisher.dissolutionYear),
     links: Object.assign(
-      { 
-        website: null, 
+      {
+        website: null,
         store: null,
         twitter: null,
         instagram: null,
@@ -100,8 +101,8 @@ async function handleSubmit() {
         youTube: null,
       } satisfies PublisherLinks,
       Object.fromEntries(
-        newPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)])
-      )
+        newPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+      ),
     ),
   }
 
@@ -187,9 +188,9 @@ useBeforeUnload({
             </Tab>
           </TabList>
           <BasicSelect
+            id="tabs"
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tabs"
             :disabled="isCreating"
             :options="tabs"
             :option-text="tab => $t(tab.text)"

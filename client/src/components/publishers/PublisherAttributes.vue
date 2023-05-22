@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PublisherAttributes, PublisherEntity } from '@/types/tankobon-publisher'
+import type { PublisherAttributes, PublisherEntity } from '@/types/tankobon-publisher'
 
 export interface SeriesAttributesProps {
   publisher?: PublisherEntity | null
@@ -25,8 +25,8 @@ function getCompanyStatus(attributes: PublisherAttributes | undefined) {
       // @ts-expect-error The library has the wrong types.
       years: n(attributes.dissolutionYear - attributes.foundingYear, 'unit', {
         unit: 'year',
-        unitDisplay: 'long'
-      })
+        unitDisplay: 'long',
+      }),
     })
   } else if (attributes?.foundingYear && !attributes?.dissolutionYear) {
     const currentYear = new Date().getFullYear()
@@ -34,12 +34,12 @@ function getCompanyStatus(attributes: PublisherAttributes | undefined) {
     return currentYear === attributes.foundingYear
       ? t('publishers.status-active-no-years')
       : t('publishers.status-active', {
-          // @ts-expect-error The library has the wrong types.
-          years: n(currentYear - attributes.foundingYear, 'unit', {
-            unit: 'year',
-            unitDisplay: 'long'
-          })
-        })
+        // @ts-expect-error The library has the wrong types.
+        years: n(currentYear - attributes.foundingYear, 'unit', {
+          unit: 'year',
+          unitDisplay: 'long',
+        }),
+      })
   } else if (attributes?.dissolutionYear && !attributes.foundingYear) {
     return t('publishers.status-closed-no-years')
   } else {
@@ -65,14 +65,14 @@ const metadata = computed(() => {
       title: t('common-fields.founding-year'),
       value: attributes?.foundingYear
         ? String(attributes?.foundingYear)
-        : t('publishers.founding-unknown')
+        : t('publishers.founding-unknown'),
     },
     {
       title: t('common-fields.dissolution-year'),
       value: attributes?.dissolutionYear
         ? String(attributes?.dissolutionYear)
-        : null
-    }
+        : null,
+    },
   ]
 })
 </script>

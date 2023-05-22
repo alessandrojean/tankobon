@@ -206,9 +206,9 @@ function getPublisherPicture(publisher: PublisherEntity) {
       />
 
       <SearchableCombobox
+        id="type"
         kind="fancy"
         class="lg:col-span-2"
-        id="type"
         :placeholder="$t('common-placeholders.book-series')"
         :label-text="$t('common-fields.series')"
         :model-value="seriesValue"

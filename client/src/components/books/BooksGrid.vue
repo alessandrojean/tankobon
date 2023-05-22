@@ -31,10 +31,10 @@ defineEmits<{
 const { books, loading, unpaged } = toRefs(props)
 
 const showFooter = computed(() => {
-  return books.value && 
-    books.value.pagination.totalElements >= 10 &&
-    books.value.data.length > 0 &&
-    !unpaged.value
+  return books.value
+    && books.value.pagination.totalElements >= 10
+    && books.value.data.length > 0
+    && !unpaged.value
 })
 
 const container = ref<HTMLUListElement>()

@@ -107,7 +107,7 @@ const columns = [
             emptyIcon: BookOpenIcon,
           }),
           h('div', { class: 'flex flex-col' }, [
-            h('span', { innerText: title, class: 'font-medium', title: title }),
+            h('span', { innerText: title, class: 'font-medium', title }),
             subtitle.length > 0 ? h('span', { innerText: subtitle, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
           ]),
         ])

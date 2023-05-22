@@ -82,11 +82,11 @@ const selected = computed(() => {
 <template>
   <fieldset>
     <BasicSelect
-      class="md:hidden"
       :id="`${id}-select`"
+      class="md:hidden"
       :errors="errors"
       :invalid="invalid"
-      :model-value="(modelValue as TValue)"
+      :model-value="modelValue as TValue"
       :options="options"
       :option-text="optionText"
       :option-value="optionValueSelect"
@@ -97,7 +97,7 @@ const selected = computed(() => {
     <Combobox
       as="div"
       class="relative hidden md:block"
-      :model-value="(modelValue as TValue)"
+      :model-value="modelValue as TValue"
       @update:model-value="emit('update:model-value', $event)"
     >
       <div class="relative">
@@ -170,7 +170,7 @@ const selected = computed(() => {
           <ul v-else class="max-h-[18rem] overflow-y-auto rounded-lg">
             <ComboboxOption
               v-for="(option, i) of filteredOptions"
-              v-slot="{ active, selected }"
+              v-slot="{ active, selected: isSelected }"
               :key="i"
               :value="optionValue ? optionValue(option) : String(option)"
               :disabled="disabledOptions.includes(i)"
@@ -182,7 +182,7 @@ const selected = computed(() => {
                 'dark:text-gray-300 ui-active:text-primary-700 dark:ui-active:dark:text-primary-100',
               ]"
             >
-              <slot name="option" :option="option" :active="active" :selected="selected">
+              <slot name="option" :option="option" :active="active" :selected="isSelected">
                 {{ optionText(option, i) }}
               </slot>
             </ComboboxOption>

@@ -40,7 +40,7 @@ const sort = computed({
   },
   set: (newSort) => {
     sortQuery.value = newSort ? `${newSort.property}:${newSort.direction}` : null
-  }
+  },
 })
 
 const { data: books, isLoading } = useLibraryBooksQuery({

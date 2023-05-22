@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TabList } from '@headlessui/vue';
-import Button from './form/Button.vue';
+import { TabList } from '@headlessui/vue'
+import Button from './form/Button.vue'
 
 export interface PillTab {
   key: string
@@ -79,9 +79,9 @@ const disabledTabs = computed(() => {
     </TabList>
 
     <BasicSelect
+      id="tab-select"
       v-model="activeTab"
       class="md:hidden h-12"
-      id="tab-select"
       :options="tabs"
       :option-text="tab => $t(tab.text)"
       :option-value="tab => tab.key"

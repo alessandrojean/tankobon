@@ -4,11 +4,12 @@ import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import PublisherPictureForm, { Picture } from '@/components/publishers/PublisherPictureForm.vue'
+import type { Picture } from '@/components/publishers/PublisherPictureForm.vue'
+import PublisherPictureForm from '@/components/publishers/PublisherPictureForm.vue'
 import PublisherMetadataForm from '@/components/publishers/PublisherMetadataForm.vue'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
-import { PublisherUpdate, PublisherLinks } from '@/types/tankobon-publisher'
+import type { PublisherLinks, PublisherUpdate } from '@/types/tankobon-publisher'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -91,7 +92,7 @@ whenever(publisher, (loadedPublisher) => {
       : null,
     dissolutionYear: loadedPublisher.attributes.dissolutionYear
       ? String(loadedPublisher.attributes.dissolutionYear)
-      : null
+      : null,
   } satisfies CustomPublisherUpdate)
 
   initialPublisherToEdit.value = JSON.stringify(toRaw(updatedPublisher))
@@ -135,8 +136,8 @@ async function handleSubmit() {
     foundingYear: validNumber(updatedPublisher.foundingYear),
     dissolutionYear: validNumber(updatedPublisher.dissolutionYear),
     links: Object.assign(
-      { 
-        website: null, 
+      {
+        website: null,
         store: null,
         twitter: null,
         instagram: null,
@@ -144,8 +145,8 @@ async function handleSubmit() {
         youTube: null,
       } satisfies PublisherLinks,
       Object.fromEntries(
-        updatedPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)])
-      )
+        updatedPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+      ),
     ),
   }
 
@@ -242,9 +243,9 @@ const publisherPicture = computed(() => getRelationship(publisher.value, 'PUBLIS
             </Tab>
           </TabList>
           <BasicSelect
+            id="tabs"
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tabs"
             :disabled="isLoading || isEditing"
             :options="tabs"
             :option-text="tab => $t(tab.text)"

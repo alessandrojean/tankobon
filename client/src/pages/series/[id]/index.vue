@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import { Square2StackIcon } from '@heroicons/vue/24/outline'
-import { getRelationship } from '@/utils/api'
 import { BookOpenIcon, InformationCircleIcon } from '@heroicons/vue/20/solid'
+import { getRelationship } from '@/utils/api'
 import Button from '@/components/form/Button.vue'
-import { PillTab } from '@/components/PillTabsList.vue'
-import { Sort } from '@/types/tankobon-api'
-import { BookSort } from '@/types/tankobon-book'
+import type { PillTab } from '@/components/PillTabsList.vue'
+import type { Sort } from '@/types/tankobon-api'
+import type { BookSort } from '@/types/tankobon-book'
 import { safeNumber } from '@/utils/route'
 
 const { t } = useI18n()
@@ -83,13 +83,13 @@ const tabs: PillTab[] = [
   { key: '1', text: 'series.volumes', icon: BookOpenIcon },
 ]
 
-const activeTabHash = useRouteQuery('tab', '0', { transform: v => safeNumber(v, 0, { min: 0, max: tabs.length - 1 })})
+const activeTabHash = useRouteQuery('tab', '0', { transform: v => safeNumber(v, 0, { min: 0, max: tabs.length - 1 }) })
 const activeTab = computed({
   get: () => {
     const index = Number(activeTabHash.value)
     return tabs[index] ?? tabs[0]
   },
-  set: (newTab) => activeTabHash.value = Number(newTab.key)
+  set: newTab => activeTabHash.value = Number(newTab.key),
 })
 </script>
 
@@ -146,7 +146,7 @@ const activeTab = computed({
             :tabs="tabs"
             :disabled="isLoading"
           />
-          
+
           <div
             v-if="isLoading"
             class="flex justify-center sm:justify-start items-center gap-2"

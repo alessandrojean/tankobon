@@ -2,7 +2,7 @@
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import { helpers } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 
 export interface EntityExternalLinksFormProps {
   externalLinks: FormExternalLink[]

@@ -3,6 +3,7 @@
   "rules": {
     "vue/custom-event-name-casing": "off",
     "vue/prefer-separate-static-class": "off",
+    "vue/no-dupe-keys": "off",
     "@typescript-eslint/brace-style": ["error", "1tbs"],
     "curly": ["error", "all"],
     "brace-style": ["error", "1tbs"]

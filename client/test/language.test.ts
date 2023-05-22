@@ -1,5 +1,5 @@
-import { getFlagScriptCode, getLanguageName } from '@/utils/language'
 import { describe, expect, it } from 'vitest'
+import { getFlagScriptCode, getLanguageName } from '@/utils/language'
 
 it('Should compute the correct script code for the flag', () => {
   expect(getFlagScriptCode('ja')).toBe('oriental')

@@ -56,7 +56,7 @@ const rules = computed(() => {
   const messageUrl = helpers.withMessage(t('validation.url'), urlValidator)
   const messageAllowedHosts = helpers.withMessage(
     () => t('validation.allowed-hosts', { site: allowedHostsMap[type.value]?.name ?? '' }),
-    allowedHost
+    allowedHost,
   )
 
   return {

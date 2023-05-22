@@ -100,8 +100,8 @@ function getOriginalLanguageName(language: string | undefined) {
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <SearchableCombobox
-        kind="fancy"
         id="type"
+        kind="fancy"
         :placeholder="$t('common-placeholders.series-type')"
         :label-text="$t('series.type')"
         :model-value="type === null ? 'null' : type"
@@ -114,8 +114,8 @@ function getOriginalLanguageName(language: string | undefined) {
       />
 
       <SearchableCombobox
-        kind="fancy"
         id="original-language"
+        kind="fancy"
         :placeholder="$t('common-placeholders.series-original-language')"
         :label-text="$t('original-language.label')"
         :model-value="originalLanguage === null ? 'null' : originalLanguage"

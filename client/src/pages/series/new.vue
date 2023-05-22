@@ -8,7 +8,7 @@ import SeriesCoverForm from '@/components/series/SeriesCoverForm.vue'
 import SeriesMetadataForm from '@/components/series/SeriesMetadataForm.vue'
 import SeriesAlternativeNamesForm from '@/components/series/SeriesAlternativeNamesForm.vue'
 import type { FormAlternativeName } from '@/types/tankobon-alternative-name'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 
 const { t } = useI18n()
@@ -101,19 +101,19 @@ async function handleSubmit() {
         language: fan.language,
       })),
     links: Object.assign(
-      { 
-        website: null, 
+      {
+        website: null,
         myAnimeList: null,
         kitsu: null,
         aniList: null,
         mangaUpdates: null,
         guiaDosQuadrinhos: null,
         twitter: null,
-        instagram: null
+        instagram: null,
       } satisfies SeriesLinks,
       Object.fromEntries(
-        newSeries.links.map(l => [l.type, nullOrNotBlank(l.url)])
-      )
+        newSeries.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+      ),
     ),
   }
 
@@ -199,9 +199,9 @@ useBeforeUnload({
             </Tab>
           </TabList>
           <BasicSelect
+            id="tab"
             v-model="activeTab"
             class="md:hidden mb-4"
-            id="tab"
             :disabled="isCreating"
             :options="tabs"
             :option-text="tab => $t(tab.text)"

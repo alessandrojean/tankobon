@@ -163,8 +163,8 @@ const tagMap = computed(() => {
   <fieldset class="space-y-6" :disabled="disabled">
     <fieldset class="grid grid-cols-1 lg:grid-cols-3 gap-2">
       <SearchableCombobox
-        kind="fancy"
         id="collection"
+        kind="fancy"
         :placeholder="$t('common-placeholders.book-collection')"
         :label-text="$t('common-fields.collection')"
         :model-value="collectionValue"
@@ -213,9 +213,9 @@ const tagMap = computed(() => {
           @update:model-value="$emit('update:paidPrice', $event)"
         />
         <SearchableCombobox
+          id="store"
           kind="fancy"
           class="lg:col-span-2 xl:col-span-4"
-          id="store"
           :placeholder="$t('common-placeholders.book-store')"
           :label-text="$t('common-fields.store')"
           :model-value="storeValue"

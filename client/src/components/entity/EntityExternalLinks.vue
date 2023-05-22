@@ -15,7 +15,7 @@ import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
 import FacebookIcon from '@/components/icons/FacebookIcon.vue'
 import YouTubeIcon from '@/components/icons/YouTubeIcon.vue'
 import StoreIcon from '@/components/icons/StoreIcon.vue'
-import { FormExternalLink } from '@/types/tankobon-external-link'
+import type { FormExternalLink } from '@/types/tankobon-external-link'
 
 export interface EntityExternalLinksProps {
   links?: Record<string, string | null>
@@ -79,7 +79,7 @@ const presentLinks = computed(() => {
 </script>
 
 <template>
-  <Block :title="$t('external-links.title')" v-if="presentLinks.length || loading">
+  <Block v-if="presentLinks.length || loading" :title="$t('external-links.title')">
     <div v-if="loading" class="flex flex-wrap gap-2">
       <div v-for="i in 4" :key="i" class="skeleton w-32 h-9" />
     </div>
@@ -98,7 +98,7 @@ const presentLinks = computed(() => {
             'bg-gray-200/90 dark:bg-gray-700/60',
             'hover:bg-gray-300 dark:hover:bg-gray-600/70',
             'focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white/90',
-            'motion-safe:transition'
+            'motion-safe:transition',
           ]"
         >
           <component :is="typeIcons[link.type] ?? WebsiteIcon" class="w-6 h-6" />

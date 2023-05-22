@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVuelidate } from '@vuelidate/core'
-import { helpers, required, minValue, maxValue, or } from '@vuelidate/validators'
+import { helpers, maxValue, minValue, or, required } from '@vuelidate/validators'
 import { countries as regions } from 'countries-list'
 
 export interface PublisherFormProps {
@@ -86,14 +86,14 @@ const regionsOptions = computed(() => {
   const options = ['null', ...Object.keys(regions)]
     .map(code => ({
       code,
-      name: code === 'null' 
+      name: code === 'null'
         ? t('location.unknown')
-        : (regionNames.value.of(code) ?? t('location.unknown'))
+        : (regionNames.value.of(code) ?? t('location.unknown')),
     }))
-  
+
   return [
     options[0],
-    ...options.slice(1).sort((a, b) => a.name.localeCompare(b.name, locale.value))
+    ...options.slice(1).sort((a, b) => a.name.localeCompare(b.name, locale.value)),
   ] as RegionOption[]
 })
 </script>
@@ -123,10 +123,10 @@ const regionsOptions = computed(() => {
           @input="$emit('update:legalName', $event.target.value)"
         />
       </div>
-  
+
       <SearchableCombobox
-        kind="fancy"
         id="location"
+        kind="fancy"
         :placeholder="$t('common-placeholders.publisher-location')"
         :label-text="$t('common-fields.location')"
         :model-value="location === null ? 'null' : location"
@@ -136,11 +136,11 @@ const regionsOptions = computed(() => {
         :option-value-select="l => l.code"
         :filter="(query, location) => {
           if (query.length === 2) {
-            return query.toLowerCase() == location.code.toLowerCase()
+            return query.toLowerCase() === location.code.toLowerCase()
           }
-           
-          return query.toLowerCase() == location.code.toLowerCase() ||
-            location.name.toLowerCase().includes(query.toLowerCase())            
+
+          return query.toLowerCase() === location.code.toLowerCase()
+            || location.name.toLowerCase().includes(query.toLowerCase())
         }"
         @update:model-value="$emit('update:location', $event === 'null' ? null : $event)"
         @update:model-value-select="$emit('update:location', $event === 'null' ? null : $event)"

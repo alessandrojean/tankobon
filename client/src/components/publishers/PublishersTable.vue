@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-import type { PaginationState, SortingState } from '@tanstack/vue-table'
+import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon, BuildingOffice2Icon as BuildingOffice2SolidIcon } from '@heroicons/vue/20/solid'
+import { BuildingOffice2Icon as BuildingOffice2SolidIcon, EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { BuildingOffice2Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import Avatar from '../Avatar.vue'
+import Flag from '../Flag.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { PublisherEntity, PublisherSort } from '@/types/tankobon-publisher'
 import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
-import { PaginatedResponse } from '@/types/tankobon-response'
-import { ColumnOrderState } from '@tanstack/vue-table'
-import Flag from '../Flag.vue'
-import { MagnifyingGlassIcon, BuildingOffice2Icon } from '@heroicons/vue/24/outline'
+import type { PaginatedResponse } from '@/types/tankobon-response'
 
 export interface PublishersTableProps {
   publishers?: PaginatedResponse<PublisherEntity>
