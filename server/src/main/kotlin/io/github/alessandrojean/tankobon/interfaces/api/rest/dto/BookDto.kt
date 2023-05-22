@@ -55,7 +55,7 @@ data class BookAttributesDto(
 data class BookLinksDto(
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(
-    allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn"]
+    allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn", "amazon.com.au", "amazon.com.be", "amazon.eg", "amazon.fr", "amazon.in", "amazon.it", "amazon.com.mx", "amazon.nl", "amazon.pl", "amazon.sa", "amazon.sg", "amazon.es", "amazon.se", "amazon.com.tr", "amazon.ae"]
   )
   val amazon: String? = null,
   @get:NullOrNotBlank
