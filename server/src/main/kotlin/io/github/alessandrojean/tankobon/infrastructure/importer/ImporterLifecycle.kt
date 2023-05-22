@@ -21,7 +21,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepos
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributorCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookLinksDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.DimensionsDto
 import mu.KotlinLogging
 import org.javamoney.moneta.FastMoney
@@ -110,9 +109,9 @@ class ImporterLifecycle(
         isInLibrary = true,
         pageCount = import.pageCount,
         synopsis = import.synopsis,
-        weightKg = 0f,
+        weightKg = import.weightKg,
         notes = "",
-        links = BookLinksDto(),
+        links = import.links,
       )
 
       val created = bookLifecycle.addBook(book, user)

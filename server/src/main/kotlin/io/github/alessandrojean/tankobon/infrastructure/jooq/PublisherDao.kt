@@ -113,10 +113,10 @@ class PublisherDao(
       .fetchInto(TablePublisher)
       .map { it.toDomain() }
 
-  override fun existsByNameInLibrary(name: String, legalName: String, libraryId: String): Boolean =
+  override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TablePublisher)
-        .where(TablePublisher.NAME.equalIgnoreCase(name).or(TablePublisher.LEGAL_NAME.equalIgnoreCase(legalName)))
+        .where(TablePublisher.NAME.equalIgnoreCase(name))
         .and(TablePublisher.LIBRARY_ID.eq(libraryId))
     )
 
@@ -213,7 +213,7 @@ class PublisherDao(
       facebook = facebook,
       youTube = youtube,
     ),
-    legalName = legalName,
+    legalName = legalName.orEmpty(),
     location = location,
     libraryId = libraryId,
     id = id,

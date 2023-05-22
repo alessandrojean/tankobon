@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookCon
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookLinksDto
 import org.springframework.boot.info.BuildProperties
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -101,6 +102,7 @@ class OpenLibraryImporterProvider(
       pageCount = pageCount ?: 0,
       coverUrl = cover?.large,
       url = this@OpenLibraryImporterProvider.url + key,
+      links = BookLinksDto(openLibrary = this@OpenLibraryImporterProvider.url + key),
       provider = ImporterSource.OPEN_LIBRARY,
     )
   }

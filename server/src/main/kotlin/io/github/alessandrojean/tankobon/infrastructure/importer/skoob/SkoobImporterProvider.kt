@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookRes
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import io.github.alessandrojean.tankobon.infrastructure.importer.removeDashes
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookLinksDto
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -84,6 +85,7 @@ class SkoobImporterProvider(
     pageCount = pageCount ?: 0,
     coverUrl = coverUrl?.substringAfter("format(jpeg)/"),
     url = this@SkoobImporterProvider.url + url,
+    links = BookLinksDto(skoob = this@SkoobImporterProvider.url + url),
     provider = ImporterSource.SKOOB,
   )
 

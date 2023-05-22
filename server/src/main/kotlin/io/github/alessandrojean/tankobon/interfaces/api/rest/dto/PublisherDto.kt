@@ -82,7 +82,7 @@ fun Publisher.toAttributesDto() = PublisherAttributesDto(
     youTube = links.youTube,
   ),
   legalName = legalName,
-  location = location,
+  location = location.orEmpty().ifEmpty { null },
   createdAt = createdAt.toUtcTimeZone(),
   modifiedAt = modifiedAt.toUtcTimeZone(),
 )
