@@ -83,7 +83,10 @@ const sortProperties = computed(() => {
   const properties: SortPropertyOption[] = [
     { property: 'location', text: t('common-fields.location') },
     { property: 'legalName', text: t('common-fields.legal-name') },
+    
     { property: 'name', text: t('common-fields.name') },
+    { property: 'foundingYear', text: t('common-fields.founding-year') },
+    { property: 'dissolutionYear', text: t('common-fields.dissolution-year') },
     { property: 'createdAt', text: t('common-fields.created-at') },
     { property: 'modifiedAt', text: t('common-fields.modified-at') },
   ]
@@ -96,6 +99,8 @@ const tableColumns = computed(() => {
     { id: 'name', text: t('common-fields.name'), disabled: true },
     { id: 'legalName', text: t('common-fields.legal-name') },
     { id: 'location', text: t('common-fields.location') },
+    { id: 'foundingYear', text: t('common-fields.founding-year') },
+    { id: 'dissolutionYear', text: t('common-fields.dissolution-year') },
     { id: 'createdAt', text: t('common-fields.created-at') },
     { id: 'modifiedAt', text: t('common-fields.modified-at') },
   ]
@@ -115,6 +120,8 @@ const { preference: columnVisibility } = useUserPreference<Record<string, boolea
   location: true,
   legalName: false,
   name: true,
+  foundingYear: false,
+  dissolutionYear: false,
 })
 
 const { preference: columnOrder } = useUserPreference<ColumnOrderState>('publishers_column_order', ['name', 'location', 'createdAt'])

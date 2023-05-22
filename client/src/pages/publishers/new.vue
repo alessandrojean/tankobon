@@ -72,9 +72,9 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
   return (value && value.length > 0) ? value : null
 }
 
-function validNumber(valueStr: string | null): number {
+function validNumber(valueStr: string | null): number | null {
   const value = valueStr?.length ? Number(valueStr.replace(',', '.') ?? 'NaN') : NaN
-  return isNaN(value) ? 0 : value
+  return isNaN(value) ? null : value
 }
 
 async function handleSubmit() {

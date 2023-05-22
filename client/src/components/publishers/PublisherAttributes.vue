@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<SeriesAttributesProps>(), {
 })
 
 const { publisher, loading } = toRefs(props)
-const { t, locale } = useI18n()
+const { t, n, locale } = useI18n()
 
 const regionNames = computed(() => new Intl.DisplayNames(locale.value, {
   type: 'region',
@@ -21,9 +21,27 @@ const regionNames = computed(() => new Intl.DisplayNames(locale.value, {
 
 function getCompanyStatus(attributes: PublisherAttributes | undefined) {
   if (attributes?.foundingYear && attributes?.dissolutionYear) {
-    return t('publishers.status-closed')
-  } else if (attributes?.foundingYear) {
-    return t('publishers.status-active')
+    return t('publishers.status-closed', {
+      // @ts-expect-error The library has the wrong types.
+      years: n(attributes.dissolutionYear - attributes.foundingYear, 'unit', {
+        unit: 'year',
+        unitDisplay: 'long'
+      })
+    })
+  } else if (attributes?.foundingYear && !attributes?.dissolutionYear) {
+    const currentYear = new Date().getFullYear()
+
+    return currentYear === attributes.foundingYear
+      ? t('publishers.status-active-no-years')
+      : t('publishers.status-active', {
+          // @ts-expect-error The library has the wrong types.
+          years: n(currentYear - attributes.foundingYear, 'unit', {
+            unit: 'year',
+            unitDisplay: 'long'
+          })
+        })
+  } else if (attributes?.dissolutionYear && !attributes.foundingYear) {
+    return t('publishers.status-closed-no-years')
   } else {
     return t('publishers.status-unknown')
   }

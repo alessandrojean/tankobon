@@ -32,7 +32,7 @@ function toggleSortDirection() {
       :label-text="$t('common-actions.sort')"
       :options="properties"
       :option-text="(property) => property?.text ?? $t('sort.none')"
-      :option-value="(option) => option.property"
+      :option-value="(option) => option?.property"
     >
       <template #listbox-button>
         <ListboxButton

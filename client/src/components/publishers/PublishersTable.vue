@@ -136,6 +136,18 @@ const columns = [
       ])
     },
   }),
+  columnHelper.accessor('attributes.foundingYear', {
+    id: 'foundingYear',
+    header: () => t('common-fields.founding-year'),
+    cell: info => info.getValue() ?? t('publishers.founding-unknown'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.dissolutionYear', {
+    id: 'dissolutionYear',
+    header: () => t('common-fields.dissolution-year'),
+    cell: info => info.getValue(),
+    meta: { tabular: true },
+  }),
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',
     header: () => t('common-fields.created-at'),

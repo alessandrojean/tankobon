@@ -393,8 +393,10 @@ publishers:
   legal-name-unknown: Unknown
   founding-unknown: Unknown
   company-status: Status
-  status-active: Active
-  status-closed: Closed
+  status-active: Active ({years})
+  status-active-no-years: Active
+  status-closed: Closed ({years})
+  status-closed-no-years: Closed
   status-unknown: Unknown
 
 people:
