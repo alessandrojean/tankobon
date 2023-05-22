@@ -24,8 +24,8 @@ java {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation(kotlin("reflect"))
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.1")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-artemis")
@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.data:spring-data-commons")
   implementation("org.springframework.session:spring-session-core")
-  implementation("com.github.gotson:spring-session-caffeine:1.0.3")
+  implementation("com.github.gotson:spring-session-caffeine:2.0.0")
 
   kapt("org.springframework.boot:spring-boot-configuration-processor")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -46,7 +46,7 @@ dependencies {
 
   implementation("org.flywaydb:flyway-core")
   implementation("org.apache.activemq:artemis-jms-server:2.28.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.1.4")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
   implementation("net.coobird:thumbnailator:0.4.19")
   implementation("org.apache.tika:tika-core:2.7.0")
   implementation("io.trbl:blurhash:1.0.0")
@@ -60,13 +60,13 @@ dependencies {
     exclude(module = "mockito-core")
   }
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("com.ninja-squad:springmockk:4.0.0")
+  testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("io.mockk:mockk:1.13.4")
 
   compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
 
   implementation("com.ibm.icu:icu4j:72.1")
-  implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+  implementation("io.github.microutils:kotlin-logging-jvm:2.1.23") // 3.0 brings SLF4J 2
 
   implementation("org.javamoney:moneta:1.4.2")
   implementation("org.zalando:jackson-datatype-money:1.3.0")
