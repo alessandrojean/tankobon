@@ -1,7 +1,7 @@
 
 [*]
 ident_style = space
-ident_size = 4
+ident_size = 2
 
-[*.{ts,js,vue}]
+[{*.ts,*.js,*.vue}]
 quote_type = single

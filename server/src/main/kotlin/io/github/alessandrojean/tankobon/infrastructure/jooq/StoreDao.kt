@@ -68,7 +68,7 @@ class StoreDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableStore)
         .from(TableStore)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -111,7 +111,7 @@ class StoreDao(
     dsl.fetchExists(
       dsl.selectFrom(TableStore)
         .where(TableStore.NAME.equalIgnoreCase(name))
-        .and(TableStore.LIBRARY_ID.eq(libraryId))
+        .and(TableStore.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(storeId: String): String? =
@@ -214,5 +214,4 @@ class StoreDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

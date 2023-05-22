@@ -144,6 +144,5 @@ class ContributorRoleControllerTest(
       mockMvc.get("/api/v1/contributor-roles/${contributorRole.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

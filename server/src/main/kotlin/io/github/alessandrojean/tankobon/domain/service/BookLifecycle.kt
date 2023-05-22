@@ -114,7 +114,6 @@ class BookLifecycle(
     eventPublisher.publishEvent(DomainEvent.BookUpdated(bookDomain))
   }
 
-
   fun deleteBook(book: Book) {
     transactionTemplate.executeWithoutResult {
       bookRepository.delete(book.id)

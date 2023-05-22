@@ -15,7 +15,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryCreation
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionLibrary
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -53,7 +52,7 @@ to a single user, but can be shared with others if the user wants to.
 
 The items created inside a library can't be accessed and used by books
 in other libraries as each library is meant by design to be independent.
-  """
+  """,
 )
 class LibraryController(
   private val libraryRepository: LibraryRepository,
@@ -66,7 +65,10 @@ class LibraryController(
   @Operation(summary = "Get all libraries the user has access", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllLibraries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @RequestParam(required = false) @UUID(version = [4]) @Schema(format = "uuid") ownerId: String?,
+    @RequestParam(required = false)
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    ownerId: String?,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
     val libraries = when {
@@ -91,10 +93,13 @@ class LibraryController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
   @Operation(
     summary = "Get all libraries owned by a user by its id",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getAllLibrariesByOwner(
-    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable("userId")
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @RequestParam(required = false, defaultValue = "false") includeShared: Boolean = false,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessCollectionResponseDto<LibraryEntityDto> {
@@ -123,7 +128,10 @@ class LibraryController(
   @Operation(summary = "Get a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
   ): SuccessEntityResponseDto<LibraryEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
@@ -135,7 +143,7 @@ class LibraryController(
 
     val libraryDto = referenceExpansion.expand(
       entity = library.toDto(),
-      relationsToExpand = includes
+      relationsToExpand = includes,
     )
 
     return SuccessEntityResponseDto(libraryDto)
@@ -146,7 +154,7 @@ class LibraryController(
   fun addOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
-    library: LibraryCreationDto
+    library: LibraryCreationDto,
   ): SuccessEntityResponseDto<LibraryEntityDto> {
     val ownerId = library.owner ?: principal.user.id
     val owner = userRepository.findByIdOrNull(ownerId)
@@ -160,8 +168,8 @@ class LibraryController(
       Library(
         name = library.name,
         description = library.description,
-        ownerId = owner.id
-      )
+        ownerId = owner.id,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -172,7 +180,10 @@ class LibraryController(
   @Operation(summary = "Delete a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
   ) {
     val existing = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
@@ -189,9 +200,12 @@ class LibraryController(
   @Operation(summary = "Modify a library by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @Valid @RequestBody
-    library: LibraryUpdateDto
+    library: LibraryUpdateDto,
   ) {
     val existing = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")

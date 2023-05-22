@@ -17,5 +17,5 @@ data class Series(
   val links: SeriesLinks = SeriesLinks(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : LibraryItem, Auditable, Serializable

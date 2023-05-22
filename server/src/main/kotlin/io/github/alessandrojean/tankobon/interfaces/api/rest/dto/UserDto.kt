@@ -31,7 +31,7 @@ enum class RoleDto {
 }
 
 enum class ReferenceExpansionUser : ReferenceExpansionEnum {
-  AVATAR
+  AVATAR,
 }
 
 fun TankobonUser.toDto(avatarRelationship: RelationDto<ReferenceExpansionUser>? = null) = UserEntityDto(
@@ -70,7 +70,9 @@ data class UserCreationDto(
 }
 
 data class PasswordUpdateDto(
-  @get:NotBlank @Schema(format = "password") val password: String,
+  @get:NotBlank
+  @Schema(format = "password")
+  val password: String,
 )
 
 data class UserUpdateDto(

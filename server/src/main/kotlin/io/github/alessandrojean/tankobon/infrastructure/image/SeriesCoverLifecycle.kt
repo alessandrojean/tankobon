@@ -39,5 +39,4 @@ class SeriesCoverLifecycle(
   override fun isDeleteEvent(event: DomainEvent) = event is DomainEvent.SeriesDeleted
 
   override fun getEntityIdFromDeleteEvent(event: DomainEvent) = (event as DomainEvent.SeriesDeleted).series.id
-
 }

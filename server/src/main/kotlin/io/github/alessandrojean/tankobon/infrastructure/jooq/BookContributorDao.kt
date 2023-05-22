@@ -46,8 +46,8 @@ class BookContributorDao(
             roleId = record[TableContributorRole.ID],
             roleName = record[TableContributorRole.NAME],
             personId = record[TablePerson.ID],
-            personName = record[TablePerson.NAME]
-          )
+            personName = record[TablePerson.NAME],
+          ),
         ).withPictureIfExists()
       }
 
@@ -75,8 +75,8 @@ class BookContributorDao(
             roleId = record[TableContributorRole.ID],
             roleName = record[TableContributorRole.NAME],
             personId = record[TablePerson.ID],
-            personName = record[TablePerson.NAME]
-          )
+            personName = record[TablePerson.NAME],
+          ),
         )
       }
       .withPictureIfExists()
@@ -105,8 +105,8 @@ class BookContributorDao(
             roleId = record[TableContributorRole.ID],
             roleName = record[TableContributorRole.NAME],
             personId = record[TablePerson.ID],
-            personName = record[TablePerson.NAME]
-          )
+            personName = record[TablePerson.NAME],
+          ),
         )
       }
       .withPictureIfExists()
@@ -138,7 +138,7 @@ class BookContributorDao(
             contributor.bookId,
             contributor.roleId,
             contributor.personId,
-            LocalDateTime.now(ZoneId.of("Z"))
+            LocalDateTime.now(ZoneId.of("Z")),
           )
         }
       }
@@ -179,7 +179,7 @@ class BookContributorDao(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = ReferenceExpansionBookContributor.PERSON_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = personId, type = ReferenceExpansionBookContributor.PERSON_PICTURE)),
     )
   }
 
@@ -194,10 +194,9 @@ class BookContributorDao(
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
           RelationDto(id = it.attributes.person.id, type = ReferenceExpansionBookContributor.PERSON_PICTURE)
-            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
-        )
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
       )
     }
   }
-
 }

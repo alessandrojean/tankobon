@@ -68,42 +68,42 @@ class SearchIndexLifecycle(
         LuceneEntity.Book -> rebuildIndex(
           entity = it,
           { p: Pageable -> bookDtoRepository.findAll(BookSearch(), p).expand() },
-          { e: BookEntityDto -> e.toDocument() }
+          { e: BookEntityDto -> e.toDocument() },
         )
         LuceneEntity.Series -> rebuildIndex(
           entity = it,
           { p: Pageable -> seriesRepository.findAll(SeriesSearch(), p) },
-          { e: Series -> e.toDocument() }
+          { e: Series -> e.toDocument() },
         )
         LuceneEntity.Collection -> rebuildIndex(
           entity = it,
           { p: Pageable -> collectionRepository.findAll(CollectionSearch(), p) },
-          { e: Collection -> e.toDocument() }
+          { e: Collection -> e.toDocument() },
         )
         LuceneEntity.Publisher -> rebuildIndex(
           entity = it,
           { p: Pageable -> publisherRepository.findAll(PublisherSearch(), p) },
-          { e: Publisher -> e.toDocument() }
+          { e: Publisher -> e.toDocument() },
         )
         LuceneEntity.Person -> rebuildIndex(
           entity = it,
           { p: Pageable -> personRepository.findAll(PersonSearch(), p) },
-          { e: Person -> e.toDocument() }
+          { e: Person -> e.toDocument() },
         )
         LuceneEntity.Tag -> rebuildIndex(
           entity = it,
           { p: Pageable -> tagRepository.findAll(TagSearch(), p) },
-          { e: Tag -> e.toDocument() }
+          { e: Tag -> e.toDocument() },
         )
         LuceneEntity.ContributorRole -> rebuildIndex(
           entity = it,
           { p: Pageable -> contributorRoleRepository.findAll(ContributorRoleSearch(), p) },
-          { e: ContributorRole -> e.toDocument() }
+          { e: ContributorRole -> e.toDocument() },
         )
         LuceneEntity.Store -> rebuildIndex(
           entity = it,
           { p: Pageable -> storeRepository.findAll(StoreSearch(), p) },
-          { e: Store -> e.toDocument() }
+          { e: Store -> e.toDocument() },
         )
       }
     }
@@ -112,7 +112,7 @@ class SearchIndexLifecycle(
   private fun <T> rebuildIndex(
     entity: LuceneEntity,
     provider: (Pageable) -> Page<out T>,
-    toDoc: (T) -> Document
+    toDoc: (T) -> Document,
   ) {
     logger.info { "Rebuilding index for ${entity.name}" }
 
@@ -220,8 +220,8 @@ class SearchIndexLifecycle(
       ReferenceExpansionBook.LIBRARY,
       ReferenceExpansionBook.TAG,
       ReferenceExpansionBook.PUBLISHER,
-      ReferenceExpansionBook.CONTRIBUTOR
-    )
+      ReferenceExpansionBook.CONTRIBUTOR,
+    ),
   )
 
   private fun Page<BookEntityDto>.expand(): Page<BookEntityDto> {
@@ -231,8 +231,8 @@ class SearchIndexLifecycle(
         ReferenceExpansionBook.LIBRARY,
         ReferenceExpansionBook.TAG,
         ReferenceExpansionBook.PUBLISHER,
-        ReferenceExpansionBook.CONTRIBUTOR
-      )
+        ReferenceExpansionBook.CONTRIBUTOR,
+      ),
     )
 
     return PageImpl(

@@ -30,9 +30,9 @@ fun Tag.toDto(libraryAttributes: LibraryAttributesDto? = null) = TagEntityDto(
     RelationDto(
       id = libraryId,
       type = ReferenceExpansionTag.LIBRARY,
-      attributes = libraryAttributes
-    )
-  )
+      attributes = libraryAttributes,
+    ),
+  ),
 )
 
 fun Tag.toAttributesDto() = TagAttributesDto(name, description)

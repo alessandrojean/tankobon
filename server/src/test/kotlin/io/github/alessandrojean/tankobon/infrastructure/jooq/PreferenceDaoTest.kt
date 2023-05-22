@@ -65,7 +65,7 @@ class PreferenceDaoTest(
     preferenceDao.insert(preference)
 
     val updated = preferenceDao.findByKeyFromUser(preference.key, preference.userId)!!.copy(
-      value = "valueUpdated"
+      value = "valueUpdated",
     )
 
     preferenceDao.update(updated)

@@ -59,9 +59,9 @@ fun Store.toDto(libraryAttributes: LibraryAttributesDto? = null) = StoreEntityDt
     RelationDto(
       id = id,
       type = ReferenceExpansionStore.LIBRARY,
-      attributes = libraryAttributes
-    )
-  )
+      attributes = libraryAttributes,
+    ),
+  ),
 )
 
 fun Store.toAttributesDto() = StoreAttributesDto(

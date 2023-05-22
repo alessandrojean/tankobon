@@ -119,7 +119,7 @@ abstract class EntityImageLifecycle(
       val existingImage = getImageDetails(entityId)!!
 
       imageRepository.update(
-        imageDomain.copy(createdAt = existingImage.createdAt)
+        imageDomain.copy(createdAt = existingImage.createdAt),
       )
     } else {
       imageRepository.insert(imageDomain)
@@ -169,8 +169,8 @@ abstract class EntityImageLifecycle(
             val sizeString = size.toString()
             sizeString to image.fileName.replace(".", ".$sizeString.")
           }
-          .toTypedArray()
-      )
+          .toTypedArray(),
+      ),
     )
   }
 
@@ -223,5 +223,4 @@ abstract class EntityImageLifecycle(
   companion object {
     protected val THUMBNAIL_REGEX = ".*(\\.\\d+)\\.jpg\$".toRegex()
   }
-
 }

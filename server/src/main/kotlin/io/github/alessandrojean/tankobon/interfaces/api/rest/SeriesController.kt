@@ -95,7 +95,10 @@ class SeriesController(
   fun getAllSeriesByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionSeries> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
@@ -140,7 +143,10 @@ class SeriesController(
   @Operation(summary = "Get a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionSeries> = emptySet(),
   ): SuccessEntityResponseDto<SeriesEntityDto> {
     val series = seriesRepository.findByIdOrNull(seriesId)
@@ -194,8 +200,8 @@ class SeriesController(
           twitter = series.links.twitter,
           instagram = series.links.instagram,
         ),
-        libraryId = series.library
-      )
+        libraryId = series.library,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -206,7 +212,10 @@ class SeriesController(
   @Operation(summary = "Upload a cover to a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadPersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
     @RequestParam("cover") @SupportedImageFormat coverFile: MultipartFile,
   ) {
     val libraryId = seriesRepository.getLibraryIdOrNull(seriesId)
@@ -225,7 +234,10 @@ class SeriesController(
   @Operation(summary = "Delete a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
   ) {
     val existing = seriesRepository.findByIdOrNull(seriesId)
       ?: throw IdDoesNotExistException("Series not found")
@@ -244,7 +256,10 @@ class SeriesController(
   @Operation(summary = "Delete a series cover by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deletePersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
   ) {
     val existing = seriesRepository.findByIdOrNull(seriesId)
       ?: throw IdDoesNotExistException("Series not found")
@@ -263,9 +278,12 @@ class SeriesController(
   @Operation(summary = "Modify a series by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
     @Valid @RequestBody
-    series: SeriesUpdateDto
+    series: SeriesUpdateDto,
   ) {
     val existing = seriesRepository.findByIdOrNull(seriesId)
       ?: throw IdDoesNotExistException("Series not found")
@@ -306,7 +324,7 @@ class SeriesController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionSeries.SERIES_COVER))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionSeries.SERIES_COVER)),
     )
   }
 
@@ -321,8 +339,8 @@ class SeriesController(
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
           RelationDto(id = it.id, type = ReferenceExpansionSeries.SERIES_COVER)
-            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
-        )
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
       )
     }
   }

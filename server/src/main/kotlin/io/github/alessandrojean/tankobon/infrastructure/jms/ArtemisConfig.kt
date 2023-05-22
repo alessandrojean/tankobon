@@ -32,18 +32,18 @@ class ArtemisConfig : ArtemisConfigurationCustomizer {
       it.maxDiskUsage = 100
       it.addAddressSetting(
         QUEUE_TASKS,
-        AddressSettings().apply { defaultConsumerWindowSize = 0 }
+        AddressSettings().apply { defaultConsumerWindowSize = 0 },
       )
       it.addQueueConfiguration(
         QueueConfiguration(QUEUE_TASKS)
           .setAddress(QUEUE_TASKS)
           .setLastValueKey(QUEUE_UNIQUE_ID)
-          .setRoutingType(RoutingType.ANYCAST)
+          .setRoutingType(RoutingType.ANYCAST),
       )
       it.addQueueConfiguration(
         QueueConfiguration(TOPIC_EVENTS)
           .setAddress(TOPIC_EVENTS)
-          .setRoutingType(RoutingType.MULTICAST)
+          .setRoutingType(RoutingType.MULTICAST),
       )
     }
   }
@@ -61,10 +61,9 @@ class ArtemisConfig : ArtemisConfigurationCustomizer {
   @Bean(QUEUE_FACTORY)
   fun queueJmsListenerContainerFactory(
     connectionFactory: ConnectionFactory,
-    configurer: DefaultJmsListenerContainerFactoryConfigurer
+    configurer: DefaultJmsListenerContainerFactoryConfigurer,
   ): DefaultJmsListenerContainerFactory = DefaultJmsListenerContainerFactory().apply {
     configurer.configure(this, connectionFactory)
     setErrorHandler { logger.warn { it.message } }
   }
-
 }

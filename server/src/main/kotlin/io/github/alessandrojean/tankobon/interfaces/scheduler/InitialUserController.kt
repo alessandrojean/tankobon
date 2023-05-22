@@ -52,7 +52,7 @@ class InitialUsersProdConfiguration {
       email = "admin@example.org",
       password = RandomStringUtils.randomAlphanumeric(12),
       isAdmin = true,
-      name = "Administrator"
+      name = "Administrator",
     ),
   )
 }

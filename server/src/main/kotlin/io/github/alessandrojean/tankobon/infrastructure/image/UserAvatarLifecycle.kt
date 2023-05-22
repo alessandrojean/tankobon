@@ -39,5 +39,4 @@ class UserAvatarLifecycle(
   override fun isDeleteEvent(event: DomainEvent) = event is DomainEvent.UserDeleted
 
   override fun getEntityIdFromDeleteEvent(event: DomainEvent) = (event as DomainEvent.UserDeleted).user.id
-
 }

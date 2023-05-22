@@ -25,9 +25,11 @@ class SecurityConfiguration(
   private val sessionCookieName: String,
   private val userAgentWebAuthenticationDetailsSource: WebAuthenticationDetailsSource,
   private val sessionRegistry: SessionRegistry,
-  @Autowired @Qualifier("delegatedAuthenticationEntryPoint")
+  @Autowired
+  @Qualifier("delegatedAuthenticationEntryPoint")
   private val authenticationEntryPoint: AuthenticationEntryPoint,
-  @Autowired @Qualifier("delegatedAccessDeniedHandler")
+  @Autowired
+  @Qualifier("delegatedAccessDeniedHandler")
   private val accessDeniedHandler: AccessDeniedHandler,
 ) {
 

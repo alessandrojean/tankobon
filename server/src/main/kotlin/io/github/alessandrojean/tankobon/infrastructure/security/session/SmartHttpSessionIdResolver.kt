@@ -9,7 +9,7 @@ import org.springframework.session.web.http.HttpSessionIdResolver
 
 class SmartHttpSessionIdResolver(
   private val sessionHeaderName: String,
-  cookieSerializer: CookieSerializer
+  cookieSerializer: CookieSerializer,
 ) : HttpSessionIdResolver {
 
   private val cookie = CookieHttpSessionIdResolver().apply {

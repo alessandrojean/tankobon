@@ -39,5 +39,4 @@ class PersonPictureLifecycle(
   override fun isDeleteEvent(event: DomainEvent) = event is DomainEvent.PersonDeleted
 
   override fun getEntityIdFromDeleteEvent(event: DomainEvent) = (event as DomainEvent.PersonDeleted).person.id
-
 }

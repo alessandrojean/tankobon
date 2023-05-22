@@ -26,7 +26,8 @@ enum class LuceneEntity(val type: String, val id: String, val defaultFields: Arr
   Person("person", "person_id", arrayOf("name")),
   ContributorRole("contributor_role", "contributor_role_id", arrayOf("name")),
   Tag("tag", "tag_id", arrayOf("name")),
-  Store("store", "store_id", arrayOf("name"));
+  Store("store", "store_id", arrayOf("name")),
+  ;
 
   companion object {
     const val TYPE = "type"

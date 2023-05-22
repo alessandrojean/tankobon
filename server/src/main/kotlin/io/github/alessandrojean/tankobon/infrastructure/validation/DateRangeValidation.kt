@@ -45,5 +45,4 @@ class DurationalDateRangeValidator : ConstraintValidator<DateRangeValidation, Du
 
     return false
   }
-
 }

@@ -32,12 +32,12 @@ fun Library.toDto(userAttributes: UserAttributesDto? = null) = LibraryEntityDto(
     RelationDto(
       id = ownerId,
       type = ReferenceExpansionLibrary.OWNER,
-      attributes = userAttributes
+      attributes = userAttributes,
     ),
     *sharedUsersIds
       .map { RelationDto(it, ReferenceExpansionLibrary.LIBRARY_SHARING) }
-      .toTypedArray()
-  )
+      .toTypedArray(),
+  ),
 )
 
 fun Library.toAttributesDto() = LibraryAttributesDto(name, description)
@@ -47,7 +47,7 @@ data class LibraryCreationDto(
   val description: String,
   @get:NullOrUuid
   @get:Schema(format = "uuid", description = "It will use the `id` of the current authenticated user if not set or null")
-  val owner: String? = null
+  val owner: String? = null,
 )
 
 data class LibraryUpdateDto(
@@ -57,5 +57,5 @@ data class LibraryUpdateDto(
   @get:Schema(format = "uuid")
   val owner: String? = null,
   @get:Schema(type = "array", format = "uuid")
-  val sharedUsers: Set<@UUID(version = [4]) String> = emptySet()
+  val sharedUsers: Set<@UUID(version = [4]) String> = emptySet(),
 )

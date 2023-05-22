@@ -95,6 +95,5 @@ class PreferenceControllerTest(
           jsonPath("$.data.length()") { value(0) }
         }
     }
-
   }
 }

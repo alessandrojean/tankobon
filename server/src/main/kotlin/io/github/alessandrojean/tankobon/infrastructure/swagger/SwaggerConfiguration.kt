@@ -13,7 +13,6 @@ import io.swagger.v3.oas.models.media.StringSchema
 import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
-import mu.KotlinLogging
 import org.springdoc.core.customizers.OpenApiCustomizer
 import org.springdoc.core.customizers.OperationCustomizer
 import org.springdoc.core.utils.SpringDocUtils
@@ -42,7 +41,7 @@ class SwaggerConfiguration {
           .license(
             License()
               .name("MIT")
-              .url("https://github.com/alessandrojean/tankobon/blob/master/LICENSE")
+              .url("https://github.com/alessandrojean/tankobon/blob/master/LICENSE"),
           ),
       )
       .externalDocs(
@@ -74,8 +73,8 @@ class SwaggerConfiguration {
               you can also send a `X-Auth-Token` header. If sent empty, the response will
               include a header with the same name with the authenticated session token that
               can be reused in future requests without requiring the HTTP Basic Authentication.
-            """.trimIndent()
-          )
+            """.trimIndent(),
+          ),
       )
       .addTagsItem(
         Tag()
@@ -90,8 +89,8 @@ class SwaggerConfiguration {
               Make sure you're converting the date-time values to UTC when sending the requests,
               otherwise you will create some time inconsistencies in the database that can lead
               to wrong date-time values when presenting.
-            """.trimIndent()
-          )
+            """.trimIndent(),
+          ),
       )
       .addTagsItem(
         Tag()
@@ -105,8 +104,8 @@ class SwaggerConfiguration {
               Endpoints that supports this feature are indicated by the presence of an optional
               `includes` query parameter, which can be set to a list of includes with the type
               names from the relationships, in lowercase, separated by a comma (`,`).
-            """.trimIndent()
-          )
+            """.trimIndent(),
+          ),
       )
 
   @Bean
@@ -157,13 +156,12 @@ class SwaggerConfiguration {
       format = "iso-4217",
       pattern = "^[A-Z]{3}$",
       example = "USD",
-      description = "[ISO 4217](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes) currency code"
+      description = "[ISO 4217](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes) currency code",
     )
-    val currency: String
+    val currency: String,
   )
 
   companion object {
     private val NUMERIC_HEADER_REGEX = "^\\d+\\. ".toRegex()
   }
-
 }

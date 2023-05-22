@@ -70,7 +70,7 @@ class UserController(
   private val authenticationActivityRepository: AuthenticationActivityRepository,
   private val userAvatarLifecycle: UserAvatarLifecycle,
   private val referenceExpansion: ReferenceExpansion,
-  env: Environment
+  env: Environment,
 ) {
 
   private val isDemo = env.activeProfiles.contains("demo")
@@ -91,12 +91,12 @@ class UserController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
     summary = "Modify the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun updateMe(
     @Valid @RequestBody
     user: UserUpdateDto,
-    @AuthenticationPrincipal principal: TankobonPrincipal
+    @AuthenticationPrincipal principal: TankobonPrincipal,
   ) {
     if (isDemo) {
       throw CantChangeDemoUserAttributesException()
@@ -109,7 +109,7 @@ class UserController(
       name = user.name,
       biography = user.biography,
       email = user.email,
-      isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN)
+      isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN),
     )
 
     userLifecycle.updateUser(toUpdate)
@@ -119,7 +119,7 @@ class UserController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
     summary = "Upload an avatar to the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun uploadMeAvatar(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -136,7 +136,7 @@ class UserController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
     summary = "Delete the avatar of the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun deleteMeAvatar(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -155,12 +155,12 @@ class UserController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
     summary = "Change the password of the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun updateMyPassword(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
-    newPasswordDto: PasswordUpdateDto
+    newPasswordDto: PasswordUpdateDto,
   ) {
     if (isDemo) {
       throw CantChangePasswordInDemoModeException()
@@ -176,7 +176,7 @@ class UserController(
   @PageableAsQueryParam
   @Operation(
     summary = "Get the authentication activity of the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getMyAuthenticationActivity(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -213,11 +213,14 @@ class UserController(
   @PageableAsQueryParam
   @Operation(
     summary = "Get the authentication activity of a user by its id",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getAuthenticationActivityFromUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<AuthenticationActivityEntityDto> {
@@ -254,7 +257,7 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(
     summary = "Get the authentication activities",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getAuthenticationActivity(
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
@@ -303,7 +306,7 @@ class UserController(
     val usersPage = userRepository.findAll(pageRequest)
     val users = referenceExpansion.expand(
       entities = usersPage.content.map { it.toDto() }.withAvatarIfExists(),
-      relationsToExpand = includes
+      relationsToExpand = includes,
     )
 
     return SuccessPaginatedCollectionResponseDto(users, usersPage.toPaginationDto())
@@ -314,7 +317,9 @@ class UserController(
   @Operation(summary = "Get a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionUser> = emptySet(),
   ): SuccessEntityResponseDto<UserEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
@@ -330,7 +335,10 @@ class UserController(
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasRole('$ROLE_ADMIN')")
   @Operation(summary = "Create a new user", security = [SecurityRequirement(name = "Basic Auth")])
-  fun addOneUser(@Valid @RequestBody newUser: UserCreationDto): SuccessEntityResponseDto<UserEntityDto> {
+  fun addOneUser(
+    @Valid @RequestBody
+    newUser: UserCreationDto,
+  ): SuccessEntityResponseDto<UserEntityDto> {
     val user = userLifecycle.createUser(newUser.toDomain())
 
     return SuccessEntityResponseDto(user.toDto())
@@ -341,7 +349,10 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
   @Operation(summary = "Delete a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneUser(
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @AuthenticationPrincipal principal: TankobonPrincipal,
   ) {
     val user = userRepository.findByIdOrNull(userId)
@@ -355,10 +366,13 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') and #principal.user.id != #id")
   @Operation(summary = "Modify a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateUser(
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @Valid @RequestBody
     user: UserUpdateDto,
-    @AuthenticationPrincipal principal: TankobonPrincipal
+    @AuthenticationPrincipal principal: TankobonPrincipal,
   ) {
     if (isDemo && userId == principal.user.id) {
       throw CantChangeDemoUserAttributesException()
@@ -371,7 +385,7 @@ class UserController(
       name = user.name,
       email = user.email,
       biography = user.biography,
-      isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN)
+      isAdmin = user.roles.contains(RoleDto.ROLE_ADMIN),
     )
 
     userLifecycle.updateUser(toUpdate)
@@ -383,7 +397,10 @@ class UserController(
   @Operation(summary = "Upload an avatar to a user by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadUserAvatar(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @RequestParam("avatar") @SupportedImageFormat avatarFile: MultipartFile,
   ) {
     if (isDemo && userId == principal.user.id) {
@@ -402,7 +419,10 @@ class UserController(
   @Operation(summary = "Delete an user avatar by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteUserAvatar(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
   ) {
     val existing = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
@@ -415,10 +435,13 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
   @Operation(
     summary = "Change the password of a user by its id",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun updatePassword(
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @Valid @RequestBody
     newPasswordDto: PasswordUpdateDto,
@@ -439,7 +462,7 @@ class UserController(
     }
 
     return copy(
-      relationships = listOf(RelationDto(id = id, type = ReferenceExpansionUser.AVATAR))
+      relationships = listOf(RelationDto(id = id, type = ReferenceExpansionUser.AVATAR)),
     )
   }
 
@@ -454,8 +477,8 @@ class UserController(
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
           RelationDto(id = it.id, type = ReferenceExpansionUser.AVATAR)
-            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
-        )
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
       )
     }
   }
@@ -464,11 +487,13 @@ class UserController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or #principal.user.id == #userId")
   @Operation(
     summary = "Get the latest authentication activity of a user by its id",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getLatestAuthenticationActivityForUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionAuthenticationActivity> = emptySet(),
   ): SuccessEntityResponseDto<AuthenticationActivityEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
@@ -485,7 +510,7 @@ class UserController(
   @RolesAllowed(ROLE_ADMIN)
   @Operation(
     summary = "Check if an user with the email exists",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun checkEmailAvailability(
     @PathVariable

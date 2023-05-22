@@ -26,7 +26,7 @@ class TankobonUserDao(
     "createdAt" to TableUser.CREATED_AT,
     "modifiedAt" to TableUser.MODIFIED_AT,
   )
-  
+
   override fun findByIdOrNull(userId: String): TankobonUser? =
     dsl.selectFrom(TableUser)
       .where(TableUser.ID.equal(userId))
@@ -58,8 +58,11 @@ class TankobonUserDao(
 
     return PageImpl(
       users,
-      if (pageable.isPaged) PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
-      else PageRequest.of(0, maxOf(count, 20), pageSort),
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
       count.toLong(),
     )
   }
@@ -85,7 +88,7 @@ class TankobonUserDao(
   override fun existsByEmailIgnoreCase(email: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TableUser)
-        .where(TableUser.EMAIL.equalIgnoreCase(email))
+        .where(TableUser.EMAIL.equalIgnoreCase(email)),
     )
 
   @Transactional

@@ -36,7 +36,7 @@ class OpenLibraryImporterProvider(
       O Open Library é um projeto online com o objetivo de criar "uma página na internet
       para cada livro já publicado". É um projeto do Internet Archive, uma organização
       sem fins lucrativos.
-    """.trimIndent()
+    """.trimIndent(),
   )
 
   override val language: String = "all"
@@ -88,7 +88,7 @@ class OpenLibraryImporterProvider(
       isbn = identifiers["isbn_13"]?.get(0) ?: identifiers["isbn_10"]!![0],
       title = title.trim(),
       contributors = authors.orEmpty().map { ImporterBookContributor(it.name, "Author") } +
-              details?.contributors.orEmpty().map { ImporterBookContributor(it.name, it.role.orEmpty().ifEmpty { "Author" }) },
+        details?.contributors.orEmpty().map { ImporterBookContributor(it.name, it.role.orEmpty().ifEmpty { "Author" }) },
       publisher = publishers[0].name,
       dimensions = if (
         details?.physicalDimensions.orEmpty().endsWith(" centimeters") &&
@@ -106,5 +106,4 @@ class OpenLibraryImporterProvider(
       provider = ImporterSource.OPEN_LIBRARY,
     )
   }
-
 }

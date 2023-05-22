@@ -12,4 +12,4 @@ data class SeriesAlternativeName(
   val seriesId: String = "",
 
   val createdAt: LocalDateTime = LocalDateTime.now(),
-): AlternativeName, Serializable
+) : AlternativeName, Serializable

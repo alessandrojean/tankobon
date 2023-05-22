@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 data class SkoobResponseDto<T>(
   val success: Boolean = false,
   val error: String? = "",
-  val response: T? = null
+  val response: T? = null,
 )
 
 data class SkoobBookDto(

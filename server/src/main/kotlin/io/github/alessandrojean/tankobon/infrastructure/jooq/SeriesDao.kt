@@ -102,7 +102,7 @@ class SeriesDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableSeries.ID)
         .from(TableSeries)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -151,7 +151,7 @@ class SeriesDao(
     dsl.fetchExists(
       dsl.selectFrom(TableSeries)
         .where(TableSeries.NAME.equalIgnoreCase(name))
-        .and(TableSeries.LIBRARY_ID.eq(libraryId))
+        .and(TableSeries.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(seriesId: String): String? =
@@ -227,13 +227,12 @@ class SeriesDao(
             series.id,
             alternativeName.name,
             alternativeName.language,
-            LocalDateTime.now(ZoneId.of("Z"))
+            LocalDateTime.now(ZoneId.of("Z")),
           )
         }
       }
       .execute()
   }
-
 
   @Transactional
   override fun delete(seriesId: String) {
@@ -303,5 +302,4 @@ class SeriesDao(
     seriesId = seriesId,
     createdAt = createdAt,
   )
-
 }

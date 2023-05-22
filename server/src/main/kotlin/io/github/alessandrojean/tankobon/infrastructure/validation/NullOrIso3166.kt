@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
   AnnotationTarget.VALUE_PARAMETER,
   AnnotationTarget.FIELD,
   AnnotationTarget.PROPERTY_GETTER,
-  AnnotationTarget.TYPE
+  AnnotationTarget.TYPE,
 )
 @Retention(AnnotationRetention.RUNTIME)
 @ReportAsSingleViolation

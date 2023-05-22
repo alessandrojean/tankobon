@@ -71,7 +71,7 @@ class ImporterLifecycle(
     val existingRoles = contributorRoleRepository
       .findByNamesInLibraryOrNull(
         names = import.contributors.map { it.role }.distinct(),
-        libraryId = libraryId
+        libraryId = libraryId,
       )
       .associateBy { it.name.lowercase() }
       .toMutableMap()

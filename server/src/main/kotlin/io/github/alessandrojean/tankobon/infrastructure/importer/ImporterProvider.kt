@@ -15,5 +15,4 @@ abstract class ImporterProvider {
   abstract val language: String
 
   abstract suspend fun searchByIsbn(isbn: String): Collection<ImporterBookResult>
-
 }

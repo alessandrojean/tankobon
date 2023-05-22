@@ -10,9 +10,9 @@ class TankobonPrincipal(val user: TankobonUser) : UserDetails {
   override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
     val roles = listOfNotNull(
       SimpleGrantedAuthority("ROLE_ADMIN").takeIf { user.isAdmin },
-      SimpleGrantedAuthority("ROLE_USER")
+      SimpleGrantedAuthority("ROLE_USER"),
     )
-    
+
     return roles.toMutableSet()
   }
 

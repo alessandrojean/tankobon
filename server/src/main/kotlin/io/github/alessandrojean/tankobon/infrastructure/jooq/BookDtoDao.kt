@@ -125,7 +125,7 @@ class BookDtoDao(
           .leftJoin(TableCollection)
           .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
           .where(conditions)
-          .groupBy(TableBook.ID)
+          .groupBy(TableBook.ID),
       )
 
       if (pagingBySearch) {
@@ -175,7 +175,7 @@ class BookDtoDao(
       .where(TableCollection.LIBRARY_ID.`in`(librariesIds))
       .and(
         TableBook.CODE.eq(isbn.removeDashes())
-          .or(TableBook.CODE.eq(isbn.toIsbn10()))
+          .or(TableBook.CODE.eq(isbn.toIsbn10())),
       )
       .fetchInto(TableBook)
       .map { it.toDomain() }
@@ -280,7 +280,7 @@ class BookDtoDao(
           personId = it.first.id,
           roleId = it.second.id,
         )
-      }
+      },
     )
   }
 
@@ -364,7 +364,7 @@ class BookDtoDao(
       skoob = links.skoob,
       goodreads = links.goodreads,
       guiaDosQuadrinhos = links.guiaDosQuadrinhos,
-    )
+    ),
   )
 
   private fun Book.toDto(): BookEntityDto {
@@ -478,14 +478,16 @@ class BookDtoDao(
 
     if (!seriesIds.isNullOrEmpty()) c = c.and(TableBook.SERIES_ID.`in`(seriesIds))
 
-    if (!publisherIds.isNullOrEmpty()) c = c.and(
-      TableBook.ID.`in`(
-        DSL.select(TableBookPublisher.BOOK_ID)
-          .from(TableBookPublisher)
-          .where(TableBookPublisher.PUBLISHER_ID.`in`(publisherIds))
-          .and(TableBookPublisher.BOOK_ID.eq(TableBook.ID))
+    if (!publisherIds.isNullOrEmpty()) {
+      c = c.and(
+        TableBook.ID.`in`(
+          DSL.select(TableBookPublisher.BOOK_ID)
+            .from(TableBookPublisher)
+            .where(TableBookPublisher.PUBLISHER_ID.`in`(publisherIds))
+            .and(TableBookPublisher.BOOK_ID.eq(TableBook.ID)),
+        ),
       )
-    )
+    }
 
     if (!userId.isNullOrEmpty()) {
       val user = userDao.findByIdOrNull(userId)!!
@@ -532,7 +534,7 @@ class BookDtoDao(
       *publishers,
       *contributors,
       *tags,
-    )
+    ),
   )
 
   private fun BookRecord.toDomain() = Book(
@@ -571,5 +573,4 @@ class BookDtoDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

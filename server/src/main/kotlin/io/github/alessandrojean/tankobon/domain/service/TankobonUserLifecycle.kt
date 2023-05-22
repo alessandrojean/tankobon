@@ -22,7 +22,7 @@ class TankobonUserLifecycle(
   private val passwordEncoder: PasswordEncoder,
   private val sessionRegistry: SessionRegistry,
   private val transactionTemplate: TransactionTemplate,
-  private val eventPublisher: EventPublisher
+  private val eventPublisher: EventPublisher,
 ) {
 
   fun updatePassword(user: TankobonUser, newPassword: String, expireSessions: Boolean) {
@@ -95,5 +95,4 @@ class TankobonUserLifecycle(
         it.expireNow()
       }
   }
-
 }

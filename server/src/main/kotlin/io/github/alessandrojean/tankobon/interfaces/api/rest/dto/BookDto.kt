@@ -49,13 +49,13 @@ data class BookAttributesDto(
   val billedAt: LocalDateTime?,
   val arrivedAt: LocalDateTime?,
   val createdAt: LocalDateTime?,
-  val modifiedAt: LocalDateTime?
+  val modifiedAt: LocalDateTime?,
 ) : EntityAttributesDto()
 
 data class BookLinksDto(
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(
-    allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn", "amazon.com.au", "amazon.com.be", "amazon.eg", "amazon.fr", "amazon.in", "amazon.it", "amazon.com.mx", "amazon.nl", "amazon.pl", "amazon.sa", "amazon.sg", "amazon.es", "amazon.se", "amazon.com.tr", "amazon.ae", "amazon.de"]
+    allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn", "amazon.com.au", "amazon.com.be", "amazon.eg", "amazon.fr", "amazon.in", "amazon.it", "amazon.com.mx", "amazon.nl", "amazon.pl", "amazon.sa", "amazon.sg", "amazon.es", "amazon.se", "amazon.com.tr", "amazon.ae", "amazon.de"],
   )
   val amazon: String? = null,
   @get:NullOrNotBlank
@@ -112,7 +112,7 @@ fun String.toCodeDto(): CodeDto = when (val type = guessCodeType()) {
       code = this,
       group = isbnInformation?.group,
       region = isbnInformation?.region,
-      language = isbnInformation?.language
+      language = isbnInformation?.language,
     )
   }
   else -> SimpleCodeDto(type = type, code = this)

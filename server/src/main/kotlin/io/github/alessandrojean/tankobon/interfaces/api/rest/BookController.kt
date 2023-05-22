@@ -116,7 +116,10 @@ class BookController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     library: String? = null,
-    @PathVariable @ISBN @Schema(format = "isbn") isbn: String,
+    @PathVariable
+    @ISBN
+    @Schema(format = "isbn")
+    isbn: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
   ): SuccessCollectionResponseDto<BookEntityDto> {
     val libraries = if (library.isNullOrEmpty()) {
@@ -143,7 +146,10 @@ class BookController(
   @Operation(summary = "Get all books from a library", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllBooksFromLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
@@ -164,7 +170,7 @@ class BookController(
     val bookSearch = BookSearch(
       libraryIds = listOf(libraryId),
       searchTerm = searchTerm,
-      userId = principal.user.id
+      userId = principal.user.id,
     )
     val pageRequest = PageRequest.of(page.pageNumber, page.pageSize, sort)
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
@@ -179,7 +185,10 @@ class BookController(
   @Operation(summary = "Get all books from a series", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllBooksFromSeries(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") seriesId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    seriesId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -206,7 +215,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       seriesIds = listOf(seriesId),
-      userId = principal.user.id
+      userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
     val books = referenceExpansion.expand(booksPage.content, includes)
@@ -220,7 +229,10 @@ class BookController(
   @Operation(summary = "Get all books from a publisher", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllBooksFromPublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -247,7 +259,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       publisherIds = listOf(publisherId),
-      userId = principal.user.id
+      userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
     val books = referenceExpansion.expand(booksPage.content, includes)
@@ -259,11 +271,14 @@ class BookController(
   @GetMapping("v1/libraries/{libraryId}/books/latest")
   @Operation(
     summary = "Get newly added or updated books from a library",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getLatestBooksInLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
@@ -288,7 +303,10 @@ class BookController(
   @Operation(summary = "Get a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
   ): SuccessEntityResponseDto<BookEntityDto> {
     val book = bookDtoRepository.findByIdOrNull(bookId)
@@ -330,7 +348,10 @@ class BookController(
   @Operation(summary = "Upload a cover to a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadBookCover(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
     @RequestParam("cover") @SupportedImageFormat coverFile: MultipartFile,
   ) {
     val libraryId = bookRepository.getLibraryIdOrNull(bookId)
@@ -349,7 +370,10 @@ class BookController(
   @Operation(summary = "Modify a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
     @Valid @RequestBody
     book: BookUpdateDto,
   ) {
@@ -369,7 +393,10 @@ class BookController(
   @Operation(summary = "Delete a book by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
   ) {
     val existing = bookRepository.findByIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")
@@ -388,7 +415,10 @@ class BookController(
   @Operation(summary = "Delete a book cover by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteBookCover(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
   ) {
     val existing = bookRepository.findByIdOrNull(bookId)
       ?: throw IdDoesNotExistException("Book not found")

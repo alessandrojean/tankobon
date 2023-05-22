@@ -51,7 +51,7 @@ fun ReadProgress.toDto(
       id = userId,
       type = ReferenceExpansionReadProgress.USER,
       attributes = userAttributesDto,
-    )
+    ),
   ),
 )
 
@@ -65,7 +65,9 @@ fun ReadProgress.toAttributesDto() = ReadProgressAttributesDto(
 
 @DateRangeValidation
 data class ReadProgressCreationDto(
-  @get:NotNull @get:Min(0) val page: Int,
+  @get:NotNull
+  @get:Min(0)
+  val page: Int,
   @get:Nullable override val startedAt: LocalDateTime? = null,
   @get:Nullable override val finishedAt: LocalDateTime? = null,
   @get:NotNull val isCompleted: Boolean,
@@ -80,7 +82,9 @@ data class ReadProgressCreationDto(
 
 @DateRangeValidation
 data class ReadProgressUpdateDto(
-  @get:NotNull @get:Min(0) val page: Int,
+  @get:NotNull
+  @get:Min(0)
+  val page: Int,
   @get:Nullable override val startedAt: LocalDateTime? = null,
   @get:Nullable override val finishedAt: LocalDateTime? = null,
   @get:NotNull val isCompleted: Boolean,

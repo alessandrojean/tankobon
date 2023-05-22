@@ -91,7 +91,10 @@ class StoreController(
   fun getAllStoresByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<StoreEntityDto> {
@@ -130,7 +133,10 @@ class StoreController(
   @Operation(summary = "Get a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneStory(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    storeId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionStore> = emptySet(),
   ): SuccessEntityResponseDto<StoreEntityDto> {
     val store = storeRepository.findByIdOrNull(storeId)
@@ -178,8 +184,8 @@ class StoreController(
         legalName = store.legalName,
         location = store.location,
         type = store.type,
-        libraryId = store.library
-      )
+        libraryId = store.library,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -190,7 +196,10 @@ class StoreController(
   @Operation(summary = "Delete a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    storeId: String,
   ) {
     val existing = storeRepository.findByIdOrNull(storeId)
       ?: throw IdDoesNotExistException("Store not found")
@@ -209,9 +218,12 @@ class StoreController(
   @Operation(summary = "Modify a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") storeId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    storeId: String,
     @Valid @RequestBody
-    store: StoreUpdateDto
+    store: StoreUpdateDto,
   ) {
     val existing = storeRepository.findByIdOrNull(storeId)
       ?: throw IdDoesNotExistException("Store not found")

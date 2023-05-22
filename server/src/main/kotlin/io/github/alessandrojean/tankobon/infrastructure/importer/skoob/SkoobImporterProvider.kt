@@ -33,7 +33,7 @@ class SkoobImporterProvider(
     "pt-BR" to """
       O Skoob é uma rede social colaborativa para leitores, lançada em 2009. Atualmente
       pertence as Lojas Americanas, uma rede privada de varejo, desde 2021.
-    """.trimIndent()
+    """.trimIndent(),
   )
 
   override val language: String = "pt-BR"
@@ -49,7 +49,7 @@ class SkoobImporterProvider(
             "limit:8",
             "page:1",
             "isbn:true",
-            "ranking:true"
+            "ranking:true",
           )
           .build()
       }
@@ -92,5 +92,4 @@ class SkoobImporterProvider(
   companion object {
     private const val API_USER_AGENT = "okhttp/3.12.12"
   }
-
 }

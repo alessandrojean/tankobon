@@ -51,7 +51,7 @@ fun String.toIsbn10(): String? {
 data class IsbnInformation(
   val group: Int,
   val region: String,
-  val language: String
+  val language: String,
 )
 
 val RegistrationGroups = arrayOf(
@@ -84,7 +84,7 @@ val RegistrationGroups = arrayOf(
   IsbnInformation(9974, "UY", "es"),
   IsbnInformation(99905, "BO", "es"),
   IsbnInformation(99954, "BO", "es"),
-  IsbnInformation(99974, "BO", "es")
+  IsbnInformation(99974, "BO", "es"),
 )
 
 fun String.toIsbnInformation(): IsbnInformation? {

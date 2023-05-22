@@ -31,7 +31,7 @@ fun ContributorRole.toDto(libraryAttributes: LibraryAttributesDto? = null) = Con
       id = libraryId,
       type = ReferenceExpansionContributorRole.LIBRARY,
       attributes = libraryAttributes,
-    )
+    ),
   ),
 )
 

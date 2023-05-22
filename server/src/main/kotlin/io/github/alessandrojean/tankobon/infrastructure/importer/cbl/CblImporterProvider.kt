@@ -40,7 +40,7 @@ class CblImporterProvider(
       A Câmara Brasileira do Livro (CBL) é uma organização sem fins lucrativos que tem
       como objetivo promover o mercado editorial brasileiro e o hábito de leitura. É
       a única agência oficial do ISBN desde 2020.
-    """.trimIndent()
+    """.trimIndent(),
   )
 
   override val language: String = "pt-BR"
@@ -61,7 +61,7 @@ class CblImporterProvider(
       searchMode = "any",
       select = FIELDS_TO_SELECT.joinToString(","),
       skip = 0,
-      top = 12
+      top = 12,
     )
 
     val results = webClient.post()
@@ -107,8 +107,8 @@ class CblImporterProvider(
         ?: return@let null
 
       Dimensions(
-        widthCm = (match.groupValues[1] + "." + match.groupValues[2].ifEmpty{ "0" }).toFloatOrNull() ?: 0f,
-        heightCm = (match.groupValues[3] + "." + match.groupValues[4].ifEmpty { "0" }).toFloatOrNull() ?: 0f
+        widthCm = (match.groupValues[1] + "." + match.groupValues[2].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
+        heightCm = (match.groupValues[3] + "." + match.groupValues[4].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
       )
     },
     synopsis = synopsis.orEmpty().trim(),
@@ -138,10 +138,9 @@ class CblImporterProvider(
       "Veiculacao",
       "Profissoes",
       "Dimensao",
-      "Sinopse"
+      "Sinopse",
     )
 
     private val DIMENSION_REGEX = "(\\d{2})(\\d)?x(\\d{2})(\\d)?$".toRegex()
   }
-
 }

@@ -48,7 +48,7 @@ class ErrorHandlingControllerAdvice(
           title = it.propertyPath.toString(),
           details = it.message,
         )
-      }
+      },
     )
   }
 
@@ -64,7 +64,7 @@ class ErrorHandlingControllerAdvice(
           title = it.field,
           details = it.defaultMessage.orEmpty(),
         )
-      }
+      },
     )
   }
 
@@ -156,8 +156,8 @@ class ErrorHandlingControllerAdvice(
           status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
           title = "There was an error while accessing the database",
           details = "Check with an administrator if the error persists",
-        )
-      )
+        ),
+      ),
     )
   }
 
@@ -167,7 +167,7 @@ class ErrorHandlingControllerAdvice(
   fun onException(e: Exception) = e.toErrorResponseDto()
 
   private fun CodedException.toErrorResponseDto(status: HttpStatus = HttpStatus.BAD_REQUEST) = ErrorResponseDto(
-    errors = listOf(toErrorDto(status))
+    errors = listOf(toErrorDto(status)),
   )
 
   private fun CodedException.toErrorDto(status: HttpStatus = HttpStatus.BAD_REQUEST) = ErrorDto(
@@ -175,7 +175,7 @@ class ErrorHandlingControllerAdvice(
     status = status.value(),
     title = localizedMessage.orEmpty().ifEmpty { message.orEmpty() },
     details = code.ifEmpty { message.orEmpty() },
-    stackTrace = stackTraceToString().takeIf { showStackTrace }
+    stackTrace = stackTraceToString().takeIf { showStackTrace },
   )
 
   private fun Exception.toErrorResponseDto(status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) = ErrorResponseDto(
@@ -187,7 +187,7 @@ class ErrorHandlingControllerAdvice(
         details = message.orEmpty(),
         stackTrace = stackTraceToString().takeIf { showStackTrace },
       ),
-    )
+    ),
   )
 
   private fun String.toErrorId(): String =

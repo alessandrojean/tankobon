@@ -76,7 +76,7 @@ class PublisherDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TablePublisher.ID)
         .from(TablePublisher)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -119,7 +119,7 @@ class PublisherDao(
     dsl.fetchExists(
       dsl.selectFrom(TablePublisher)
         .where(TablePublisher.NAME.equalIgnoreCase(name))
-        .and(TablePublisher.LIBRARY_ID.eq(libraryId))
+        .and(TablePublisher.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(publisherId: String): String? =
@@ -228,5 +228,4 @@ class PublisherDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

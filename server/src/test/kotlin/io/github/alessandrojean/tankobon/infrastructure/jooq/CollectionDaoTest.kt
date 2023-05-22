@@ -79,7 +79,7 @@ class CollectionDaoTest(
 
     val updated = collectionDao.findById(collection.id).copy(
       name = "CollectionUpdated",
-      description = "CollectionUpdated description"
+      description = "CollectionUpdated description",
     )
 
     collectionDao.update(updated)

@@ -46,7 +46,7 @@ class PreferenceController(
   @GetMapping("v1/users/me/preferences")
   @Operation(
     summary = "Get all preferences from the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getAllMePreferences(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -62,7 +62,10 @@ class PreferenceController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
   @Operation(summary = "Get all preferences from a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllPreferencesByUser(
-    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable("userId")
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
   ): SuccessCollectionResponseDto<PreferenceEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
@@ -77,11 +80,12 @@ class PreferenceController(
   @PostMapping("v1/users/me/preferences")
   @Operation(
     summary = "Set a preference value by key to the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun setMePreferenceValueByKey(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @Valid @RequestBody preference: PreferenceCreationUpdateDto,
+    @Valid @RequestBody
+    preference: PreferenceCreationUpdateDto,
   ): SuccessEntityResponseDto<PreferenceEntityDto> {
     val exists = preferenceRepository.existsByKeyFromUser(preference.key, principal.user.id)
     val preferenceDomain = Preference(
@@ -103,8 +107,12 @@ class PreferenceController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
   @Operation(summary = "Set a preference value by key to a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun setPreferenceValueByKey(
-    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
-    @Valid @RequestBody preference: PreferenceCreationUpdateDto,
+    @PathVariable("userId")
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
+    @Valid @RequestBody
+    preference: PreferenceCreationUpdateDto,
   ): SuccessEntityResponseDto<PreferenceEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw RelationIdDoesNotExistException("User not found")
@@ -123,11 +131,12 @@ class PreferenceController(
   @PostMapping("v1/users/me/preferences/batch")
   @Operation(
     summary = "Set multiple preference values by keys to the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun setMePreferencesValuesByKeys(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @NotEmpty @RequestBody preferences: Map<@NotBlank String, @NotBlank String>,
+    @NotEmpty @RequestBody
+    preferences: Map<@NotBlank String, @NotBlank String>,
   ): SuccessCollectionResponseDto<PreferenceEntityDto> {
     preferenceRepository.insertOrUpdate(
       preferences = preferences.map { Preference(principal.user.id, it.key, it.value) },
@@ -146,8 +155,12 @@ class PreferenceController(
   @PreAuthorize("hasRole('$ROLE_ADMIN') or authentication.principal.user.id == #userId")
   @Operation(summary = "Set multiple preference values by keys to a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun setPreferencesValuesByKeys(
-    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
-    @NotEmpty @RequestBody preferences: Map<@NotBlank String, @NotBlank String>,
+    @PathVariable("userId")
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
+    @NotEmpty @RequestBody
+    preferences: Map<@NotBlank String, @NotBlank String>,
   ): SuccessCollectionResponseDto<PreferenceEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw RelationIdDoesNotExistException("User not found")
@@ -169,7 +182,7 @@ class PreferenceController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
     summary = "Delete a preference by key from the current authenticated user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun deletePreferenceByKeyFromMe(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -187,7 +200,10 @@ class PreferenceController(
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a preference by key from a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun deletePreferenceByKeyFromUser(
-    @PathVariable("userId") @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable("userId")
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @PathVariable("preferenceKey") preferenceKey: String,
   ) {
     val user = userRepository.findByIdOrNull(userId)

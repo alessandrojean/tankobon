@@ -39,7 +39,7 @@ class PreferenceDao(
       dsl.select(TableUserPreference.KEY)
         .from(TableUserPreference)
         .where(TableUserPreference.KEY.eq(key))
-        .and(TableUserPreference.USER_ID.eq(userId))
+        .and(TableUserPreference.USER_ID.eq(userId)),
     )
 
   @Transactional

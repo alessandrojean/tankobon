@@ -16,5 +16,5 @@ data class ReadProgress(
   val userId: String = "",
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : Auditable, Durational, Serializable

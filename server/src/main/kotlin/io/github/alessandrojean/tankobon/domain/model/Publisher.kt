@@ -18,5 +18,5 @@ data class Publisher(
   override val dissolutionYear: Int? = null,
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : LibraryItem, DurationalCompanyYear, Auditable, Serializable

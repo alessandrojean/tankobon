@@ -151,6 +151,5 @@ class StoreControllerTest(
       mockMvc.get("/api/v1/stores/${store.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

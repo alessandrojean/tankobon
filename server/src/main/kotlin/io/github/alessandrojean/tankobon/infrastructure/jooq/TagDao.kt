@@ -64,7 +64,7 @@ class TagDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableTag.ID)
         .from(TableTag)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -107,7 +107,7 @@ class TagDao(
     dsl.fetchExists(
       dsl.selectFrom(TableTag)
         .where(TableTag.NAME.equalIgnoreCase(name))
-        .and(TableTag.LIBRARY_ID.eq(libraryId))
+        .and(TableTag.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(tagId: String): String? =
@@ -184,5 +184,4 @@ class TagDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

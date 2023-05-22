@@ -26,7 +26,6 @@ class SystemStatusController(
     status = SystemStatus.OPERATIONAL,
     isDevelopment = environment.activeProfiles.contains("dev"),
     isDemo = environment.activeProfiles.contains("demo"),
-    version = buildProperties.version
+    version = buildProperties.version,
   )
-
 }

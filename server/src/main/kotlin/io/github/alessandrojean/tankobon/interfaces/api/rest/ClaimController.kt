@@ -28,7 +28,7 @@ The claim feature can be used in a new Tankobon instance that needs to set its f
 administrator account. By claiming a server, the user will be given an administrator role
 and will be able to create new users and entities. After a server has been claimed,
 it can not be claimed by other user any more.
-  """
+  """,
 )
 class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
 
@@ -49,7 +49,7 @@ class ClaimController(private val userLifecycle: TankobonUserLifecycle) {
         password = claimInfo.password,
         isAdmin = true,
         name = claimInfo.name,
-      )
+      ),
     )
 
     return SuccessEntityResponseDto(admin.toDto())

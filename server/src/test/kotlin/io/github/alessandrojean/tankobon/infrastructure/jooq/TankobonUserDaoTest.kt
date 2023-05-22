@@ -129,7 +129,7 @@ class TankobonUserDaoTest(
   @Test
   fun `it should check properly if email already exists even with different casing`() {
     tankobonUserDao.insert(
-      TankobonUser("user1@example.org", "p", false, "User1")
+      TankobonUser("user1@example.org", "p", false, "User1"),
     )
 
     val exists = tankobonUserDao.existsByEmailIgnoreCase("USER1@EXAMPLE.ORG")
@@ -142,7 +142,7 @@ class TankobonUserDaoTest(
   @Test
   fun `it should find the user by its email if it exists even with different casing`() {
     tankobonUserDao.insert(
-      TankobonUser("user1@example.org", "p", false, "User1")
+      TankobonUser("user1@example.org", "p", false, "User1"),
     )
 
     val found = tankobonUserDao.findByEmailIgnoreCaseOrNull("USER1@EXAMPLE.ORG")

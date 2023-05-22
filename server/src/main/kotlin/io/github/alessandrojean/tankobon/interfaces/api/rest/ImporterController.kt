@@ -73,7 +73,7 @@ programmatically by the API if needed, with extra metadata such as a multi langu
 | `CBL`          | https://cblservicos.org | Official Brazilian ISBN agency.                     |
 | `OPEN_LIBRARY` | https://openlibrary.org | Book cataloging archive by Internet Archive.        |
 | `SKOOB`        | https://skoob.com.br    | Collaborative social network for Brazilian readers. | 
-  """
+  """,
 )
 class ImporterController(
   private val importerProviders: List<ImporterProvider>,
@@ -103,7 +103,7 @@ class ImporterController(
   @GetMapping("v1/importer/search/{isbn}")
   @Operation(
     summary = "Search a book by its ISBN in the external sources",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   suspend fun searchByIsbn(
     @PathVariable
@@ -141,7 +141,7 @@ class ImporterController(
   @PostMapping("v1/importer/import")
   @Operation(
     summary = "Import an external book into a collection",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   suspend fun importOneBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
@@ -173,10 +173,9 @@ class ImporterController(
     val book = importerLifecycle.importToCollection(
       collectionId = import.collection,
       import = bookResult,
-      user = principal.user
+      user = principal.user,
     )
 
     return SuccessEntityResponseDto(book)
   }
-
 }

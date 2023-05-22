@@ -15,7 +15,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRole
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ContributorRoleUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionContributorRole
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -89,12 +88,15 @@ class ContributorRoleController(
   @GetMapping("v1/libraries/{libraryId}/contributor-roles")
   @Operation(
     summary = "Get all contributor roles from a library",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getAllContributorRolesByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<ContributorRoleEntityDto> {
@@ -133,7 +135,10 @@ class ContributorRoleController(
   @Operation(summary = "Get a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    contributorRoleId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionContributorRole> = emptySet(),
   ): SuccessEntityResponseDto<ContributorRoleEntityDto> {
     val contributorRole = contributorRoleRepository.findByIdOrNull(contributorRoleId)
@@ -147,7 +152,7 @@ class ContributorRoleController(
 
     val expanded = referenceExpansion.expand(
       entity = contributorRole.toDto(),
-      relationsToExpand = includes
+      relationsToExpand = includes,
     )
 
     return SuccessEntityResponseDto(expanded)
@@ -171,8 +176,8 @@ class ContributorRoleController(
       ContributorRole(
         name = contributorRole.name,
         description = contributorRole.description,
-        libraryId = contributorRole.library
-      )
+        libraryId = contributorRole.library,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -183,7 +188,10 @@ class ContributorRoleController(
   @Operation(summary = "Delete a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    contributorRoleId: String,
   ) {
     val existing = contributorRoleRepository.findByIdOrNull(contributorRoleId)
       ?: throw IdDoesNotExistException("Contributor role not found")
@@ -202,9 +210,12 @@ class ContributorRoleController(
   @Operation(summary = "Modify a contributor role by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneContributorRole(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorRoleId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    contributorRoleId: String,
     @Valid @RequestBody
-    contributorRole: ContributorRoleUpdateDto
+    contributorRole: ContributorRoleUpdateDto,
   ) {
     val existing = contributorRoleRepository.findByIdOrNull(contributorRoleId)
       ?: throw IdDoesNotExistException("Contributor role not found")

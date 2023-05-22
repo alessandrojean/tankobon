@@ -15,5 +15,5 @@ enum class SeriesType {
   NOVEL,
   DATABOOK,
   ARTBOOK,
-  LIGHT_NOVEL
+  LIGHT_NOVEL,
 }

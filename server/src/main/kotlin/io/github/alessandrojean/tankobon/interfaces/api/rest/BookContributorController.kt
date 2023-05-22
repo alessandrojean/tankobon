@@ -40,7 +40,10 @@ class BookContributorController(
   @Operation(summary = "Get all contributors from a book", security = [SecurityRequirement(name = "Basic Auth")])
   fun getAllContributorsByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBookContributor> = emptySet(),
   ): SuccessCollectionResponseDto<BookContributorEntityDto> {
     val libraryId = bookRepository.getLibraryIdOrNull(bookId)
@@ -65,7 +68,10 @@ class BookContributorController(
   @Operation(summary = "Get a book contributor by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneBookContributor(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") contributorId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    contributorId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBookContributor> = emptySet(),
   ): SuccessEntityResponseDto<BookContributorEntityDto> {
     val contributor = bookContributorRepository.findByIdAsDtoOrNull(contributorId)
@@ -85,5 +91,4 @@ class BookContributorController(
 
     return SuccessEntityResponseDto(expanded)
   }
-
 }

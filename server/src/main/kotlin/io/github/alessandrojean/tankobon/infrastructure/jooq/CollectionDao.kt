@@ -31,7 +31,7 @@ class CollectionDao(
 ) : CollectionRepository {
 
   private val sorts = mapOf(
-    "name" to TableCollection.NAME.collate(SqliteUdfDataSource.collationUnicode3)
+    "name" to TableCollection.NAME.collate(SqliteUdfDataSource.collationUnicode3),
   )
 
   override fun findById(collectionId: String): DomainCollection = findByIdOrNull(collectionId)!!
@@ -63,7 +63,7 @@ class CollectionDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableCollection.ID)
         .from(TableCollection)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -106,7 +106,7 @@ class CollectionDao(
     dsl.fetchExists(
       dsl.selectFrom(TableCollection)
         .where(TableCollection.NAME.equalIgnoreCase(name))
-        .and(TableCollection.LIBRARY_ID.eq(libraryId))
+        .and(TableCollection.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(collectionId: String): String? =
@@ -183,5 +183,4 @@ class CollectionDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

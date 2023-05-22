@@ -109,7 +109,7 @@ class BookCoverLifecycle(
       val existingImage = getImageDetails(bookId)!!
 
       imageRepository.update(
-        imageDomain.copy(createdAt = existingImage.createdAt)
+        imageDomain.copy(createdAt = existingImage.createdAt),
       )
     } else {
       imageRepository.insert(imageDomain)
@@ -122,5 +122,4 @@ class BookCoverLifecycle(
       eventPublisher.publishEvent(event)
     }
   }
-
 }

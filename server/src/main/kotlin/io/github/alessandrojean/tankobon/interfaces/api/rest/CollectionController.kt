@@ -15,7 +15,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionCollection
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
@@ -113,7 +112,10 @@ class CollectionController(
   fun getAllCollectionsByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessCollectionResponseDto<CollectionEntityDto> {
@@ -156,7 +158,10 @@ class CollectionController(
   @Operation(summary = "Get a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    collectionId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionCollection> = emptySet(),
   ): SuccessEntityResponseDto<CollectionEntityDto> {
     val collection = collectionRepository.findByIdOrNull(collectionId)
@@ -170,7 +175,7 @@ class CollectionController(
 
     val expanded = referenceExpansion.expand(
       entity = collection.toDto(),
-      relationsToExpand = includes
+      relationsToExpand = includes,
     )
 
     return SuccessEntityResponseDto(expanded)
@@ -194,8 +199,8 @@ class CollectionController(
       Collection(
         name = collection.name,
         description = collection.description,
-        libraryId = collection.library
-      )
+        libraryId = collection.library,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -206,7 +211,10 @@ class CollectionController(
   @Operation(summary = "Delete a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    collectionId: String,
   ) {
     val existing = collectionRepository.findByIdOrNull(collectionId)
       ?: throw IdDoesNotExistException("Collection not found")
@@ -225,9 +233,12 @@ class CollectionController(
   @Operation(summary = "Modify a collection by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneCollection(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") collectionId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    collectionId: String,
     @Valid @RequestBody
-    collection: CollectionUpdateDto
+    collection: CollectionUpdateDto,
   ) {
     val existing = collectionRepository.findByIdOrNull(collectionId)
       ?: throw IdDoesNotExistException("Collection not found")

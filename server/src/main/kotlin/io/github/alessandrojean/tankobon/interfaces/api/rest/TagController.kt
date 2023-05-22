@@ -12,7 +12,6 @@ import io.github.alessandrojean.tankobon.domain.service.TagLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionTag
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.TagCreationDto
@@ -91,7 +90,10 @@ class TagController(
   fun getAllTagsByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<TagEntityDto> {
@@ -130,7 +132,10 @@ class TagController(
   @Operation(summary = "Get a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    tagId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionTag> = emptySet(),
   ): SuccessEntityResponseDto<TagEntityDto> {
     val tag = tagRepository.findByIdOrNull(tagId)
@@ -169,7 +174,7 @@ class TagController(
         name = tag.name,
         description = tag.description,
         libraryId = tag.library,
-      )
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -180,7 +185,10 @@ class TagController(
   @Operation(summary = "Delete a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    tagId: String,
   ) {
     val existing = tagRepository.findByIdOrNull(tagId)
       ?: throw IdDoesNotExistException("Tag not found")
@@ -199,9 +207,12 @@ class TagController(
   @Operation(summary = "Modify a tag by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneTag(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") tagId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    tagId: String,
     @Valid @RequestBody
-    tag: TagUpdateDto
+    tag: TagUpdateDto,
   ) {
     val existing = tagRepository.findByIdOrNull(tagId)
       ?: throw IdDoesNotExistException("Tag not found")

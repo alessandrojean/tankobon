@@ -78,7 +78,7 @@ class ReadProgressDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableReadProgress.ID)
         .from(TableReadProgress)
-        .where(TableReadProgress.USER_ID.eq(userId))
+        .where(TableReadProgress.USER_ID.eq(userId)),
     )
 
     val orderBy = pageable.sort.mapNotNull { it.toSortField(sorts) }
@@ -163,5 +163,4 @@ class ReadProgressDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

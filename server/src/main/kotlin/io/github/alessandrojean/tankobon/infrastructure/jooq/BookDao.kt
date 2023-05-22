@@ -100,7 +100,7 @@ class BookDao(
     dsl.fetchExists(
       dsl.select(TableBook.ID)
         .from(TableBook)
-        .where(TableBook.CODE.equalIgnoreCase(code))
+        .where(TableBook.CODE.equalIgnoreCase(code)),
     )
 
   override fun getLibraryIdOrNull(bookId: String): String? =

@@ -61,8 +61,8 @@ fun Person.toDto(libraryAttributesDto: LibraryAttributesDto? = null) = PersonEnt
       id = libraryId,
       type = ReferenceExpansionPerson.LIBRARY,
       attributes = libraryAttributesDto,
-    )
-  )
+    ),
+  ),
 )
 
 fun Person.toAttributesDto() = PersonAttributesDto(
@@ -76,7 +76,7 @@ fun Person.toAttributesDto() = PersonAttributesDto(
     pixiv = links.pixiv,
     deviantArt = links.deviantArt,
     youTube = links.youTube,
-  )
+  ),
 )
 
 data class PersonCreationDto(

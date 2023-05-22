@@ -24,32 +24,31 @@ class CorsConfiguration {
   @Conditional(CorsAllowedOriginsPresent::class)
   fun corsConfigurationSource(
     sessionHeaderName: String,
-    tankobonProperties: TankobonProperties
-  ): UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource().apply { 
+    tankobonProperties: TankobonProperties,
+  ): UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource().apply {
     registerCorsConfiguration(
       "/**",
-      CorsConfiguration().applyPermitDefaultValues().apply { 
+      CorsConfiguration().applyPermitDefaultValues().apply {
         allowedOrigins = tankobonProperties.cors.allowedOrigins
         allowedMethods = HttpMethod.values().map(HttpMethod::name)
         allowCredentials = true
         addExposedHeader(HttpHeaders.CONTENT_DISPOSITION)
         addExposedHeader(sessionHeaderName)
-      }
+      },
     )
   }
 
   class CorsAllowedOriginsPresent : SpringBootCondition() {
     override fun getMatchOutcome(
       context: ConditionContext,
-      metadata: AnnotatedTypeMetadata
-    ): ConditionOutcome { 
+      metadata: AnnotatedTypeMetadata,
+    ): ConditionOutcome {
       val defined = Binder.get(context.environment)
         .bind(ConfigurationPropertyName.of("tankobon.cors.allowed-origins"), Bindable.of(List::class.java))
         .orElse(Collections.emptyList<String>())
         .isNotEmpty()
 
       return ConditionOutcome(defined, "Cors allowed-origins present")
-    }    
+    }
   }
-
 }

@@ -144,6 +144,5 @@ class CollectionControllerTest(
       mockMvc.get("/api/v1/collections/${collection.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

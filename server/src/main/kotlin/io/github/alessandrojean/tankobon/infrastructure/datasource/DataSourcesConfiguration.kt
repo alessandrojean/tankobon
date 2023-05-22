@@ -18,8 +18,11 @@ class DataSourcesConfiguration(
   @Primary
   fun sqliteDataSource(): DataSource {
     val extraPragmas = tankobonProperties.database.pragmas.let {
-      if (it.isEmpty()) ""
-      else "?" + it.entries.joinToString("&") { (key, value) -> "$key=$value" }
+      if (it.isEmpty()) {
+        ""
+      } else {
+        "?" + it.entries.joinToString("&") { (key, value) -> "$key=$value" }
+      }
     }
 
     val sqliteUdfDataSource = DataSourceBuilder.create()
@@ -46,7 +49,7 @@ class DataSourcesConfiguration(
         dataSource = sqliteUdfDataSource
         poolName = "SqliteUdfPool"
         maximumPoolSize = poolSize
-      }
+      },
     )
   }
 }

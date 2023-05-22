@@ -72,7 +72,7 @@ class LibraryDaoTest(
 
     val updated = libraryDao.findById(library.id).copy(
       name = "LibraryUpdated",
-      description = "LibraryUpdated description"
+      description = "LibraryUpdated description",
     )
 
     libraryDao.update(updated)

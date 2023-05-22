@@ -18,5 +18,5 @@ data class Image(
   val versions: Map<String, String> = emptyMap(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : Serializable, Auditable

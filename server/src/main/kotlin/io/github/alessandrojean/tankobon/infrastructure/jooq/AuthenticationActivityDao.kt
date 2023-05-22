@@ -67,8 +67,11 @@ class AuthenticationActivityDao(
     val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
     return PageImpl(
       items,
-      if (pageable.isPaged) PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
-      else PageRequest.of(0, maxOf(count, 20), pageSort),
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
       count.toLong(),
     )
   }
@@ -84,7 +87,7 @@ class AuthenticationActivityDao(
         TableAuthenticationActivity.USER_AGENT,
         TableAuthenticationActivity.SUCCESS,
         TableAuthenticationActivity.ERROR,
-        TableAuthenticationActivity.SOURCE
+        TableAuthenticationActivity.SOURCE,
       )
       .values(
         activity.id,
@@ -94,7 +97,7 @@ class AuthenticationActivityDao(
         activity.userAgent,
         activity.success,
         activity.error,
-        activity.source
+        activity.source,
       )
       .execute()
   }

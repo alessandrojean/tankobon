@@ -24,7 +24,7 @@ class TaskHandler(
   @JmsListener(
     destination = QUEUE_TASKS,
     containerFactory = QUEUE_FACTORY,
-    concurrency = "#{@tankobonProperties.taskConsumers}-#{@tankobonProperties.taskConsumersMax}"
+    concurrency = "#{@tankobonProperties.taskConsumers}-#{@tankobonProperties.taskConsumersMax}",
   )
   fun handleTask(task: Task) {
     logger.info { "Executing task: $task" }

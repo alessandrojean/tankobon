@@ -141,6 +141,5 @@ class TagControllerTest(
       mockMvc.get("/api/v1/tags/${tag.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

@@ -39,5 +39,4 @@ class PublisherPictureLifecycle(
   override fun isDeleteEvent(event: DomainEvent) = event is DomainEvent.PublisherDeleted
 
   override fun getEntityIdFromDeleteEvent(event: DomainEvent) = (event as DomainEvent.PublisherDeleted).publisher.id
-
 }

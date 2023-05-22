@@ -73,8 +73,8 @@ fun Publisher.toDto(libraryAttributes: LibraryAttributesDto? = null) = Publisher
       id = libraryId,
       type = ReferenceExpansionPublisher.LIBRARY,
       attributes = libraryAttributes,
-    )
-  )
+    ),
+  ),
 )
 
 fun Publisher.toAttributesDto() = PublisherAttributesDto(

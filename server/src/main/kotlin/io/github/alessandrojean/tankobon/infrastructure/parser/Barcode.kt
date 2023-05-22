@@ -15,7 +15,7 @@ enum class CodeType {
   ISBN_10,
   ISSN,
   EAN_13,
-  UNKNOWN
+  UNKNOWN,
 }
 
 fun String.guessCodeType(): CodeType {

@@ -25,7 +25,7 @@ class SessionConfiguration {
 
   @Bean
   fun cookieSerializer(sessionCookieName: String): CookieSerializer =
-    DefaultCookieSerializer().apply {setCookieName(sessionCookieName) }
+    DefaultCookieSerializer().apply { setCookieName(sessionCookieName) }
 
   @Bean
   fun httpSessionIdResolver(sessionHeaderName: String, cookieSerializer: CookieSerializer): HttpSessionIdResolver =

@@ -13,7 +13,7 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 @Retention(AnnotationRetention.RUNTIME)
 @WithSecurityContext(
   factory = WithMockCustomUserSecurityContextFactory::class,
-  setupBefore = TestExecutionEvent.TEST_EXECUTION
+  setupBefore = TestExecutionEvent.TEST_EXECUTION,
 )
 annotation class WithMockCustomUser(
   val email: String = "user@example.org",
@@ -33,7 +33,7 @@ class WithMockCustomUserSecurityContextFactory : WithSecurityContextFactory<With
         isAdmin = customUser.roles.contains(ROLE_ADMIN),
         name = customUser.name,
         id = customUser.id,
-      )
+      ),
     )
 
     val auth = UsernamePasswordAuthenticationToken(principal, "", principal.authorities)

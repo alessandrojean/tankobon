@@ -95,7 +95,10 @@ class PersonController(
   fun getAllPeopleByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPerson> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
@@ -140,7 +143,10 @@ class PersonController(
   @Operation(summary = "Get a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPerson> = emptySet(),
   ): SuccessEntityResponseDto<PersonEntityDto> {
     val person = personRepository.findByIdOrNull(personId)
@@ -188,7 +194,7 @@ class PersonController(
           youTube = person.links.youTube,
         ),
         libraryId = person.library,
-      )
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -199,7 +205,10 @@ class PersonController(
   @Operation(summary = "Upload a picture to a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadPersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
     @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
   ) {
     val libraryId = personRepository.getLibraryIdOrNull(personId)
@@ -218,7 +227,10 @@ class PersonController(
   @Operation(summary = "Delete a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
   ) {
     val existing = personRepository.findByIdOrNull(personId)
       ?: throw IdDoesNotExistException("Person not found")
@@ -237,7 +249,10 @@ class PersonController(
   @Operation(summary = "Delete a person picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deletePersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
   ) {
     val existing = personRepository.findByIdOrNull(personId)
       ?: throw IdDoesNotExistException("Person not found")
@@ -256,9 +271,12 @@ class PersonController(
   @Operation(summary = "Modify a person by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOnePerson(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") personId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
     @Valid @RequestBody
-    person: PersonUpdateDto
+    person: PersonUpdateDto,
   ) {
     val existing = personRepository.findByIdOrNull(personId)
       ?: throw IdDoesNotExistException("Person not found")
@@ -292,7 +310,7 @@ class PersonController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPerson.PERSON_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPerson.PERSON_PICTURE)),
     )
   }
 
@@ -307,8 +325,8 @@ class PersonController(
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
           RelationDto(id = it.id, type = ReferenceExpansionPerson.PERSON_PICTURE)
-            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
-        )
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
       )
     }
   }

@@ -153,6 +153,5 @@ class PublisherControllerTest(
       mockMvc.get("/api/v1/publishers/${publisher.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

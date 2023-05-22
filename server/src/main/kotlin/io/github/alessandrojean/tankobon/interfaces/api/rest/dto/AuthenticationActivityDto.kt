@@ -25,7 +25,7 @@ data class AuthenticationActivityAttributesDto(
 ) : EntityAttributesDto()
 
 enum class ReferenceExpansionAuthenticationActivity : ReferenceExpansionEnum {
-  USER
+  USER,
 }
 
 fun AuthenticationActivity.toDto(userAttributes: UserAttributesDto? = null) = AuthenticationActivityEntityDto(
@@ -38,7 +38,7 @@ fun AuthenticationActivity.toDto(userAttributes: UserAttributesDto? = null) = Au
         type = ReferenceExpansionAuthenticationActivity.USER,
         attributes = userAttributes,
       )
-    }
+    },
   ),
 )
 

@@ -11,6 +11,7 @@ plugins {
   id("nu.studer.jooq") version "8.1"
   id("org.flywaydb.flyway") version "9.15.1"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
+  id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "io.github.alessandrojean"
@@ -25,7 +26,7 @@ dependencies {
   implementation(kotlin("reflect"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")
-  
+
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-artemis")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
@@ -54,7 +55,7 @@ dependencies {
 
   implementation("org.xerial:sqlite-jdbc:3.41.0.0")
   jooqGenerator("org.xerial:sqlite-jdbc:3.41.0.0")
-  
+
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")
   }
@@ -63,7 +64,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.13.4")
 
   compileOnly("jakarta.servlet:jakarta.servlet-api:6.0.0")
-  
+
   implementation("com.ibm.icu:icu4j:72.1")
   implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
 
@@ -78,7 +79,6 @@ dependencies {
   implementation("org.apache.lucene:lucene-core:$luceneVersion")
   implementation("org.apache.lucene:lucene-analysis-common:$luceneVersion")
   implementation("org.apache.lucene:lucene-queryparser:$luceneVersion")
-
 }
 
 val client = "$rootDir/client"
@@ -88,7 +88,7 @@ tasks {
     kotlinOptions {
       freeCompilerArgs = listOf(
         "-Xjsr305=strict",
-        "-opt-in=kotlin.time.ExperimentalTime"
+        "-opt-in=kotlin.time.ExperimentalTime",
       )
       jvmTarget = JavaVersion.VERSION_17.toString()
     }
@@ -105,7 +105,7 @@ tasks {
       expand(project.properties + mapOf("rootDir" to rootDir))
     }
   }
-  
+
   getByName<Jar>("jar") {
     enabled = false
   }
@@ -127,7 +127,7 @@ tasks {
       "install",
     )
   }
-  
+
   register<Exec>("pnpmBuild") {
     group = "client"
     dependsOn("pnpmInstall")
@@ -139,7 +139,7 @@ tasks {
       "build",
     )
   }
-  
+
   register<Sync>("copyWebDist") {
     group = "client"
     dependsOn("pnpmBuild")
@@ -226,4 +226,8 @@ openApi {
   customBootRun {
     args.add("--spring.profiles.active=claim")
   }
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+  filter { exclude("**/db/migration/**") }
 }

@@ -13,5 +13,5 @@ data class Person(
   val links: PersonLinks = PersonLinks(),
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : LibraryItem, Auditable, Serializable

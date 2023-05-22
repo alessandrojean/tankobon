@@ -99,5 +99,4 @@ class MetricsPublisherController(
       USER_AVATARS -> noTagGauges[USER_AVATARS]?.set(userAvatarLifecycle.count())
     }
   }
-
 }

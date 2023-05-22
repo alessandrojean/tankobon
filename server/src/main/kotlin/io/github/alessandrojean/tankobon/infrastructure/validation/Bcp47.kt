@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
   AnnotationTarget.VALUE_PARAMETER,
   AnnotationTarget.FIELD,
   AnnotationTarget.PROPERTY_GETTER,
-  AnnotationTarget.ANNOTATION_CLASS
+  AnnotationTarget.ANNOTATION_CLASS,
 )
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Bcp47(

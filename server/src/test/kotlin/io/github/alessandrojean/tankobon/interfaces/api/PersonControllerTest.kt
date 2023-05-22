@@ -150,6 +150,5 @@ class PersonControllerTest(
       mockMvc.get("/api/v1/people/${person.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

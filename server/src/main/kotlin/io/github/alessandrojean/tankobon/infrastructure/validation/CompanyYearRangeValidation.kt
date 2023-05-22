@@ -45,5 +45,4 @@ class DurationalCompanyYearRangeValidator : ConstraintValidator<CompanyYearRange
 
     return false
   }
-
 }

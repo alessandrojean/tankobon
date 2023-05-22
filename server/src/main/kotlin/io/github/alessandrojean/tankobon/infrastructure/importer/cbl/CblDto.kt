@@ -13,12 +13,12 @@ data class CblSearchRequestDto(
   val searchMode: String,
   val select: String,
   val skip: Int,
-  val top: Int
+  val top: Int,
 )
 
 data class CblSearchResultDto(
   @field:JsonProperty("@odata.count") val count: Int = 0,
-  val value: List<CblRecordDto> = emptyList()
+  val value: List<CblRecordDto> = emptyList(),
 )
 
 data class CblRecordDto(
@@ -30,5 +30,5 @@ data class CblRecordDto(
   @field:JsonProperty("Profissoes") val roles: List<String>? = emptyList(),
   @field:JsonProperty("RowKey") val rowKey: String = "",
   @field:JsonProperty("Sinopse") val synopsis: String? = "",
-  @field:JsonProperty("Title") val title: String = ""
+  @field:JsonProperty("Title") val title: String = "",
 )

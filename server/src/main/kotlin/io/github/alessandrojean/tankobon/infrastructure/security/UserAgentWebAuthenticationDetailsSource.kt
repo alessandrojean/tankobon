@@ -1,8 +1,8 @@
 package io.github.alessandrojean.tankobon.infrastructure.security
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
-import jakarta.servlet.http.HttpServletRequest
 
 @Component
 class UserAgentWebAuthenticationDetailsSource : WebAuthenticationDetailsSource() {

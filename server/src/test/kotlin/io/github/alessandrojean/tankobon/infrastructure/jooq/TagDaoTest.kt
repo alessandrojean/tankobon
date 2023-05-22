@@ -79,7 +79,7 @@ class TagDaoTest(
 
     val updated = tagDao.findById(tag.id).copy(
       name = "TagUpdated",
-      description = "TagUpdated description"
+      description = "TagUpdated description",
     )
 
     tagDao.update(updated)

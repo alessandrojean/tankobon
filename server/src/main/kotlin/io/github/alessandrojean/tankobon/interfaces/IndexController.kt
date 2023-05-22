@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @Controller
 class IndexController(
-    servletContext: ServletContext,
+  servletContext: ServletContext,
 ) {
-    private val baseUrl: String = "${servletContext.contextPath}/"
+  private val baseUrl: String = "${servletContext.contextPath}/"
 
-    @GetMapping("/")
-    fun index(model: Model): String {
-        model.addAttribute("baseUrl", baseUrl)
-        return "index"
-    }
+  @GetMapping("/")
+  fun index(model: Model): String {
+    model.addAttribute("baseUrl", baseUrl)
+    return "index"
+  }
 }

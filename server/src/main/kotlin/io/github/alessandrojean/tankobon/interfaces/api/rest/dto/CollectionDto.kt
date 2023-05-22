@@ -31,8 +31,8 @@ fun Collection.toDto(libraryAttributes: LibraryAttributesDto? = null) = Collecti
       id = libraryId,
       type = ReferenceExpansionCollection.LIBRARY,
       attributes = libraryAttributes,
-    )
-  )
+    ),
+  ),
 )
 
 fun Collection.toAttributesDto() = CollectionAttributesDto(name, description)

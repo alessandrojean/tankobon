@@ -40,7 +40,7 @@ fun BookContributor.toDto() = BookContributorEntityDto(
   relationships = listOf(
     RelationDto(bookId, ReferenceExpansionBookContributor.BOOK),
     RelationDto(roleId, ReferenceExpansionBookContributor.CONTRIBUTOR_ROLE),
-    RelationDto(personId, ReferenceExpansionBookContributor.PERSON)
+    RelationDto(personId, ReferenceExpansionBookContributor.PERSON),
   ),
 )
 
@@ -48,7 +48,7 @@ fun BookContributor.toAttributesDto(
   roleId: String = "",
   roleName: String = "",
   personId: String = "",
-  personName: String = ""
+  personName: String = "",
 ) = BookContributorAttributesDto(
   role = BookContributorRoleDto(
     id = roleId,

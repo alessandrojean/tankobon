@@ -24,7 +24,7 @@ data class TankobonUser(
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt,
-): Auditable, Serializable {
+) : Auditable, Serializable {
 
   @delegate:Transient
   val roles: Set<String> by lazy {

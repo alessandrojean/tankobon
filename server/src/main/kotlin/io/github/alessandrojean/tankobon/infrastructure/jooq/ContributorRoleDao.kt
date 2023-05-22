@@ -56,7 +56,7 @@ class ContributorRoleDao(
       .where(TableContributorRole.LIBRARY_ID.eq(libraryId))
       .and(
         names.map { TableContributorRole.NAME.equalIgnoreCase(it) }
-          .fold(noCondition(), Condition::or)
+          .fold(noCondition(), Condition::or),
       )
       .fetchInto(TableContributorRole)
       .map { it.toDomain() }
@@ -82,7 +82,7 @@ class ContributorRoleDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TableContributorRole.ID)
         .from(TableContributorRole)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -125,7 +125,7 @@ class ContributorRoleDao(
     dsl.fetchExists(
       dsl.selectFrom(TableContributorRole)
         .where(TableContributorRole.NAME.equalIgnoreCase(name))
-        .and(TableContributorRole.LIBRARY_ID.eq(libraryId))
+        .and(TableContributorRole.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(contributorRoleId: String): String? =
@@ -202,5 +202,4 @@ class ContributorRoleDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

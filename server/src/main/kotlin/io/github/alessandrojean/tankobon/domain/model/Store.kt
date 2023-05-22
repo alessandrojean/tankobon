@@ -16,5 +16,5 @@ data class Store(
   val type: StoreType? = null,
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
-  override val modifiedAt: LocalDateTime = createdAt
+  override val modifiedAt: LocalDateTime = createdAt,
 ) : LibraryItem, Auditable, Serializable

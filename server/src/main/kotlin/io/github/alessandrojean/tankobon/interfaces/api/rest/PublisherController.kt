@@ -95,7 +95,10 @@ class PublisherController(
   fun getAllPublishersByLibrary(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") libraryId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    libraryId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPublisher> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
@@ -140,7 +143,10 @@ class PublisherController(
   @Operation(summary = "Get a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionPublisher> = emptySet(),
   ): SuccessEntityResponseDto<PublisherEntityDto> {
     val publisher = publisherRepository.findByIdOrNull(publisherId)
@@ -190,8 +196,8 @@ class PublisherController(
         location = publisher.location,
         foundingYear = publisher.foundingYear,
         dissolutionYear = publisher.dissolutionYear,
-        libraryId = publisher.library
-      )
+        libraryId = publisher.library,
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -202,7 +208,10 @@ class PublisherController(
   @Operation(summary = "Upload a picture to a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun uploadPersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
     @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
   ) {
     val libraryId = publisherRepository.getLibraryIdOrNull(publisherId)
@@ -221,7 +230,10 @@ class PublisherController(
   @Operation(summary = "Delete a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
   ) {
     val existing = publisherRepository.findByIdOrNull(publisherId)
       ?: throw IdDoesNotExistException("Publisher not found")
@@ -240,7 +252,10 @@ class PublisherController(
   @Operation(summary = "Delete a publisher picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deletePersonPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
   ) {
     val existing = publisherRepository.findByIdOrNull(publisherId)
       ?: throw IdDoesNotExistException("Publisher not found")
@@ -254,15 +269,17 @@ class PublisherController(
     publisherPictureLifecycle.deleteImage(publisherId)
   }
 
-
   @PutMapping("v1/publishers/{publisherId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Modify a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOnePublisher(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") publisherId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    publisherId: String,
     @Valid @RequestBody
-    publisher: PublisherUpdateDto
+    publisher: PublisherUpdateDto,
   ) {
     val existing = publisherRepository.findByIdOrNull(publisherId)
       ?: throw IdDoesNotExistException("Publisher not found")
@@ -299,7 +316,7 @@ class PublisherController(
     }
 
     return copy(
-      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE))
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE)),
     )
   }
 
@@ -314,8 +331,8 @@ class PublisherController(
       it.copy(
         relationships = it.relationships.orEmpty() + listOfNotNull(
           RelationDto(id = it.id, type = ReferenceExpansionPublisher.PUBLISHER_PICTURE)
-            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) }
-        )
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
       )
     }
   }

@@ -105,8 +105,8 @@ class ReferenceExpansion(
       ids.associateWith { publisherPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
     "SERIES_COVER" to { ids ->
-      ids.associateWith{ seriesCoverLifecycle.getImageDetails(it)!!.toAttributesDto() }
-    }
+      ids.associateWith { seriesCoverLifecycle.getImageDetails(it)!!.toAttributesDto() }
+    },
   )
 
   fun <R : ReferenceExpansionEnum, T : EntityDto<R>> expand(entity: T, relationsToExpand: Set<R>): T {

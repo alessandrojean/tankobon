@@ -1,9 +1,6 @@
 package io.github.alessandrojean.tankobon.infrastructure.web
 
 import io.github.alessandrojean.tankobon.infrastructure.configuration.TankobonProperties
-import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
-import kotlin.io.path.absolutePathString
 import mu.KotlinLogging
 import org.springframework.boot.convert.ApplicationConversionService
 import org.springframework.context.annotation.Configuration
@@ -13,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.mvc.WebContentInterceptor
+import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
+import kotlin.io.path.absolutePathString
 
 private val logger = KotlinLogging.logger {}
 
@@ -66,9 +66,9 @@ class WebMvcConfiguration(
       WebContentInterceptor().apply {
         addCacheMapping(
           cachePrivate,
-          "/api/**"
+          "/api/**",
         )
-      }
+      },
     )
   }
 
@@ -76,5 +76,4 @@ class WebMvcConfiguration(
     // Add provided custom converters such as enum to string.
     ApplicationConversionService.configure(registry)
   }
-
 }

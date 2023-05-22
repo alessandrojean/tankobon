@@ -158,6 +158,5 @@ class SeriesControllerTest(
       mockMvc.get("/api/v1/series/${series.id}")
         .andExpect { status { isNotFound() } }
     }
-
   }
 }

@@ -47,8 +47,8 @@ class LibraryDao(
         TableLibrary.ID.`in`(
           dsl.select(TableUserLibrarySharing.LIBRARY_ID)
             .from(TableUserLibrarySharing)
-            .where(TableUserLibrarySharing.USER_ID.eq(ownerId))
-        )
+            .where(TableUserLibrarySharing.USER_ID.eq(ownerId)),
+        ),
       )
       .fetchAndMap()
   }
@@ -72,7 +72,7 @@ class LibraryDao(
     dsl.fetchExists(
       dsl.selectFrom(TableLibrary)
         .where(TableLibrary.NAME.equalIgnoreCase(name))
-        .and(TableLibrary.OWNER_ID.equal(ownerId))
+        .and(TableLibrary.OWNER_ID.equal(ownerId)),
     )
 
   @Transactional
@@ -137,8 +137,7 @@ class LibraryDao(
           ownerId = lr.ownerId,
           sharedUsersIds = ulr.mapNotNull { it.userId }.toSet(),
           createdAt = lr.createdAt.toCurrentTimeZone(),
-          modifiedAt = lr.modifiedAt.toCurrentTimeZone()
+          modifiedAt = lr.modifiedAt.toCurrentTimeZone(),
         )
       }
-
 }

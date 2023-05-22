@@ -93,5 +93,4 @@ class ImageDao(private val dsl: DSLContext) : ImageRepository {
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

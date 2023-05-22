@@ -79,7 +79,7 @@ class ContributorRoleDaoTest(
 
     val updated = contributorRoleDao.findById(contributorRole.id).copy(
       name = "ContributorRoleUpdated",
-      description = "ContributorRoleUpdated description"
+      description = "ContributorRoleUpdated description",
     )
 
     contributorRoleDao.update(updated)

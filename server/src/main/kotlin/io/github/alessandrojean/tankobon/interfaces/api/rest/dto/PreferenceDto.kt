@@ -27,8 +27,8 @@ fun Preference.toDto() = PreferenceEntityDto(
   id = key,
   attributes = toAttributesDto(),
   relationships = listOf(
-    RelationDto(id = userId, type = ReferenceExpansionPreference.USER)
-  )
+    RelationDto(id = userId, type = ReferenceExpansionPreference.USER),
+  ),
 )
 
 fun Preference.toAttributesDto() = PreferenceAttributesDto(

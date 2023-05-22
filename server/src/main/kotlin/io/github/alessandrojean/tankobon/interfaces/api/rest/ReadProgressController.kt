@@ -15,7 +15,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressCre
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReadProgressUpdateDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionReadProgress
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationshipType
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
@@ -66,7 +65,10 @@ class ReadProgressController(
   @Operation(summary = "Get all read progresses from a user", security = [SecurityRequirement(name = "Basic Auth")])
   fun getReadProgressesByUser(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") userId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    userId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<ReadProgressEntityDto> {
@@ -93,11 +95,14 @@ class ReadProgressController(
   @GetMapping("v1/books/{bookId}/read-progresses")
   @Operation(
     summary = "Get all read progresses from a book by the user",
-    security = [SecurityRequirement(name = "Basic Auth")]
+    security = [SecurityRequirement(name = "Basic Auth")],
   )
   fun getReadProgressesByBook(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") bookId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    bookId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
     sort: Sort,
   ): SuccessCollectionResponseDto<ReadProgressEntityDto> {
@@ -128,7 +133,10 @@ class ReadProgressController(
   @Operation(summary = "Get a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun getOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    readProgressId: String,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionReadProgress> = emptySet(),
   ): SuccessEntityResponseDto<ReadProgressEntityDto> {
     val readProgress = readProgressRepository.findByIdOrNull(readProgressId)
@@ -179,7 +187,7 @@ class ReadProgressController(
         isCompleted = readProgress.isCompleted,
         bookId = readProgress.book,
         userId = userId,
-      )
+      ),
     )
 
     return SuccessEntityResponseDto(created.toDto())
@@ -190,7 +198,10 @@ class ReadProgressController(
   @Operation(summary = "Delete a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun deleteOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    readProgressId: String,
   ) {
     val existing = readProgressRepository.findByIdOrNull(readProgressId)
       ?: throw IdDoesNotExistException("Read progress not found")
@@ -207,7 +218,10 @@ class ReadProgressController(
   @Operation(summary = "Modify a read progress by its id", security = [SecurityRequirement(name = "Basic Auth")])
   fun updateOneReadProgress(
     @AuthenticationPrincipal principal: TankobonPrincipal,
-    @PathVariable @UUID(version = [4]) @Schema(format = "uuid") readProgressId: String,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    readProgressId: String,
     @Valid @RequestBody
     readProgress: ReadProgressUpdateDto,
   ) {

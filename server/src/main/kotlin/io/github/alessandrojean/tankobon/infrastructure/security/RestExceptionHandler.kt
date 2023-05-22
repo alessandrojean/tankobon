@@ -33,8 +33,8 @@ class RestExceptionHandler(
           .ifEmpty { e.message.orEmpty() },
         details = "Check if the credentials were sent properly",
         stackTrace = e.stackTraceToString().takeIf { showStackTrace },
-      )
-    )
+      ),
+    ),
   )
 
   @ExceptionHandler(AccessDeniedException::class)
@@ -48,9 +48,9 @@ class RestExceptionHandler(
         title = e.localizedMessage.orEmpty()
           .ifEmpty { e.message.orEmpty() },
         details = "You don't have access to this operation",
-        stackTrace = e.stackTraceToString().takeIf { showStackTrace }
-      )
-    )
+        stackTrace = e.stackTraceToString().takeIf { showStackTrace },
+      ),
+    ),
   )
 
   private fun String.toErrorId(): String =

@@ -19,7 +19,7 @@ class ReadProgressLifecycle(
 
   fun addReadProgress(readProgress: ReadProgress): ReadProgress {
     logger.info { "Adding new read progress: $readProgress" }
-    
+
     readProgressRepository.insert(readProgress)
     eventPublisher.publishEvent(DomainEvent.ReadProgressAdded(readProgress))
 

@@ -39,7 +39,7 @@ data class ImporterContributorDto(
 )
 
 enum class ReferenceExpansionImporter : ReferenceExpansionEnum {
-  IMPORTER_SOURCE
+  IMPORTER_SOURCE,
 }
 
 data class ImporterSourceEntityDto(
@@ -56,7 +56,7 @@ data class ImporterSourceAttributesDto(
   val url: String,
   @get:Schema(
     description = "A simple multi language description in Markdown format",
-    example = """{"en-US": "English description", "pt-BR": "Portuguese description"}"""
+    example = """{"en-US": "English description", "pt-BR": "Portuguese description"}""",
   )
   val description: Map<String, String>,
   @get:Schema(format = "bcp-47")
@@ -84,9 +84,9 @@ fun ImporterBookResult.toDto(importerSourceAttributes: ImporterSourceAttributesD
     RelationDto(
       id = provider.name,
       type = ReferenceExpansionImporter.IMPORTER_SOURCE,
-      attributes = importerSourceAttributes
-    )
-  )
+      attributes = importerSourceAttributes,
+    ),
+  ),
 )
 
 fun ImporterBookResult.toAttributesDto() = ImporterAttributesDto(

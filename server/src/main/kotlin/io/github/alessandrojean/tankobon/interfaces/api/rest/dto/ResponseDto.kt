@@ -24,7 +24,7 @@ data class ErrorDto(
   val status: Int,
   val title: String,
   val details: String,
-  val stackTrace: String? = null
+  val stackTrace: String? = null,
 )
 
 abstract class SuccessResponseDto<T>(val data: T) : ResponseDto {
@@ -43,8 +43,8 @@ class SuccessEntityResponseDto<T : EntityDto<*>>(data: T) : SuccessResponseDto<T
   override val response = SuccessResponseTypeDto.ENTITY
 }
 
-open class SuccessCollectionResponseDto<T : EntityDto<*>>(data: Collection<T>)
-  : SuccessResponseDto<Collection<T>>(data) {
+open class SuccessCollectionResponseDto<T : EntityDto<*>>(data: Collection<T>) :
+  SuccessResponseDto<Collection<T>>(data) {
   @Schema(type = "string", allowableValues = ["COLLECTION"])
   override val response = SuccessResponseTypeDto.COLLECTION
 }
@@ -52,7 +52,7 @@ open class SuccessCollectionResponseDto<T : EntityDto<*>>(data: Collection<T>)
 @JsonInclude(Include.NON_NULL)
 open class SuccessPaginatedCollectionResponseDto<T : EntityDto<*>>(
   data: Collection<T>,
-  val pagination: PaginationDto
+  val pagination: PaginationDto,
 ) : SuccessCollectionResponseDto<T>(data)
 
 data class PaginationDto(
@@ -131,7 +131,7 @@ fun <T, R : EntityDto<*>> Page<T>.toSuccessCollectionResponseDto(mapper: (T) -> 
     pagination = PaginationDto(
       currentPage = this.number,
       totalPages = totalPages,
-      totalElements = totalElements
+      totalElements = totalElements,
     ),
   )
 

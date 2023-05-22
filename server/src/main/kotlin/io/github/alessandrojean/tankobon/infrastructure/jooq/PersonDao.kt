@@ -56,7 +56,7 @@ class PersonDao(
       .where(TablePerson.LIBRARY_ID.eq(libraryId))
       .and(
         names.map { TablePerson.NAME.equalIgnoreCase(it) }
-          .fold(noCondition(), Condition::or)
+          .fold(noCondition(), Condition::or),
       )
       .fetchInto(TablePerson)
       .map { it.toDomain() }
@@ -82,7 +82,7 @@ class PersonDao(
     val count = dsl.fetchCount(
       dsl.selectDistinct(TablePerson.ID)
         .from(TablePerson)
-        .where(conditions)
+        .where(conditions),
     )
 
     val orderBy = pageable.sort.mapNotNull {
@@ -125,7 +125,7 @@ class PersonDao(
     dsl.fetchExists(
       dsl.selectFrom(TablePerson)
         .where(TablePerson.NAME.equalIgnoreCase(name))
-        .and(TablePerson.LIBRARY_ID.eq(libraryId))
+        .and(TablePerson.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(personId: String): String? =
@@ -225,5 +225,4 @@ class PersonDao(
     createdAt = createdAt.toCurrentTimeZone(),
     modifiedAt = modifiedAt.toCurrentTimeZone(),
   )
-
 }

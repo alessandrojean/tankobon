@@ -86,8 +86,8 @@ fun Series.toDto(libraryAttributes: LibraryAttributesDto? = null) = SeriesEntity
       id = libraryId,
       type = ReferenceExpansionSeries.LIBRARY,
       attributes = libraryAttributes,
-    )
-  )
+    ),
+  ),
 )
 
 fun SeriesAlternativeName.toDto() = SeriesAlternativeNameDto(name, language)
