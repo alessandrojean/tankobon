@@ -22,7 +22,7 @@ export const allowedHostsMap: Record<string, AllowedHosts> = {
   },
   amazon: {
     name: 'Amazon',
-    hosts: ['amazon.com', 'amazon.ca', 'amazon.com.br', 'amazon.co.uk', 'amazon.co.jp', 'amazon.cn'],
+    hosts: ['amazon.com', 'amazon.ca', 'amazon.com.br', 'amazon.co.uk', 'amazon.co.jp', 'amazon.cn', 'amazon.com.au', 'amazon.com.be', 'amazon.eg', 'amazon.fr', 'amazon.in', 'amazon.it', 'amazon.com.mx', 'amazon.nl', 'amazon.pl', 'amazon.sa', 'amazon.sg', 'amazon.es', 'amazon.se', 'amazon.com.tr', 'amazon.ae'],
   },
   openLibrary: {
     name: 'Open Library',
@@ -54,6 +54,6 @@ export const allowedHostsMap: Record<string, AllowedHosts> = {
   },
   mangaUpdates: {
     name: 'MangaUpdates',
-    hosts: ['mangaupdates.com']
+    hosts: ['mangaupdates.com'],
   },
 }
