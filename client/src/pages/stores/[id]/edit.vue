@@ -1,38 +1,55 @@
 <script setup lang="ts">
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import { getRelationship } from '@/utils/api'
+import { createImageUrl } from '@/modules/api'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { Picture } from '@/components/publishers/PublisherPictureForm.vue'
-import PublisherPictureForm from '@/components/publishers/PublisherPictureForm.vue'
-import PublisherMetadataForm from '@/components/publishers/PublisherMetadataForm.vue'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
-import type { PublisherCreation, PublisherLinks } from '@/types/tankobon-publisher'
+import StoreMetadataForm from '@/components/stores/StoreMetadataForm.vue'
+import StorePictureForm from '@/components/stores/StorePictureForm.vue'
+import type { Picture } from '@/components/stores/StorePictureForm.vue'
+import type { StoreLinks, StoreUpdate } from '@/types/tankobon-store'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const notificator = useToaster()
-const libraryStory = useLibraryStore()
-const libraryId = computed(() => libraryStory.library!.id)
+const storeId = computed(() => route.params.id as string)
 
-const { mutateAsync: createPublisher, isLoading: isCreatingPublisher } = useCreatePublisherMutation()
-const { mutateAsync: uploadPicture, isLoading: isUploadingPicture } = useUploadPublisherPictureMutation()
+const { mutateAsync: editStore, isLoading: isEditingStore } = useUpdateStoreMutation()
+const { mutateAsync: uploadPicture, isLoading: isUploadingPicture } = useUploadStorePictureMutation()
+const { mutateAsync: deletePicture, isLoading: isDeletingPicture } = useDeleteStorePictureMutation()
 
-const isCreating = logicOr(isCreatingPublisher, isUploadingPicture)
+const isEditing = logicOr(isEditingStore, isUploadingPicture, isDeletingPicture)
 
-const metadataForm = ref<InstanceType<typeof PublisherMetadataForm>>()
+const { data: store, isLoading } = useStoreQuery({
+  storeId,
+  includes: ['store_picture'],
+  enabled: computed(() => !!storeId.value),
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+  staleTime: Infinity,
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('publishers.fetch-one-failure'),
+      body: error.message,
+    })
+  },
+})
+
+const metadataForm = ref<InstanceType<typeof StoreMetadataForm>>()
 const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
-const pictureForm = ref<InstanceType<typeof PublisherPictureForm>>()
+const pictureForm = ref<InstanceType<typeof StorePictureForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
 const pictureInvalid = computed(() => pictureForm.value?.v$.$error ?? false)
 
 const tabs = [
-  { key: '0', text: 'publishers.metadata' },
+  { key: '0', text: 'stores.metadata' },
   { key: '1', text: 'external-links.title' },
-  { key: '2', text: 'publishers.picture' },
+  { key: '2', text: 'stores.picture' },
 ]
 
 const invalidTabs = computed(() => [
@@ -41,22 +58,37 @@ const invalidTabs = computed(() => [
   pictureInvalid.value,
 ])
 
-interface CustomPublisherCreation extends Omit<PublisherCreation, 'links' | 'foundingYear' | 'dissolutionYear'> {
+interface CustomStoreUpdate extends Omit<StoreUpdate, 'links'> {
   links: FormExternalLink[]
-  foundingYear: string | null
-  dissolutionYear: string | null
 }
 
-const newPublisher = reactive<CustomPublisherCreation>({
-  library: libraryId.value,
+const updatedStore = reactive<CustomStoreUpdate>({
+  id: '',
   name: '',
   description: '',
   links: [],
   legalName: '',
   location: null,
-  foundingYear: null,
-  dissolutionYear: null,
+  type: null,
 })
+
+const initialStoreToEdit = ref('')
+
+whenever(store, (loadedStore) => {
+  Object.assign(updatedStore, {
+    id: loadedStore.id,
+    name: loadedStore.attributes.name,
+    description: loadedStore.attributes.description,
+    links: Object.entries(loadedStore.attributes.links)
+      .filter(([_, url]) => url !== null && url.length > 0)
+      .map(([type, url]) => ({ type, url })),
+    legalName: loadedStore.attributes.legalName,
+    location: loadedStore.attributes.location,
+    type: loadedStore.attributes.type,
+  } satisfies CustomStoreUpdate)
+
+  initialStoreToEdit.value = JSON.stringify(toRaw(updatedStore))
+}, { immediate: true })
 
 const picture = ref<Picture>({
   removeExisting: false,
@@ -66,16 +98,15 @@ const picture = ref<Picture>({
 const activeTab = ref(tabs[0])
 
 const headerTitle = computed(() => {
-  return newPublisher.name.length > 0 ? newPublisher.name : t('publishers.new')
+  if (isLoading.value || !store.value) {
+    return ''
+  }
+
+  return updatedStore.name.length > 0 ? updatedStore.name : store.value.attributes.name
 })
 
 function nullOrNotBlank(value: string | null | undefined): string | null {
   return (value && value.length > 0) ? value : null
-}
-
-function validNumber(valueStr: string | null): number | null {
-  const value = valueStr?.length ? Number(valueStr.replace(',', '.') ?? 'NaN') : NaN
-  return isNaN(value) ? null : value
 }
 
 async function handleSubmit() {
@@ -87,51 +118,59 @@ async function handleSubmit() {
     return
   }
 
-  const publisherToCreate: PublisherCreation = {
-    ...toRaw(newPublisher),
-    foundingYear: validNumber(newPublisher.foundingYear),
-    dissolutionYear: validNumber(newPublisher.dissolutionYear),
+  const editedStore: StoreUpdate = {
+    ...toRaw(updatedStore),
     links: Object.assign(
       {
         website: null,
-        store: null,
         twitter: null,
         instagram: null,
         facebook: null,
         youTube: null,
-      } satisfies PublisherLinks,
+      } satisfies StoreLinks,
       Object.fromEntries(
-        newPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+        updatedStore.links.map(l => [l.type, nullOrNotBlank(l.url)]),
       ),
     ),
   }
 
   try {
-    const { id } = await createPublisher(publisherToCreate)
+    await editStore(editedStore)
 
     if (picture.value.file) {
-      await uploadPicture({ publisherId: id, picture: picture.value.file })
+      await uploadPicture({ storeId: updatedStore.id, picture: picture.value.file })
+    } else if (picture.value.removeExisting) {
+      await deletePicture(updatedStore.id)
     }
 
-    await router.replace({ name: 'publishers-id', params: { id } })
-    await notificator.success({ title: t('publishers.created-with-success') })
+    await router.replace({ name: 'stores-id', params: { id: updatedStore.id } })
+    await notificator.success({ title: t('stores.edited-with-success') })
   } catch (error) {
     await notificator.failure({
-      title: t('publishers.created-with-failure'),
+      title: t('stores.edited-with-failure'),
       body: (error as TankobonApiError | Error).message,
     })
   }
 }
 
-useBeforeUnload({
-  enabled: computed(() => route.name === 'publishers-new'),
+const storeWasModified = ref(false)
+
+watch(updatedStore, (newUpdatedStore) => {
+  storeWasModified.value = initialStoreToEdit.value !== JSON.stringify(toRaw(newUpdatedStore))
 })
+
+useBeforeUnload({ enabled: storeWasModified })
+
+const storePicture = computed(() => getRelationship(store.value, 'STORE_PICTURE'))
 </script>
 
 <template>
   <form autocomplete="off" novalidate @submit.prevent="handleSubmit">
     <TabGroup :selected-index="Number(activeTab.key)" @change="activeTab = tabs[$event]">
-      <Header :title="headerTitle">
+      <Header
+        :title="headerTitle"
+        :loading="isLoading"
+      >
         <template #avatar>
           <Button
             class="aspect-1 w-10 h-10 -ml-2"
@@ -139,7 +178,7 @@ useBeforeUnload({
             kind="ghost"
             rounded="full"
             :title="$t('common-actions.back')"
-            :disabled="isCreating"
+            :disabled="isEditing"
             @click="router.back"
           >
             <span class="sr-only">
@@ -152,11 +191,11 @@ useBeforeUnload({
           <Button
             kind="primary"
             type="submit"
-            :disabled="isCreating"
-            :loading="isCreating"
+            :disabled="isLoading || isEditing"
+            :loading="isEditing"
           >
             <CheckIcon class="w-5 h-5" />
-            <span>{{ $t('common-actions.create') }}</span>
+            <span>{{ $t('common-actions.save') }}</span>
           </Button>
         </template>
         <template #tabs>
@@ -165,7 +204,7 @@ useBeforeUnload({
               v-for="tab in tabs"
               :key="tab.key"
               v-slot="{ selected }"
-              :disabled="isCreating"
+              :disabled="isLoading || isEditing"
               as="template"
             >
               <Button
@@ -191,7 +230,7 @@ useBeforeUnload({
             id="tabs"
             v-model="activeTab"
             class="md:hidden mb-4"
-            :disabled="isCreating"
+            :disabled="isLoading || isEditing"
             :options="tabs"
             :option-text="tab => $t(tab.text)"
             :option-value="tab => tab.key"
@@ -201,30 +240,35 @@ useBeforeUnload({
       <div class="max-w-7xl mx-auto p-4 sm:p-6">
         <TabPanels>
           <TabPanel :unmount="false">
-            <PublisherMetadataForm
+            <StoreMetadataForm
               ref="metadataForm"
-              v-model:name="newPublisher.name"
-              v-model:description="newPublisher.description"
-              v-model:legal-name="newPublisher.legalName"
-              v-model:location="newPublisher.location"
-              v-model:founding-year="newPublisher.foundingYear"
-              v-model:dissolution-year="newPublisher.dissolutionYear"
-              :disabled="isCreating"
+              v-model:name="updatedStore.name"
+              v-model:description="updatedStore.description"
+              v-model:legal-name="updatedStore.legalName"
+              v-model:location="updatedStore.location"
+              v-model:type="updatedStore.type"
+              :disabled="isLoading || isEditing"
             />
           </TabPanel>
           <TabPanel :unmount="false">
             <EntityExternalLinksForm
               ref="externalLinksForm"
-              v-model:external-links="newPublisher.links"
-              :types="['website', 'store', 'twitter', 'instagram', 'facebook', 'youTube']"
-              :disabled="isCreating"
+              v-model:external-links="updatedStore.links"
+              :types="['website', 'twitter', 'instagram', 'facebook', 'youTube']"
+              :disabled="isLoading || isEditing"
             />
           </TabPanel>
           <TabPanel :unmount="false">
-            <PublisherPictureForm
+            <StorePictureForm
               ref="pictureForm"
               v-model:picture="picture"
-              :disabled="isCreating"
+              :current-image-url="
+                createImageUrl({
+                  fileName: storePicture?.attributes?.versions?.['256'],
+                  timeHex: storePicture?.attributes?.timeHex,
+                })
+              "
+              :disabled="isLoading || isEditing"
             />
           </TabPanel>
         </TabPanels>

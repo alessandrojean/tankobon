@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { BuildingOffice2Icon } from '@heroicons/vue/24/outline'
+import { BuildingStorefrontIcon } from '@heroicons/vue/24/outline'
 import { BookOpenIcon, InformationCircleIcon } from '@heroicons/vue/20/solid'
 import { getRelationship } from '@/utils/api'
 import type { Sort } from '@/types/tankobon-api'
@@ -11,22 +11,22 @@ import { safeNumber } from '@/utils/route'
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const publisherId = useRouteParams<string | undefined>('id', undefined)
+const storeId = useRouteParams<string | undefined>('id', undefined)
 const notificator = useToaster()
 
-const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
+const { mutate: deleteStore, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteStoreMutation()
 
 const queryEnabled = computed(() => {
-  return !!publisherId.value && !isDeleting.value && !isDeleted.value && route.name === 'publishers-id'
+  return !!storeId.value && !isDeleting.value && !isDeleted.value && route.name === 'stores-id'
 })
 
-const { data: publisher, isLoading } = usePublisherQuery({
-  publisherId: publisherId as Ref<string>,
-  includes: ['library', 'publisher_picture'],
+const { data: store, isLoading } = useStoreQuery({
+  storeId: storeId as Ref<string>,
+  includes: ['library', 'store_picture'],
   enabled: queryEnabled,
   onError: async (error) => {
     await notificator.failure({
-      title: t('publishers.fetch-one-failure'),
+      title: t('stores.fetch-one-failure'),
       body: error.message,
     })
   },
@@ -34,11 +34,11 @@ const { data: publisher, isLoading } = usePublisherQuery({
 
 const sort = ref<Sort<BookSort> | null>({ property: 'number', direction: 'asc' })
 
-const { data: books, isLoading: isLoadingBooks } = usePublisherBooksQuery({
-  publisherId: publisherId as Ref<string>,
+const { data: books, isLoading: isLoadingBooks } = useStoreBooksQuery({
+  storeId: storeId as Ref<string>,
   includes: ['cover_art', 'collection', 'series', 'publisher'],
   sort: computed(() => sort.value ? [sort.value] : undefined),
-  enabled: computed(() => queryEnabled.value && !!publisher.value?.id),
+  enabled: computed(() => queryEnabled.value && !!store.value?.id),
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
@@ -49,24 +49,24 @@ const { data: books, isLoading: isLoadingBooks } = usePublisherBooksQuery({
 })
 
 function handleDelete() {
-  deletePublisher(publisherId.value!, {
+  deleteStore(storeId.value!, {
     onSuccess: async () => {
-      notificator.success({ title: t('publishers.deleted-with-success') })
-      await router.replace({ name: 'publishers' })
+      notificator.success({ title: t('stores.deleted-with-success') })
+      await router.replace({ name: 'stores' })
     },
     onError: async (error) => {
       await notificator.failure({
-        title: t('publishers.deleted-with-failure'),
+        title: t('stores.deleted-with-failure'),
         body: error.message,
       })
     },
   })
 }
 
-useHead({ title: () => publisher.value?.attributes.name ?? '' })
+useHead({ title: () => store.value?.attributes.name ?? '' })
 
 const tabs: PillTab[] = [
-  { key: '0', text: 'publishers.information', icon: InformationCircleIcon },
+  { key: '0', text: 'stores.information', icon: InformationCircleIcon },
   { key: '1', text: 'entities.books', icon: BookOpenIcon },
 ]
 
@@ -90,9 +90,9 @@ const activeTab = computed({
     <div class="absolute inset-x-0 top-0">
       <ImageBanner
         class="!h-52"
-        :alt="publisher?.attributes.name ?? ''"
+        :alt="store?.attributes.name ?? ''"
         :loading="isLoading"
-        :image="getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes"
+        :image="getRelationship(store, 'STORE_PICTURE')?.attributes"
         size="64"
         kind="repeated"
       />
@@ -101,22 +101,22 @@ const activeTab = computed({
     <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
       <TabGroup
         as="div"
-        class="publisher-grid"
+        class="store-grid"
         :selected-index="Number(activeTab.key)"
         @change="activeTab = tabs[$event]"
       >
         <ImageCover
-          class="publisher-cover"
+          class="store-cover"
           version="256"
           aspect-ratio="1 / 1"
-          :icon="BuildingOffice2Icon"
+          :icon="BuildingStorefrontIcon"
           :loading="isLoading"
-          :image="getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes"
-          :alt="publisher?.attributes.name ?? ''"
+          :image="getRelationship(store, 'STORE_PICTURE')?.attributes"
+          :alt="store?.attributes.name ?? ''"
         >
           <Flag
             v-if="!isLoading"
-            :region="publisher?.attributes.location"
+            :region="store?.attributes.location"
             :class="[
               'inline-block z-10',
               'absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3',
@@ -125,13 +125,13 @@ const activeTab = computed({
           />
         </ImageCover>
 
-        <PublisherName
-          class="publisher-name"
+        <StoreName
+          class="store-name"
           :loading="isLoading"
-          :publisher="publisher"
+          :store="store"
         />
 
-        <div class="publisher-buttons pt-1.5 flex items-center justify-between">
+        <div class="store-buttons pt-1.5 flex items-center justify-between">
           <PillTabsList
             v-model="activeTab"
             :tabs="tabs"
@@ -150,7 +150,7 @@ const activeTab = computed({
               class="aspect-1"
               size="small"
               is-router-link
-              :to="{ name: 'publishers-id-edit', params: { id: publisher?.id } }"
+              :to="{ name: 'stores-id-edit', params: { id: store?.id } }"
               :disabled="isDeleting"
               :title="$t('common-actions.edit')"
             >
@@ -171,16 +171,16 @@ const activeTab = computed({
           </Toolbar>
         </div>
 
-        <TabPanels class="publisher-tabs">
+        <TabPanels class="store-tabs">
           <TabPanel class="flex flex-col gap-4 sm:gap-6 -mb-4 sm:mb-0">
             <BlockMarkdown
               :loading="isLoading"
-              :markdown="publisher?.attributes?.description"
+              :markdown="store?.attributes?.description"
               :title="$t('common-fields.description')"
             />
 
             <EntityExternalLinks
-              :links="(publisher?.attributes?.links as Record<string, string | null> | undefined)"
+              :links="(store?.attributes?.links as Record<string, string | null> | undefined)"
               :loading="isLoading"
             />
           </TabPanel>
@@ -188,9 +188,9 @@ const activeTab = computed({
           <TabPanel :unmount="false">
             <BooksListViewer
               v-model:sort="sort"
-              column-order-key="publisher_books_column_order"
-              column-visibility-key="publisher_books_column_visibility"
-              view-mode-key="publisher_books_view_mode"
+              column-order-key="store_books_column_order"
+              column-visibility-key="store_books_column_visibility"
+              view-mode-key="store_books_view_mode"
               :books="books"
               :default-column-order="['title', 'collection', 'boughtAt']"
               :default-column-visibility="{
@@ -213,11 +213,11 @@ const activeTab = computed({
           </TabPanel>
         </TabPanels>
 
-        <div class="publisher-attributes">
-          <PublisherAttributes
+        <div class="store-attributes">
+          <StoreAttributes
             class="sm:sticky sm:top-24"
             :loading="isLoading"
-            :publisher="publisher"
+            :store="store"
           />
         </div>
       </TabGroup>
@@ -232,7 +232,7 @@ meta:
 </route>
 
 <style lang="postcss">
-.publisher-grid {
+.store-grid {
   display: grid;
   gap: 1rem;
   grid-template-areas:
@@ -252,23 +252,23 @@ meta:
     grid-template-columns: 12rem 1fr;
   }
 
-  .publisher-cover {
+  .store-cover {
     grid-area: cover / cover / cover / cover;
   }
 
-  .publisher-buttons {
+  .store-buttons {
     grid-area: buttons / buttons / buttons / buttons;
   }
 
-  .publisher-name {
+  .store-name {
     grid-area: name / name / name / name;
   }
 
-  .publisher-tabs {
+  .store-tabs {
     grid-area: tabs / tabs / tabs / tabs;
   }
 
-  .publisher-attributes {
+  .store-attributes {
     grid-area: attributes / attributes / attributes / attributes;
   }
 }

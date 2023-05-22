@@ -114,6 +114,9 @@ common-placeholders:
   contributor-role-description: Person that wrote the story…
   store-name: Amazon
   store-description: Amazon is an American multinational technology company…
+  store-location: United States
+  store-legal-name: Amazon.com, Inc.
+  store-type: Bookstore
   search-by-isbn: Search by ISBN…
   book-code: '9781934287729'
   book-title: MW
@@ -478,6 +481,9 @@ stores:
   search: Search into stores
   unknown: Unknown
   type: Type
+  information: Information
+  metadata: Metadata
+  picture: Picture
 
 stores-types:
   unknown: Unknown

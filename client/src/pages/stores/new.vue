@@ -2,12 +2,12 @@
 import { CheckIcon, ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
 import type { TankobonApiError } from '@/types/tankobon-response'
-import type { Picture } from '@/components/publishers/PublisherPictureForm.vue'
-import PublisherPictureForm from '@/components/publishers/PublisherPictureForm.vue'
-import PublisherMetadataForm from '@/components/publishers/PublisherMetadataForm.vue'
+import type { Picture } from '@/components/stores/StorePictureForm.vue'
+import StorePictureForm from '@/components/stores/StorePictureForm.vue'
+import StoreMetadataForm from '@/components/stores/StoreMetadataForm.vue'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
-import type { PublisherCreation, PublisherLinks } from '@/types/tankobon-publisher'
+import type { StoreCreation, StoreLinks } from '@/types/tankobon-store'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -16,23 +16,23 @@ const notificator = useToaster()
 const libraryStory = useLibraryStore()
 const libraryId = computed(() => libraryStory.library!.id)
 
-const { mutateAsync: createPublisher, isLoading: isCreatingPublisher } = useCreatePublisherMutation()
-const { mutateAsync: uploadPicture, isLoading: isUploadingPicture } = useUploadPublisherPictureMutation()
+const { mutateAsync: createStore, isLoading: isCreatingStore } = useCreateStoreMutation()
+const { mutateAsync: uploadPicture, isLoading: isUploadingPicture } = useUploadStorePictureMutation()
 
-const isCreating = logicOr(isCreatingPublisher, isUploadingPicture)
+const isCreating = logicOr(isCreatingStore, isUploadingPicture)
 
-const metadataForm = ref<InstanceType<typeof PublisherMetadataForm>>()
+const metadataForm = ref<InstanceType<typeof StoreMetadataForm>>()
 const externalLinksForm = ref<InstanceType<typeof EntityExternalLinksForm>>()
-const pictureForm = ref<InstanceType<typeof PublisherPictureForm>>()
+const pictureForm = ref<InstanceType<typeof StorePictureForm>>()
 
 const metadataInvalid = computed(() => metadataForm.value?.v$.$error ?? false)
 const externalLinksInvalid = computed(() => externalLinksForm.value?.v$.$error ?? false)
 const pictureInvalid = computed(() => pictureForm.value?.v$.$error ?? false)
 
 const tabs = [
-  { key: '0', text: 'publishers.metadata' },
+  { key: '0', text: 'stores.metadata' },
   { key: '1', text: 'external-links.title' },
-  { key: '2', text: 'publishers.picture' },
+  { key: '2', text: 'stores.picture' },
 ]
 
 const invalidTabs = computed(() => [
@@ -41,21 +41,18 @@ const invalidTabs = computed(() => [
   pictureInvalid.value,
 ])
 
-interface CustomPublisherCreation extends Omit<PublisherCreation, 'links' | 'foundingYear' | 'dissolutionYear'> {
+interface CustomStoreCreation extends Omit<StoreCreation, 'links'> {
   links: FormExternalLink[]
-  foundingYear: string | null
-  dissolutionYear: string | null
 }
 
-const newPublisher = reactive<CustomPublisherCreation>({
+const newStore = reactive<CustomStoreCreation>({
   library: libraryId.value,
   name: '',
   description: '',
   links: [],
   legalName: '',
   location: null,
-  foundingYear: null,
-  dissolutionYear: null,
+  type: null,
 })
 
 const picture = ref<Picture>({
@@ -66,16 +63,11 @@ const picture = ref<Picture>({
 const activeTab = ref(tabs[0])
 
 const headerTitle = computed(() => {
-  return newPublisher.name.length > 0 ? newPublisher.name : t('publishers.new')
+  return newStore.name.length > 0 ? newStore.name : t('stores.new')
 })
 
 function nullOrNotBlank(value: string | null | undefined): string | null {
   return (value && value.length > 0) ? value : null
-}
-
-function validNumber(valueStr: string | null): number | null {
-  const value = valueStr?.length ? Number(valueStr.replace(',', '.') ?? 'NaN') : NaN
-  return isNaN(value) ? null : value
 }
 
 async function handleSubmit() {
@@ -87,44 +79,41 @@ async function handleSubmit() {
     return
   }
 
-  const publisherToCreate: PublisherCreation = {
-    ...toRaw(newPublisher),
-    foundingYear: validNumber(newPublisher.foundingYear),
-    dissolutionYear: validNumber(newPublisher.dissolutionYear),
+  const storeToCreate: StoreCreation = {
+    ...toRaw(newStore),
     links: Object.assign(
       {
         website: null,
-        store: null,
         twitter: null,
         instagram: null,
         facebook: null,
         youTube: null,
-      } satisfies PublisherLinks,
+      } satisfies StoreLinks,
       Object.fromEntries(
-        newPublisher.links.map(l => [l.type, nullOrNotBlank(l.url)]),
+        newStore.links.map(l => [l.type, nullOrNotBlank(l.url)]),
       ),
     ),
   }
 
   try {
-    const { id } = await createPublisher(publisherToCreate)
+    const { id } = await createStore(storeToCreate)
 
     if (picture.value.file) {
-      await uploadPicture({ publisherId: id, picture: picture.value.file })
+      await uploadPicture({ storeId: id, picture: picture.value.file })
     }
 
-    await router.replace({ name: 'publishers-id', params: { id } })
-    await notificator.success({ title: t('publishers.created-with-success') })
+    await router.replace({ name: 'stores-id', params: { id } })
+    await notificator.success({ title: t('stores.created-with-success') })
   } catch (error) {
     await notificator.failure({
-      title: t('publishers.created-with-failure'),
+      title: t('stores.created-with-failure'),
       body: (error as TankobonApiError | Error).message,
     })
   }
 }
 
 useBeforeUnload({
-  enabled: computed(() => route.name === 'publishers-new'),
+  enabled: computed(() => route.name === 'stores-new'),
 })
 </script>
 
@@ -201,27 +190,26 @@ useBeforeUnload({
       <div class="max-w-7xl mx-auto p-4 sm:p-6">
         <TabPanels>
           <TabPanel :unmount="false">
-            <PublisherMetadataForm
+            <StoreMetadataForm
               ref="metadataForm"
-              v-model:name="newPublisher.name"
-              v-model:description="newPublisher.description"
-              v-model:legal-name="newPublisher.legalName"
-              v-model:location="newPublisher.location"
-              v-model:founding-year="newPublisher.foundingYear"
-              v-model:dissolution-year="newPublisher.dissolutionYear"
+              v-model:name="newStore.name"
+              v-model:description="newStore.description"
+              v-model:legal-name="newStore.legalName"
+              v-model:location="newStore.location"
+              v-model:type="newStore.type"
               :disabled="isCreating"
             />
           </TabPanel>
           <TabPanel :unmount="false">
             <EntityExternalLinksForm
               ref="externalLinksForm"
-              v-model:external-links="newPublisher.links"
-              :types="['website', 'store', 'twitter', 'instagram', 'facebook', 'youTube']"
+              v-model:external-links="newStore.links"
+              :types="['website', 'twitter', 'instagram', 'facebook', 'youTube']"
               :disabled="isCreating"
             />
           </TabPanel>
           <TabPanel :unmount="false">
-            <PublisherPictureForm
+            <StorePictureForm
               ref="pictureForm"
               v-model:picture="picture"
               :disabled="isCreating"

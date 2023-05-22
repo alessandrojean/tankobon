@@ -14,6 +14,7 @@ import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.PersonPictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.PublisherPictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.SeriesCoverLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.StorePictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.image.UserAvatarLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityAttributesDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.EntityDto
@@ -40,6 +41,7 @@ class ReferenceExpansion(
   private val userAvatarLifecycle: UserAvatarLifecycle,
   private val personPictureLifecycle: PersonPictureLifecycle,
   private val publisherPictureLifecycle: PublisherPictureLifecycle,
+  private val storePictureLifecycle: StorePictureLifecycle,
   private val seriesCoverLifecycle: SeriesCoverLifecycle,
 ) {
 
@@ -103,6 +105,9 @@ class ReferenceExpansion(
     },
     "PUBLISHER_PICTURE" to { ids ->
       ids.associateWith { publisherPictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
+    },
+    "STORE_PICTURE" to { ids ->
+      ids.associateWith { storePictureLifecycle.getImageDetails(it)!!.toAttributesDto() }
     },
     "SERIES_COVER" to { ids ->
       ids.associateWith { seriesCoverLifecycle.getImageDetails(it)!!.toAttributesDto() }

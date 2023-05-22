@@ -121,6 +121,39 @@ export async function getAllBooksByPublisher(options: GetAllBooksByPublisherPara
   }
 }
 
+export interface GetAllBooksByStoreParameters extends Paginated<BookSort> {
+  storeId: string
+  includes?: BookIncludes[]
+}
+
+export async function getAllBooksByStore(options: GetAllBooksByStoreParameters): Promise<BookPaginated> {
+  const { storeId, includes, page, size, sort } = options
+
+  try {
+    const { data: books } = await api.get<BookPaginated>(`stores/${storeId}/books`, {
+      params: {
+        includes: includes?.join(','),
+        page,
+        size,
+        sort: sort?.map(({ property, direction }) => {
+          return `${property},${direction}`
+        }),
+      },
+      paramsSerializer: {
+        indexes: null,
+      },
+    })
+
+    return books
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export interface GetOneBookParameters {
   bookId?: string
   includes?: BookIncludes[]

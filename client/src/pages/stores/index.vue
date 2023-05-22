@@ -132,13 +132,13 @@ meta:
   <div>
     <Header
       class="mb-3 md:mb-0"
-      :title="$t('entities.publishers')"
+      :title="$t('entities.stores')"
     >
       <template #actions>
         <Button
           kind="primary"
           is-router-link
-          :to="{ name: 'publishers-new' }"
+          :to="{ name: 'stores-new' }"
         >
           <PlusIcon class="w-5 h-5" />
           <span>{{ $t('stores.new') }}</span>

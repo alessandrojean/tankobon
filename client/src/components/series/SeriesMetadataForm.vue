@@ -19,7 +19,7 @@ export interface SeriesMetadataFormProps {
 export interface SeriesMetadataFormEmits {
   (e: 'update:name', name: string): void
   (e: 'update:description', description: string): void
-  (e: 'update:type', type: string | null): void
+  (e: 'update:type', type: SeriesType | null): void
   (e: 'update:alternativeNames', alternativeNames: AlternativeName[]): void
   (e: 'update:originalLanguage', originalLanguage: string | null): void
   (e: 'update:lastNumber', lastNumber: string | null): void

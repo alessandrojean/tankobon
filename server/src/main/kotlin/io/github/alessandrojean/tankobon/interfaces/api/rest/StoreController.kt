@@ -141,7 +141,7 @@ class StoreController(
 
   @GetMapping("v1/stores/{storeId}")
   @Operation(summary = "Get a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
-  fun getOneStory(
+  fun getOneStore(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable
     @UUID(version = [4])

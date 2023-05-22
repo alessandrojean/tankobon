@@ -477,6 +477,7 @@ class BookDtoDao(
     var c: Condition = DSL.noCondition()
 
     if (!seriesIds.isNullOrEmpty()) c = c.and(TableBook.SERIES_ID.`in`(seriesIds))
+    if (!storeIds.isNullOrEmpty()) c = c.and(TableBook.STORE_ID.`in`(storeIds))
 
     if (!publisherIds.isNullOrEmpty()) {
       c = c.and(

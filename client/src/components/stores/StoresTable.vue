@@ -4,6 +4,8 @@ import { createColumnHelper } from '@tanstack/vue-table'
 import { BuildingStorefrontIcon as BuildingStorefrontSolidIcon, EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { BuildingStorefrontIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import Avatar from '@/components/Avatar.vue'
+import type { BadgeColor } from '@/components/Badge.vue'
+import Badge from '@/components/Badge.vue'
 import Flag from '@/components/Flag.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
@@ -11,7 +13,7 @@ import type { Sort } from '@/types/tankobon-api'
 import { getRelationship } from '@/utils/api'
 import { createImageUrl } from '@/modules/api'
 import type { PaginatedResponse } from '@/types/tankobon-response'
-import type { StoreEntity, StoreSort } from '@/types/tankobon-store'
+import type { StoreEntity, StoreSort, StoreType } from '@/types/tankobon-store'
 
 export interface PublishersTableProps {
   stores?: PaginatedResponse<StoreEntity>
@@ -61,6 +63,12 @@ const regionNames = computed(() => new Intl.DisplayNames(locale.value, {
   type: 'region',
   style: 'long',
 }))
+
+const typeBadge: Record<StoreType, BadgeColor> = {
+  COMIC_SHOP: 'blue',
+  BOOKSTORE: 'green',
+  NEWSSTAND: 'purple',
+}
 
 const columns = [
   columnHelper.display({
@@ -142,7 +150,10 @@ const columns = [
       const type = info.getValue()
       const typeKey = type ? type.toLowerCase().replace(/_/g, '-') : 'unknown'
 
-      return t(`stores-types.${typeKey}`)
+      return h(Badge, {
+        color: type ? (typeBadge[type] ?? 'gray') : 'gray',
+        innerText: t(`stores-types.${typeKey}`),
+      })
     },
     enableSorting: false,
     meta: {
@@ -231,7 +242,7 @@ function handleSortingChange(sorting: SortingState) {
             <Button
               kind="primary"
               is-router-link
-              :to="{ name: 'publishers-new' }"
+              :to="{ name: 'stores-new' }"
             >
               <PlusIcon class="w-5 h-5" />
               <span>{{ $t('stores.new') }}</span>

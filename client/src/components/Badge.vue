@@ -32,6 +32,11 @@ const badge = cva(
           'text-blue-700 dark:text-blue-400',
           'ring-blue-700/10 dark:ring-blue-400/30',
         ],
+        purple: [
+          'bg-purple-50 dark:bg-purple-400/10',
+          'text-purple-700 dark:text-purple-400',
+          'ring-purple-700/10 dark:ring-purple-400/30',
+        ],
       },
       rounded: {
         true: 'rounded-full',
@@ -46,6 +51,8 @@ const badge = cva(
 )
 
 type BadgeCvaProps = Required<VariantProps<typeof badge>>
+
+export type BadgeColor = BadgeCvaProps['color']
 
 interface BadgeProps {
   color?: BadgeCvaProps['color']
