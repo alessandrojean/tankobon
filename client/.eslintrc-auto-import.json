@@ -424,6 +424,8 @@
     "watchTriggerable": true,
     "watchWithFilter": true,
     "whenever": true,
-    "toValue": true
+    "toValue": true,
+    "useDeleteStorePictureMutation": true,
+    "useUploadStorePictureMutation": true
   }
 }

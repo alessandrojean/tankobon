@@ -206,7 +206,7 @@ class PublisherController(
   @PostMapping("v1/publishers/{publisherId}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Upload a picture to a publisher by its id", security = [SecurityRequirement(name = "Basic Auth")])
-  fun uploadPersonPicture(
+  fun uploadPublisherPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable
     @UUID(version = [4])
@@ -250,7 +250,7 @@ class PublisherController(
   @DeleteMapping("v1/publishers/{publisherId}/picture")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a publisher picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
-  fun deletePersonPicture(
+  fun deletePublisherPicture(
     @AuthenticationPrincipal principal: TankobonPrincipal,
     @PathVariable
     @UUID(version = [4])

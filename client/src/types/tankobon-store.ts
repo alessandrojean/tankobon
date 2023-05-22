@@ -11,6 +11,8 @@ export interface StoreAttributes {
   legalName: string
   location: string | null
   type: StoreType | null
+  createdAt: string
+  modifiedAt: string
 }
 
 export type StoreType = 'COMIC_SHOP' | 'BOOKSTORE' | 'NEWSSTAND'
@@ -46,4 +48,4 @@ export interface StoreUpdate {
 }
 
 export type StoreSort = 'name' | 'createdAt' | 'modifiedAt' | 'legalName' | 'location'
-export type StoreIncludes = 'library'
+export type StoreIncludes = 'library' | 'store_picture'

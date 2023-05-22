@@ -10,9 +10,12 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
 import io.github.alessandrojean.tankobon.domain.service.StoreLifecycle
+import io.github.alessandrojean.tankobon.infrastructure.image.StorePictureLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.infrastructure.validation.SupportedImageFormat
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionStore
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.RelationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.StoreUpdateDto
@@ -20,7 +23,6 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityRe
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
-import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toSuccessCollectionResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -46,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @Validated
 @RestController
@@ -56,6 +59,7 @@ class StoreController(
   private val storeRepository: StoreRepository,
   private val storeLifecycle: StoreLifecycle,
   private val referenceExpansion: ReferenceExpansion,
+  private val storePictureLifecycle: StorePictureLifecycle,
 ) {
 
   @GetMapping("v1/stores")
@@ -79,7 +83,7 @@ class StoreController(
     )
 
     val stores = referenceExpansion.expand(
-      entities = storesPage.content.map { it.toDto() },
+      entities = storesPage.content.map { it.toDto() }.withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -95,6 +99,7 @@ class StoreController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     libraryId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionStore> = emptySet(),
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
     @Parameter(hidden = true) page: Pageable,
   ): SuccessPaginatedCollectionResponseDto<StoreEntityDto> {
@@ -117,7 +122,7 @@ class StoreController(
       PageRequest.of(page.pageNumber, page.pageSize, sort)
     }
 
-    val stores = storeRepository.findAll(
+    val storesPage = storeRepository.findAll(
       search = StoreSearch(
         libraryIds = listOf(library.id),
         searchTerm = searchTerm,
@@ -126,7 +131,12 @@ class StoreController(
       pageable = pageRequest,
     )
 
-    return stores.toSuccessCollectionResponseDto { it.toDto() }
+    val stores = referenceExpansion.expand(
+      entities = storesPage.content.map { it.toDto() }.withPictureIfExists(),
+      relationsToExpand = includes,
+    )
+
+    return SuccessPaginatedCollectionResponseDto(stores, storesPage.toPaginationDto())
   }
 
   @GetMapping("v1/stores/{storeId}")
@@ -149,7 +159,7 @@ class StoreController(
     }
 
     val expanded = referenceExpansion.expand(
-      entity = store.toDto(),
+      entity = store.toDto().withPictureIfExists(),
       relationsToExpand = includes,
     )
 
@@ -191,6 +201,28 @@ class StoreController(
     return SuccessEntityResponseDto(created.toDto())
   }
 
+  @PostMapping("v1/stores/{storeId}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Upload a picture to a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun uploadStorePicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    storeId: String,
+    @RequestParam("picture") @SupportedImageFormat pictureFile: MultipartFile,
+  ) {
+    val libraryId = storeRepository.getLibraryIdOrNull(storeId)
+      ?: throw IdDoesNotExistException("Store not found")
+    val library = libraryRepository.findById(libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    storePictureLifecycle.createImage(storeId, pictureFile.bytes)
+  }
+
   @DeleteMapping("v1/stores/{storeId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Delete a store by its id", security = [SecurityRequirement(name = "Basic Auth")])
@@ -211,6 +243,28 @@ class StoreController(
     }
 
     storeLifecycle.deleteStore(existing)
+  }
+
+  @DeleteMapping("v1/stores/{storeId}/picture")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(summary = "Delete a store picture by its id", security = [SecurityRequirement(name = "Basic Auth")])
+  fun deleteStorePicture(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    storeId: String,
+  ) {
+    val existing = storeRepository.findByIdOrNull(storeId)
+      ?: throw IdDoesNotExistException("Store not found")
+
+    val library = libraryRepository.findById(storeRepository.getLibraryIdOrNull(existing.id)!!)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    storePictureLifecycle.deleteImage(storeId)
   }
 
   @PutMapping("v1/stores/{storeId}")
@@ -250,5 +304,32 @@ class StoreController(
     )
 
     storeLifecycle.updateStore(toUpdate)
+  }
+
+  private fun StoreEntityDto.withPictureIfExists(): StoreEntityDto {
+    if (!storePictureLifecycle.hasImage(id)) {
+      return this
+    }
+
+    return copy(
+      relationships = relationships.orEmpty() + listOf(RelationDto(id = id, type = ReferenceExpansionStore.STORE_PICTURE)),
+    )
+  }
+
+  private fun List<StoreEntityDto>.withPictureIfExists(): List<StoreEntityDto> {
+    val entitiesWithImages = storePictureLifecycle.getEntitiesWithImages(map { it.id })
+
+    if (entitiesWithImages.isEmpty()) {
+      return this
+    }
+
+    return map {
+      it.copy(
+        relationships = it.relationships.orEmpty() + listOfNotNull(
+          RelationDto(id = it.id, type = ReferenceExpansionStore.STORE_PICTURE)
+            .takeIf { relation -> entitiesWithImages.getOrDefault(relation.id, false) },
+        ),
+      )
+    }
   }
 }

@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Store
 import io.github.alessandrojean.tankobon.domain.model.StoreType
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
+import java.time.LocalDateTime
 
 data class StoreEntityDto(
   override val id: String,
@@ -28,6 +30,8 @@ data class StoreAttributesDto(
   val legalName: String,
   val location: String?,
   val type: StoreType?,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 data class StoreLinksDto(
@@ -50,6 +54,7 @@ data class StoreLinksDto(
 
 enum class ReferenceExpansionStore : ReferenceExpansionEnum {
   LIBRARY,
+  STORE_PICTURE,
 }
 
 fun Store.toDto(libraryAttributes: LibraryAttributesDto? = null) = StoreEntityDto(
@@ -77,6 +82,8 @@ fun Store.toAttributesDto() = StoreAttributesDto(
   legalName = legalName,
   location = location,
   type = type,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 data class StoreCreationDto(

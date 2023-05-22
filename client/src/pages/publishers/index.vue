@@ -52,7 +52,7 @@ const { data: publishers, isLoading } = useLibraryPublishersQuery({
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('series.fetch-failure'),
+      title: t('publishers.fetch-failure'),
       body: error.message,
     })
   },

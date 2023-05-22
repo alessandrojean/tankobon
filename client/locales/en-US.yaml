@@ -477,6 +477,13 @@ stores:
   empty-search-description: Matches not found for “{0}”
   search: Search into stores
   unknown: Unknown
+  type: Type
+
+stores-types:
+  unknown: Unknown
+  bookstore: Bookstore
+  comic-shop: Comic shop
+  newsstand: Newsstand
 
 importer:
   header: Import by ISBN

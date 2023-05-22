@@ -94,6 +94,25 @@ export async function getOneStore({ storeId, includes }: GetOneStoreParameters):
   }
 }
 
+export interface UploadStorePictureOptions {
+  storeId: string
+  picture: File
+}
+
+export async function uploadStorePicture(options: UploadStorePictureOptions): Promise<void> {
+  try {
+    await api.postForm(`stores/${options.storeId}/picture`, {
+      picture: options.picture,
+    })
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
 export async function updateOneStore(store: StoreUpdate): Promise<void> {
   try {
     await api.put(`stores/${store.id}`, store)
@@ -109,6 +128,18 @@ export async function updateOneStore(store: StoreUpdate): Promise<void> {
 export async function deleteOneStore(storeId: string): Promise<void> {
   try {
     await api.delete(`stores/${storeId}`)
+  } catch (e) {
+    if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
+      throw new TankobonApiError(e.response.data)
+    }
+
+    throw e
+  }
+}
+
+export async function deleteStorePicture(storeId: string): Promise<void> {
+  try {
+    await api.delete(`stores/${storeId}/picture`)
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)
