@@ -40,8 +40,10 @@ const invalidTabs = computed(() => [
   pictureInvalid.value,
 ])
 
-interface CustomPublisherCreation extends Omit<PublisherCreation, 'links'> {
+interface CustomPublisherCreation extends Omit<PublisherCreation, 'links' | 'foundingYear' | 'dissolutionYear'> {
   links: FormExternalLink[]
+  foundingYear: string | null
+  dissolutionYear: string | null
 }
 
 const newPublisher = reactive<CustomPublisherCreation>({
@@ -51,6 +53,8 @@ const newPublisher = reactive<CustomPublisherCreation>({
   links: [],
   legalName: '',
   location: null,
+  foundingYear: null,
+  dissolutionYear: null,
 })
 
 const picture = ref<Picture>({
@@ -68,6 +72,11 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
   return (value && value.length > 0) ? value : null
 }
 
+function validNumber(valueStr: string | null): number {
+  const value = valueStr?.length ? Number(valueStr.replace(',', '.') ?? 'NaN') : NaN
+  return isNaN(value) ? 0 : value
+}
+
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
@@ -79,6 +88,8 @@ async function handleSubmit() {
 
   const publisherToCreate: PublisherCreation = {
     ...toRaw(newPublisher),
+    foundingYear: validNumber(newPublisher.foundingYear),
+    dissolutionYear: validNumber(newPublisher.dissolutionYear),
     links: Object.assign(
       { 
         website: null, 
@@ -195,6 +206,8 @@ useBeforeUnload({
               v-model:description="newPublisher.description"
               v-model:legal-name="newPublisher.legalName"
               v-model:location="newPublisher.location"
+              v-model:founding-year="newPublisher.foundingYear"
+              v-model:dissolution-year="newPublisher.dissolutionYear"
               :disabled="isCreating"
             />
           </TabPanel>

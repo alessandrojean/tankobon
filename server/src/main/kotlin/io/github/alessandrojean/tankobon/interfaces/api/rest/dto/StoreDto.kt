@@ -1,6 +1,8 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Store
+import io.github.alessandrojean.tankobon.domain.model.StoreType
+import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
@@ -23,6 +25,9 @@ data class StoreAttributesDto(
   val name: String,
   val description: String,
   val links: StoreLinksDto,
+  val legalName: String,
+  val location: String?,
+  val type: StoreType?,
 ) : EntityAttributesDto()
 
 data class StoreLinksDto(
@@ -68,7 +73,10 @@ fun Store.toAttributesDto() = StoreAttributesDto(
     instagram = links.instagram,
     facebook = links.facebook,
     youTube = links.youTube,
-  )
+  ),
+  legalName = legalName,
+  location = location,
+  type = type,
 )
 
 data class StoreCreationDto(
@@ -77,6 +85,11 @@ data class StoreCreationDto(
   @get:NotNull
   @get:Valid
   val links: StoreLinksDto,
+  @get:NotNull
+  val legalName: String,
+  @get:NullOrIso3166
+  val location: String?,
+  val type: StoreType?,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
@@ -88,4 +101,9 @@ data class StoreUpdateDto(
   @get:NotNull
   @get:Valid
   val links: StoreLinksDto,
+  @get:NotNull
+  val legalName: String,
+  @get:NullOrIso3166
+  val location: String?,
+  val type: StoreType?,
 )

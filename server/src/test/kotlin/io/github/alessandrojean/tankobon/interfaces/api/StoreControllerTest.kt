@@ -113,6 +113,9 @@ class StoreControllerTest(
             "facebook": null,
             "youTube": null
           },
+          "legalName": "",
+          "location": "US",
+          "type": "BOOKSTORE",
           "library": "${library.id}"
         }
       """.trimIndent()

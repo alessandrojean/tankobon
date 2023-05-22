@@ -3,6 +3,7 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Store
 import io.github.alessandrojean.tankobon.domain.model.StoreLinks
 import io.github.alessandrojean.tankobon.domain.model.StoreSearch
+import io.github.alessandrojean.tankobon.domain.model.StoreType
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
@@ -31,6 +32,8 @@ class StoreDao(
 ) : StoreRepository {
 
   private val sorts = mapOf(
+    "legalName" to TableStore.LEGAL_NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "location" to TableStore.LOCATION,
     "name" to TableStore.NAME.collate(SqliteUdfDataSource.collationUnicode3),
     "createdAt" to TableStore.CREATED_AT,
     "modifiedAt" to TableStore.MODIFIED_AT,
@@ -128,6 +131,9 @@ class StoreDao(
       .set(TableStore.INSTAGRAM, store.links.instagram)
       .set(TableStore.FACEBOOK, store.links.facebook)
       .set(TableStore.YOUTUBE, store.links.youTube)
+      .set(TableStore.LEGAL_NAME, store.legalName)
+      .set(TableStore.LOCATION, store.location)
+      .set(TableStore.TYPE, store.type?.ordinal)
       .set(TableStore.LIBRARY_ID, store.libraryId)
       .execute()
   }
@@ -143,6 +149,9 @@ class StoreDao(
       .set(TableStore.INSTAGRAM, store.links.instagram)
       .set(TableStore.FACEBOOK, store.links.facebook)
       .set(TableStore.YOUTUBE, store.links.youTube)
+      .set(TableStore.LEGAL_NAME, store.legalName)
+      .set(TableStore.LOCATION, store.location)
+      .set(TableStore.TYPE, store.type?.ordinal)
       .set(TableStore.LIBRARY_ID, store.libraryId)
       .set(TableStore.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TableStore.ID.eq(store.id))
@@ -197,6 +206,9 @@ class StoreDao(
       facebook = facebook,
       youTube = youtube,
     ),
+    legalName = legalName,
+    location = location,
+    type = StoreType.values().getOrNull(type ?: -1),
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),

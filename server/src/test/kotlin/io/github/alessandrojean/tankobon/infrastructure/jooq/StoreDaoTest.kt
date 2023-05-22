@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Store
 import io.github.alessandrojean.tankobon.domain.model.StoreLinks
+import io.github.alessandrojean.tankobon.domain.model.StoreType
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
@@ -53,6 +54,9 @@ class StoreDaoTest(
       name = "Store",
       description = "Store description",
       links = StoreLinks(twitter = "store"),
+      legalName = "Store co.",
+      location = "US",
+      type = StoreType.BOOKSTORE,
       libraryId = library.id,
     )
 
@@ -65,6 +69,9 @@ class StoreDaoTest(
       assertThat(name).isEqualTo(store.name)
       assertThat(description).isEqualTo(store.description)
       assertThat(links.twitter).isEqualTo(store.links.twitter)
+      assertThat(legalName).isEqualTo(store.legalName)
+      assertThat(location).isEqualTo(store.location)
+      assertThat(type).isEqualTo(store.type)
       assertThat(libraryId).isEqualTo(store.libraryId)
     }
   }
@@ -75,6 +82,9 @@ class StoreDaoTest(
       name = "Store",
       description = "Store description",
       links = StoreLinks(twitter = "store"),
+      legalName = "Store co.",
+      location = "US",
+      type = StoreType.BOOKSTORE,
       libraryId = library.id,
     )
     storeDao.insert(store)
@@ -85,6 +95,9 @@ class StoreDaoTest(
       name = "StoreUpdated",
       description = "StoreUpdated description",
       links = StoreLinks(twitter = "store_"),
+      legalName = "Store Inc.",
+      location = "JP",
+      type = StoreType.COMIC_SHOP,
     )
 
     storeDao.update(updated)
@@ -99,6 +112,9 @@ class StoreDaoTest(
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
       assertThat(links.twitter).isEqualTo(updated.links.twitter)
+      assertThat(legalName).isEqualTo(updated.legalName)
+      assertThat(location).isEqualTo(updated.location)
+      assertThat(type).isEqualTo(updated.type)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

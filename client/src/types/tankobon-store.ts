@@ -8,7 +8,12 @@ export interface StoreAttributes {
   name: string
   description: string
   links: StoreLinks
+  legalName: string
+  location: string | null
+  type: StoreType | null
 }
+
+export type StoreType = 'COMIC_SHOP' | 'BOOKSTORE' | 'NEWSSTAND'
 
 export interface StoreLinks {
   website: string | null
@@ -24,6 +29,9 @@ export interface StoreCreation {
   name: string
   description: string
   links: StoreLinks
+  legalName: string
+  location: string | null
+  type: StoreType | null
   library: string
 }
 
@@ -32,7 +40,10 @@ export interface StoreUpdate {
   name: string
   description: string
   links: StoreLinks
+  legalName: string
+  location: string | null
+  type: StoreType | null
 }
 
-export type StoreSort = 'name' | 'createdAt' | 'modifiedAt'
+export type StoreSort = 'name' | 'createdAt' | 'modifiedAt' | 'legalName' | 'location'
 export type StoreIncludes = 'library'

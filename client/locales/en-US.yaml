@@ -48,6 +48,8 @@ common-fields:
   modified-at: Modified at
   location: Location
   legal-name: Legal name
+  founding-year: Founding year
+  dissolution-year: Dissolution year
 
 common-actions:
   sign-in: Sign in
@@ -103,6 +105,7 @@ common-placeholders:
   publisher-description: VIZ Media is an American entertainment company…
   publisher-legal-name: VIZ Media, LLC
   publisher-location: United States
+  publisher-founding-year: '1986'
   person-name: Katsuhiro Otomo
   person-description: Katsuhiro Otomo is a japanese manga artist…
   tag-name: Hardcover
@@ -153,6 +156,8 @@ validation:
   repeated-positions: 'Repeated positions: {0}'
   durational-start: It should be less or equal than the finish date
   durational-finish: It should be greater or equal than the start date
+  durational-company-year-founding: It should be less or equal than the dissolution year
+  durational-company-year-dissolution: It should be greater or equal than the founding year
   url: It should be a valid URL.
   allowed-hosts: It should be a valid {site} URL.
 
@@ -386,6 +391,11 @@ publishers:
   information: Information
   picture: Picture
   legal-name-unknown: Unknown
+  founding-unknown: Unknown
+  company-status: Status
+  status-active: Active
+  status-closed: Closed
+  status-unknown: Unknown
 
 people:
   fetch-failure: There was an error while fetching the person

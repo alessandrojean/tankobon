@@ -57,8 +57,10 @@ const invalidTabs = computed(() => [
   pictureInvalid.value,
 ])
 
-interface CustomPublisherUpdate extends Omit<PublisherUpdate, 'links'> {
+interface CustomPublisherUpdate extends Omit<PublisherUpdate, 'links' | 'foundingYear' | 'dissolutionYear'> {
   links: FormExternalLink[]
+  foundingYear: string | null
+  dissolutionYear: string | null
 }
 
 const updatedPublisher = reactive<CustomPublisherUpdate>({
@@ -68,6 +70,8 @@ const updatedPublisher = reactive<CustomPublisherUpdate>({
   links: [],
   legalName: '',
   location: null,
+  foundingYear: null,
+  dissolutionYear: null,
 })
 
 const initialPublisherToEdit = ref('')
@@ -82,6 +86,12 @@ whenever(publisher, (loadedPublisher) => {
       .map(([type, url]) => ({ type, url })),
     legalName: loadedPublisher.attributes.legalName,
     location: loadedPublisher.attributes.location,
+    foundingYear: loadedPublisher.attributes.foundingYear
+      ? String(loadedPublisher.attributes.foundingYear)
+      : null,
+    dissolutionYear: loadedPublisher.attributes.dissolutionYear
+      ? String(loadedPublisher.attributes.dissolutionYear)
+      : null
   } satisfies CustomPublisherUpdate)
 
   initialPublisherToEdit.value = JSON.stringify(toRaw(updatedPublisher))
@@ -106,6 +116,11 @@ function nullOrNotBlank(value: string | null | undefined): string | null {
   return (value && value.length > 0) ? value : null
 }
 
+function validNumber(valueStr: string | null): number | null {
+  const value = valueStr?.length ? Number(valueStr.replace(',', '.') ?? 'NaN') : NaN
+  return isNaN(value) ? null : value
+}
+
 async function handleSubmit() {
   const isValidMetadata = await metadataForm.value!.v$.$validate()
   const isValidExternalLinks = await externalLinksForm.value!.v$.$validate()
@@ -117,6 +132,8 @@ async function handleSubmit() {
 
   const editedPublisher: PublisherUpdate = {
     ...toRaw(updatedPublisher),
+    foundingYear: validNumber(updatedPublisher.foundingYear),
+    dissolutionYear: validNumber(updatedPublisher.dissolutionYear),
     links: Object.assign(
       { 
         website: null, 
@@ -244,6 +261,8 @@ const publisherPicture = computed(() => getRelationship(publisher.value, 'PUBLIS
               v-model:description="updatedPublisher.description"
               v-model:legal-name="updatedPublisher.legalName"
               v-model:location="updatedPublisher.location"
+              v-model:founding-year="updatedPublisher.foundingYear"
+              v-model:dissolution-year="updatedPublisher.dissolutionYear"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

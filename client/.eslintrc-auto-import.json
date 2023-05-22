@@ -291,6 +291,7 @@
     "usePreferredReducedMotion": true,
     "usePrevious": true,
     "useProjection": true,
+    "usePublisherBooksQuery": true,
     "usePublisherQuery": true,
     "useRafFn": true,
     "useReadProgressQuery": true,
@@ -422,7 +423,6 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true,
-    "usePublisherBooksQuery": true
+    "whenever": true
   }
 }

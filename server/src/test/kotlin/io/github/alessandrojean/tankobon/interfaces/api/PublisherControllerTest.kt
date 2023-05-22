@@ -116,6 +116,8 @@ class PublisherControllerTest(
           },
           "legalName": "",
           "location": "",
+          "foundingYear": 2020,
+          "dissolutionYear": 2022,
           "library": "${library.id}"
         }
       """.trimIndent()

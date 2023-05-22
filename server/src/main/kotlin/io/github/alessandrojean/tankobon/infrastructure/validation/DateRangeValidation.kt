@@ -18,26 +18,28 @@ annotation class DateRangeValidation(
 )
 
 class DurationalDateRangeValidator : ConstraintValidator<DateRangeValidation, Durational> {
+  private lateinit var startGreaterMessage: String
+  private lateinit var finishLessMessage: String
+
+  override fun initialize(constraintAnnotation: DateRangeValidation) {
+    startGreaterMessage = constraintAnnotation.startGreaterMessage
+    finishLessMessage = constraintAnnotation.finishLessMessage
+  }
+
   override fun isValid(value: Durational, context: ConstraintValidatorContext): Boolean {
     if (value.startedAt == null || value.finishedAt == null) {
       return true
     }
 
-    val annotation = value::class.annotations
-      .filterIsInstance<DateRangeValidation>()
-      .first()
-
     val startGreaterThanFinish = value.startedAt!! > value.finishedAt!!
     val finishLessThanStart = value.finishedAt!! < value.startedAt!!
-    val startMessage = annotation.startGreaterMessage
-    val finishMessage = annotation.finishLessMessage
 
     if (!startGreaterThanFinish && !finishLessThanStart) {
       return true
     }
 
     context.disableDefaultConstraintViolation()
-    context.buildConstraintViolationWithTemplate(if (startGreaterThanFinish) startMessage else finishMessage)
+    context.buildConstraintViolationWithTemplate(if (startGreaterThanFinish) startGreaterMessage else finishLessMessage)
       .addPropertyNode(if (startGreaterThanFinish) "startedAt" else "finishedAt")
       .addConstraintViolation()
 

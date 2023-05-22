@@ -175,6 +175,9 @@ class StoreController(
           facebook = store.links.facebook,
           youTube = store.links.youTube,
         ),
+        legalName = store.legalName,
+        location = store.location,
+        type = store.type,
         libraryId = store.library
       )
     )
@@ -229,6 +232,9 @@ class StoreController(
         facebook = store.links.facebook,
         youTube = store.links.youTube,
       ),
+      legalName = store.legalName,
+      location = store.location,
+      type = store.type,
     )
 
     storeLifecycle.updateStore(toUpdate)

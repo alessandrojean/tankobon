@@ -10,6 +10,8 @@ export interface PublisherAttributes {
   links: PublisherLinks
   legalName: string
   location: string | null
+  foundingYear: number | null
+  dissolutionYear: number | null
   createdAt: string
   modifiedAt: string
 }
@@ -31,6 +33,8 @@ export interface PublisherCreation {
   links: PublisherLinks
   legalName: string
   location: string | null
+  foundingYear: number | null
+  dissolutionYear: number | null
   library: string
 }
 
@@ -41,7 +45,9 @@ export interface PublisherUpdate {
   links: PublisherLinks
   legalName: string
   location: string | null
+  foundingYear: number | null
+  dissolutionYear: number | null
 }
 
-export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt' | 'legalName' | 'location'
+export type PublisherSort = 'name' | 'createdAt' | 'modifiedAt' | 'legalName' | 'location' | 'foundingYear' | 'dissolutionYear'
 export type PublisherIncludes = 'library' | 'publisher_picture'

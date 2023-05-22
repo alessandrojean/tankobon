@@ -11,6 +11,9 @@ data class Store(
   override val libraryId: String = "",
   val description: String = "",
   val links: StoreLinks = StoreLinks(),
+  val legalName: String = "",
+  val location: String? = null,
+  val type: StoreType? = null,
 
   override val createdAt: LocalDateTime = LocalDateTime.now(),
   override val modifiedAt: LocalDateTime = createdAt

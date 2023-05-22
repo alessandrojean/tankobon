@@ -54,7 +54,9 @@ class PublisherDaoTest(
       description = "Publisher description",
       links = PublisherLinks(twitter = "publisher"),
       legalName = "Publisher LLC",
-      location = "Location",
+      location = "US",
+      foundingYear = 2021,
+      dissolutionYear = 2023,
       libraryId = library.id,
     )
 
@@ -69,6 +71,8 @@ class PublisherDaoTest(
       assertThat(links.twitter).isEqualTo(publisher.links.twitter)
       assertThat(legalName).isEqualTo(publisher.legalName)
       assertThat(location).isEqualTo(publisher.location)
+      assertThat(foundingYear).isEqualTo(publisher.foundingYear)
+      assertThat(dissolutionYear).isEqualTo(publisher.dissolutionYear)
       assertThat(libraryId).isEqualTo(publisher.libraryId)
     }
   }
@@ -80,7 +84,9 @@ class PublisherDaoTest(
       description = "Publisher description",
       links = PublisherLinks(twitter = "publisher"),
       legalName = "Publisher LLC",
-      location = "Location",
+      location = "US",
+      foundingYear = 2020,
+      dissolutionYear = 2022,
       libraryId = library.id,
     )
     publisherDao.insert(publisher)
@@ -92,7 +98,9 @@ class PublisherDaoTest(
       description = "PublisherUpdated description",
       links = PublisherLinks(twitter = "publisher_"),
       legalName = "Publisher Inc",
-      location = "Another location",
+      location = "JP",
+      foundingYear = 2021,
+      dissolutionYear = 2023,
     )
 
     publisherDao.update(updated)
@@ -109,6 +117,8 @@ class PublisherDaoTest(
       assertThat(links.twitter).isEqualTo(updated.links.twitter)
       assertThat(legalName).isEqualTo(updated.legalName)
       assertThat(location).isEqualTo(updated.location)
+      assertThat(foundingYear).isEqualTo(updated.foundingYear)
+      assertThat(dissolutionYear).isEqualTo(updated.dissolutionYear)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

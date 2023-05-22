@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useVuelidate } from '@vuelidate/core'
-import { helpers, required } from '@vuelidate/validators'
+import { helpers, required, minValue, maxValue, or } from '@vuelidate/validators'
 import { countries as regions } from 'countries-list'
 
 export interface PublisherFormProps {
@@ -8,6 +8,8 @@ export interface PublisherFormProps {
   description: string
   location: string | null
   legalName: string
+  foundingYear: string | null
+  dissolutionYear: string | null
   mode?: 'creation' | 'update'
 }
 
@@ -16,6 +18,8 @@ export interface PublisherFormEmits {
   (e: 'update:description', description: string): void
   (e: 'update:location', location: string | null): void
   (e: 'update:legalName', legalName: string): void
+  (e: 'update:foundingYear', foundingYear: string): void
+  (e: 'update:dissolutionYear', dissolutionYear: string): void
   (e: 'validate', isValid: boolean): void
 }
 
@@ -24,19 +28,45 @@ const props = withDefaults(defineProps<PublisherFormProps>(), {
 })
 const emit = defineEmits<PublisherFormEmits>()
 
-const { name, description } = toRefs(props)
+const { name, description, foundingYear, dissolutionYear } = toRefs(props)
 
 const { t, locale } = useI18n()
+
+const foundingYearNumber = computed(() => foundingYear.value ? Number(foundingYear.value) : -1)
+const dissolutionYearNumber = computed(() => dissolutionYear.value ? Number(dissolutionYear.value) : -1)
 
 const rules = computed(() => {
   const messageRequired = helpers.withMessage(t('validation.required'), required)
 
+  const messageMaxValue = helpers.withMessage(({ $params }) => t('validation.max-value', [$params.max]), maxValue(new Date().getFullYear()))
+
+  const validDissolutionYear = or(
+    (value: number) => typeof value === 'number' && value === -1,
+    () => foundingYear.value === null || foundingYear.value.length === 0,
+    minValue(foundingYearNumber),
+  )
+
+  const validFoundingYear = or(
+    (value: Date | number) => typeof value === 'number' && value === -1,
+    () => dissolutionYear.value === null || dissolutionYear.value.length === 0,
+    maxValue(dissolutionYearNumber),
+  )
+
+  const messageFounding = helpers.withMessage(t('validation.durational-company-year-founding'), validFoundingYear)
+  const messageDissolution = helpers.withMessage(t('validation.durational-company-year-dissolution'), validDissolutionYear)
+
   return {
     name: { messageRequired },
+    foundingYear: { messageFounding },
+    dissolutionYear: { messageDissolution, messageMaxValue },
   }
 })
 
-const v$ = useVuelidate(rules, { name })
+const v$ = useVuelidate(rules, {
+  name,
+  foundingYear: foundingYearNumber,
+  dissolutionYear: dissolutionYearNumber,
+})
 
 watch(() => v$.value.$error, isValid => emit('validate', isValid))
 
@@ -142,5 +172,44 @@ const regionsOptions = computed(() => {
       :placeholder="$t('common-placeholders.publisher-description')"
       @input="$emit('update:description', $event.target.value)"
     />
+
+    <div class="grid grid-cols-1 lg:grid-cols-10 gap-2">
+      <div class="lg:col-span-2">
+        <TextInput
+          id="founding-year"
+          :model-value="foundingYear ?? ''"
+          inputmode="numeric"
+          :input-mask="{
+            regex: '\\d{4}',
+            showMaskOnHover: false,
+            showMaskOnFocus: false,
+          }"
+          :placeholder="$t('common-placeholders.publisher-founding-year')"
+          :label-text="$t('common-fields.founding-year')"
+          :invalid="v$.foundingYear.$error"
+          :errors="v$.foundingYear.$errors"
+          @blur="v$.foundingYear.$touch()"
+          @input="$emit('update:foundingYear', $event.target.value)"
+        />
+      </div>
+
+      <div class="lg:col-span-2">
+        <TextInput
+          id="dissolution-year"
+          :model-value="dissolutionYear ?? ''"
+          inputmode="numeric"
+          :input-mask="{
+            regex: '\\d{4}',
+            showMaskOnHover: false,
+            showMaskOnFocus: false,
+          }"
+          :label-text="$t('common-fields.dissolution-year')"
+          :invalid="v$.dissolutionYear.$error"
+          :errors="v$.dissolutionYear.$errors"
+          @blur="v$.dissolutionYear.$touch()"
+          @input="$emit('update:dissolutionYear', $event.target.value)"
+        />
+      </div>
+    </div>
   </div>
 </template>

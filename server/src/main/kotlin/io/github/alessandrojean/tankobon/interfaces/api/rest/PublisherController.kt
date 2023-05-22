@@ -188,6 +188,8 @@ class PublisherController(
         ),
         legalName = publisher.legalName,
         location = publisher.location,
+        foundingYear = publisher.foundingYear,
+        dissolutionYear = publisher.dissolutionYear,
         libraryId = publisher.library
       )
     )
@@ -284,6 +286,8 @@ class PublisherController(
       ),
       legalName = publisher.legalName,
       location = publisher.location,
+      foundingYear = publisher.foundingYear,
+      dissolutionYear = publisher.dissolutionYear,
     )
 
     publisherLifecycle.updatePublisher(toUpdate)

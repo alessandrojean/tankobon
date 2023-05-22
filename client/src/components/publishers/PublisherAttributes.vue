@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PublisherEntity } from '@/types/tankobon-publisher'
+import { PublisherAttributes, PublisherEntity } from '@/types/tankobon-publisher'
 
 export interface SeriesAttributesProps {
   publisher?: PublisherEntity | null
@@ -19,6 +19,16 @@ const regionNames = computed(() => new Intl.DisplayNames(locale.value, {
   style: 'long',
 }))
 
+function getCompanyStatus(attributes: PublisherAttributes | undefined) {
+  if (attributes?.foundingYear && attributes?.dissolutionYear) {
+    return t('publishers.status-closed')
+  } else if (attributes?.foundingYear) {
+    return t('publishers.status-active')
+  } else {
+    return t('publishers.status-unknown')
+  }
+}
+
 const metadata = computed(() => {
   const attributes = publisher.value?.attributes
 
@@ -29,6 +39,22 @@ const metadata = computed(() => {
         ? regionNames.value.of(attributes?.location)
         : t('location.unknown'),
     },
+    {
+      title: t('publishers.company-status'),
+      value: getCompanyStatus(attributes),
+    },
+    {
+      title: t('common-fields.founding-year'),
+      value: attributes?.foundingYear
+        ? String(attributes?.foundingYear)
+        : t('publishers.founding-unknown')
+    },
+    {
+      title: t('common-fields.dissolution-year'),
+      value: attributes?.dissolutionYear
+        ? String(attributes?.dissolutionYear)
+        : null
+    }
   ]
 })
 </script>

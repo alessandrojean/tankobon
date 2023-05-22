@@ -1,14 +1,19 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
+import io.github.alessandrojean.tankobon.domain.model.DurationalCompanyYear
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
+import io.github.alessandrojean.tankobon.infrastructure.validation.CompanyYearRangeValidation
+import io.github.alessandrojean.tankobon.infrastructure.validation.MaxCurrentYear
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
 import io.github.alessandrojean.tankobon.infrastructure.validation.UrlMultipleHosts
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Positive
 import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 import java.time.LocalDateTime
@@ -28,6 +33,8 @@ data class PublisherAttributesDto(
   val links: PublisherLinksDto,
   val legalName: String,
   val location: String?,
+  val foundingYear: Int?,
+  val dissolutionYear: Int?,
   val createdAt: LocalDateTime,
   val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
@@ -83,10 +90,13 @@ fun Publisher.toAttributesDto() = PublisherAttributesDto(
   ),
   legalName = legalName,
   location = location.orEmpty().ifEmpty { null },
+  foundingYear = foundingYear,
+  dissolutionYear = dissolutionYear,
   createdAt = createdAt.toUtcTimeZone(),
   modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
+@CompanyYearRangeValidation
 data class PublisherCreationDto(
   @get:NotBlank
   val name: String,
@@ -99,11 +109,18 @@ data class PublisherCreationDto(
   val legalName: String,
   @get:NullOrIso3166
   val location: String?,
+  @get:Positive
+  @get:Min(1900)
+  override val foundingYear: Int?,
+  @get:Positive
+  @get:MaxCurrentYear
+  override val dissolutionYear: Int?,
   @get:UUID(version = [4])
   @get:Schema(format = "uuid")
   val library: String,
-)
+) : DurationalCompanyYear
 
+@CompanyYearRangeValidation
 data class PublisherUpdateDto(
   @get:NotBlank val name: String,
   val description: String,
@@ -114,4 +131,10 @@ data class PublisherUpdateDto(
   val legalName: String,
   @get:NullOrIso3166
   val location: String?,
-)
+  @get:Positive
+  @get:Min(1900)
+  override val foundingYear: Int?,
+  @get:Positive
+  @get:MaxCurrentYear
+  override val dissolutionYear: Int?,
+) : DurationalCompanyYear

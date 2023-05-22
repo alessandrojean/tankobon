@@ -36,6 +36,8 @@ class PublisherDao(
     "name" to TablePublisher.NAME.collate(SqliteUdfDataSource.collationUnicode3),
     "createdAt" to TablePublisher.CREATED_AT,
     "modifiedAt" to TablePublisher.MODIFIED_AT,
+    "foundingYear" to TablePublisher.FOUNDING_YEAR,
+    "dissolutionYear" to TablePublisher.DISSOLUTION_YEAR,
   )
 
   override fun findById(publisherId: String): Publisher = findByIdOrNull(publisherId)!!
@@ -140,6 +142,8 @@ class PublisherDao(
       .set(TablePublisher.YOUTUBE, publisher.links.youTube)
       .set(TablePublisher.LEGAL_NAME, publisher.legalName)
       .set(TablePublisher.LOCATION, publisher.location)
+      .set(TablePublisher.FOUNDING_YEAR, publisher.foundingYear)
+      .set(TablePublisher.DISSOLUTION_YEAR, publisher.dissolutionYear)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .execute()
   }
@@ -158,6 +162,8 @@ class PublisherDao(
       .set(TablePublisher.YOUTUBE, publisher.links.youTube)
       .set(TablePublisher.LEGAL_NAME, publisher.legalName)
       .set(TablePublisher.LOCATION, publisher.location)
+      .set(TablePublisher.FOUNDING_YEAR, publisher.foundingYear)
+      .set(TablePublisher.DISSOLUTION_YEAR, publisher.dissolutionYear)
       .set(TablePublisher.LIBRARY_ID, publisher.libraryId)
       .set(TablePublisher.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TablePublisher.ID.eq(publisher.id))
@@ -215,6 +221,8 @@ class PublisherDao(
     ),
     legalName = legalName.orEmpty(),
     location = location,
+    foundingYear = foundingYear,
+    dissolutionYear = dissolutionYear,
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),
