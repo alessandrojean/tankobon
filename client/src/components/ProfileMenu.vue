@@ -71,7 +71,7 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
         ]"
       >
         <span class="sr-only">{{ t('common-actions.open') }}</span>
-        <Avatar :picture-url="avatarUrl" size="xs" kind="gray" />
+        <Avatar :picture-url="avatarUrl" size="sm" kind="gray" />
         <span aria-hidden="true">
           <ChevronDownIcon
             class="w-5 h-5 ml-1 motion-safe:transition-transform"

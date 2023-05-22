@@ -18,6 +18,7 @@ import {
   UsersIcon,
 } from '@heroicons/vue/24/outline'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
+import { breakpointsTailwind } from '@vueuse/core'
 
 export interface Item {
   key: string
@@ -188,13 +189,16 @@ const isDev = import.meta.env.DEV
 const versionString = isDev ? gitShortHash : `v${appVersion}`
 const commitLink = `https://github.com/alessandrojean/tankobon/commit/${gitShortHash}`
 const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${appVersion}`
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const lgAndLarger = breakpoints.greaterOrEqual('lg')
 </script>
 
 <template>
   <aside
     class="box-content bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-hidden shadow motion-safe:transition-all"
     :class="[
-      collapsed ? 'w-16' : 'w-72',
+      collapsed && lgAndLarger ? 'w-16' : 'w-72',
     ]"
   >
     <div class="flex flex-col min-h-0 h-full">
@@ -202,7 +206,7 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
         <div
           class="px-3.5 flex justify-between items-center h-16 w-[18rem] box-border motion-safe:transition-transform origin-right"
           :class="[
-            collapsed ? '-translate-x-[13.85rem]' : '',
+            collapsed && lgAndLarger ? '-translate-x-[13.85rem]' : '',
           ]"
         >
           <slot name="logo">
@@ -215,9 +219,9 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
             kind="ghost"
             icon-only
             :aria-controls="$attrs.id"
-            :aria-expanded="!collapsed"
+            :aria-expanded="!(collapsed && lgAndLarger)"
             :title="
-              collapsed
+              collapsed && lgAndLarger
                 ? t('common-actions.expand')
                 : t('common-actions.collapse')
             "
@@ -226,7 +230,7 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
             <span />
             <ChevronDoubleLeftIcon
               class="w-5 h-5 collapse-icon"
-              :class="[{ collapsed }]"
+              :class="[{ collapsed: collapsed && lgAndLarger }]"
             />
           </Button>
         </div>
@@ -234,7 +238,7 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
           <ul
             class="space-y-1.5"
             :class="[
-              collapsed ? 'flex flex-col items-center' : '',
+              collapsed && lgAndLarger ? 'flex flex-col items-center' : '',
             ]"
           >
             <li v-for="item in allowedItems" :key="item.key" class="w-full">
@@ -263,12 +267,12 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
       </div>
 
       <div v-if="$slots.footer" class="shrink-0">
-        <slot name="footer" :collapsed="collapsed" :collapsible="collapsible" />
+        <slot name="footer" :collapsed="collapsed && lgAndLarger" :collapsible="collapsible" />
       </div>
 
       <div
         class="p-3.5 text-xs flex flex-col gap-1 w-44 box-border text-gray-700 dark:text-gray-400 motion-safe:transition-transform origin-right"
-        :class="[collapsed ? '-translate-x-44' : '']"
+        :class="[collapsed && lgAndLarger ? '-translate-x-44' : '']"
       >
         <a
           :href="isDev ? commitLink : releaseLink"
@@ -281,7 +285,7 @@ const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${
             'focus-visible:ring-black dark:focus-visible:ring-white/90',
           ]"
           :title="isDev ? $t('aside-menu.commit-link') : $t('aside-menu.release-link')"
-          :tabindex="collapsed ? '-1' : undefined"
+          :tabindex="collapsed && lgAndLarger ? '-1' : undefined"
         >
           <span>{{ versionString }}</span>
           <ArrowTopRightOnSquareIcon class="w-3 h-3" />

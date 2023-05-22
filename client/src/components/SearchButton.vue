@@ -6,7 +6,7 @@ withDefaults(defineProps<SearchButtonProps>(), {
 })
 
 const searchButton = cva(
-  'flex items-center motion-safe:transition-colors rounded-lg',
+  'flex items-center motion-safe:transition-colors rounded-md h-8',
   {
     variants: {
       transparent: {
@@ -70,7 +70,7 @@ const isMac = navigator.userAgentData
   <div :class="searchButton({ transparent })">
     <button
       type="button"
-      class="flex items-center px-3 py-2 group rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90"
+      class="flex items-center px-2 py-1.5 group rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90"
     >
       <MagnifyingGlassIcon class="w-5 h-5" />
       <span class="ml-3 text-sm w-56 text-left">

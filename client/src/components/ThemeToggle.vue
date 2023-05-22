@@ -8,6 +8,7 @@ import {
   SunIcon as SunIconSolid,
 } from '@heroicons/vue/20/solid'
 
+import Button from './form/Button.vue'
 import type { Theme } from '@/App.vue'
 
 export interface ThemeToggleProps {
@@ -66,36 +67,38 @@ async function setTheme(theme: Theme) {
   <Listbox
     :model-value="theme"
     as="div"
-    class="relative flex items-center justify-center"
     :class="[
+      'relative flex items-center justify-center',
       { light, transparent },
-    ]" @update:model-value="setTheme"
+    ]"
+    @update:model-value="setTheme"
   >
     <ListboxButton
-      class="theme-chooser"
+      :as="Button"
       :title="t('theme-toggle.label')"
+      :kind="transparent ? 'navbar-light' : 'navbar-dark-elevated'"
+      size="mini"
+      class="w-8 h-8 theme-chooser"
     >
-      <span aria-hidden="true">
-        <template v-if="theme === 'system'">
-          <!-- eslint-disable-next-line prettier/prettier -->
-          <Component
-            :is="options[0].icon"
-            class="w-6 h-6 dark:hidden system"
-          />
-          <Component
-            :is="options[1].icon"
-            class="w-6 h-6 hidden dark:block system"
-          />
-        </template>
-        <Component
-          :is="currentOption!.icon"
-          v-else
-          class="w-6 h-6 not-system"
-        />
-      </span>
       <span class="sr-only">
         {{ t('theme-toggle.label') }}
       </span>
+      <template v-if="theme === 'system'">
+        <!-- eslint-disable-next-line prettier/prettier -->
+        <Component
+          :is="options[0].icon"
+          class="w-6 h-6 dark:hidden system"
+        />
+        <Component
+          :is="options[1].icon"
+          class="w-6 h-6 hidden dark:block system"
+        />
+      </template>
+      <Component
+        :is="currentOption!.icon"
+        v-else
+        class="w-6 h-6 not-system"
+      />
     </ListboxButton>
     <MenuTransition>
       <ListboxOptions :class="bottom ? 'is-bottom' : ''" class="theme-options">
@@ -137,35 +140,16 @@ async function setTheme(theme: Theme) {
 </template>
 
 <style lang="postcss" scoped>
-.theme-chooser {
-  @apply w-8 h-8 flex items-center justify-center rounded-full
-    text-gray-400 dark:text-gray-300
-    motion-safe:transition focus:outline-none
-    focus-visible:ring-2 focus-visible:ring-white/90;
-}
-
 .theme-chooser svg.not-system {
-  @apply text-blue-300;
+  @apply !text-blue-300;
 }
 
 .light .theme-chooser svg.not-system {
-  @apply text-blue-400;
+  @apply !text-blue-400;
 }
 
 .light .theme-chooser:hover svg.system {
   @apply text-gray-500 dark:text-gray-300;
-}
-
-.theme-chooser:hover {
-  @apply bg-gray-700;
-}
-
-.light .theme-chooser:hover {
-  @apply bg-gray-200 dark:bg-gray-700;
-}
-
-.light .theme-chooser:focus-visible {
-  @apply ring-black;
 }
 
 .transparent .theme-chooser {
@@ -175,16 +159,10 @@ async function setTheme(theme: Theme) {
   }
 
   &:where(:focus-visible, :hover) {
-    @apply bg-white/20;
-
     svg.system,
     svg.not-system {
       @apply text-white/95;
     }
-  }
-
-  &:focus-visible {
-    @apply ring-white/90;
   }
 }
 

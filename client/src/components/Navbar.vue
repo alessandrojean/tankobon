@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Bars3Icon } from '@heroicons/vue/20/solid'
-import { BuildingLibraryIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { ShowAsideDialogKey } from '@/symbols'
 import { injectStrict } from '@/utils/injetion'
 
@@ -18,28 +18,6 @@ const { y: scrollY } = useScroll(window)
 const isScrolling = computed(() => scrollY.value > 0)
 
 const showAsideDialog = injectStrict(ShowAsideDialogKey)
-
-const librarySelectorOpen = ref(false)
-
-function showLibrarySelector() {
-  librarySelectorOpen.value = true
-}
-
-function closeLibrarySelector() {
-  librarySelectorOpen.value = false
-}
-
-const userStore = useUserStore()
-const userId = computed(() => userStore.me?.id)
-const libraryStore = useLibraryStore()
-
-const library = computed(() => libraryStore.library)
-const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
-  enabled: computed(() => userStore.isAuthenticated),
-  userId: userId as ComputedRef<string>,
-  select: libraries => libraries.length > 1,
-  initialData: [],
-})
 </script>
 
 <template>
@@ -54,18 +32,16 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center h-16">
         <Button
-          v-if="userHasAtLeastTwoLibraries"
-          class="lg:hidden -ml-1 mr-2 w-10 h-10"
-          :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
+          class="lg:hidden -ml-1 mr-2 w-8 h-8"
+          :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
           size="mini"
-          rounded="full"
           :title="$t('common-actions.open-menu')"
           @click="showAsideDialog()"
         >
           <span class="sr-only">
             {{ $t('common-actions.open-menu') }}
           </span>
-          <Bars3Icon class="h-6 w-6" />
+          <Bars3Icon class="h-5 w-5" />
         </Button>
 
         <Logo
@@ -75,23 +51,7 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
           icon-only
         />
 
-        <FadeTransition>
-          <Button
-            v-if="userHasAtLeastTwoLibraries"
-            class="h-8 -ml-2 hidden lg:flex"
-            :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
-            size="mini"
-            rounded="full"
-            :title="$t('libraries.select')"
-            @click="showLibrarySelector"
-          >
-            <BuildingLibraryIcon class="w-5 h-5" />
-            <div>
-              <span class="sr-only">{{ $t('libraries.selected') }}</span>
-              {{ library?.attributes?.name }}
-            </div>
-          </Button>
-        </FadeTransition>
+        <LibrarySelector :transparent="transparent && !isScrolling" />
 
         <div class="ml-auto inline-flex items-center">
           <SearchButton
@@ -101,45 +61,20 @@ const { data: userHasAtLeastTwoLibraries } = useUserLibrariesByUserQuery({
 
           <Button
             class="h-8 w-8 mr-2 lg:hidden"
-            :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
+            :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
             size="mini"
-            rounded="full"
             :title="$t('common-actions.search-collection')"
           >
             <div class="sr-only">
               {{ $t('common-actions.search-collection') }}
             </div>
-            <MagnifyingGlassIcon class="w-6 h-6" />
+            <MagnifyingGlassIcon class="w-5 h-5" />
           </Button>
-
-          <FadeTransition>
-            <Button
-              v-if="userHasAtLeastTwoLibraries"
-              class="h-8 w-8 mr-2 lg:hidden"
-              :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark'"
-              size="mini"
-              rounded="full"
-              :title="$t('libraries.select')"
-              @click="showLibrarySelector"
-            >
-              <div class="sr-only">
-                <span>{{ $t('libraries.selected') }}</span>
-                {{ library?.attributes?.name }}
-              </div>
-              <BuildingLibraryIcon class="w-6 h-6" />
-            </Button>
-          </FadeTransition>
 
           <ThemeToggle class="ml-1" :transparent="transparent && !isScrolling" />
           <ProfileMenu class="-mr-1" :transparent="transparent && !isScrolling" />
         </div>
       </div>
     </div>
-
-    <LibrarySelectorDialog
-      v-if="userHasAtLeastTwoLibraries"
-      :is-open="librarySelectorOpen"
-      @close="closeLibrarySelector"
-    />
   </nav>
 </template>

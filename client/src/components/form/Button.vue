@@ -60,14 +60,15 @@ const button = cva(
           'focus-visible:ring-white/90',
         ],
         'navbar-dark-elevated': [
-          'border-gray-800 bg-gray-800 text-gray-300',
-          'not-disabled:hocus:bg-gray-700 not-disabled:hocus:border-gray-700',
+          'border-gray-600 bg-gray-800 text-gray-300',
+          'not-disabled:hocus:bg-gray-700 not-disabled:hocus:border-gray-500',
           'not-disabled:hocus:text-gray-200',
           'focus-visible:ring-white/90',
         ],
         'navbar-light': [
-          'border-transparent bg-transparent text-white/80',
+          'border-white/30 bg-transparent text-white/80',
           'not-disabled:hocus:bg-white/20 not-disabled:hocus:text-white/95',
+          'not-disabled:hocus:border-white/50',
           'focus-visible:ring-white/90',
         ],
         'danger': [
