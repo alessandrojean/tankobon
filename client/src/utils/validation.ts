@@ -1,4 +1,4 @@
-import { email, helpers } from '@vuelidate/validators'
+import { email, helpers, url } from '@vuelidate/validators'
 import { checkEmailAvailability } from '@/services/tankobon-users'
 
 export const positiveDecimal = helpers.regex(/^\d+([,.]\d+)?$/)
@@ -36,6 +36,25 @@ export function maxFileSize(maxSize: number, sizeString: string) {
       return file.size <= maxSize
     },
   )
+}
+
+export function allowedHosts(hosts: string[]) {
+  const hostsParsed = hosts.map(h => h.toLowerCase().replace(/^www\./, ''))
+
+  return (value: string) => {
+    if (value.length === 0 || !url.$validator(value, null, null)) {
+      return true
+    }
+
+    try {
+      const urlParsed = new URL(value)
+      const host = urlParsed.hostname.toLowerCase().replace(/^www./, '')
+
+      return hostsParsed.includes(host)
+    } catch (_) {
+      return false
+    }
+  }
 }
 
 export function isbn(isbn: string) {

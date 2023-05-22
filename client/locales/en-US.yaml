@@ -154,6 +154,7 @@ validation:
   durational-start: It should be less or equal than the finish date
   durational-finish: It should be greater or equal than the start date
   url: It should be a valid URL.
+  allowed-hosts: It should be a valid {site} URL.
 
 entities:
   users: Users

@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import { SortPropertyOption } from '@/components/SortControls.vue';
-import { TableColumn } from '@/components/TableColumnsControls.vue';
-import { Sort } from '@/types/tankobon-api';
-import { PublisherSort } from '@/types/tankobon-publisher';
-import { safeNumber } from '@/utils/route';
+import { SortPropertyOption } from '@/components/SortControls.vue'
+import { TableColumn } from '@/components/TableColumnsControls.vue'
+import { Sort } from '@/types/tankobon-api'
+import { PublisherSort } from '@/types/tankobon-publisher'
+import { safeNumber } from '@/utils/route'
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/20/solid'
-import { BuildingOffice2Icon, MagnifyingGlassIcon as MagnifyingGlassIconOutline } from '@heroicons/vue/24/outline'
-import { ColumnOrderState } from '@tanstack/vue-table';
-import { SortDirection } from '@tanstack/vue-table';
+import { ColumnOrderState } from '@tanstack/vue-table'
+import { SortDirection } from '@tanstack/vue-table'
 
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library!.id)
@@ -68,11 +67,11 @@ function handleSizeChange(newSize: number) {
   size.value = newSize
 }
 
-function handleSortChange(newSort: Sort<SeriesSort>[]) {
+function handleSortChange(newSort: Sort<PublisherSort>[]) {
   sortQuery.value = newSort[0] ? `${newSort[0].property}:${newSort[0].direction}` : null
 }
 
-function handleSortPropertyChange(newSortProperty: SeriesSort) {
+function handleSortPropertyChange(newSortProperty: PublisherSort) {
   sortQuery.value = `${newSortProperty}:${sort.value?.direction ?? 'asc'}`
 }
 
