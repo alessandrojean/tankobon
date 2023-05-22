@@ -17,6 +17,7 @@ import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
 import FacebookIcon from '@/components/icons/FacebookIcon.vue'
 import YouTubeIcon from '@/components/icons/YouTubeIcon.vue'
 import StoreIcon from '@/components/icons/StoreIcon.vue'
+import { allowedHostsMap } from '@/utils/links'
 
 export interface TextInputProps {
   disabledTypes?: string[]
@@ -47,7 +48,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const { errorsType, errorsUrl, disabledTypes, types, type } = toRefs(props)
+const { errorsType, errorsUrl, disabledTypes, types, type, url } = toRefs(props)
 
 const errorMessage = computed(() => {
   const errorType = unref(errorsType.value?.[0]?.$message)
@@ -123,6 +124,47 @@ const disabledIndexes = computed(() => {
     .map((t, i) => disabledTypes.value.includes(t) && t !== type.value ? i : -1)
     .filter(i => i !== -1)
 })
+
+async function handleExternalLinkChange(type: string, url: string) {
+  await nextTick()
+  handleTypeChange(type)
+
+  await nextTick()
+  handleUrlChange(url)
+}
+
+async function detectTypeFromUrl(event: ClipboardEvent) {
+  const pastedUrl = event.clipboardData?.getData('text/plain')
+
+  if (!pastedUrl) {
+    return
+  }
+
+  let parsedUrl: URL
+
+  try {
+    parsedUrl = new URL(pastedUrl)
+  } catch (_) {
+    return
+  }
+
+  const host = parsedUrl.hostname.toLowerCase().replace(/^www./, '')
+  const [detectedType] = Object.entries(allowedHostsMap)
+    .find(([_, value]) => value.hosts.includes(host)) ?? []
+
+  if (!detectedType || !types.value.includes(detectedType)) {
+    const freeType = ['website', 'store'].find(t => types.value.includes(t))
+
+    if (!freeType) {
+      return
+    }
+
+    await handleExternalLinkChange(freeType, pastedUrl)
+    return
+  }
+
+  await handleExternalLinkChange(detectedType, pastedUrl)
+}
 </script>
 
 <template>
@@ -147,6 +189,7 @@ const disabledIndexes = computed(() => {
       ]"
       :placeholder="placeholder"
       :value="url"
+      @paste="detectTypeFromUrl"
       @blur="blurBothFields"
       @input="handleUrlChange(($event.target! as HTMLInputElement).value)"
     >

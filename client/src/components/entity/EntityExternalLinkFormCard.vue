@@ -2,6 +2,7 @@
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { helpers, required, url as urlValidator } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import { allowedHostsMap } from '@/utils/links'
 
 export interface EntityExternalLinkFormCardProps {
   disabled?: boolean
@@ -30,66 +31,6 @@ const { t } = useI18n()
 
 function notNullValue(value: string) {
   return value !== 'null'
-}
-
-interface AllowedHosts {
-  name: string
-  hosts: string[]
-}
-
-const allowedHostsMap: Record<string, AllowedHosts> = {
-  twitter: {
-    name: 'Twitter',
-    hosts: ['twitter.com', 'mobile.twitter.com'],
-  },
-  facebook: {
-    name: 'Facebook',
-    hosts: ['facebook.com'],
-  },
-  instagram: {
-    name: 'Instagram',
-    hosts: ['instagram.com'],
-  },
-  youTube: {
-    name: 'YouTube',
-    hosts: ['youtube.com'],
-  },
-  amazon: {
-    name: 'Amazon',
-    hosts: ['amazon.com', 'amazon.ca', 'amazon.com.br', 'amazon.co.uk', 'amazon.co.jp', 'amazon.cn'],
-  },
-  openLibrary: {
-    name: 'Open Library',
-    hosts: ['openlibrary.org'],
-  },
-  skoob: {
-    name: 'Skoob',
-    hosts: ['skoob.com.br'],
-  },
-  goodreads: {
-    name: 'Goodreads',
-    hosts: ['goodreads.com'],
-  },
-  guiaDosQuadrinhos: {
-    name: 'Guia dos Quadrinhos',
-    hosts: ['guiadosquadrinhos.com'],
-  },
-  myAnimeList: {
-    name: 'MyAnimeList',
-    hosts: ['myanimelist.net'],
-  },
-  kitsu: {
-    name: 'Kitsu',
-    hosts: ['kitsu.io'],
-  },
-  aniList: {
-    name: 'AniList',
-    hosts: ['anilist.co'],
-  },
-  mangaUpdates: {
-    name: 'MangaUpdates',
-    hosts: ['mangaupdates.com']
-  },
 }
 
 function allowedHost(value: string) {

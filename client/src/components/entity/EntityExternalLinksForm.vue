@@ -125,7 +125,7 @@ const usedTypes = computed(() => externalLinks.value.map(e => e.type))
       <div>
         <Button
           size="small"
-          :disabled="loading"
+          :disabled="loading || externalLinks.length === types.length"
           @click="addExternalLink"
         >
           <PlusIcon class="w-5 h-5" />
