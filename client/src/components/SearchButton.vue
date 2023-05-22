@@ -61,11 +61,9 @@ interface SearchButtonProps {
   transparent?: SearchButtonCvaProps['transparent']
 }
 
-const isMac = ref(
-  navigator.userAgentData
-    ? navigator.userAgentData.platform.toLowerCase().includes('mac')
-    : navigator.platform.toLowerCase().includes('mac'),
-)
+const isMac = navigator.userAgentData
+  ? navigator.userAgentData.platform.toLowerCase().includes('mac')
+  : navigator.platform.toLowerCase().includes('mac')
 </script>
 
 <template>

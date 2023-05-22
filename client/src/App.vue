@@ -17,7 +17,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const isAuthenticated = computed(() => userStore.isAuthenticated)
-const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
+const isPreferredDark = usePreferredDark()
 const localTheme = useLocalStorage('theme', THEME_SYSTEM)
 const { data: theme } = useUserPreferencesQuery({
   select: preferences => preferences.theme as Theme ?? localTheme.value,
@@ -52,10 +52,10 @@ type InnerToast = Toast & { id: string }
 
 const toasts = ref<InnerToast[]>([])
 const toaster = ref<HTMLDivElement | null>()
-const motionOk = useMediaQuery('(prefers-reduced-motion: no-preference)')
+const preferredMotion = usePreferredReducedMotion()
 
 async function addToast(toast: Toast) {
-  if (motionOk.value) {
+  if (preferredMotion.value === 'no-preference') {
     return await flipToast(toast)
   } else {
     const id = new Date().getTime().toString(16)
