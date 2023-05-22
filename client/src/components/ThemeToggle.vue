@@ -78,7 +78,7 @@ async function setTheme(theme: Theme) {
       :title="t('theme-toggle.label')"
       :kind="transparent ? 'navbar-light' : 'navbar-dark-elevated'"
       size="mini"
-      class="w-8 h-8 theme-chooser"
+      class="w-8 h-8"
     >
       <span class="sr-only">
         {{ t('theme-toggle.label') }}
