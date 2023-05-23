@@ -496,8 +496,8 @@ class BookDtoDao(
           DSL.select(TableBookContributor.BOOK_ID)
             .from(TableBookContributor)
             .where(TableBookContributor.PERSON_ID.`in`(personIds))
-            .and(TableBookContributor.BOOK_ID.eq(TableBook.ID))
-        )
+            .and(TableBookContributor.BOOK_ID.eq(TableBook.ID)),
+        ),
       )
     }
 
