@@ -119,7 +119,7 @@ class CollectionControllerTest(
       val creation = CollectionCreationDto(
         name = collection.name.lowercase(),
         description = "",
-        library = library.id
+        library = library.id,
       )
 
       mockMvc
@@ -144,7 +144,7 @@ class CollectionControllerTest(
       val creation = CollectionCreationDto(
         name = "",
         description = "",
-        library = "1234"
+        library = "1234",
       )
 
       mockMvc
