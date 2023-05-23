@@ -73,8 +73,8 @@ export default { inheritAttrs: false }
         @input="$emit('update:modelValue', ($event.target! as HTMLInputElement).value)"
       >
       <label
-        class="font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text"
         :class="[
+          'font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text',
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'] },
           invalid ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
         ]"

@@ -5,7 +5,7 @@ import MonetaryAmountInput from '../form/MonetaryAmountInput.vue'
 import type { MonetaryAmountString } from '@/types/tankobon-monetary'
 import { convertLocalTimeZoneToUtc, convertUtcToLocalTimeZone } from '@/utils/date'
 import { positiveDecimal } from '@/utils/validation'
-import type { StoreEntity, StoreLinks } from '@/types/tankobon-store'
+import type { StoreAttributes, StoreEntity } from '@/types/tankobon-store'
 import { createEmptyPaginatedResponse } from '@/utils/api'
 import type { TagEntity } from '@/types/tankobon-tag'
 
@@ -132,11 +132,7 @@ const { data: libraryTags } = useLibraryTagsQuery({
 const nullStore = computed<StoreEntity>(() => ({
   type: 'STORE',
   id: 'null',
-  attributes: {
-    name: t('stores.unknown'),
-    description: '',
-    links: {} as StoreLinks,
-  },
+  attributes: { name: t('stores.unknown') } as StoreAttributes,
   relationships: [],
 }))
 

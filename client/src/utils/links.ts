@@ -56,4 +56,12 @@ export const allowedHostsMap: Record<string, AllowedHosts> = {
     name: 'MangaUpdates',
     hosts: ['mangaupdates.com'],
   },
+  pixiv: {
+    name: 'Pixiv',
+    hosts: ['pixiv.net'],
+  },
+  deviantArt: {
+    name: 'DeviantArt',
+    hosts: ['deviantart.com'],
+  },
 }

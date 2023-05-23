@@ -75,6 +75,7 @@ defineExpose({ v$ })
 
     <AlternativeNameInput
       class="grow -mr-2"
+      kind="basic"
       :index="index"
       :name="name"
       :language="language"

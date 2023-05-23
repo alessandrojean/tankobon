@@ -114,7 +114,7 @@ whenever(image, async (image) => {
         v-if="showCoverImage"
         :src="coverUrl"
         :alt="alt ?? ''"
-        class="w-full h-full"
+        class="w-full h-full object-cover"
       >
       <div v-else-if="loading || coverUrl.length === 0 || imageHasError" class="w-full h-full flex items-center justify-center">
         <component

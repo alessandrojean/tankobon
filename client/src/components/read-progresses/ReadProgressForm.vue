@@ -118,24 +118,6 @@ whenever(isCompleted, () => emit('update:page', pageCount.value))
       />
     </div>
 
-    <!-- <TextInput
-      id="page"
-      :model-value="page ?? ''"
-      required
-      inputmode="numeric"
-      :input-mask="{
-        regex: '\\d+',
-        showMaskOnHover: false,
-        showMaskOnFocus: false,
-      }"
-      :placeholder="String(pageCount)"
-      :label-text="$t('common-fields.page')"
-      :invalid="v$.page.$error"
-      :errors="v$.page.$errors"
-      @blur="v$.page.$touch()"
-      @input="$emit('update:page', $event.target.value)"
-    /> -->
-
     <RangeInput
       id="page"
       :min="0"

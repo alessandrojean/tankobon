@@ -50,6 +50,11 @@ common-fields:
   legal-name: Legal name
   founding-year: Founding year
   dissolution-year: Dissolution year
+  born-at: Born at
+  died-at: Died at
+  nationality: Nationality
+  native-name: Native name
+  native-name-language: Native name language
 
 common-actions:
   sign-in: Sign in
@@ -108,6 +113,8 @@ common-placeholders:
   publisher-founding-year: '1986'
   person-name: Katsuhiro Otomo
   person-description: Katsuhiro Otomo is a japanese manga artist…
+  person-native-name: 大友克洋
+  person-nationality: Japan
   tag-name: Hardcover
   tag-description: Books with hardcover binding…
   contributor-role-name: Script
@@ -161,6 +168,8 @@ validation:
   durational-finish: It should be greater or equal than the start date
   durational-company-year-founding: It should be less or equal than the dissolution year
   durational-company-year-dissolution: It should be greater or equal than the founding year
+  durational-person-born: It should be less than the died date
+  durational-person-died: It should be greater than the born date
   url: It should be a valid URL.
   allowed-hosts: It should be a valid {site} URL.
 
@@ -183,6 +192,7 @@ errors:
 date:
   unknown: Unknown date
   unknown-short: Unknown
+  today: today
 
 password-strength:
   very-weak: Very weak
@@ -421,6 +431,10 @@ people:
   empty-search-description: Matches not found for “{0}”
   search: Search into people
   role-as: as
+  information: Information
+  picture: Picture
+  metadata: Metadata
+  died-at-attribute: '{date} ({years})'
 
 tags:
   fetch-failure: There was an error while fetching the tags
@@ -630,4 +644,7 @@ external-links:
   store: Store
 
 location:
+  unknown: Unknown
+
+nationality:
   unknown: Unknown

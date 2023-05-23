@@ -15,6 +15,8 @@ import MangaUpdatesIcon from '@/components/icons/MangaUpdatesIcon.vue'
 import FacebookIcon from '@/components/icons/FacebookIcon.vue'
 import YouTubeIcon from '@/components/icons/YouTubeIcon.vue'
 import StoreIcon from '@/components/icons/StoreIcon.vue'
+import PixivIcon from '@/components/icons/PixivIcon.vue'
+import DeviantArtIcon from '@/components/icons/DeviantArtIcon.vue'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
 
 export interface EntityExternalLinksProps {
@@ -46,6 +48,8 @@ const typeNames = computed<Record<string, string>>(() => ({
   skoob: 'Skoob',
   mangaUpdates: 'MangaUpdates',
   guiaDosQuadrinhos: 'Guia dos Quadrinhos',
+  deviantArt: 'DeviantArt',
+  pixiv: 'Pixiv',
 }))
 
 const typeIcons: Record<string, Component> = {
@@ -65,6 +69,8 @@ const typeIcons: Record<string, Component> = {
   skoob: SkoobIcon,
   mangaUpdates: MangaUpdatesIcon,
   guiaDosQuadrinhos: GuiaDosQuadrinhosIcon,
+  pixiv: PixivIcon,
+  deviantArt: DeviantArtIcon,
 }
 
 const presentLinks = computed(() => {

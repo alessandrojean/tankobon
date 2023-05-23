@@ -427,6 +427,7 @@
     "toValue": true,
     "useDeleteStorePictureMutation": true,
     "useUploadStorePictureMutation": true,
-    "useStoreBooksQuery": true
+    "useStoreBooksQuery": true,
+    "usePersonBooksQuery": true
   }
 }

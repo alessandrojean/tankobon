@@ -2,6 +2,7 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.DurationalPerson
 import io.github.alessandrojean.tankobon.domain.model.Person
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrBcp47
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrIso3166
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
@@ -11,8 +12,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 import org.hibernate.validator.constraints.UUID
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class PersonEntityDto(
   override val id: String,
@@ -31,6 +34,8 @@ data class PersonAttributesDto(
   val diedAt: LocalDate?,
   val nationality: String?,
   val nativeName: PersonNativeNameDto,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 data class PersonNativeNameDto(
@@ -43,7 +48,7 @@ data class PersonNativeNameDto(
 
 data class PersonLinksDto(
   @get:NullOrNotBlank
-  @get:UrlMultipleHosts
+  @get:URL
   @get:Schema(format = "uri", nullable = true)
   val website: String? = null,
   @get:NullOrNotBlank
@@ -108,6 +113,8 @@ fun Person.toAttributesDto() = PersonAttributesDto(
     name = nativeName,
     language = nativeNameLanguage,
   ),
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 @PersonDateRangeValidation

@@ -490,6 +490,17 @@ class BookDtoDao(
       )
     }
 
+    if (!personIds.isNullOrEmpty()) {
+      c = c.and(
+        TableBook.ID.`in`(
+          DSL.select(TableBookContributor.BOOK_ID)
+            .from(TableBookContributor)
+            .where(TableBookContributor.PERSON_ID.`in`(personIds))
+            .and(TableBookContributor.BOOK_ID.eq(TableBook.ID))
+        )
+      )
+    }
+
     if (!userId.isNullOrEmpty()) {
       val user = userDao.findByIdOrNull(userId)!!
       val librariesIdsUserHasAccess = libraryDao.getAllowedToViewLibrariesIds(userId)

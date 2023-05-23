@@ -8,6 +8,7 @@ import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessExcep
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
+import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
@@ -69,6 +70,7 @@ class BookController(
   private val seriesRepository: SeriesRepository,
   private val publisherRepository: PublisherRepository,
   private val storeRepository: StoreRepository,
+  private val personRepository: PersonRepository,
   private val bookCoverLifecycle: BookCoverLifecycle,
   private val referenceExpansion: ReferenceExpansion,
 ) {
@@ -305,6 +307,50 @@ class BookController(
 
     val bookSearch = BookSearch(
       storeIds = listOf(storeId),
+      userId = principal.user.id,
+    )
+    val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
+    val books = referenceExpansion.expand(booksPage.content, includes)
+
+    return PageImpl(books, booksPage.pageable, booksPage.totalElements)
+      .toSuccessCollectionResponseDto { it }
+  }
+
+  @GetMapping("v1/people/{personId}/books")
+  @PageableAsQueryParam
+  @Operation(summary = "Get all books from a person", security = [SecurityRequirement(name = "Basic Auth")])
+  fun getAllBooksFromPerson(
+    @AuthenticationPrincipal principal: TankobonPrincipal,
+    @PathVariable
+    @UUID(version = [4])
+    @Schema(format = "uuid")
+    personId: String,
+    @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
+    @Parameter(hidden = true) page: Pageable,
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
+  ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
+    val person = personRepository.findByIdOrNull(personId)
+      ?: throw IdDoesNotExistException("Person not found")
+
+    val library = libraryRepository.findById(person.libraryId)
+
+    if (!principal.user.canAccessLibrary(library)) {
+      throw UserDoesNotHaveAccessException()
+    }
+
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      else -> Sort.unsorted()
+    }
+
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
+    }
+
+    val bookSearch = BookSearch(
+      personIds = listOf(personId),
       userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)

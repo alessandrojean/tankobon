@@ -4,11 +4,15 @@ import Button from './Button.vue'
 import { getFlagScriptCode, getLanguageName, getRegionCode } from '@/utils/language'
 
 export interface TextInputProps {
+  disabledOptions?: number[]
   errorsLanguage?: ErrorObject[]
   errorsName?: ErrorObject[]
-  index: number
+  index?: number
   invalidLanguage?: boolean
   invalidName?: boolean
+  kind?: 'basic' | 'fancy'
+  labelLanguage?: string
+  labelName?: string
   language: string
   languages: string[]
   name: string
@@ -16,10 +20,13 @@ export interface TextInputProps {
 }
 
 const props = withDefaults(defineProps<TextInputProps>(), {
+  disabledOptions: () => [0],
   errorsLanguage: undefined,
   errorsName: undefined,
+  index: -1,
   invalidLanguage: false,
   invalidName: false,
+  kind: 'basic',
 })
 
 const emit = defineEmits<{
@@ -74,20 +81,16 @@ function blurBothFields() {
 </script>
 
 <template>
-  <fieldset class="relative disabled:opacity-50">
-    <label
-      :for="`name-input-${index}`"
-      class="sr-only"
-    >
-      {{ $t('alternative-names.label-name', [index + 1]) }}
-    </label>
+  <fieldset class="relative disabled:opacity-60">
     <input
       :id="`name-input-${index}`"
+      type="text"
       :class="[
         'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md',
         'dark:text-gray-200 focus:ring focus:ring-opacity-50',
         'motion-safe:transition-shadow placeholder:text-gray-500',
-        'border focus:outline-none pl-[3.6rem] h-10',
+        'border focus:outline-none pl-[3.6rem]',
+        kind === 'basic' ? 'h-10' : 'pt-8',
         invalidName || invalidLanguage
           ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
           : 'border-gray-300 dark:border-gray-800 focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-200 dark:focus:ring-primary-200/30',
@@ -98,27 +101,38 @@ function blurBothFields() {
       @blur="blurBothFields"
       @input="handleNameChange(($event.target! as HTMLInputElement).value)"
     >
+    <label
+      :for="`name-input-${index}`"
+      :class="[
+        'font-medium text-xs px-3 absolute top-3 inset-x-0 select-none cursor-text',
+        { '!sr-only': kind === 'basic' },
+        invalidName ? 'text-red-800 dark:text-red-600' : 'text-gray-700 dark:text-gray-300',
+      ]"
+    >
+      {{ labelName ?? $t('alternative-names.label-name', [index + 1]) }}
+    </label>
     <div
       :class="[
         'absolute h-7 flex items-center justify-center',
-        'motion-safe:transition-colors left-1.5 top-0',
-        'border-r border-gray-300 dark:border-gray-800 my-1.5 pr-1.5',
+        'motion-safe:transition-colors left-1.5',
+        'border-r border-gray-300 dark:border-gray-800 pr-1.5',
+        kind === 'basic' ? 'top-0 my-1.5' : 'top-8',
       ]"
     >
       <BasicListbox
         :check-icon="false"
-        :label-text="$t('alternative-names.label-language', [index + 1])"
+        :label-text="labelLanguage ?? $t('alternative-names.label-language', [index + 1])"
         :model-value="language === '' ? 'null' : language"
         :options="languages"
         :option-text="getOriginalLanguageName"
         :option-value="l => l"
-        :disabled-options="[0]"
+        :disabled-options="disabledOptions"
         @update:model-value="handleLanguageChange"
       >
         <template #listbox-button>
           <ListboxButton
             :as="Button"
-            class="w-9 h-9 !p-0"
+            :class="['w-9 !p-0', kind === 'basic' ? 'h-9' : 'h-8']"
             kind="ghost-alt"
             size="mini"
             :title="$t('alternative-names.label-language', [index + 1])"

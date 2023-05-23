@@ -5,6 +5,7 @@ open class BookSearch(
   val seriesIds: kotlin.collections.Collection<String>? = null,
   val publisherIds: kotlin.collections.Collection<String>? = null,
   val storeIds: kotlin.collections.Collection<String>? = null,
+  val personIds: kotlin.collections.Collection<String>? = null,
   val userId: String? = null,
   val searchTerm: String? = null,
 )

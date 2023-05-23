@@ -88,6 +88,7 @@ fun Publisher.toDocument() = Document().apply {
 
 fun Person.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
+  add(TextField("native-name", nativeName, Field.Store.NO))
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Person.type, Field.Store.NO))
   add(StringField(LuceneEntity.Person.id, id, Field.Store.YES))
 }
@@ -106,6 +107,7 @@ fun Tag.toDocument() = Document().apply {
 
 fun Store.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
+  add(TextField("legal-name", legalName, Field.Store.NO))
   add(StringField(LuceneEntity.TYPE, LuceneEntity.Store.type, Field.Store.NO))
   add(StringField(LuceneEntity.Store.id, id, Field.Store.YES))
 }
