@@ -129,6 +129,7 @@ data class SeriesCreationDto(
   val type: SeriesType?,
   @get:NotNull
   @get:UniqueElements
+  @get:Valid
   val alternativeNames: List<@NotNull SeriesAlternativeNameDto>,
   @get:NullOrNotBlank
   val lastNumber: String?,
@@ -151,11 +152,12 @@ data class SeriesUpdateDto(
   val type: SeriesType?,
   @get:NotNull
   @get:UniqueElements
+  @get:Valid
   val alternativeNames: List<@NotNull SeriesAlternativeNameDto>,
   @get:NullOrNotBlank
   val lastNumber: String?,
   @get:NullOrBcp47
-  @get:Schema(format = "bcp-47")
+  @get:Schema(format = "bcp-47", nullable = true)
   val originalLanguage: String?,
   @get:NotNull
   @get:Valid

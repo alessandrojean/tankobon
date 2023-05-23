@@ -31,8 +31,8 @@ class DurationalCompanyYearRangeValidator : ConstraintValidator<CompanyYearRange
       return true
     }
 
-    val foundingGreaterThanDissolution = value.foundingYear!! > value.dissolutionYear!!
-    val dissolutionLessThanFounding = value.dissolutionYear!! < value.foundingYear!!
+    val foundingGreaterThanDissolution = value.foundingYear!! >= value.dissolutionYear!!
+    val dissolutionLessThanFounding = value.dissolutionYear!! <= value.foundingYear!!
 
     if (!foundingGreaterThanDissolution && !dissolutionLessThanFounding) {
       return true

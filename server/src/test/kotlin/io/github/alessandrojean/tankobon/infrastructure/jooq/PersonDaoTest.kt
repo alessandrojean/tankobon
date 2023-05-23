@@ -54,6 +54,9 @@ class PersonDaoTest(
       description = "Person description",
       libraryId = library.id,
       links = PersonLinks(twitter = "person"),
+      nationality = "US",
+      nativeName = "Persona",
+      nativeNameLanguage = "en-US",
     )
 
     personDao.insert(person)
@@ -65,6 +68,11 @@ class PersonDaoTest(
       assertThat(name).isEqualTo(person.name)
       assertThat(description).isEqualTo(person.description)
       assertThat(links.twitter).isEqualTo(person.links.twitter)
+      assertThat(bornAt).isEqualTo(person.bornAt)
+      assertThat(diedAt).isEqualTo(person.diedAt)
+      assertThat(nationality).isEqualTo(person.nationality)
+      assertThat(nativeName).isEqualTo(person.nativeName)
+      assertThat(nativeNameLanguage).isEqualTo(person.nativeNameLanguage)
       assertThat(libraryId).isEqualTo(person.libraryId)
     }
   }
@@ -76,6 +84,9 @@ class PersonDaoTest(
       description = "Person description",
       libraryId = library.id,
       links = PersonLinks(twitter = "person"),
+      nationality = "US",
+      nativeName = "Persona",
+      nativeNameLanguage = "en-US",
     )
     personDao.insert(person)
 
@@ -85,6 +96,9 @@ class PersonDaoTest(
       name = "PersonUpdated",
       description = "PersonUpdated description",
       links = PersonLinks(twitter = "person_"),
+      nationality = "BR",
+      nativeName = "Pessoa",
+      nativeNameLanguage = "pt-BR",
     )
 
     personDao.update(updated)
@@ -99,6 +113,11 @@ class PersonDaoTest(
       assertThat(name).isEqualTo(updated.name)
       assertThat(description).isEqualTo(updated.description)
       assertThat(links.twitter).isEqualTo(updated.links.twitter)
+      assertThat(bornAt).isEqualTo(updated.bornAt)
+      assertThat(diedAt).isEqualTo(updated.diedAt)
+      assertThat(nationality).isEqualTo(updated.nationality)
+      assertThat(nativeName).isEqualTo(updated.nativeName)
+      assertThat(nativeNameLanguage).isEqualTo(updated.nativeNameLanguage)
       assertThat(libraryId).isEqualTo(updated.libraryId)
     }
   }

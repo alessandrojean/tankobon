@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.interfaces.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
@@ -8,6 +9,9 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.PersonLifecycle
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonCreationDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonLinksDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.PersonNativeNameDto
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -33,6 +37,7 @@ class PersonControllerTest(
   @Autowired private val personLifecycle: PersonLifecycle,
   @Autowired private val libraryRepository: LibraryRepository,
   @Autowired private val userRepository: TankobonUserRepository,
+  @Autowired private val objectMapper: ObjectMapper,
 ) {
 
   companion object {
@@ -102,27 +107,32 @@ class PersonControllerTest(
     fun `it should return bad request when creating a person with a duplicate name in the library`() {
       personLifecycle.addPerson(person)
 
-      val jsonString = """
-        {
-          "name": "${person.name.lowercase()}",
-          "description": "",
-          "links": {
-            "website": null,
-            "twitter": null,
-            "instagram": null,
-            "facebook": null,
-            "pixiv": null,
-            "deviantArt": null,
-            "youTube": null
-          },
-          "library": "${library.id}"
-        }
-      """.trimIndent()
+      val creation = PersonCreationDto(
+        name = person.name.lowercase(),
+        description = "",
+        links = PersonLinksDto(
+          website = null,
+          twitter = null,
+          instagram = null,
+          facebook = null,
+          pixiv = null,
+          deviantArt = null,
+          youTube = null
+        ),
+        bornAt = null,
+        diedAt = null,
+        nationality = null,
+        nativeName = PersonNativeNameDto(
+          name = "",
+          language = null,
+        ),
+        library = library.id,
+      )
 
       mockMvc
         .post("/api/v1/people") {
           contentType = MediaType.APPLICATION_JSON
-          content = jsonString
+          content = objectMapper.writeValueAsString(creation)
         }
         .andExpect { status { isBadRequest() } }
     }

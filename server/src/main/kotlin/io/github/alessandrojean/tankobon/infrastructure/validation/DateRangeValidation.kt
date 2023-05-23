@@ -31,8 +31,8 @@ class DurationalDateRangeValidator : ConstraintValidator<DateRangeValidation, Du
       return true
     }
 
-    val startGreaterThanFinish = value.startedAt!! > value.finishedAt!!
-    val finishLessThanStart = value.finishedAt!! < value.startedAt!!
+    val startGreaterThanFinish = value.startedAt!! >= value.finishedAt!!
+    val finishLessThanStart = value.finishedAt!! <= value.startedAt!!
 
     if (!startGreaterThanFinish && !finishLessThanStart) {
       return true

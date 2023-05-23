@@ -32,6 +32,9 @@ class PersonDao(
 
   private val sorts = mapOf(
     "name" to TablePerson.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "nativeName" to TablePerson.NATIVE_NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "bornAt" to TablePerson.BORN_AT,
+    "diedAt" to TablePerson.DIED_AT,
     "createdAt" to TablePerson.CREATED_AT,
     "modifiedAt" to TablePerson.MODIFIED_AT,
   )
@@ -148,6 +151,11 @@ class PersonDao(
       .set(TablePerson.PIXIV, person.links.pixiv)
       .set(TablePerson.DEVIANTART, person.links.deviantArt)
       .set(TablePerson.YOUTUBE, person.links.youTube)
+      .set(TablePerson.BORN_AT, person.bornAt)
+      .set(TablePerson.DIED_AT, person.diedAt)
+      .set(TablePerson.NATIONALITY, person.nationality)
+      .set(TablePerson.NATIVE_NAME, person.nativeName)
+      .set(TablePerson.NATIVE_NAME_LANGUAGE, person.nativeNameLanguage)
       .execute()
   }
 
@@ -165,6 +173,11 @@ class PersonDao(
       .set(TablePerson.PIXIV, person.links.pixiv)
       .set(TablePerson.DEVIANTART, person.links.deviantArt)
       .set(TablePerson.YOUTUBE, person.links.youTube)
+      .set(TablePerson.BORN_AT, person.bornAt)
+      .set(TablePerson.DIED_AT, person.diedAt)
+      .set(TablePerson.NATIONALITY, person.nationality)
+      .set(TablePerson.NATIVE_NAME, person.nativeName)
+      .set(TablePerson.NATIVE_NAME_LANGUAGE, person.nativeNameLanguage)
       .set(TablePerson.MODIFIED_AT, LocalDateTime.now(ZoneId.of("Z")))
       .where(TablePerson.ID.eq(person.id))
       .execute()
@@ -220,6 +233,11 @@ class PersonDao(
       deviantArt = deviantart,
       youTube = youtube,
     ),
+    bornAt = bornAt,
+    diedAt = diedAt,
+    nationality = nationality,
+    nativeName = nativeName,
+    nativeNameLanguage = nativeNameLanguage,
     libraryId = libraryId,
     id = id,
     createdAt = createdAt.toCurrentTimeZone(),

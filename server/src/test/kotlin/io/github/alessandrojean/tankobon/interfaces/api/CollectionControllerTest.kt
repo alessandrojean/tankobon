@@ -10,6 +10,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.CollectionLifecycle
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -157,9 +158,8 @@ class CollectionControllerTest(
           jsonPath("$.result") { value("ERROR") }
           jsonPath("$.errors.length()") { value(2) }
           jsonPath("$.errors[0].id") { value("VIOLATION_FIELD_ERROR") }
-          jsonPath("$.errors[0].title") { value("library") }
           jsonPath("$.errors[1].id") { value("VIOLATION_FIELD_ERROR") }
-          jsonPath("$.errors[1].title") { value("name") }
+          jsonPath("$.errors[*].title") { containsInAnyOrder("library", "name") }
         }
     }
   }

@@ -193,6 +193,11 @@ class PersonController(
           deviantArt = person.links.deviantArt,
           youTube = person.links.youTube,
         ),
+        bornAt = person.bornAt,
+        diedAt = person.diedAt,
+        nationality = person.nationality,
+        nativeName = person.nativeName.name,
+        nativeNameLanguage = person.nativeName.language,
         libraryId = person.library,
       ),
     )
@@ -299,6 +304,11 @@ class PersonController(
         deviantArt = person.links.deviantArt,
         youTube = person.links.youTube,
       ),
+      bornAt = person.bornAt,
+      diedAt = person.diedAt,
+      nationality = person.nationality,
+      nativeName = person.nativeName.name,
+      nativeNameLanguage = person.nativeName.language,
     )
 
     personLifecycle.updatePerson(toUpdate)
