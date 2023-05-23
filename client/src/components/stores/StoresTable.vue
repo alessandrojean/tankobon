@@ -41,7 +41,7 @@ const emit = defineEmits<{
   (e: 'update:sort', sort: Sort<StoreSort>[]): void
 }>()
 
-const { page, search, size, sort } = toRefs(props)
+const { page, search, size, sort, columnVisibility } = toRefs(props)
 const { t, d, locale } = useI18n()
 
 const pagination = computed<PaginationState>(() => ({
@@ -117,7 +117,9 @@ const columns = [
           }),
           h('div', { class: 'flex flex-col' }, [
             h('span', { innerText: name, class: 'font-medium', title: name }),
-            legalName ? h('span', { innerText: legalName, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
+            (legalName && !columnVisibility.value.legalName)
+              ? h('span', { innerText: legalName, class: 'text-xs text-gray-700 dark:text-gray-400' })
+              : undefined,
           ]),
         ])
       },
