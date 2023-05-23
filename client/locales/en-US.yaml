@@ -490,6 +490,7 @@ stores-types:
   bookstore: Bookstore
   comic-shop: Comic shop
   newsstand: Newsstand
+  retail-chain: Retail chain
 
 importer:
   header: Import by ISBN

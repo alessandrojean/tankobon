@@ -76,6 +76,7 @@ const types = computed(() => {
     { type: 'BOOKSTORE', text: t('stores-types.bookstore') },
     { type: 'NEWSSTAND', text: t('stores-types.newsstand') },
     { type: 'COMIC_SHOP', text: t('stores-types.comic-shop') },
+    { type: 'RETAIL_CHAIN', text: t('stores-types.retail-chain') },
   ]
 
   return [

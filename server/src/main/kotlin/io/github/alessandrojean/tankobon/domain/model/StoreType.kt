@@ -10,4 +10,5 @@ enum class StoreType {
   COMIC_SHOP,
   BOOKSTORE,
   NEWSSTAND,
+  RETAIL_CHAIN,
 }

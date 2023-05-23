@@ -15,7 +15,7 @@ export interface StoreAttributes {
   modifiedAt: string
 }
 
-export type StoreType = 'COMIC_SHOP' | 'BOOKSTORE' | 'NEWSSTAND'
+export type StoreType = 'COMIC_SHOP' | 'BOOKSTORE' | 'NEWSSTAND' | 'RETAIL_CHAIN'
 
 export interface StoreLinks {
   website: string | null
