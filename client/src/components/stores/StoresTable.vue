@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { BuildingStorefrontIcon as BuildingStorefrontSolidIcon, EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { BuildingStorefrontIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { BuildingStorefrontIcon as BuildingStorefrontSolidIcon } from '@heroicons/vue/24/solid'
 import Avatar from '@/components/Avatar.vue'
 import type { BadgeColor } from '@/components/Badge.vue'
 import Badge from '@/components/Badge.vue'
@@ -96,13 +97,14 @@ const columns = [
   columnHelper.accessor(
     store => ({
       name: store.attributes.name,
+      legalName: store.attributes.legalName,
       picture: getRelationship(store, 'STORE_PICTURE'),
     }),
     {
       id: 'name',
       header: () => t('common-fields.name'),
       cell: (info) => {
-        const { name, picture } = info.getValue()
+        const { name, legalName, picture } = info.getValue()
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
@@ -112,9 +114,11 @@ const columns = [
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),
-            size: 'sm',
           }),
-          h('span', { innerText: name }),
+          h('div', { class: 'flex flex-col' }, [
+            h('span', { innerText: name, class: 'font-medium', title: name }),
+            legalName ? h('span', { innerText: legalName, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
+          ]),
         ])
       },
       meta: {

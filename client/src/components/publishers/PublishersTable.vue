@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { BuildingOffice2Icon as BuildingOffice2SolidIcon, EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import { BuildingOffice2Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { BuildingOffice2Icon as BuildingOffice2SolidIcon } from '@heroicons/vue/24/solid'
 import Avatar from '../Avatar.vue'
 import Flag from '../Flag.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
@@ -87,13 +88,14 @@ const columns = [
   columnHelper.accessor(
     publisher => ({
       name: publisher.attributes.name,
+      legalName: publisher.attributes.legalName,
       picture: getRelationship(publisher, 'PUBLISHER_PICTURE'),
     }),
     {
       id: 'name',
       header: () => t('common-fields.name'),
       cell: (info) => {
-        const { name, picture } = info.getValue()
+        const { name, legalName, picture } = info.getValue()
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
@@ -103,9 +105,11 @@ const columns = [
               fileName: picture?.attributes?.versions?.['64'],
               timeHex: picture?.attributes?.timeHex,
             }),
-            size: 'sm',
           }),
-          h('span', { innerText: name }),
+          h('div', { class: 'flex flex-col' }, [
+            h('span', { innerText: name, class: 'font-medium', title: name }),
+            legalName ? h('span', { innerText: legalName, class: 'text-xs text-gray-700 dark:text-gray-400' }) : undefined,
+          ]),
         ])
       },
       meta: {

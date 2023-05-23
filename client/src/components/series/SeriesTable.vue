@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon, PlusIcon, Square2StackIcon as Square2StackSolidIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon, Square2StackIcon } from '@heroicons/vue/24/outline'
+import { Square2StackIcon as Square2StackSolidIcon } from '@heroicons/vue/24/solid'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import type { SeriesEntity, SeriesSort } from '@/types/tankobon-series'
@@ -98,7 +99,7 @@ const columns = [
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
             pictureUrl: createImageUrl({
-              fileName: cover?.attributes?.versions?.['256'],
+              fileName: cover?.attributes?.versions?.['128'],
               timeHex: cover?.attributes?.timeHex,
             }),
             square: true,

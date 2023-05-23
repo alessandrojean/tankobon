@@ -3,6 +3,7 @@ import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/
 import { createColumnHelper } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
 import { BookOpenIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { BookOpenIcon as BookOpenSolidIcon } from '@heroicons/vue/24/solid'
 import Avatar from '../Avatar.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
@@ -104,7 +105,7 @@ const columns = [
               timeHex: coverArt?.attributes?.timeHex,
             }),
             square: true,
-            emptyIcon: BookOpenIcon,
+            emptyIcon: BookOpenSolidIcon,
           }),
           h('div', { class: 'flex flex-col' }, [
             h('span', { innerText: title, class: 'font-medium', title }),
