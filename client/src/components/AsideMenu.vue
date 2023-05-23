@@ -3,7 +3,6 @@ import type { ComputedRef, FunctionalComponent } from 'vue'
 import type { RouteLocation, RouteLocationRaw } from 'vue-router'
 
 import {
-  AcademicCapIcon,
   ArchiveBoxIcon,
   BookOpenIcon,
   BuildingLibraryIcon,
@@ -11,6 +10,7 @@ import {
   BuildingStorefrontIcon,
   ChevronDoubleLeftIcon,
   HomeIcon,
+  PaintBrushIcon,
   QueueListIcon,
   ServerStackIcon,
   Square2StackIcon,
@@ -115,7 +115,7 @@ const items = computed<Item[]>(() => [
   {
     key: 'people',
     label: t('entities.people'),
-    icon: AcademicCapIcon,
+    icon: PaintBrushIcon,
     to: { name: 'people' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes('people')
