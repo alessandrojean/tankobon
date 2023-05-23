@@ -37,6 +37,11 @@ const badge = cva(
           'text-purple-700 dark:text-purple-400',
           'ring-purple-700/10 dark:ring-purple-400/30',
         ],
+        indigo: [
+          'bg-indigo-50 dark:bg-indigo-400/10',
+          'text-indigo-700 dark:text-indigo-400',
+          'ring-indigo-700/10 dark:ring-indigo-400/30',
+        ],
       },
       rounded: {
         true: 'rounded-full',

@@ -68,6 +68,7 @@ const typeBadge: Record<StoreType, BadgeColor> = {
   COMIC_SHOP: 'blue',
   BOOKSTORE: 'green',
   NEWSSTAND: 'purple',
+  RETAIL_CHAIN: 'indigo',
 }
 
 const columns = [
