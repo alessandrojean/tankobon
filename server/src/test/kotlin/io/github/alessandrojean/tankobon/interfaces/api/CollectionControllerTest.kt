@@ -1,5 +1,6 @@
 package io.github.alessandrojean.tankobon.interfaces.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.ROLE_ADMIN
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
@@ -8,6 +9,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.CollectionLifecycle
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.CollectionCreationDto
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -33,6 +35,7 @@ class CollectionControllerTest(
   @Autowired private val collectionLifecycle: CollectionLifecycle,
   @Autowired private val libraryRepository: LibraryRepository,
   @Autowired private val userRepository: TankobonUserRepository,
+  @Autowired private val objectMapper: ObjectMapper,
 ) {
 
   companion object {
@@ -72,15 +75,23 @@ class CollectionControllerTest(
   inner class UnauthorizedUser {
     @Test
     fun `it should return unauthorized when getting the collections from a library with an anonymous user`() {
-      mockMvc.get("/api/v1/libraries/${library.id}/collections")
-        .andExpect { status { isUnauthorized() } }
+      mockMvc.get("/api/v1/libraries/${library.id}/collections").andExpect {
+        status { isUnauthorized() }
+        jsonPath("$.result") { value("ERROR") }
+        jsonPath("$.errors.length()") { value(1) }
+        jsonPath("$.errors[0].id") { value("INSUFFICIENT_AUTHENTICATION") }
+      }
     }
 
     @Test
     @WithMockCustomUser(id = USER_ID)
     fun `it should return forbidden when getting the collections from a library the user does not have access`() {
-      mockMvc.get("/api/v1/libraries/${library.id}/collections")
-        .andExpect { status { isForbidden() } }
+      mockMvc.get("/api/v1/libraries/${library.id}/collections").andExpect {
+        status { isForbidden() }
+        jsonPath("$.result") { value("ERROR") }
+        jsonPath("$.errors.length()") { value(1) }
+        jsonPath("$.errors[0].id") { value("USER_DOES_NOT_HAVE_ACCESS") }
+      }
     }
 
     @Test
@@ -105,20 +116,51 @@ class CollectionControllerTest(
     fun `it should return bad request when creating a collection with a duplicate name in the library`() {
       collectionLifecycle.addCollection(collection)
 
-      val jsonString = """
-        {
-          "name": "${collection.name.lowercase()}",
-          "description": "",
-          "library": "${library.id}"
-        }
-      """.trimIndent()
+      val creation = CollectionCreationDto(
+        name = collection.name.lowercase(),
+        description = "",
+        library = library.id
+      )
 
       mockMvc
         .post("/api/v1/collections") {
           contentType = MediaType.APPLICATION_JSON
-          content = jsonString
+          content = objectMapper.writeValueAsString(creation)
         }
-        .andExpect { status { isBadRequest() } }
+        .andExpect {
+          status { isBadRequest() }
+          jsonPath("$.result") { value("ERROR") }
+          jsonPath("$.errors.length()") { value(1) }
+          jsonPath("$.errors[0].id") { value("DUPLICATE_NAME") }
+        }
+    }
+  }
+
+  @Nested
+  inner class Validation {
+    @Test
+    @WithMockCustomUser(id = OWNER_ID)
+    fun `it should return bad request when creating a collection with invalid data`() {
+      val creation = CollectionCreationDto(
+        name = "",
+        description = "",
+        library = "1234"
+      )
+
+      mockMvc
+        .post("/api/v1/collections") {
+          contentType = MediaType.APPLICATION_JSON
+          content = objectMapper.writeValueAsString(creation)
+        }
+        .andExpect {
+          status { isBadRequest() }
+          jsonPath("$.result") { value("ERROR") }
+          jsonPath("$.errors.length()") { value(2) }
+          jsonPath("$.errors[0].id") { value("VIOLATION_FIELD_ERROR") }
+          jsonPath("$.errors[0].title") { value("library") }
+          jsonPath("$.errors[1].id") { value("VIOLATION_FIELD_ERROR") }
+          jsonPath("$.errors[1].title") { value("name") }
+        }
     }
   }
 
