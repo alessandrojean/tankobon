@@ -42,21 +42,27 @@ data class PublisherAttributesDto(
 data class PublisherLinksDto(
   @get:NullOrNotBlank
   @get:URL
+  @get:Schema(format = "uri", nullable = true)
   val website: String? = null,
   @get:NullOrNotBlank
   @get:URL
+  @get:Schema(format = "uri", nullable = true)
   val store: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
+  @get:Schema(format = "uri", nullable = true)
   val twitter: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["instagram.com"])
+  @get:Schema(format = "uri", nullable = true)
   val instagram: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["facebook.com"])
+  @get:Schema(format = "uri", nullable = true)
   val facebook: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["youtube.com"])
+  @get:Schema(format = "uri", nullable = true)
   val youTube: String? = null,
 )
 

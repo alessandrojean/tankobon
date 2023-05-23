@@ -57,18 +57,23 @@ data class BookLinksDto(
   @get:UrlMultipleHosts(
     allowedHosts = ["amazon.com", "amazon.ca", "amazon.com.br", "amazon.co.uk", "amazon.co.jp", "amazon.cn", "amazon.com.au", "amazon.com.be", "amazon.eg", "amazon.fr", "amazon.in", "amazon.it", "amazon.com.mx", "amazon.nl", "amazon.pl", "amazon.sa", "amazon.sg", "amazon.es", "amazon.se", "amazon.com.tr", "amazon.ae", "amazon.de"],
   )
+  @get:Schema(format = "uri", nullable = true)
   val amazon: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["openlibrary.org"])
+  @get:Schema(format = "uri", nullable = true)
   val openLibrary: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["skoob.com.br"])
+  @get:Schema(format = "uri", nullable = true)
   val skoob: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["goodreads.com"])
+  @get:Schema(format = "uri", nullable = true)
   val goodreads: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["guiadosquadrinhos.com"])
+  @get:Schema(format = "uri", nullable = true)
   val guiaDosQuadrinhos: String? = null,
 )
 

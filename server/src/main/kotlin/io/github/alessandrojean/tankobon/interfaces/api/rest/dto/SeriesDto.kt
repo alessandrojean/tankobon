@@ -49,27 +49,35 @@ data class SeriesAlternativeNameDto(
 data class SeriesLinksDto(
   @get:NullOrNotBlank
   @get:URL
+  @get:Schema(format = "uri", nullable = true)
   val website: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["myanimelist.net"])
+  @get:Schema(format = "uri", nullable = true)
   val myAnimeList: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["kitsu.io"])
+  @get:Schema(format = "uri", nullable = true)
   val kitsu: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["anilist.co"])
+  @get:Schema(format = "uri", nullable = true)
   val aniList: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["mangaupdates.com"])
+  @get:Schema(format = "uri", nullable = true)
   val mangaUpdates: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["guiadosquadrinhos.com"])
+  @get:Schema(format = "uri", nullable = true)
   val guiaDosQuadrinhos: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["twitter.com", "mobile.twitter.com"])
+  @get:Schema(format = "uri", nullable = true)
   val twitter: String? = null,
   @get:NullOrNotBlank
   @get:UrlMultipleHosts(allowedHosts = ["instagram.com"])
+  @get:Schema(format = "uri", nullable = true)
   val instagram: String? = null,
 )
 
