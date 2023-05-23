@@ -1,5 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.BufferedReader
 
 plugins {
   kotlin("jvm")
@@ -112,6 +113,19 @@ tasks {
 
   // Use a known archive name for Docker builds
   if (System.getenv("DOCKER_PIPELINE").toBoolean()) {
+    if (System.getenv("DOCKER_NIGHTLY").toBoolean()) {
+      version = Runtime.getRuntime()
+        .exec("git rev-parse --short HEAD")
+        .let { process ->
+          process.waitFor()
+          val output = process.inputStream.use {
+            it.bufferedReader().use(BufferedReader::readText)
+          }
+          process.destroy()
+          output.trim()
+        }
+    }
+
     bootJar.configure {
       archiveFileName.set("tankobon.jar")
     }

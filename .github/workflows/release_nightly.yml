@@ -48,9 +48,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=schedule,pattern=nightly
+            type=raw,value=nightly
             type=schedule,prefix=nightly-,pattern={{date 'YYYY-MM-DD'}}
             type=sha,prefix=,format=short
+          labels: |
+            org.opencontainers.image.title=Tankobon
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -59,4 +61,5 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-
+          build-args: |
+            NIGHTLY=true

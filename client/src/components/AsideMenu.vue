@@ -185,8 +185,9 @@ const allowedItems = computed(() => {
 const appVersion = import.meta.env.APP_VERSION
 const gitShortHash = import.meta.env.GIT_SHORT_HASH
 const isDev = import.meta.env.DEV
+const isNightly = import.meta.env.NIGHTLY
 
-const versionString = isDev ? gitShortHash : `v${appVersion}`
+const versionString = (isDev || isNightly) ? gitShortHash : `v${appVersion}`
 const commitLink = `https://github.com/alessandrojean/tankobon/commit/${gitShortHash}`
 const releaseLink = `https://github.com/alessandrojean/tankobon/releases/tag/v${appVersion}`
 
@@ -275,7 +276,7 @@ const lgAndLarger = breakpoints.greaterOrEqual('lg')
         :class="[collapsed && lgAndLarger ? '-translate-x-44' : '']"
       >
         <a
-          :href="isDev ? commitLink : releaseLink"
+          :href="(isDev || isNightly) ? commitLink : releaseLink"
           target="_blank"
           :class="[
             'flex items-center gap-1.5 w-fit rounded',

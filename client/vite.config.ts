@@ -31,6 +31,7 @@ export default defineConfig({
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
     'import.meta.env.GIT_SHORT_HASH': JSON.stringify(commitHash.slice(0, 7)),
     'import.meta.env.GIT_HASH': JSON.stringify(commitHash),
+    'import.meta.env.NIGHTLY': JSON.stringify(process.env.DOCKER_NIGHTLY === 'true'),
   },
 
   plugins: [
