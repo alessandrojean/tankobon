@@ -69,6 +69,7 @@ export default { inheritAttrs: false }
         :placeholder="placeholder"
         :required="required"
         :value="modelValue"
+        :autocomplete="autoComplete"
         @input="$emit('update:modelValue', ($event.target! as HTMLInputElement).value)"
       >
       <label
