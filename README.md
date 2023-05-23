@@ -42,16 +42,74 @@ to reach out if you have anything you'd like to see.
 
 ## Download
 
-Get the tool from our [releases page] or through Docker.
+Get the tool from our [releases page] or through [Docker].
 
 [releases page]: https://github.com/alessandrojean/tankobon
+[Docker]: https://github.com/alessandrojean/tankobon/pkgs/container/tankobon
 
 ## Getting started
 
-Tankobon isn't ready for normal usage yet. For now, follow the [Contributing]
-section to build from source and run locally.
+Tankobon isn't ready for normal usage yet. For now, you can follow the
+[Contributing] section to build from source and run locally or try a
+nightly Docker image build.
 
 [Contributing]: #contributing
+
+### Running through Docker
+
+The nightly images are available in [GitHub Packages]. You can run
+manually by using the `docker` command or by using [Docker Compose].
+
+<details>
+  <summary>Command-line instructions</summary>
+
+  1. Pull the Docker image from GitHub Packages.
+
+     ```console
+     $ docker pull ghcr.io/alessandrojean/tankobon:{tag}
+     ```
+
+     Make sure to replace `{tag}` in the command with the latest
+     image tag version, available at the [Github Packages] page.
+  2. Start a Docker container in detached mode.
+
+     ```console
+     $ docker run -d -p 25565:8080 ghcr.io/alessandrojean/tankobon:{tag}
+     ```
+  3. Open http://localhost:25565 on a browser and proceed with the claim setup
+     to create the first administrator user.
+</details>
+
+<details>
+  <summary>Docker Compose instructions</summary>
+
+  Using a Docker Compose file such as the example provided below will
+  allow you to change additional settings such as mapping volumes to
+  have access to the database if needed.
+
+  1. Create a `docker-compose.yml` file.
+
+     ```yaml
+     version: '3.9'
+     services:
+       tankobon:
+         image: ghcr.io/alessandrojean/tankobon:{tag}
+         ports:
+           - '25565:8080'
+         volumes:
+           - /path/to/user_home/.tankobon:/root/.tankobon
+     ```
+  2. Start a Docker container in detached mode.
+
+     ```console
+     $ docker-compose up -d
+     ```
+  3. Open http://localhost:25565 on a browser and proceed with the claim setup
+     to create the first administrator user.
+</details>
+
+[GitHub Packages]: https://github.com/alessandrojean/tankobon/pkgs/container/tankobon
+[Docker Compose]: https://docs.docker.com/compose/
 
 ## Contributing
 
@@ -62,7 +120,7 @@ A quick summary of the steps required to get going:
 
 1. Install [pnpm], [Node.js] and [JDK 17].
 2. Run the server:
-   
+
    ```console
    $ ./gradlew bootRun --args='--spring.profiles.active=dev,localdb'
    ```
@@ -74,6 +132,10 @@ A quick summary of the steps required to get going:
 
 And that's it! Open [http://localhost:8081](http://localhost:8081) in a browser
 and follow the claim setup at the first time to create the administrator user.
+
+If you use IntelliJ Idea, you can use some run configurations provided with
+the project that will make easier to run the application within specific
+contexts such as `localdb`, `noclaim` and `dev`.
 
 [pnpm]: https://pnpm.io/
 [Node.js]: https://nodejs.org/
@@ -100,7 +162,7 @@ The standard Vue.js web client that consumes the API.
 
 [Komga] project structure is the main inspiration for the Tankobon
 code structure. Although it's a self-hosted tool with a different
-purpose, it's definetely worth taking a look into it. 
+purpose, it's definetely worth taking a look into it.
 
 [Komga]: https://github.com/gotson/komga/
 
