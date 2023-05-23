@@ -73,7 +73,7 @@ const currentLibrary = computed(() => {
     >
       <template #listbox-button>
         <ListboxButton
-          class="h-8 -ml-2 hidden lg:flex"
+          class="h-8 hidden lg:flex"
           :as="Button"
           :kind="transparent ? 'navbar-light' : 'navbar-dark-elevated'"
           size="mini"
