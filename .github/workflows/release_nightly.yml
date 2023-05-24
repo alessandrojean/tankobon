@@ -1,9 +1,6 @@
-name: Release weekly nightly Docker image
+name: Release nightly Docker image
 
 on:
-  # Every Sunday at 21:00 UTC
-  # schedule:
-  #   - cron: '0 21 * * 0'
   push:
     branches:
       - main
@@ -38,10 +35,16 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.inputs.git-ref }}
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -49,10 +52,11 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=nightly
-            type=schedule,prefix=nightly-,pattern={{date 'YYYY-MM-DD'}}
             type=sha,prefix=,format=short,enable=${{ github.event.inputs.git-ref != '' }}
           labels: |
             org.opencontainers.image.title=Tankobon
