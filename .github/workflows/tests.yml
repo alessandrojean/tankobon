@@ -10,12 +10,22 @@ on:
       - 'dependabot/**'
 
 jobs:
+  validate-wrapper:
+    runs-on: ubuntu-latest
+    name: Validate Gradle Wrapper
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Validate
+        uses: gradle/wrapper-validation-action@v1
+
   test-server:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         java: [17, 19]
     name: Test server in JDK ${{ matrix.java }}
+    needs: validate-wrapper
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
