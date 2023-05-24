@@ -4,6 +4,9 @@ on:
   # Every Sunday at 21:00 UTC
   # schedule:
   #   - cron: '0 21 * * 0'
+  push:
+    branches:
+      - main
   # Manual triggers
   workflow_dispatch:
     inputs:
@@ -50,7 +53,7 @@ jobs:
           tags: |
             type=raw,value=nightly
             type=schedule,prefix=nightly-,pattern={{date 'YYYY-MM-DD'}}
-            type=sha,prefix=,format=short
+            type=sha,prefix=,format=short,enable=${{ github.event.inputs.git-ref != '' }}
           labels: |
             org.opencontainers.image.title=Tankobon
 

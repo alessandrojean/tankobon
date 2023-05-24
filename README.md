@@ -66,11 +66,8 @@ manually by using the `docker` command or by using [Docker Compose].
   1. Pull the Docker image from GitHub Packages.
 
      ```console
-     $ docker pull ghcr.io/alessandrojean/tankobon:{tag}
+     $ docker pull ghcr.io/alessandrojean/tankobon:nightly
      ```
-
-     Make sure to replace `{tag}` in the command with the latest
-     image tag version, available at the [Github Packages] page.
   2. Start a Docker container in detached mode.
 
      ```console
@@ -93,7 +90,7 @@ manually by using the `docker` command or by using [Docker Compose].
      version: '3.9'
      services:
        tankobon:
-         image: ghcr.io/alessandrojean/tankobon:{tag}
+         image: ghcr.io/alessandrojean/tankobon:nightly
          ports:
            - '25565:8080'
          volumes:
