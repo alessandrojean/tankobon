@@ -57,7 +57,7 @@ jobs:
             ghcr.io/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=nightly
-            type=sha,prefix=,format=short,enable=${{ github.event.inputs.git-ref != '' }}
+            type=sha,prefix=,format=short
           labels: |
             org.opencontainers.image.title=Tankobon
 

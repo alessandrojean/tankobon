@@ -63,7 +63,7 @@ You can run manually by using the `docker` command or by using [Docker Compose].
 <details>
   <summary>Command-line instructions</summary>
 
-  1. Pull the Docker image from GitHub Packages.
+  1. Pull the Docker image.
 
      ```console
      $ docker pull alessandrojean/tankobon:nightly
@@ -88,10 +88,6 @@ You can run manually by using the `docker` command or by using [Docker Compose].
 
 <details>
   <summary>Docker Compose instructions</summary>
-
-  Using a Docker Compose file such as the example provided below will
-  allow you to change additional settings such as mapping volumes to
-  have access to the database if needed.
 
   1. Create a `docker-compose.yml` file.
 
@@ -127,26 +123,28 @@ You can run manually by using the `docker` command or by using [Docker Compose].
 Contributions are very **welcome**! Please review the [CONTRIBUTING.md]
 guide before getting started.
 
-A quick summary of the steps required to get going:
+<details>
+  <summary>Development instructions</summary>
 
-1. Install [pnpm], [Node.js] and [JDK 17].
-2. Run the server:
+  1. Install [pnpm], [Node.js] and [JDK 17].
+  2. Run the server:
 
-   ```console
-   $ ./gradlew bootRun --args='--spring.profiles.active=dev,localdb'
-   ```
-3. Run the client:
+    ```console
+    $ ./gradlew bootRun --args='--spring.profiles.active=dev,localdb'
+    ```
+  3. Run the client:
 
-   ```console
-   $ pnpm dev
-   ```
+    ```console
+    $ pnpm dev
+    ```
 
-And that's it! Open [http://localhost:8081](http://localhost:8081) in a browser
-and follow the claim setup at the first time to create the administrator user.
+  And that's it! Open [http://localhost:8081](http://localhost:8081) in a browser
+  and follow the claim setup at the first time to create the administrator user.
 
-If you use IntelliJ Idea, you can use some run configurations provided with
-the project that will make easier to run the application within specific
-contexts such as `localdb`, `noclaim` and `dev`.
+  If you use IntelliJ Idea, you can use some run configurations provided with
+  the project that will make easier to run the application within specific
+  contexts such as `localdb`, `noclaim` and `dev`.
+</details>
 
 [pnpm]: https://pnpm.io/
 [Node.js]: https://nodejs.org/
