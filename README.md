@@ -76,7 +76,7 @@ You can run manually by using the `docker` command or by using [Docker Compose].
      ```
   2. Start a Docker container in detached mode.
 
-     ```console
+     ```
      $ docker run -d \
          -p 25565:8080 \
          -v /path/to/user_home/.tankobon:/root/.tankobon \
