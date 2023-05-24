@@ -45,7 +45,7 @@ to reach out if you have anything you'd like to see.
 Get the tool from our [releases page] or through [Docker].
 
 [releases page]: https://github.com/alessandrojean/tankobon
-[Docker]: https://github.com/alessandrojean/tankobon/pkgs/container/tankobon
+[Docker]: #running-through-docker
 
 ## Getting started
 
@@ -57,8 +57,8 @@ nightly Docker image build.
 
 ### Running through Docker
 
-The nightly images are available in [GitHub Packages]. You can run
-manually by using the `docker` command or by using [Docker Compose].
+The nightly images are available in [Docker Hub] and [GitHub Packages].
+You can run manually by using the `docker` command or by using [Docker Compose].
 
 <details>
   <summary>Command-line instructions</summary>
@@ -66,12 +66,21 @@ manually by using the `docker` command or by using [Docker Compose].
   1. Pull the Docker image from GitHub Packages.
 
      ```console
+     $ docker pull alessandrojean/tankobon:nightly
+     ```
+
+     If you want to use the image from [GitHub Packages], use the command below instead.
+
+     ```console
      $ docker pull ghcr.io/alessandrojean/tankobon:nightly
      ```
   2. Start a Docker container in detached mode.
 
      ```console
-     $ docker run -d -p 25565:8080 ghcr.io/alessandrojean/tankobon:{tag}
+     $ docker run -d \
+         -p 25565:8080 \
+         -v /path/to/user_home/.tankobon:/root/.tankobon \
+         alessandrojean/tankobon:nightly
      ```
   3. Open http://localhost:25565 on a browser and proceed with the claim setup
      to create the first administrator user.
@@ -90,10 +99,14 @@ manually by using the `docker` command or by using [Docker Compose].
      version: '3.9'
      services:
        tankobon:
-         image: ghcr.io/alessandrojean/tankobon:nightly
+         # To use the GitHub Packages image, use the line below instead.
+         # image: ghcr.io/alessandrojean/tankobon:nightly
+         image: alessandrojean/tankobon:nightly
          ports:
+           # Tankobon will be available at port 25565.
            - '25565:8080'
          volumes:
+           # The app files will be available outside the container.
            - /path/to/user_home/.tankobon:/root/.tankobon
      ```
   2. Start a Docker container in detached mode.
@@ -105,6 +118,7 @@ manually by using the `docker` command or by using [Docker Compose].
      to create the first administrator user.
 </details>
 
+[Docker Hub]: https://hub.docker.com/r/alessandrojean/tankobon
 [GitHub Packages]: https://github.com/alessandrojean/tankobon/pkgs/container/tankobon
 [Docker Compose]: https://docs.docker.com/compose/
 
