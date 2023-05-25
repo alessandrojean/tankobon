@@ -84,7 +84,6 @@ class BookDtoDao(
     "arrivedAt" to TableBook.ARRIVED_AT,
     "number" to TableBook.NUMBER,
     "pageCount" to TableBook.PAGE_COUNT,
-    "weightKg" to TableBook.WEIGHT,
   )
 
   override fun findByIdOrNull(bookId: String): BookEntityDto? = bookDao.findByIdOrNull(bookId)?.toDto()
