@@ -157,6 +157,7 @@ class BookController(
     @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
   ): SuccessPaginatedCollectionResponseDto<BookEntityDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
@@ -171,12 +172,17 @@ class BookController(
       else -> Sort.unsorted()
     }
 
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
+    }
+
     val bookSearch = BookSearch(
       libraryIds = listOf(libraryId),
       searchTerm = searchTerm,
       userId = principal.user.id,
     )
-    val pageRequest = PageRequest.of(page.pageNumber, page.pageSize, sort)
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
     val books = referenceExpansion.expand(booksPage.content, includes)
 
@@ -193,6 +199,7 @@ class BookController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     seriesId: String,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -208,6 +215,7 @@ class BookController(
 
     val sort = when {
       page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
       else -> Sort.unsorted()
     }
 
@@ -219,6 +227,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       seriesIds = listOf(seriesId),
+      searchTerm = searchTerm,
       userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
@@ -237,6 +246,7 @@ class BookController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     publisherId: String,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -252,6 +262,7 @@ class BookController(
 
     val sort = when {
       page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
       else -> Sort.unsorted()
     }
 
@@ -263,6 +274,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       publisherIds = listOf(publisherId),
+      searchTerm = searchTerm,
       userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
@@ -281,6 +293,7 @@ class BookController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     storeId: String,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -296,6 +309,7 @@ class BookController(
 
     val sort = when {
       page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
       else -> Sort.unsorted()
     }
 
@@ -307,6 +321,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       storeIds = listOf(storeId),
+      searchTerm = searchTerm,
       userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
@@ -325,6 +340,7 @@ class BookController(
     @UUID(version = [4])
     @Schema(format = "uuid")
     personId: String,
+    @RequestParam(name = "search", required = false) searchTerm: String? = null,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionBook> = emptySet(),
     @Parameter(hidden = true) page: Pageable,
     @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
@@ -340,6 +356,7 @@ class BookController(
 
     val sort = when {
       page.sort.isSorted -> page.sort
+      !searchTerm.isNullOrBlank() -> Sort.by("relevance")
       else -> Sort.unsorted()
     }
 
@@ -351,6 +368,7 @@ class BookController(
 
     val bookSearch = BookSearch(
       personIds = listOf(personId),
+      searchTerm = searchTerm,
       userId = principal.user.id,
     )
     val booksPage = bookDtoRepository.findAll(bookSearch, pageRequest)
