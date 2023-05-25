@@ -6,6 +6,10 @@ import org.springframework.boot.convert.ApplicationConversionService
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
 import org.springframework.http.CacheControl
+import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -52,7 +56,7 @@ class WebMvcConfiguration(
         .addResourceLocations("classpath:/META-INF/resources/webjars/")
     }
 
-    if (!registry.hasMappingForPattern("/images/covers/**")) {
+    if (!registry.hasMappingForPattern("/images/**")) {
       val imagesDirectoryPath = Paths.get(properties.imagesDir).absolutePathString()
 
       registry
@@ -76,4 +80,12 @@ class WebMvcConfiguration(
     // Add provided custom converters such as enum to string.
     ApplicationConversionService.configure(registry)
   }
+}
+
+@Component
+@ControllerAdvice
+class Customizer {
+
+  @ExceptionHandler(NoHandlerFoundException::class)
+  fun notFound(): String = "forward:/"
 }
