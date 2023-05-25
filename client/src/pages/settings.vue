@@ -48,9 +48,11 @@ function getCurrencyName(currency: string) {
 }
 
 const currencies = computed(() => {
+  const unknownText = t('monetary-amount-input.unknown-currency')
+
   return [...new Set(Object.values(regions).flatMap(r => r.currency.split(',')))]
     .map(code => ({ code, name: getCurrencyName(code) }))
-    .filter(({ name }) => name !== null)
+    .filter(({ name }) => name !== unknownText)
     .sort((a, b) => a.name!.localeCompare(b.name!, locale.value))
 })
 </script>
