@@ -1,9 +1,15 @@
+import type { LengthUnit } from './tankobon-unit'
+
 export interface Dimensions {
-  widthCm: number
-  heightCm: number
+  width: number
+  height: number
+  depth: number
+  unit: LengthUnit
 }
 
 export interface DimensionsString {
-  widthCm: string
-  heightCm: string
+  width: string
+  height: string
+  depth: string
+  unit: LengthUnit
 }

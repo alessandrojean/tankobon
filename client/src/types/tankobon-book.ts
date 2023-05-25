@@ -1,6 +1,7 @@
 import type { Dimensions } from './tankobon-dimensions'
 import type { Entity } from './tankobon-entity'
 import type { MonetaryAmount } from './tankobon-monetary'
+import type { Weight } from './tankobon-weight'
 
 export type BookEntity = Entity<BookAttributes> & {
   type: 'BOOK'
@@ -24,7 +25,7 @@ export interface BookAttributes {
   subtitle: string
   synopsis: string
   title: string
-  weightKg: number
+  weight: Weight
   links: BookLinks
 }
 
@@ -64,7 +65,7 @@ export type BookIncludes = 'contributor' | 'collection' | 'publisher'
 | 'series' | 'store' | 'tag' | 'library' | 'cover_art'
 | 'previous_book' | 'next_book'
 export type BookSort = 'title' | 'createdAt' | 'modifiedAt' |
-'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount' | 'weightKg'
+'boughtAt' | 'billedAt' | 'arrivedAt' | 'number' | 'pageCount'
 
 export interface BookUpdate {
   id: string
@@ -89,7 +90,7 @@ export interface BookUpdate {
   synopsis: string
   tags?: string[] | null
   title: string
-  weightKg: number
+  weight: Weight
   links: BookLinks
 }
 

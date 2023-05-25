@@ -14,6 +14,7 @@ import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
+import type { WeightString } from '@/types/tankobon-weight'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -79,12 +80,12 @@ const invalidTabs = computed(() => [
   externalLinksInvalid.value,
 ])
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
+interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weight'> {
   dimensions: DimensionsString
   labelPrice: MonetaryAmountString
   paidPrice: MonetaryAmountString
   pageCount: string
-  weightKg: string
+  weight: WeightString
   links: FormExternalLink[]
 }
 
@@ -99,8 +100,10 @@ const updatedBook = reactive<CustomBookUpdate>({
   contributors: [],
   isInLibrary: true,
   dimensions: {
-    widthCm: '0',
-    heightCm: '0',
+    width: '0',
+    height: '0',
+    depth: '0',
+    unit: 'CENTIMETER',
   },
   labelPrice: {
     amount: '0',
@@ -120,7 +123,10 @@ const updatedBook = reactive<CustomBookUpdate>({
   synopsis: '',
   tags: [],
   title: '',
-  weightKg: '0',
+  weight: {
+    value: '0',
+    unit: 'KILOGRAM',
+  },
   links: [],
 })
 
@@ -141,8 +147,10 @@ whenever(book, (loadedBook) => {
     billedAt: loadedBook.attributes.billedAt,
     arrivedAt: loadedBook.attributes.arrivedAt,
     dimensions: {
-      widthCm: n(loadedBook.attributes.dimensions.widthCm, 'decimal'),
-      heightCm: n(loadedBook.attributes.dimensions.heightCm, 'decimal'),
+      width: n(loadedBook.attributes.dimensions.width, 'decimal'),
+      height: n(loadedBook.attributes.dimensions.height, 'decimal'),
+      depth: n(loadedBook.attributes.dimensions.depth, 'decimal'),
+      unit: loadedBook.attributes.dimensions.unit,
     },
     labelPrice: {
       amount: String(loadedBook.attributes.labelPrice.amount),
@@ -163,7 +171,10 @@ whenever(book, (loadedBook) => {
     tags: (getRelationships(loadedBook, 'TAG') ?? []).map(t => t.id),
     series: getRelationship(loadedBook, 'SERIES')?.id ?? null,
     store: getRelationship(loadedBook, 'STORE')?.id ?? null,
-    weightKg: String(loadedBook.attributes.weightKg),
+    weight: {
+      value: n(loadedBook.attributes.weight.value, 'decimal'),
+      unit: loadedBook.attributes.weight.unit,
+    },
     links: Object.entries(loadedBook.attributes.links)
       .filter(([_, url]) => url !== null && url.length > 0)
       .map(([type, url]) => ({ type, url })),
@@ -220,7 +231,10 @@ async function handleSubmit() {
     billedAt: nullOrNotBlank(updatedBook.billedAt),
     arrivedAt: nullOrNotBlank(updatedBook.arrivedAt),
     pageCount: validNumber(updatedBook.pageCount),
-    weightKg: validNumber(updatedBook.weightKg),
+    weight: {
+      value: validNumber(updatedBook.weight.value),
+      unit: updatedBook.weight.unit,
+    },
     labelPrice: {
       amount: validNumber(updatedBook.labelPrice.amount),
       currency: updatedBook.labelPrice.currency,
@@ -230,8 +244,10 @@ async function handleSubmit() {
       currency: updatedBook.paidPrice.currency,
     },
     dimensions: {
-      widthCm: validNumber(updatedBook.dimensions.widthCm),
-      heightCm: validNumber(updatedBook.dimensions.heightCm),
+      width: validNumber(updatedBook.dimensions.width),
+      height: validNumber(updatedBook.dimensions.height),
+      depth: validNumber(updatedBook.dimensions.depth),
+      unit: updatedBook.dimensions.unit,
     },
     links: Object.assign(
       {
@@ -369,7 +385,7 @@ const bookCover = computed(() => getRelationship(book.value, 'COVER_ART'))
               v-model:dimensions="updatedBook.dimensions"
               v-model:series="updatedBook.series"
               v-model:publishers="updatedBook.publishers"
-              v-model:weight="updatedBook.weightKg"
+              v-model:weight="updatedBook.weight"
               :disabled="isLoading || isEditing"
             />
           </TabPanel>

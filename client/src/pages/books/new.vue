@@ -12,6 +12,7 @@ import BookCoverArtForm from '@/components/books/BookCoverArtForm.vue'
 import type { TankobonApiError } from '@/types/tankobon-response'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
+import type { WeightString } from '@/types/tankobon-weight'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -51,12 +52,12 @@ const invalidTabs = computed(() => [
   externalLinksInvalid.value,
 ])
 
-interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weightKg'> {
+interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pageCount' | 'labelPrice' | 'paidPrice' | 'weight'> {
   dimensions: DimensionsString
   labelPrice: MonetaryAmountString
   paidPrice: MonetaryAmountString
   pageCount: string
-  weightKg: string
+  weight: WeightString
   links: FormExternalLink[]
 }
 
@@ -71,8 +72,10 @@ const newBook = reactive<CustomBookUpdate>({
   contributors: [],
   isInLibrary: true,
   dimensions: {
-    widthCm: '0',
-    heightCm: '0',
+    width: '0',
+    height: '0',
+    depth: '0',
+    unit: 'CENTIMETER',
   },
   labelPrice: {
     amount: '0',
@@ -92,7 +95,10 @@ const newBook = reactive<CustomBookUpdate>({
   synopsis: '',
   tags: [],
   title: '',
-  weightKg: '0',
+  weight: {
+    value: '0',
+    unit: 'KILOGRAM',
+  },
   links: [],
 })
 
@@ -140,7 +146,10 @@ async function handleSubmit() {
     billedAt: nullOrNotBlank(newBook.billedAt),
     arrivedAt: nullOrNotBlank(newBook.arrivedAt),
     pageCount: validNumber(newBook.pageCount),
-    weightKg: validNumber(newBook.weightKg),
+    weight: {
+      value: validNumber(newBook.weight.value),
+      unit: newBook.weight.unit,
+    },
     labelPrice: {
       amount: validNumber(newBook.labelPrice.amount),
       currency: newBook.labelPrice.currency,
@@ -150,8 +159,10 @@ async function handleSubmit() {
       currency: newBook.paidPrice.currency,
     },
     dimensions: {
-      widthCm: validNumber(newBook.dimensions.widthCm),
-      heightCm: validNumber(newBook.dimensions.heightCm),
+      width: validNumber(newBook.dimensions.width),
+      height: validNumber(newBook.dimensions.height),
+      depth: validNumber(newBook.dimensions.depth),
+      unit: newBook.dimensions.unit,
     },
     links: Object.assign(
       {
@@ -278,7 +289,7 @@ useBeforeUnload({
               v-model:dimensions="newBook.dimensions"
               v-model:series="newBook.series"
               v-model:publishers="newBook.publishers"
-              v-model:weight="newBook.weightKg"
+              v-model:weight="newBook.weight"
               :disabled="isCreating"
             />
           </TabPanel>

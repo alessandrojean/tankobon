@@ -15,6 +15,7 @@ export interface TextInputProps {
   placeholder?: string
   required?: boolean
   unit?: string
+  rightIconClass?: string
 }
 
 const props = withDefaults(defineProps<TextInputProps>(), {
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<TextInputProps>(), {
   type: 'text',
   required: false,
   unit: undefined,
+  rightIconClass: '',
 })
 
 defineEmits<{
@@ -95,11 +97,13 @@ export default { inheritAttrs: false }
       </div>
       <div
         v-if="$slots['right-icon'] && !unit"
-        class="absolute right-[1.125rem] inset-y-0 flex items-center justify-center motion-safe:transition-colors"
         :class="[
+          'absolute right-[1.125rem] inset-y-0 flex items-center',
+          'justify-center motion-safe:transition-colors',
           invalid
             ? 'text-red-600 peer-focus:text-red-600'
             : 'text-gray-500 peer-focus:text-primary-600 dark:peer-focus:text-primary-500',
+          rightIconClass,
         ]"
       >
         <slot name="right-icon" />

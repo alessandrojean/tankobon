@@ -191,16 +191,20 @@ const columns = [
       cellClass: 'text-right',
     },
   }),
-  columnHelper.accessor('attributes.weightKg', {
-    id: 'weightKg',
-    header: () => t('common-fields.weight-kg'),
-    // @ts-expect-error The signature is wrong at the library
-    cell: info => n(info.getValue(), 'unit', { unit: 'kilogram' }),
+  columnHelper.accessor('attributes.weight', {
+    id: 'weight',
+    header: () => t('common-fields.weight'),
+    cell: (info) => {
+      const { value, unit } = info.getValue()
+      // @ts-expect-error The signature is wrong at the library
+      return n(value, 'unit', { unit: unit.toLowerCase() })
+    },
     meta: {
       tabular: true,
       headerContainerClass: 'justify-end',
       cellClass: 'text-right',
     },
+    enableSorting: false,
   }),
   columnHelper.display({
     id: 'actions',

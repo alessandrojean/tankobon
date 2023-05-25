@@ -2,8 +2,10 @@
 import type { ErrorObject } from '@vuelidate/core'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 import { Listbox, ListboxOption, ListboxOptions } from '@headlessui/vue'
+import type { AnchorAlignment } from '@primer/behaviors'
 
 const props = withDefaults(defineProps<{
+  align?: AnchorAlignment
   checkIcon?: boolean
   disabledOptions?: number[]
   errors?: ErrorObject[]
@@ -17,6 +19,7 @@ const props = withDefaults(defineProps<{
   placeholder?: string
   size?: 'normal' | 'small'
 }>(), {
+  align: 'start',
   checkIcon: true,
   disabledOptions: () => [] as number[],
   errors: undefined,
@@ -32,7 +35,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: TValue): void
 }>()
 
-const { optionValue, options } = toRefs(props)
+const { optionValue, options, align } = toRefs(props)
 
 const listboxButton = ref<HTMLElement>()
 const listboxOptions = ref<InstanceType<typeof ListboxOptions>>()
@@ -41,7 +44,7 @@ const { position } = useAnchoredPosition({
   anchorElementRef: listboxButton,
   floatingElementRef: computed(() => listboxOptions.value?.$el),
   side: 'outside-bottom',
-  align: 'start',
+  align,
   allowOutOfBounds: false,
 })
 
@@ -66,6 +69,7 @@ const selected = computed(() => {
       <slot
         name="listbox-button"
         :value="modelValue"
+        :selected="selected"
         :text="optionText(selected.option, selected.index)"
       >
         <ListboxButton
@@ -133,6 +137,7 @@ const selected = computed(() => {
               :active="active"
               :selected="optionSelected"
               :option="option"
+              :text="optionText(option, i)"
             >
               <span
                 class="block truncate"

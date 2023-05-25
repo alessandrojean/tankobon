@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<BooksListViewerProps>(), {
     boughtAt: false,
     billedAt: false,
     arrivedAt: false,
-    weightKg: false,
+    weight: false,
     publishers: false,
     title: true,
     number: false,
@@ -70,7 +70,6 @@ const sortProperties = computed(() => {
     { property: 'arrivedAt', text: t('common-fields.arrived-at') },
     { property: 'number', text: t('common-fields.number') },
     { property: 'pageCount', text: t('common-fields.page-count') },
-    { property: 'weightKg', text: t('common-fields.weight-kg') },
   ]
 
   return properties.sort((a, b) => a.text.localeCompare(b.text, locale.value))
@@ -86,7 +85,7 @@ const tableColumns = computed(() => {
     { id: 'arrivedAt', text: t('common-fields.arrived-at') },
     { id: 'createdAt', text: t('common-fields.created-at') },
     { id: 'modifiedAt', text: t('common-fields.modified-at') },
-    { id: 'weightKg', text: t('common-fields.weight-kg') },
+    { id: 'weight', text: t('common-fields.weight') },
     { id: 'publishers', text: t('entities.publishers') },
     { id: 'number', text: t('common-fields.number') },
     { id: 'pageCount', text: t('common-fields.page-count') },

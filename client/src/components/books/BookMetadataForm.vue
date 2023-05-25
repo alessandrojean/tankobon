@@ -8,6 +8,8 @@ import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
 import type { SeriesEntity, SeriesLinks } from '@/types/tankobon-series'
 import type { PublisherEntity } from '@/types/tankobon-publisher'
 import { createImageUrl } from '@/modules/api'
+import type { WeightString } from '@/types/tankobon-weight'
+import type { MassUnit } from '@/types/tankobon-unit'
 
 export interface BookMetadataFormProps {
   disabled?: boolean
@@ -19,7 +21,7 @@ export interface BookMetadataFormProps {
   synopsis: string
   pageCount: string
   dimensions: DimensionsString
-  weight: string
+  weight: WeightString
   publishers: string[]
   series: string | null | undefined
   mode?: 'creation' | 'update'
@@ -34,7 +36,7 @@ export interface BookMetadataFormEmits {
   (e: 'update:synopsis', synopsis: string): void
   (e: 'update:pageCount', pageCount: string): void
   (e: 'update:dimensions', dimensions: DimensionsString): void
-  (e: 'update:weight', weight: string): void
+  (e: 'update:weight', weight: WeightString): void
   (e: 'update:series', series: string | null): void
   (e: 'update:publishers', publishers: string[]): void
   (e: 'validate', isValid: boolean): void
@@ -61,11 +63,14 @@ const rules = computed(() => {
     code: { messageRequired },
     title: { messageRequired },
     pageCount: { messageInteger, messageMinValue },
-    weight: { messageRequired },
+    weight: {
+      value: { messageRequired },
+    },
     publishers: { messageNotEmpty },
     dimensions: {
-      widthCm: { messageDecimal },
-      heightCm: { messageDecimal },
+      width: { messageDecimal },
+      height: { messageDecimal },
+      depth: { messageDecimal },
     },
   }
 })
@@ -143,6 +148,18 @@ const seriesOptions = computed(() => {
 
 function getPublisherPicture(publisher: PublisherEntity) {
   return getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes
+}
+
+function handleWeightValueChange(value: string) {
+  const newWeight: WeightString = { ...weight.value, value }
+
+  emit('update:weight', newWeight)
+}
+
+function handleWeightUnitPicked(unit: MassUnit) {
+  const newWeight: WeightString = { ...weight.value, unit }
+
+  emit('update:weight', newWeight)
 }
 </script>
 
@@ -307,7 +324,7 @@ function getPublisherPicture(publisher: PublisherEntity) {
       @input="$emit('update:synopsis', $event.target.value)"
     />
 
-    <div class="grid grid-cols-1 lg:grid-cols-10 gap-2">
+    <div class="grid grid-cols-1 lg:grid-cols-11 gap-2">
       <div class="lg:col-span-2">
         <TextInput
           id="page-count"
@@ -330,39 +347,52 @@ function getPublisherPicture(publisher: PublisherEntity) {
 
       <DimensionsInput
         id="dimensions"
-        class="lg:col-span-3 xl:col-span-2"
+        class="lg:col-span-4"
         :model-value="dimensions"
         required
-        :placeholder-width="$t('common-placeholders.book-width-cm')"
-        :placeholder-height="$t('common-placeholders.book-height-cm')"
-        :invalid-width="v$.dimensions.widthCm.$error"
-        :errors-width="v$.dimensions.widthCm.$errors"
-        :invalid-height="v$.dimensions.heightCm.$error"
-        :errors-height="v$.dimensions.heightCm.$errors"
-        @blur:width="v$.dimensions.widthCm.$touch()"
-        @blur:height="v$.dimensions.heightCm.$touch()"
+        :placeholder-width="$t('common-placeholders.book-width')"
+        :placeholder-height="$t('common-placeholders.book-height')"
+        :placeholder-depth="$t('common-placeholders.book-depth')"
+        :invalid-width="v$.dimensions.width.$error"
+        :errors-width="v$.dimensions.width.$errors"
+        :invalid-height="v$.dimensions.height.$error"
+        :errors-height="v$.dimensions.height.$errors"
+        :invalid-depth="v$.dimensions.depth.$error"
+        :errors-depth="v$.dimensions.depth.$errors"
+        @blur:width="v$.dimensions.width.$touch()"
+        @blur:height="v$.dimensions.height.$touch()"
+        @blur:depth="v$.dimensions.depth.$touch()"
         @update:model-value="$emit('update:dimensions', $event)"
       />
 
       <div class="lg:col-span-2">
         <TextInput
           id="weight"
-          :model-value="weight ?? ''"
+          right-icon-class="!items-end pb-2.5 !right-1"
+          :model-value="weight.value"
           required
           inputmode="numeric"
-          unit="kg"
           :input-mask="{
             regex: '\\d+([,.]\\d{1,3})?',
             showMaskOnHover: false,
             showMaskOnFocus: false,
           }"
           :placeholder="$t('common-placeholders.book-weight')"
-          :label-text="$t('common-fields.weight-kg')"
+          :label-text="$t('common-fields.weight')"
           :invalid="v$.weight.$error"
           :errors="v$.weight.$errors"
           @blur="v$.weight.$touch()"
-          @input="$emit('update:weight', $event.target.value)"
-        />
+          @input="handleWeightValueChange($event.target.value)"
+        >
+          <template #right-icon>
+            <UnitListbox
+              class="shrink-0"
+              :model-value="weight.unit"
+              :units="['KILOGRAM', 'GRAM', 'OUNCE', 'POUND']"
+              @update:model-value="handleWeightUnitPicked($event)"
+            />
+          </template>
+        </TextInput>
       </div>
     </div>
   </fieldset>

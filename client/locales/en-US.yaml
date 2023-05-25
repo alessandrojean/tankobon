@@ -24,6 +24,7 @@ common-fields:
   dimensions: Dimensions
   height: Height
   width: Width
+  depth: Depth
   label-price: Label price
   paid-price: Paid price
   store: Store
@@ -44,7 +45,7 @@ common-fields:
   started-at: Started at
   finished-at: Finished at
   page: Page
-  weight-kg: Weight
+  weight: Weight
   modified-at: Modified at
   location: Location
   legal-name: Legal name
@@ -55,6 +56,7 @@ common-fields:
   nationality: Nationality
   native-name: Native name
   native-name-language: Native name language
+  unit: Unit
 
 common-actions:
   sign-in: Sign in
@@ -133,8 +135,9 @@ common-placeholders:
   book-number: '1'
   book-barcode: '9781934287729'
   book-page-count: '582'
-  book-width-cm: '16.5'
-  book-height-cm: '20.9'
+  book-width: '16.5'
+  book-height: '20.9'
+  book-depth: '3.0'
   book-label-price-amount: '19.95'
   book-label-price-currency: USD
   book-paid-price-amount: '15.95'
@@ -648,3 +651,14 @@ location:
 
 nationality:
   unknown: Unknown
+
+units:
+  mass:
+    kilogram: Kilogram
+    gram: Gram
+    ounce: Ounce
+    pound: Pound
+  length:
+    centimeter: Centimeter
+    millimeter: Millimeter
+    inch: Inch

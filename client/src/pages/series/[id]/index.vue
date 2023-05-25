@@ -217,7 +217,7 @@ const activeTab = computed({
                 boughtAt: true,
                 billedAt: false,
                 arrivedAt: false,
-                weightKg: false,
+                weight: false,
                 publishers: false,
                 title: true,
                 number: true,

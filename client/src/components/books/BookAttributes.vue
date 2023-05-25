@@ -8,6 +8,7 @@ import type { BookEntity } from '@/types/tankobon-book'
 import { isIsbnCode } from '@/types/tankobon-book'
 import type { MonetaryAmount } from '@/types/tankobon-monetary'
 import { getRelationship, getRelationships } from '@/utils/api'
+import { unitAbbreviation } from '@/utils/unit'
 
 export interface BookAttributesProps {
   book?: BookEntity | null
@@ -125,10 +126,12 @@ const metadata = computed(() => {
     {
       title: t('common-fields.dimensions'),
       value: attributes?.dimensions
-        ? `${n(attributes!.dimensions.widthCm, 'dimension')
+        ? `${n(attributes!.dimensions.width, 'dimension')
           } × ${
-          n(attributes!.dimensions.heightCm, 'dimension')
-          } cm`
+          n(attributes!.dimensions.height, 'dimension')
+          } × ${
+          n(attributes!.dimensions.depth, 'dimension')
+          } ${unitAbbreviation[attributes!.dimensions.unit]}`
         : null,
     },
     {
@@ -137,9 +140,9 @@ const metadata = computed(() => {
       warning: attributes?.pageCount === 0,
     },
     {
-      title: t('common-fields.weight-kg'),
+      title: t('common-fields.weight'),
       // @ts-expect-error The signature is wrong at the library.
-      value: n(attributes?.weightKg ?? 0, 'unit', { unit: 'kilogram' }),
+      value: n(attributes?.weight?.value ?? 0, 'unit', { unit: attributes?.weight?.unit?.toLowerCase() ?? 'kilogram' }),
     },
     {
       title: t('common-fields.label-price'),
