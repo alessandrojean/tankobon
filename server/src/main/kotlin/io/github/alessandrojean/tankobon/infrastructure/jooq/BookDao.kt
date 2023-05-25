@@ -35,6 +35,16 @@ class BookDao(
       .fetchOneInto(TableBook)
       ?.toDomain()
 
+  override fun findByCodeInLibraryOrNull(bookCode: String, libraryId: String): Book? =
+    dsl.select(*TableBook.fields())
+      .from(TableBook)
+      .leftJoin(TableCollection)
+      .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
+      .where(TableBook.CODE.eq(bookCode))
+      .and(TableCollection.LIBRARY_ID.eq(libraryId))
+      .fetchOneInto(TableBook)
+      ?.toDomain()
+
   override fun findAll(): Collection<Book> =
     dsl.selectFrom(TableBook)
       .fetchInto(TableBook)
@@ -104,6 +114,16 @@ class BookDao(
       dsl.select(TableBook.ID)
         .from(TableBook)
         .where(TableBook.CODE.equalIgnoreCase(code)),
+    )
+
+  override fun existsByCodeInLibrary(code: String, libraryId: String): Boolean =
+    dsl.fetchExists(
+      dsl.select(TableBook.ID)
+        .from(TableBook)
+        .leftJoin(TableCollection)
+        .on(TableBook.COLLECTION_ID.eq(TableCollection.ID))
+        .where(TableBook.CODE.equalIgnoreCase(code))
+        .and(TableCollection.LIBRARY_ID.eq(libraryId)),
     )
 
   override fun getLibraryIdOrNull(bookId: String): String? =

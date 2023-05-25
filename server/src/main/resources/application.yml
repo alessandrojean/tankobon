@@ -14,7 +14,7 @@ logging:
 
 tankobon:
   database:
-    file: \${tankobon.config-dir}/database.sqlite
+    file: \${tankobon.config-dir}/app_database.sqlite
   lucene:
     data-directory: \${tankobon.config-dir}/lucene
   config-dir: \${user.home}/.tankobon

@@ -11,6 +11,7 @@ import io.github.alessandrojean.tankobon.domain.model.RelationIsNotFromSameLibra
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
+import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
@@ -25,6 +26,7 @@ private val logger = KotlinLogging.logger {}
 class BookLifecycle(
   private val bookRepository: BookRepository,
   private val bookDtoRepository: BookDtoRepository,
+  private val collectionRepository: CollectionRepository,
   private val eventPublisher: EventPublisher,
   private val transactionTemplate: TransactionTemplate,
 ) {
@@ -38,7 +40,10 @@ class BookLifecycle(
   fun addBook(book: BookCreationDto, user: TankobonUser): BookEntityDto {
     logger.info { "Adding new book: $book" }
 
-    if (bookRepository.findByCodeOrNull(book.code) != null) {
+    val libraryId = collectionRepository.findByIdOrNull(book.collection)?.libraryId
+      ?: throw IdDoesNotExistException("Collection not found")
+
+    if (bookRepository.existsByCodeInLibrary(book.code, libraryId)) {
       throw DuplicateCodeException("A book with the code ${book.code} already exists")
     }
 
@@ -58,7 +63,10 @@ class BookLifecycle(
   fun addBook(book: Book): Book {
     logger.info { "Adding new book: $book" }
 
-    if (bookRepository.findByCodeOrNull(book.code) != null) {
+    val libraryId = collectionRepository.findByIdOrNull(book.collectionId)?.libraryId
+      ?: throw IdDoesNotExistException("Collection not found")
+
+    if (bookRepository.existsByCodeInLibrary(book.code, libraryId)) {
       throw DuplicateCodeException("A book with the code ${book.code} already exists")
     }
 
@@ -82,7 +90,10 @@ class BookLifecycle(
       throw IdDoesNotExistException("Cannot update book that does not exist")
     }
 
-    if (bookRepository.findByCodeOrNull(toUpdate.code)?.id != toUpdate.id) {
+    val libraryId = collectionRepository.findByIdOrNull(toUpdate.collectionId)?.libraryId
+      ?: throw IdDoesNotExistException("Collection not found")
+
+    if (bookRepository.findByCodeInLibraryOrNull(toUpdate.code, libraryId)?.id != toUpdate.id) {
       throw DuplicateCodeException("A book with the code ${toUpdate.code} already exists")
     }
 
@@ -104,7 +115,10 @@ class BookLifecycle(
       throw IdDoesNotExistException("Cannot update book that does not exist")
     }
 
-    if (bookRepository.findByCodeOrNull(toUpdate.code)?.id != bookId) {
+    val libraryId = collectionRepository.findByIdOrNull(toUpdate.collection)?.libraryId
+      ?: throw IdDoesNotExistException("Collection not found")
+
+    if (bookRepository.findByCodeInLibraryOrNull(toUpdate.code, libraryId)?.id != bookId) {
       throw DuplicateCodeException("A book with the code ${toUpdate.code} already exists")
     }
 

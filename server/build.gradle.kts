@@ -10,7 +10,7 @@ plugins {
   id("org.springframework.boot") version "3.0.3"
   id("io.spring.dependency-management") version "1.1.0"
   id("nu.studer.jooq") version "8.1"
-  id("org.flywaydb.flyway") version "9.15.1"
+  id("org.flywaydb.flyway") version "9.19.1"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
@@ -182,7 +182,7 @@ sourceSets {
 }
 
 val dbSqlite = mapOf(
-  "url" to "jdbc:sqlite:${project.buildDir}/generated/flyway/database.sqlite",
+  "url" to "jdbc:sqlite:${project.buildDir}/generated/flyway/app_database.sqlite",
 )
 
 val migrationDirsSqlite = listOf(

@@ -5,6 +5,7 @@ import io.github.alessandrojean.tankobon.domain.model.Book
 interface BookRepository {
   fun findByIdOrNull(bookId: String): Book?
   fun findByCodeOrNull(bookCode: String): Book?
+  fun findByCodeInLibraryOrNull(bookCode: String, libraryId: String): Book?
 
   fun findAll(): Collection<Book>
   fun findAllByIds(bookIds: Collection<String>): Collection<Book>
@@ -19,6 +20,7 @@ interface BookRepository {
   fun findAllIdsByLibraryId(libraryId: String): Collection<String>
 
   fun existsByCode(code: String): Boolean
+  fun existsByCodeInLibrary(code: String, libraryId: String): Boolean
 
   fun getLibraryIdOrNull(bookId: String): String?
 

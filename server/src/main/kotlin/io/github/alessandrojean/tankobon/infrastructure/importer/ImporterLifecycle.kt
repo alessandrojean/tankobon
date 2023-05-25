@@ -2,11 +2,11 @@ package io.github.alessandrojean.tankobon.infrastructure.importer
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.DuplicateCodeException
+import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.LengthUnit
 import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.Publisher
-import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.RelationIsNotFromSameLibraryException
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
@@ -56,12 +56,12 @@ class ImporterLifecycle(
   ): BookEntityDto {
     logger.info { "Importing book ${import.id} from ${import.provider} to collection $collectionId" }
 
-    if (bookRepository.existsByCode(import.isbn)) {
+    val libraryId = collectionRepository.findByIdOrNull(collectionId)?.libraryId
+      ?: throw IdDoesNotExistException("Collection not found")
+
+    if (bookRepository.existsByCodeInLibrary(import.isbn, libraryId)) {
       throw DuplicateCodeException("A book with the code ${import.isbn} already exists")
     }
-
-    val libraryId = collectionRepository.getLibraryIdOrNull(collectionId)
-      ?: throw RelationIdDoesNotExistException("Collection not found")
 
     val existingPublisher = publisherRepository.findByNameInLibraryOrNull(import.publisher, libraryId)
     val existingPeople = personRepository
