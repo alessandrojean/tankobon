@@ -3,6 +3,9 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
+import io.github.alessandrojean.tankobon.domain.model.MassUnit
+import io.github.alessandrojean.tankobon.domain.model.Weight
 import io.github.alessandrojean.tankobon.domain.persistence.BookRepository
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
 import io.github.alessandrojean.tankobon.jooq.tables.records.BookRecord
@@ -126,8 +129,10 @@ class BookDao(
       .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.number.toFloat())
       .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency.currencyCode)
       .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.number.toFloat())
-      .set(TableBook.DIMENSION_WIDTH_CM, book.dimensions.widthCm)
-      .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
+      .set(TableBook.DIMENSION_WIDTH, book.dimensions.width)
+      .set(TableBook.DIMENSION_HEIGHT, book.dimensions.height)
+      .set(TableBook.DIMENSION_DEPTH, book.dimensions.depth)
+      .set(TableBook.DIMENSION_UNIT, book.dimensions.unit.ordinal)
       .set(TableBook.NUMBER, book.number)
       .set(TableBook.PAGE_COUNT, book.pageCount)
       .set(TableBook.SOURCE_KEY, book.source?.ordinal)
@@ -138,7 +143,8 @@ class BookDao(
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
-      .set(TableBook.WEIGHT_KG, book.weightKg)
+      .set(TableBook.WEIGHT, book.weight.value)
+      .set(TableBook.WEIGHT_UNIT, book.weight.unit.ordinal)
       .set(TableBook.AMAZON, book.links.amazon)
       .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
       .set(TableBook.SKOOB, book.links.skoob)
@@ -161,8 +167,10 @@ class BookDao(
       .set(TableBook.PAID_PRICE_VALUE, book.paidPrice.number.toFloat())
       .set(TableBook.LABEL_PRICE_CURRENCY, book.labelPrice.currency.currencyCode)
       .set(TableBook.LABEL_PRICE_VALUE, book.labelPrice.number.toFloat())
-      .set(TableBook.DIMENSION_WIDTH_CM, book.dimensions.widthCm)
-      .set(TableBook.DIMENSION_HEIGHT_CM, book.dimensions.heightCm)
+      .set(TableBook.DIMENSION_WIDTH, book.dimensions.width)
+      .set(TableBook.DIMENSION_HEIGHT, book.dimensions.height)
+      .set(TableBook.DIMENSION_DEPTH, book.dimensions.depth)
+      .set(TableBook.DIMENSION_UNIT, book.dimensions.unit.ordinal)
       .set(TableBook.NUMBER, book.number)
       .set(TableBook.PAGE_COUNT, book.pageCount)
       .set(TableBook.SOURCE_KEY, book.source?.ordinal)
@@ -173,7 +181,8 @@ class BookDao(
       .set(TableBook.SYNOPSIS, book.synopsis)
       .set(TableBook.NOTES, book.notes)
       .set(TableBook.SUBTITLE, book.subtitle)
-      .set(TableBook.WEIGHT_KG, book.weightKg)
+      .set(TableBook.WEIGHT, book.weight.value)
+      .set(TableBook.WEIGHT_UNIT, book.weight.unit.ordinal)
       .set(TableBook.AMAZON, book.links.amazon)
       .set(TableBook.OPEN_LIBRARY, book.links.openLibrary)
       .set(TableBook.SKOOB, book.links.skoob)
@@ -200,8 +209,10 @@ class BookDao(
     paidPrice = FastMoney.of(paidPriceValue, paidPriceCurrency),
     labelPrice = FastMoney.of(labelPriceValue, labelPriceCurrency),
     dimensions = Dimensions(
-      widthCm = dimensionWidthCm,
-      heightCm = dimensionHeightCm,
+      width = dimensionWidth,
+      height = dimensionHeight,
+      depth = dimensionDepth,
+      unit = LengthUnit.values().getOrElse(dimensionUnit) { LengthUnit.CENTIMETER },
     ),
     id = id,
     collectionId = collectionId,
@@ -216,7 +227,10 @@ class BookDao(
     source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
     sourceBookId = sourceBookId,
     subtitle = subtitle,
-    weightKg = weightKg,
+    weight = Weight(
+      value = weight,
+      unit = MassUnit.values().getOrElse(weightUnit) { MassUnit.KILOGRAM },
+    ),
     links = BookLinks(
       amazon = amazon,
       openLibrary = openLibrary,

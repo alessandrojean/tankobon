@@ -30,6 +30,7 @@ data class ImporterAttributesDto(
   val labelPrice: MonetaryAmount? = null,
   val coverUrl: String? = null,
   val pageCount: Int = 0,
+  val weight: WeightDto? = null,
   val url: String? = null,
 ) : EntityAttributesDto()
 
@@ -95,10 +96,23 @@ fun ImporterBookResult.toAttributesDto() = ImporterAttributesDto(
   contributors = contributors.map { ImporterContributorDto(it.name, it.role) },
   publisher = publisher,
   synopsis = synopsis,
-  dimensions = dimensions?.let { DimensionsDto(it.widthCm, it.heightCm) },
+  dimensions = dimensions?.let {
+    DimensionsDto(
+      width = it.width,
+      height = it.height,
+      depth = it.depth,
+      unit = it.unit,
+    )
+  },
   labelPrice = labelPrice,
   coverUrl = coverUrl,
   pageCount = pageCount,
+  weight = weight?.let {
+    WeightDto(
+      value = it.value,
+      unit = it.unit,
+    )
+  },
   url = url,
 )
 

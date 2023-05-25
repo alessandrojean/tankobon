@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.importer
 
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.Weight
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookLinksDto
 import javax.money.MonetaryAmount
 
@@ -19,7 +20,7 @@ data class ImporterBookResult(
   val coverUrl: String? = null,
   val pageCount: Int = 0,
   val url: String? = null,
-  val weightKg: Float = 0f,
+  val weight: Weight? = null,
   val links: BookLinksDto = BookLinksDto(),
 )
 

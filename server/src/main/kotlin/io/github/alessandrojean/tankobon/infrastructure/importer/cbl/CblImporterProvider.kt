@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.importer.cbl
 
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
 import io.github.alessandrojean.tankobon.infrastructure.importer.AmazonCoverService
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookContributor
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
@@ -107,8 +108,10 @@ class CblImporterProvider(
         ?: return@let null
 
       Dimensions(
-        widthCm = (match.groupValues[1] + "." + match.groupValues[2].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
-        heightCm = (match.groupValues[3] + "." + match.groupValues[4].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
+        width = (match.groupValues[1] + "." + match.groupValues[2].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
+        height = (match.groupValues[3] + "." + match.groupValues[4].ifEmpty { "0" }).toFloatOrNull() ?: 0f,
+        depth = 0f,
+        unit = LengthUnit.CENTIMETER,
       )
     },
     synopsis = synopsis.orEmpty().trim(),

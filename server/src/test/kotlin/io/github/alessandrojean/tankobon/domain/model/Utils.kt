@@ -24,7 +24,12 @@ fun makeBook(
   subtitle: String = "",
   paidPrice: MonetaryAmount = FastMoney.of(10.99f, "USD"),
   labelPrice: MonetaryAmount = FastMoney.of(9.99f, "USD"),
-  dimensions: Dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
+  dimensions: Dimensions = Dimensions(
+    width = 13.2f,
+    height = 20f,
+    depth = 1.5f,
+    unit = LengthUnit.CENTIMETER,
+  ),
   id: String = makeUuid(),
   collectionId: String = "0",
 ): Book = Book(

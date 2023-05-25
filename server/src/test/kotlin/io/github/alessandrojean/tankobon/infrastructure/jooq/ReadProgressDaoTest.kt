@@ -41,7 +41,11 @@ class ReadProgressDaoTest(
     subtitle = "Subtitle",
     paidPrice = FastMoney.of(10.99f, "USD"),
     labelPrice = FastMoney.of(9.99f, "USD"),
-    dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
+    dimensions = Dimensions(
+      width = 13.2f,
+      height = 20f,
+      depth = 1.5f,
+    ),
     id = "1",
     collectionId = collection.id,
     barcode = "12345",

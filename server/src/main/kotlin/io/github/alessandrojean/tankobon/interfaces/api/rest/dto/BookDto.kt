@@ -1,6 +1,8 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Book
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
+import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.parser.CodeType
 import io.github.alessandrojean.tankobon.infrastructure.parser.guessCodeType
@@ -38,7 +40,7 @@ data class BookAttributesDto(
   val paidPrice: MonetaryAmount,
   val labelPrice: MonetaryAmount,
   val dimensions: DimensionsDto,
-  val weightKg: Float,
+  val weight: WeightDto,
   val isInLibrary: Boolean,
   val number: String,
   val pageCount: Int,
@@ -131,10 +133,15 @@ fun Book.toAttributesDto() = BookAttributesDto(
   paidPrice = paidPrice,
   labelPrice = labelPrice,
   dimensions = DimensionsDto(
-    widthCm = dimensions.widthCm,
-    heightCm = dimensions.heightCm,
+    width = dimensions.width,
+    height = dimensions.height,
+    depth = dimensions.depth,
+    unit = dimensions.unit,
   ),
-  weightKg = weightKg,
+  weight = WeightDto(
+    value = weight.value,
+    unit = weight.unit,
+  ),
   isInLibrary = isInLibrary,
   number = number,
   pageCount = pageCount,
@@ -167,6 +174,7 @@ data class BookCreationDto(
   val series: String? = null,
   @get:NotEmpty
   @get:UniqueElements
+  @get:Valid
   val contributors: List<@NotNull BookContributorCreationDto>,
   @get:NotEmpty
   @get:UniqueElements
@@ -190,10 +198,11 @@ data class BookCreationDto(
   @get:PositiveAmount
   val labelPrice: MonetaryAmount,
   @get:NotNull
+  @get:Valid
   val dimensions: DimensionsDto,
   @get:NotNull
-  @get:Min(0)
-  val weightKg: Float,
+  @get:Valid
+  val weight: WeightDto,
   @get:Schema(description = "If the book is a future and planned acquisition, set as `false`")
   val isInLibrary: Boolean,
   @get:NotNull
@@ -236,9 +245,24 @@ data class DimensionsDto(
   @get:NotNull
   @get:Min(value = 0L)
   @get:Schema(example = "13.2")
-  val widthCm: Float,
+  val width: Float,
   @get:NotNull
   @get:Min(value = 0L)
   @get:Schema(example = "20.0")
-  val heightCm: Float,
+  val height: Float,
+  @get:NotNull
+  @get:Min(value = 0L)
+  @get:Schema(example = "1.5")
+  val depth: Float,
+  @get:NotNull
+  val unit: LengthUnit,
+)
+
+data class WeightDto(
+  @get:NotNull
+  @get:Min(value = 0L)
+  @get:Schema(example = "0.2")
+  val value: Float,
+  @get:NotNull
+  val unit: MassUnit,
 )

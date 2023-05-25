@@ -2,6 +2,8 @@ package io.github.alessandrojean.tankobon.infrastructure.importer
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.DuplicateCodeException
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
+import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
@@ -22,6 +24,7 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookContributor
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.BookEntityDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.DimensionsDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.WeightDto
 import mu.KotlinLogging
 import org.javamoney.moneta.FastMoney
 import org.springframework.stereotype.Component
@@ -103,13 +106,18 @@ class ImporterLifecycle(
         labelPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         paidPrice = import.labelPrice ?: FastMoney.of(0, "USD"),
         dimensions = DimensionsDto(
-          widthCm = import.dimensions?.widthCm ?: 0f,
-          heightCm = import.dimensions?.heightCm ?: 0f,
+          width = import.dimensions?.width ?: 0f,
+          height = import.dimensions?.height ?: 0f,
+          depth = import.dimensions?.depth ?: 0f,
+          unit = import.dimensions?.unit ?: LengthUnit.CENTIMETER,
         ),
         isInLibrary = true,
         pageCount = import.pageCount,
         synopsis = import.synopsis,
-        weightKg = import.weightKg,
+        weight = WeightDto(
+          value = import.weight?.value ?: 0f,
+          unit = import.weight?.unit ?: MassUnit.KILOGRAM,
+        ),
         notes = "",
         links = import.links,
       )

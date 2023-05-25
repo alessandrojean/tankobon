@@ -29,7 +29,7 @@ data class Book(
   val sourceBookId: String? = null,
 
   val subtitle: String = "",
-  val weightKg: Float = 0f,
+  val weight: Weight = Weight(value = 0f, unit = MassUnit.KILOGRAM),
   val links: BookLinks = BookLinks(),
 
   /**

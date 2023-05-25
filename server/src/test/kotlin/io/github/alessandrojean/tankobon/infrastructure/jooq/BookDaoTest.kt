@@ -4,7 +4,10 @@ import io.github.alessandrojean.tankobon.domain.model.Book
 import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.Collection
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
+import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
+import io.github.alessandrojean.tankobon.domain.model.Weight
 import io.github.alessandrojean.tankobon.domain.model.makeBook
 import io.github.alessandrojean.tankobon.domain.model.makeLibrary
 import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
@@ -64,8 +67,16 @@ class BookDaoTest(
       subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
-      dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
-      weightKg = 0.2f,
+      dimensions = Dimensions(
+        width = 13.2f,
+        height = 20f,
+        depth = 1.5f,
+        unit = LengthUnit.CENTIMETER,
+      ),
+      weight = Weight(
+        value = 0.2f,
+        unit = MassUnit.KILOGRAM,
+      ),
       links = BookLinks(amazon = "amazon.com"),
       collectionId = collection.id,
       barcode = "12345",
@@ -82,9 +93,12 @@ class BookDaoTest(
       assertThat(code).isEqualTo(book.code)
       assertThat(paidPrice).isEqualTo(book.paidPrice)
       assertThat(labelPrice).isEqualTo(book.labelPrice)
-      assertThat(dimensions.widthCm).isEqualTo(book.dimensions.widthCm)
-      assertThat(dimensions.heightCm).isEqualTo(book.dimensions.heightCm)
-      assertThat(weightKg).isEqualTo(book.weightKg)
+      assertThat(dimensions.width).isEqualTo(book.dimensions.width)
+      assertThat(dimensions.height).isEqualTo(book.dimensions.height)
+      assertThat(dimensions.depth).isEqualTo(book.dimensions.depth)
+      assertThat(dimensions.unit).isEqualTo(book.dimensions.unit)
+      assertThat(weight.value).isEqualTo(book.weight.value)
+      assertThat(weight.unit).isEqualTo(book.weight.unit)
       assertThat(collectionId).isEqualTo(book.collectionId)
       assertThat(barcode).isEqualTo(book.barcode)
       assertThat(boughtAt).isEqualToIgnoringNanos(now)
@@ -107,8 +121,16 @@ class BookDaoTest(
       subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
-      dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
-      weightKg = 0.2f,
+      dimensions = Dimensions(
+        width = 13.2f,
+        height = 20f,
+        depth = 1.5f,
+        unit = LengthUnit.CENTIMETER,
+      ),
+      weight = Weight(
+        value = 0.2f,
+        unit = MassUnit.KILOGRAM,
+      ),
       collectionId = collection.id,
       barcode = "12345",
       links = BookLinks(amazon = "amazon.com"),
@@ -124,7 +146,7 @@ class BookDaoTest(
       copy(
         title = "Updated",
         subtitle = "Subtitle updated",
-        weightKg = 0.3f,
+        weight = weight.copy(value = 0.3f),
         boughtAt = modificationDate.toUtcTimeZone(),
         billedAt = modificationDate.toUtcTimeZone(),
         arrivedAt = modificationDate.toUtcTimeZone(),
@@ -147,7 +169,7 @@ class BookDaoTest(
       assertThat(arrivedAt).isEqualToIgnoringNanos(modificationDate)
       assertThat(title).isEqualTo(updated.title)
       assertThat(subtitle).isEqualTo(updated.subtitle)
-      assertThat(weightKg).isEqualTo(updated.weightKg)
+      assertThat(weight.value).isEqualTo(updated.weight.value)
       assertThat(links.amazon).isEqualTo(updated.links.amazon)
       assertThat(createdAt).isEqualTo(updated.createdAt)
       assertThat(modifiedAt)
@@ -164,7 +186,12 @@ class BookDaoTest(
       subtitle = "Subtitle",
       paidPrice = FastMoney.of(10.99f, "USD"),
       labelPrice = FastMoney.of(9.99f, "USD"),
-      dimensions = Dimensions(widthCm = 13.2f, heightCm = 20f),
+      dimensions = Dimensions(
+        width = 13.2f,
+        height = 20f,
+        depth = 1.5f,
+        unit = LengthUnit.CENTIMETER,
+      ),
       collectionId = collection.id,
       barcode = "12345",
     )

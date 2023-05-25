@@ -1,6 +1,7 @@
 package io.github.alessandrojean.tankobon.infrastructure.importer.openlibrary
 
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookContributor
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterBookResult
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterProvider
@@ -78,7 +79,7 @@ class OpenLibraryImporterProvider(
 
   private fun OpenLibraryBookDto.toDomain(details: OpenLibraryBookDetailsDto?): ImporterBookResult {
     val dimensions = details?.physicalDimensions
-      ?.removeSuffix(" centimeters")
+      ?.replace(UNIT_REGEX, "")
       ?.split(" x ")
       ?.mapNotNull(String::toFloatOrNull)
       .orEmpty()
@@ -90,11 +91,13 @@ class OpenLibraryImporterProvider(
       contributors = authors.orEmpty().map { ImporterBookContributor(it.name, "Author") } +
         details?.contributors.orEmpty().map { ImporterBookContributor(it.name, it.role.orEmpty().ifEmpty { "Author" }) },
       publisher = publishers[0].name,
-      dimensions = if (
-        details?.physicalDimensions.orEmpty().endsWith(" centimeters") &&
-        dimensions.size == 3
-      ) {
-        Dimensions(dimensions[1], dimensions[0])
+      dimensions = if (dimensions.size == 3) {
+        Dimensions(
+          width = dimensions[1],
+          height = dimensions[0],
+          depth = dimensions[2],
+          unit = if (details!!.physicalDimensions!!.contains("centimeters")) LengthUnit.CENTIMETER else LengthUnit.INCH,
+        )
       } else {
         null
       },
@@ -105,5 +108,9 @@ class OpenLibraryImporterProvider(
       links = BookLinksDto(openLibrary = this@OpenLibraryImporterProvider.url + key),
       provider = ImporterSource.OPEN_LIBRARY,
     )
+  }
+
+  companion object {
+    private val UNIT_REGEX = "\\s(?:centimeters|inches)$".toRegex()
   }
 }

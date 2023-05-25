@@ -129,10 +129,15 @@ class BookControllerTest(
                 }
               ],
               "dimensions": {
-                "heightCm": 25.6,
-                "widthCm": 17.8
+                "height": 25.6,
+                "width": 17.8,
+                "depth": 3.0,
+                "unit": "CENTIMETER"
               },
-              "weightKg": 0.2,
+              "weight": {
+                "value": 0.2,
+                "unit": "KILOGRAM"
+              },
               "isInLibrary": true,
               "labelPrice": {
                 "currency": "BRL",
@@ -198,15 +203,20 @@ class BookControllerTest(
                 }
               ],
               "dimensions": {
-                "heightCm": 25.6,
-                "widthCm": 17.8
+                "height": 25.6,
+                "width": 17.8,
+                "depth": 3.0,
+                "unit": "CENTIMETER"
               },
               "isInLibrary": true,
               "labelPrice": {
                 "currency": "BRL",
                 "amount": 69.9
               },
-              "weightKg": 0.2,
+              "weight": {
+                "value": 0.2,
+                "unit": "KILOGRAM"
+              },
               "notes": "",
               "number": "1",
               "pageCount": 300,

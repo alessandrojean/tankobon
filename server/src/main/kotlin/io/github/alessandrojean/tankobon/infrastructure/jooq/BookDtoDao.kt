@@ -7,7 +7,9 @@ import io.github.alessandrojean.tankobon.domain.model.BookLinks
 import io.github.alessandrojean.tankobon.domain.model.BookSearch
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
 import io.github.alessandrojean.tankobon.domain.model.Dimensions
+import io.github.alessandrojean.tankobon.domain.model.LengthUnit
 import io.github.alessandrojean.tankobon.domain.model.LibraryItem
+import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.domain.model.Person
 import io.github.alessandrojean.tankobon.domain.model.Publisher
 import io.github.alessandrojean.tankobon.domain.model.RelationIdDoesNotExistException
@@ -15,6 +17,7 @@ import io.github.alessandrojean.tankobon.domain.model.RelationIsNotFromSameLibra
 import io.github.alessandrojean.tankobon.domain.model.Tag
 import io.github.alessandrojean.tankobon.domain.model.TankobonUser
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
+import io.github.alessandrojean.tankobon.domain.model.Weight
 import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import io.github.alessandrojean.tankobon.infrastructure.image.BookCoverLifecycle
 import io.github.alessandrojean.tankobon.infrastructure.importer.ImporterSource
@@ -81,7 +84,7 @@ class BookDtoDao(
     "arrivedAt" to TableBook.ARRIVED_AT,
     "number" to TableBook.NUMBER,
     "pageCount" to TableBook.PAGE_COUNT,
-    "weightKg" to TableBook.WEIGHT_KG,
+    "weightKg" to TableBook.WEIGHT,
   )
 
   override fun findByIdOrNull(bookId: String): BookEntityDto? = bookDao.findByIdOrNull(bookId)?.toDto()
@@ -344,7 +347,12 @@ class BookDtoDao(
     subtitle = subtitle,
     paidPrice = paidPrice,
     labelPrice = labelPrice,
-    dimensions = Dimensions(dimensions.widthCm, dimensions.heightCm),
+    dimensions = Dimensions(
+      width = dimensions.width,
+      height = dimensions.height,
+      depth = dimensions.depth,
+      unit = dimensions.unit,
+    ),
     collectionId = collection,
     storeId = store,
     seriesId = series,
@@ -357,7 +365,10 @@ class BookDtoDao(
     boughtAt = boughtAt,
     billedAt = billedAt,
     arrivedAt = arrivedAt,
-    weightKg = weightKg,
+    weight = Weight(
+      value = weight.value,
+      unit = weight.unit,
+    ),
     links = BookLinks(
       amazon = links.amazon,
       openLibrary = links.openLibrary,
@@ -555,8 +566,10 @@ class BookDtoDao(
     paidPrice = FastMoney.of(paidPriceValue, paidPriceCurrency),
     labelPrice = FastMoney.of(labelPriceValue, labelPriceCurrency),
     dimensions = Dimensions(
-      widthCm = dimensionWidthCm,
-      heightCm = dimensionHeightCm,
+      width = dimensionWidth,
+      height = dimensionHeight,
+      depth = dimensionDepth,
+      unit = LengthUnit.values().getOrElse(dimensionUnit) { LengthUnit.CENTIMETER },
     ),
     id = id,
     collectionId = collectionId,
@@ -571,7 +584,10 @@ class BookDtoDao(
     source = sourceKey?.let { ImporterSource.values().getOrNull(it) },
     sourceBookId = sourceBookId,
     subtitle = subtitle,
-    weightKg = weightKg,
+    weight = Weight(
+      value = weight,
+      unit = MassUnit.values().getOrElse(weightUnit) { MassUnit.KILOGRAM },
+    ),
     links = BookLinks(
       amazon = amazon,
       openLibrary = openLibrary,
