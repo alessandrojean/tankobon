@@ -184,25 +184,7 @@ function handleCurrency(newCurrency: string) {
         {{ focused ? $t(focusedLabelText[focused]) : labelText }}
       </label>
 
-      <div class="flex flex-row-reverse gap-2 items-center w-full px-3 pb-2 pt-1">
-        <input
-          ref="amountInput"
-          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums"
-          :class="[
-            invalidAmount
-              ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
-              : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
-          ]"
-          type="text"
-          inputmode="decimal"
-          :required="required"
-          :value="modelValue.amount"
-          :placeholder="placeholderAmount"
-          @input="handleInput({ event: $event, type: 'amount' })"
-          @focus="handleFocus({ event: $event, type: 'amount' })"
-          @blur="handleBlur({ event: $event, type: 'amount' })"
-        >
-
+      <div class="flex gap-2 items-center w-full px-3 pb-2 pt-1">
         <Combobox
           as="div"
           class="relative"
@@ -276,6 +258,24 @@ function handleCurrency(newCurrency: string) {
             </ComboboxOptions>
           </MenuTransition>
         </Combobox>
+
+        <input
+          ref="amountInput"
+          class="grow min-w-0 bg-white dark:bg-gray-950 rounded-md dark:text-gray-200 border-0 focus:outline-none focus:ring placeholder:text-gray-500 h-6 px-1.5 text-right motion-safe:transition tabular-nums"
+          :class="[
+            invalidAmount
+              ? 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500 dark:ring-red-500/95 dark:focus:ring-red-500/95'
+              : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
+          ]"
+          type="text"
+          inputmode="decimal"
+          :required="required"
+          :value="modelValue.amount"
+          :placeholder="placeholderAmount"
+          @input="handleInput({ event: $event, type: 'amount' })"
+          @focus="handleFocus({ event: $event, type: 'amount' })"
+          @blur="handleBlur({ event: $event, type: 'amount' })"
+        >
       </div>
     </div>
 
