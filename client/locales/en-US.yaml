@@ -247,6 +247,16 @@ dashboard:
 
 settings:
   title: Settings
+  language-title: Language
+  language-description: The language will also be used to format numbers and dates.
+  theme-title: Theme
+  theme-description: You can also change it quickier through the navigation bar.
+  preferred-length-unit-title: Preferred length unit
+  preferred-length-unit-description: Will be used to show the book dimensions.
+  preferred-mass-unit-title: Preferred mass unit
+  preferred-mass-unit-description: Will be used to show the book weight.
+  preferred-currency-title: Preferred currency
+  preferred-currency-description: Will be used to automatically select a currency in blank forms.
 
 theme-toggle:
   label: Theme

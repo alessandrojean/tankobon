@@ -48,7 +48,7 @@ const { position } = useAnchoredPosition({
   allowOutOfBounds: false,
 })
 
-const selected = computed(() => {
+const selected = computed<{ index: number; option: TItem }>(() => {
   const index = props.options.findIndex(v => optionValue.value(v) === props.modelValue)
 
   return { index, option: options.value[index] }
@@ -78,7 +78,11 @@ const selected = computed(() => {
             size === 'small' ? 'text-sm py-1.5' : 'py-2',
           ]"
         >
-          <slot name="button">
+          <slot
+            name="button"
+            :selected="selected"
+            :text="optionText(selected.option, selected.index)"
+          >
             <span class="block truncate">
               {{ optionText(selected.option, selected.index) }}
             </span>

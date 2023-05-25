@@ -40,7 +40,7 @@ const menuItems = computed(() => [
   {
     icon: Cog8ToothIcon,
     text: t('settings.title'),
-    to: { name: 'welcome' },
+    to: { name: 'settings' },
   },
   {
     icon: ArrowLeftOnRectangleIcon,

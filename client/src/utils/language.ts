@@ -62,6 +62,14 @@ const omitRegionExceptions = [
   { language: 'sv', region: 'SE' },
 ]
 
+function capitalize(string: string | undefined) {
+  if (!string) {
+    return string
+  }
+
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
 // The tag will always have the language and country code.
 // The script code is optional.
 export function getLanguageName({ language, locale, romanizedLabel, unknownLabel }: GetLanguageNameOptions) {
@@ -78,7 +86,7 @@ export function getLanguageName({ language, locale, romanizedLabel, unknownLabel
   // Japanese, Korean and Chinese case.
   if (parts.includes('Latn')) {
     const [languageCode, _, regionCode] = parts
-    const languageName = displayNames.language.of(languageCode)
+    const languageName = capitalize(displayNames.language.of(languageCode))
     const region = displayNames.region.of(regionCode)
     const omitRegion = omitRegionExceptions.find((e) => {
       return e.language === languageCode && e.region === regionCode
@@ -91,7 +99,7 @@ export function getLanguageName({ language, locale, romanizedLabel, unknownLabel
 
   if (parts.length === 3) {
     const [languageCode, scriptCode, regionCode] = parts
-    const languageName = displayNames.language.of(`${languageCode}-${scriptCode}`)
+    const languageName = capitalize(displayNames.language.of(`${languageCode}-${scriptCode}`))
     const region = displayNames.region.of(regionCode)
     const omitRegion = omitRegionExceptions.find((e) => {
       return e.language === languageCode && e.region === regionCode
@@ -104,7 +112,7 @@ export function getLanguageName({ language, locale, romanizedLabel, unknownLabel
 
   if (parts.length === 2) {
     const [languageCode, regionCode] = parts
-    const languageName = displayNames.language.of(languageCode)
+    const languageName = capitalize(displayNames.language.of(languageCode))
     const region = displayNames.region.of(regionCode)
     const omitRegion = omitRegionExceptions.find((e) => {
       return e.language === languageCode && e.region === regionCode
@@ -115,5 +123,5 @@ export function getLanguageName({ language, locale, romanizedLabel, unknownLabel
       : (languageName ?? language)
   }
 
-  return displayNames.language.of(language) ?? language
+  return capitalize(displayNames.language.of(language)) ?? language
 }

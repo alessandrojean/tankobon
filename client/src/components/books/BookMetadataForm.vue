@@ -347,7 +347,7 @@ function handleWeightUnitPicked(unit: MassUnit) {
 
       <DimensionsInput
         id="dimensions"
-        class="lg:col-span-4"
+        class="lg:col-span-5"
         :model-value="dimensions"
         required
         :placeholder-width="$t('common-placeholders.book-width')"

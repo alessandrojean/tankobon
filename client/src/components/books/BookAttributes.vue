@@ -4,11 +4,13 @@ import {
   ArrowTrendingUpIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/vue/20/solid'
+import configureMeasurements, { length, mass } from 'convert-units'
 import type { BookEntity } from '@/types/tankobon-book'
 import { isIsbnCode } from '@/types/tankobon-book'
 import type { MonetaryAmount } from '@/types/tankobon-monetary'
 import { getRelationship, getRelationships } from '@/utils/api'
-import { unitAbbreviation } from '@/utils/unit'
+import { isMassUnit, lengthUnitMap, massUnitMap, unitAbbreviation } from '@/utils/unit'
+import type { LengthUnit, MassUnit } from '@/types/tankobon-unit'
 
 export interface BookAttributesProps {
   book?: BookEntity | null
@@ -28,6 +30,9 @@ defineEmits<{
 
 const { book, loading } = toRefs(props)
 const { t, d, n, locale } = useI18n()
+
+const convertMass = configureMeasurements({ mass })
+const convertLength = configureMeasurements({ length })
 
 function formatPrice(price: MonetaryAmount | null | undefined) {
   if (!price) {
@@ -73,6 +78,25 @@ const language = computed(() => {
   )
 })
 
+const { preference: preferredLengthUnit } = useUserPreference<LengthUnit>('preferred_length_unit', 'CENTIMETER')
+const { preference: preferredMassUnit } = useUserPreference<MassUnit>('preferred_mass_unit', 'KILOGRAM')
+
+function convertValue(value: number | undefined, unit: MassUnit | LengthUnit | undefined) {
+  if (!value || !unit) {
+    return 0
+  }
+
+  if (isMassUnit(unit)) {
+    return convertMass(value)
+      .from(massUnitMap[unit])
+      .to(massUnitMap[preferredMassUnit.value])
+  }
+
+  return convertLength(value)
+    .from(lengthUnitMap[unit])
+    .to(lengthUnitMap[preferredLengthUnit.value])
+}
+
 const metadata = computed(() => {
   const attributes = book.value?.attributes
   const sameCurrency
@@ -81,6 +105,13 @@ const metadata = computed(() => {
   const collection = getRelationship(book.value, 'COLLECTION')
   const store = getRelationship(book.value, 'STORE')
   const series = getRelationship(book.value, 'SERIES')
+
+  const weightValue = convertValue(attributes?.weight?.value, attributes?.weight?.unit)
+  const dimensions = {
+    width: convertValue(attributes?.dimensions?.width, attributes?.dimensions?.unit),
+    height: convertValue(attributes?.dimensions?.height, attributes?.dimensions?.unit),
+    depth: convertValue(attributes?.dimensions?.depth, attributes?.dimensions?.unit),
+  }
 
   return [
     {
@@ -126,12 +157,12 @@ const metadata = computed(() => {
     {
       title: t('common-fields.dimensions'),
       value: attributes?.dimensions
-        ? `${n(attributes!.dimensions.width, 'dimension')
+        ? `${n(dimensions.width, 'dimension')
           } × ${
-          n(attributes!.dimensions.height, 'dimension')
+          n(dimensions.height, 'dimension')
           } × ${
-          n(attributes!.dimensions.depth, 'dimension')
-          } ${unitAbbreviation[attributes!.dimensions.unit]}`
+          n(dimensions.depth, 'dimension')
+          } ${unitAbbreviation[preferredLengthUnit.value]}`
         : null,
     },
     {
@@ -141,8 +172,12 @@ const metadata = computed(() => {
     },
     {
       title: t('common-fields.weight'),
-      // @ts-expect-error The signature is wrong at the library.
-      value: n(attributes?.weight?.value ?? 0, 'unit', { unit: attributes?.weight?.unit?.toLowerCase() ?? 'kilogram' }),
+      value: n(
+        weightValue,
+        'unit',
+        // @ts-expect-error The signature is wrong at the library.
+        { unit: preferredMassUnit.value.toLowerCase() },
+      ),
     },
     {
       title: t('common-fields.label-price'),

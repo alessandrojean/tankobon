@@ -15,6 +15,7 @@ import type { TankobonApiError } from '@/types/tankobon-response'
 import type { FormExternalLink } from '@/types/tankobon-external-link'
 import EntityExternalLinksForm from '@/components/entity/EntityExternalLinksForm.vue'
 import type { WeightString } from '@/types/tankobon-weight'
+import type { LengthUnit, MassUnit } from '@/types/tankobon-unit'
 
 const { t, n } = useI18n()
 const route = useRoute()
@@ -89,6 +90,10 @@ interface CustomBookUpdate extends Omit<BookUpdate, 'links' | 'dimensions' | 'pa
   links: FormExternalLink[]
 }
 
+const { preference: preferredLengthUnit } = useUserPreference<LengthUnit>('preferred_length_unit', 'CENTIMETER')
+const { preference: preferredMassUnit } = useUserPreference<MassUnit>('preferred_mass_unit', 'KILOGRAM')
+const { preference: preferredCurrency } = useUserPreference<string>('preferred_currency', 'USD')
+
 const updatedBook = reactive<CustomBookUpdate>({
   id: '',
   arrivedAt: null,
@@ -103,18 +108,18 @@ const updatedBook = reactive<CustomBookUpdate>({
     width: '0',
     height: '0',
     depth: '0',
-    unit: 'CENTIMETER',
+    unit: preferredLengthUnit.value,
   },
   labelPrice: {
     amount: '0',
-    currency: 'USD',
+    currency: preferredCurrency.value,
   },
   notes: '',
   number: '',
   pageCount: '0',
   paidPrice: {
     amount: '0',
-    currency: 'USD',
+    currency: preferredCurrency.value,
   },
   publishers: [],
   series: null,
@@ -125,7 +130,7 @@ const updatedBook = reactive<CustomBookUpdate>({
   title: '',
   weight: {
     value: '0',
-    unit: 'KILOGRAM',
+    unit: preferredMassUnit.value,
   },
   links: [],
 })

@@ -43,6 +43,9 @@ dependencies:
   blurhash:
     specifier: 2.0.5
     version: 2.0.5
+  convert-units:
+    specifier: 3.0.0-beta.5
+    version: 3.0.0-beta.5
   countries-list:
     specifier: 2.6.1
     version: 2.6.1
@@ -1909,6 +1912,10 @@ packages:
       semver: 7.5.1
       well-known-symbols: 2.0.0
     dev: true
+
+  /convert-units@3.0.0-beta.5:
+    resolution: {integrity: sha512-qCy+1W8CqfK8TDuJTdT2E9hNBpG9kDub6rYsrVXOVfdmuFOLqj8RQnW8o26MFCz2XdD3beyOYZYoh9Nh7jSABA==}
+    dev: false
 
   /countries-list@2.6.1:
     resolution: {integrity: sha512-jXM1Nv3U56dPQ1DsUSsEaGmLHburo4fnB7m+1yhWDUVvx5gXCd1ok/y3gXCjXzhqyawG+igcPYcAl4qjkvopaQ==}
