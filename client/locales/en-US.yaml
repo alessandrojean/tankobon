@@ -678,3 +678,6 @@ units:
     centimeter: Centimeter
     millimeter: Millimeter
     inch: Inch
+
+statistics:
+  title: Statistics

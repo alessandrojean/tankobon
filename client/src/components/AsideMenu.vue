@@ -11,6 +11,7 @@ import {
   ChevronDoubleLeftIcon,
   HomeIcon,
   PaintBrushIcon,
+  PresentationChartLineIcon,
   QueueListIcon,
   ServerStackIcon,
   Square2StackIcon,
@@ -56,6 +57,12 @@ const items = computed<Item[]>(() => [
     icon: HomeIcon,
     to: { name: 'index' },
     exact: true,
+  },
+  {
+    key: 'statistics',
+    label: t('statistics.title'),
+    icon: PresentationChartLineIcon,
+    to: { name: 'statistics' },
   },
   {
     key: 'libraries',
