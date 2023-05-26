@@ -7,6 +7,8 @@ export type TagEntity = Entity<TagAttributes> & {
 export interface TagAttributes {
   name: string
   description: string
+  createdAt: string
+  modifiedAt: string
 }
 
 export interface TagCreation {

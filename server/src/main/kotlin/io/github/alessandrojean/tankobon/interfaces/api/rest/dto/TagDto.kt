@@ -1,9 +1,11 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Tag
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.UUID
+import java.time.LocalDateTime
 
 data class TagEntityDto(
   override val id: String,
@@ -17,6 +19,8 @@ data class TagEntityDto(
 data class TagAttributesDto(
   val name: String,
   val description: String,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 enum class ReferenceExpansionTag : ReferenceExpansionEnum {
@@ -35,7 +39,12 @@ fun Tag.toDto(libraryAttributes: LibraryAttributesDto? = null) = TagEntityDto(
   ),
 )
 
-fun Tag.toAttributesDto() = TagAttributesDto(name, description)
+fun Tag.toAttributesDto() = TagAttributesDto(
+  name = name,
+  description = description,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
+)
 
 data class TagCreationDto(
   @get:NotBlank val name: String,

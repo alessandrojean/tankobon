@@ -1,9 +1,11 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.ContributorRole
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.UUID
+import java.time.LocalDateTime
 
 data class ContributorRoleEntityDto(
   override val id: String,
@@ -17,6 +19,8 @@ data class ContributorRoleEntityDto(
 data class ContributorRoleAttributesDto(
   val name: String,
   val description: String,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 enum class ReferenceExpansionContributorRole : ReferenceExpansionEnum {
@@ -35,7 +39,12 @@ fun ContributorRole.toDto(libraryAttributes: LibraryAttributesDto? = null) = Con
   ),
 )
 
-fun ContributorRole.toAttributesDto() = ContributorRoleAttributesDto(name, description)
+fun ContributorRole.toAttributesDto() = ContributorRoleAttributesDto(
+  name = name,
+  description = description,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
+)
 
 data class ContributorRoleCreationDto(
   @get:NotBlank val name: String,

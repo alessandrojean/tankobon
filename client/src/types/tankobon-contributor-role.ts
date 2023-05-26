@@ -7,6 +7,8 @@ export type ContributorRoleEntity = Entity<ContributorRoleAttributes> & {
 export interface ContributorRoleAttributes {
   name: string
   description: string
+  createdAt: string
+  modifiedAt: string
 }
 
 export interface ContributorRoleCreation {
