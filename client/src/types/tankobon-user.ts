@@ -28,6 +28,7 @@ export interface UserCreation {
   email: string
   name: string
   password: string
+  biography: string
   roles: UserRole[]
 }
 

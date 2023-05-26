@@ -1,15 +1,20 @@
 import { isAxiosError } from 'axios'
 import { api } from '@/modules/api'
-import type { LibraryCreation, LibraryEntity, LibraryIncludes, LibraryUpdate } from '@/types/tankobon-library'
+import type { LibraryCreation, LibraryEntity, LibraryIncludes, LibrarySort, LibraryUpdate } from '@/types/tankobon-library'
+import type {
+  CollectionResponse,
+  EntityResponse,
+  ErrorResponse,
+  PaginatedResponse,
+} from '@/types/tankobon-response'
 import {
-  type CollectionResponse,
-  type EntityResponse,
-  type ErrorResponse,
   TankobonApiError,
 } from '@/types/tankobon-response'
+import type { Paginated } from '@/types/tankobon-api'
 
 type LibraryOnly = EntityResponse<LibraryEntity>
 type LibraryCollection = CollectionResponse<LibraryEntity>
+type LibraryPaginated = PaginatedResponse<LibraryEntity>
 
 export interface GetAllLibrariesParameters {
   ownerId?: string
@@ -35,24 +40,33 @@ export async function getAllLibraries(options: GetAllLibrariesParameters): Promi
   }
 }
 
-export interface GetAllLibrariesByUserParameters {
+export interface GetAllLibrariesByUserParameters extends Paginated<LibrarySort> {
   userId?: string
   includeShared?: boolean
   includes?: LibraryIncludes[]
 }
 
-export async function getAllLibrariesByUser(options: GetAllLibrariesByUserParameters): Promise<LibraryEntity[]> {
-  const { userId, includes, includeShared } = options
+export async function getAllLibrariesByUser(options: GetAllLibrariesByUserParameters): Promise<LibraryPaginated> {
+  const { userId, includes, includeShared, page, size, sort, unpaged } = options
 
   try {
-    const { data: libraries } = await api.get<LibraryCollection>(`users/${userId}/libraries`, {
+    const { data: libraries } = await api.get<LibraryPaginated>(`users/${userId}/libraries`, {
       params: {
         includes: includes?.join(','),
         includeShared,
+        page,
+        size,
+        unpaged: unpaged ?? false,
+        sort: sort?.map(({ property, direction }) => {
+          return `${property},${direction}`
+        }),
+      },
+      paramsSerializer: {
+        indexes: null,
       },
     })
 
-    return libraries.data
+    return libraries
   } catch (e) {
     if (isAxiosError<ErrorResponse>(e) && e.response?.data) {
       throw new TankobonApiError(e.response.data)

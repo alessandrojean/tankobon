@@ -295,6 +295,9 @@ users:
   avatar-removed-with-failure: There was an error while removing the avatar
   fetch-failure: There was an error while fetching the users
   fetch-one-failure: There was an error while fetching the user details
+  information: Information
+  metadata: Metadata
+  avatar: Avatar
 
 pagination:
   items-per-page: Items per page
@@ -309,10 +312,13 @@ pagination:
 
 authentication-activity:
   header: Authentication activity
+  header-short: Authentication
+  status: Status
   success: Success
   error: Error
   ip: IP
   source: Source
+  user-agent: User-Agent
   empty-header: No authentication activity found
   empty-description: The user has never attempted to sign in
   fetch-failure: There was an error while fetching the authentication activity

@@ -10,6 +10,7 @@ import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.TankobonUserRepository
 import io.github.alessandrojean.tankobon.domain.service.LibraryLifecycle
 import io.github.alessandrojean.tankobon.domain.service.ReferenceExpansion
+import io.github.alessandrojean.tankobon.infrastructure.jooq.UnpagedSorted
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryCreationDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryEntityDto
@@ -17,13 +18,19 @@ import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.LibraryUpdateDt
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.ReferenceExpansionLibrary
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessEntityResponseDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessPaginatedCollectionResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
+import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toPaginationDto
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.hibernate.validator.constraints.UUID
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -102,26 +109,35 @@ class LibraryController(
     userId: String,
     @RequestParam(required = false, defaultValue = "false") includeShared: Boolean = false,
     @RequestParam(required = false, defaultValue = "") includes: Set<ReferenceExpansionLibrary> = emptySet(),
-  ): SuccessCollectionResponseDto<LibraryEntityDto> {
+    @RequestParam(name = "unpaged", required = false) unpaged: Boolean = false,
+    @Parameter(hidden = true) page: Pageable,
+  ): SuccessPaginatedCollectionResponseDto<LibraryEntityDto> {
     val user = userRepository.findByIdOrNull(userId)
       ?: throw IdDoesNotExistException("User not found")
 
-    val libraries = if (includeShared) {
-      libraryRepository.findByOwnerIdIncludingShared(user.id)
-    } else {
-      libraryRepository.findByOwnerId(user.id)
+    val sort = when {
+      page.sort.isSorted -> page.sort
+      else -> Sort.unsorted()
     }
 
-    val librariesDto = libraries
-      .sortedBy { it.name.lowercase() }
-      .map { it.toDto() }
+    val pageRequest = if (unpaged) {
+      UnpagedSorted(sort)
+    } else {
+      PageRequest.of(page.pageNumber, page.pageSize, sort)
+    }
 
-    val expanded = referenceExpansion.expand(
-      entities = librariesDto,
+    val librariesPage = if (includeShared) {
+      libraryRepository.findByOwnerIdIncludingShared(user.id, pageRequest)
+    } else {
+      libraryRepository.findByOwnerId(user.id, pageRequest)
+    }
+
+    val libraries = referenceExpansion.expand(
+      entities = librariesPage.content.map { it.toDto() },
       relationsToExpand = includes,
     )
 
-    return SuccessCollectionResponseDto(expanded)
+    return SuccessPaginatedCollectionResponseDto(libraries, librariesPage.toPaginationDto())
   }
 
   @GetMapping("api/v1/libraries/{libraryId}")

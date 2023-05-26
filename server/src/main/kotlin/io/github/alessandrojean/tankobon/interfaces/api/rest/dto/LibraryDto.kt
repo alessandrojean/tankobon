@@ -1,10 +1,12 @@
 package io.github.alessandrojean.tankobon.interfaces.api.rest.dto
 
 import io.github.alessandrojean.tankobon.domain.model.Library
+import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrUuid
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.UUID
+import java.time.LocalDateTime
 
 data class LibraryEntityDto(
   override val id: String,
@@ -18,6 +20,8 @@ data class LibraryEntityDto(
 data class LibraryAttributesDto(
   val name: String,
   val description: String,
+  val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 enum class ReferenceExpansionLibrary : ReferenceExpansionEnum {
@@ -40,7 +44,12 @@ fun Library.toDto(userAttributes: UserAttributesDto? = null) = LibraryEntityDto(
   ),
 )
 
-fun Library.toAttributesDto() = LibraryAttributesDto(name, description)
+fun Library.toAttributesDto() = LibraryAttributesDto(
+  name = name,
+  description = description,
+  createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
+)
 
 data class LibraryCreationDto(
   @get:NotBlank val name: String,

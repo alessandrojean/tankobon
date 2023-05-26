@@ -2,9 +2,15 @@ package io.github.alessandrojean.tankobon.infrastructure.jooq
 
 import io.github.alessandrojean.tankobon.domain.model.Library
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
+import io.github.alessandrojean.tankobon.infrastructure.datasource.SqliteUdfDataSource
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.ResultQuery
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -16,6 +22,12 @@ import io.github.alessandrojean.tankobon.jooq.Tables.USER_LIBRARY_SHARING as Tab
 class LibraryDao(
   private val dsl: DSLContext,
 ) : LibraryRepository {
+
+  private val sorts = mapOf(
+    "name" to TableLibrary.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableLibrary.CREATED_AT,
+    "modifiedAt" to TableLibrary.MODIFIED_AT,
+  )
 
   private fun selectBase() =
     dsl
@@ -40,6 +52,29 @@ class LibraryDao(
       .where(TableLibrary.OWNER_ID.eq(ownerId))
       .fetchAndMap()
 
+  override fun findByOwnerId(ownerId: String, pageable: Pageable): Page<Library> {
+    val count = dsl.fetchCount(selectBase().where(TableLibrary.OWNER_ID.eq(ownerId)))
+    val orderBy = pageable.sort.toOrderBy(sorts)
+
+    val libraries = selectBase()
+      .where(TableLibrary.OWNER_ID.eq(ownerId))
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchAndMap()
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      libraries,
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
+      count.toLong(),
+    )
+  }
+
   override fun findByOwnerIdIncludingShared(ownerId: String): Collection<Library> {
     return selectBase()
       .where(TableLibrary.OWNER_ID.eq(ownerId))
@@ -51,6 +86,46 @@ class LibraryDao(
         ),
       )
       .fetchAndMap()
+  }
+
+  override fun findByOwnerIdIncludingShared(ownerId: String, pageable: Pageable): Page<Library> {
+    val count = dsl.fetchCount(
+      selectBase()
+        .where(TableLibrary.OWNER_ID.eq(ownerId))
+        .or(
+          TableLibrary.ID.`in`(
+            dsl.select(TableUserLibrarySharing.LIBRARY_ID)
+              .from(TableUserLibrarySharing)
+              .where(TableUserLibrarySharing.USER_ID.eq(ownerId))
+          )
+        )
+    )
+    val orderBy = pageable.sort.toOrderBy(sorts)
+
+    val libraries = selectBase()
+      .where(TableLibrary.OWNER_ID.eq(ownerId))
+      .or(
+        TableLibrary.ID.`in`(
+          dsl.select(TableUserLibrarySharing.LIBRARY_ID)
+            .from(TableUserLibrarySharing)
+            .where(TableUserLibrarySharing.USER_ID.eq(ownerId))
+        )
+      )
+      .orderBy(orderBy)
+      .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
+      .fetchAndMap()
+
+    val pageSort = if (orderBy.isNotEmpty()) pageable.sort else Sort.unsorted()
+
+    return PageImpl(
+      libraries,
+      if (pageable.isPaged) {
+        PageRequest.of(pageable.pageNumber, pageable.pageSize, pageSort)
+      } else {
+        PageRequest.of(0, maxOf(count, 20), pageSort)
+      },
+      count.toLong(),
+    )
   }
 
   override fun findAll(): Collection<Library> = selectBase().fetchAndMap()

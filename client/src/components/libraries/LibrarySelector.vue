@@ -2,7 +2,7 @@
 import { BuildingLibraryIcon } from '@heroicons/vue/24/outline'
 import Button from '@/components/form/Button.vue'
 import type { LibraryEntity } from '@/types/tankobon-library'
-import { getRelationship } from '@/utils/api'
+import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
 
 defineProps<{
   transparent: boolean
@@ -16,6 +16,7 @@ const libraryStore = useLibraryStore()
 
 const { data: libraries } = useUserLibrariesByUserQuery({
   userId: userId as ComputedRef<string>,
+  unpaged: true,
   includes: ['owner'],
   includeShared: true,
   enabled: computed(() => userStore.isAuthenticated),
@@ -25,7 +26,8 @@ const { data: libraries } = useUserLibrariesByUserQuery({
       body: error.message,
     })
   },
-  initialData: [],
+  select: response => response.data,
+  initialData: createEmptyPaginatedResponse(),
 })
 
 const userHasAtLeastTwoLibraries = computed(() => libraries.value && libraries.value.length > 1)

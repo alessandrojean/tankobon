@@ -5,15 +5,15 @@ import { ArrowPathIcon } from '@heroicons/vue/20/solid'
 import { emailIsAvailable, emailIsAvailableIfNotSame } from '@/utils/validation'
 import type { UserRole } from '@/types/tankobon-user'
 
-export interface UserFormProps {
+export interface UserMetadataFormProps {
+  disabled?: boolean
   name: string
   email: string
   hidePassword?: boolean
   password?: string
-  hideRoles?: boolean
   roles: UserRole[]
-  hideBiography?: boolean
-  biography?: string
+  hideRoles?: boolean
+  biography: string
   mode?: 'creation' | 'update'
 }
 
@@ -23,12 +23,12 @@ export interface UserFormEmits {
   (e: 'update:email', email: string): void
   (e: 'update:password', password: string): void
   (e: 'update:roles', roles: UserRole[]): void
-  (e: 'update:biography', biography: ''): void
+  (e: 'update:biography', biography: string): void
   (e: 'validate', isValid: boolean): void
 }
 
-const props = withDefaults(defineProps<UserFormProps>(), {
-  hideBiography: false,
+const props = withDefaults(defineProps<UserMetadataFormProps>(), {
+  disabled: false,
   hidePassword: false,
   hideRoles: false,
   mode: 'creation',
@@ -76,7 +76,7 @@ defineExpose({ v$ })
 </script>
 
 <template>
-  <div class="space-y-4">
+  <fieldset class="space-y-4" :disabled="disabled">
     <div class="space-y-2">
       <TextInput
         id="name"
@@ -102,11 +102,10 @@ defineExpose({ v$ })
         @input="$emit('update:email', $event.target.value)"
       />
 
-      <TextAreaInput
-        v-if="!hideBiography && biography !== undefined"
+      <MarkdownInput
         id="biography"
         :model-value="biography"
-        rows="3"
+        rows="8"
         :label-text="$t('common-fields.biography')"
         :placeholder="$t('common-placeholders.user-biography')"
         @input="$emit('update:biography', $event.target.value)"
@@ -156,5 +155,5 @@ defineExpose({ v$ })
       v-model="isAdmin"
       :label-text="$t('user.role-admin')"
     />
-  </div>
+  </fieldset>
 </template>

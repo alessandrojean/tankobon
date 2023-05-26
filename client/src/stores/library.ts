@@ -8,7 +8,7 @@ export const useLibraryStore = defineStore('library', {
   }),
   actions: {
     async fetchAndSelectFirstStore(userId: string) {
-      const libraries = await getAllLibrariesByUser({
+      const { data: libraries } = await getAllLibrariesByUser({
         includes: ['owner'],
         userId,
       })

@@ -1,36 +1,62 @@
 <script lang="ts" setup>
+import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { EllipsisHorizontalIcon, PlusIcon } from '@heroicons/vue/20/solid'
+import { BuildingLibraryIcon } from '@heroicons/vue/24/outline'
 import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
-import type { LibraryEntity } from '@/types/tankobon-library'
+import type { LibraryEntity, LibrarySort } from '@/types/tankobon-library'
 import { getRelationship } from '@/utils/api'
+import type { PaginatedResponse } from '@/types/tankobon-response'
+import type { Sort } from '@/types/tankobon-api'
 
 export interface LibrariesTableProps {
-  userId?: string
+  libraries?: PaginatedResponse<LibraryEntity>
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
+  loading?: boolean
+  page: number
+  size: number
+  showNewButton?: boolean
+  sort: Sort<LibrarySort>[]
 }
 
-const props = withDefaults(defineProps<LibrariesTableProps>(), { userId: undefined })
-const { userId } = toRefs(props)
-const notificator = useToaster()
+const props = withDefaults(defineProps<LibrariesTableProps>(), {
+  libraries: undefined,
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
+  loading: false,
+  showNewButton: true,
+})
+
+const emit = defineEmits<{
+  (e: 'click:new'): void
+  (e: 'update:page', page: number): void
+  (e: 'update:size', size: number): void
+  (e: 'update:sort', sort: Sort<LibrarySort>[]): void
+}>()
+
+const { page, size, sort, columnVisibility } = toRefs(props)
+const { t, d } = useI18n()
+
 const userStore = useUserStore()
-const { t } = useI18n()
+const userId = computed(() => userStore.me?.id)
+
+const pagination = computed<PaginationState>(() => ({
+  pageIndex: page.value,
+  pageSize: size.value,
+}))
+
+const sorting = computed<SortingState>(() => {
+  return sort.value.map(sorting => ({
+    id: sorting.property,
+    desc: sorting.direction === 'desc',
+  }))
+})
 
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: libraries, isLoading } = useUserLibrariesByUserQuery({
-  userId: userId as Ref<string>,
-  includeShared: true,
-  includes: ['owner'],
-  enabled: computed(() => userStore.isAuthenticated),
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('libraries.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
 const columnHelper = createColumnHelper<LibraryEntity>()
 
 const columns = [
@@ -57,25 +83,18 @@ const columns = [
   }),
   columnHelper.accessor('attributes.name', {
     id: 'name',
-    enableSorting: false,
     header: () => t('common-fields.name'),
     cell: info => info.getValue(),
-  }),
-  columnHelper.accessor('attributes.description', {
-    id: 'description',
-    enableSorting: false,
-    header: () => t('common-fields.description'),
-    cell: info => h('div', { class: 'line-clamp-2', innerText: info.getValue() }),
   }),
   columnHelper.accessor(
     library => getRelationship(library, 'OWNER')?.id !== userId.value,
     {
-      id: 'isShared',
+      id: 'ownership',
       enableSorting: false,
       header: () => t('common-fields.ownership'),
       cell: info => h(
         Badge,
-        { color: info.getValue() ? 'blue' : 'gray' },
+        { color: info.getValue() ? 'red' : 'blue' },
         { default: () => info.getValue() ? t('libraries.owner-shared') : t('libraries.owner-self') },
       ),
       meta: {
@@ -84,6 +103,18 @@ const columns = [
       },
     },
   ),
+  columnHelper.accessor('attributes.createdAt', {
+    id: 'createdAt',
+    header: () => t('common-fields.created-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.modifiedAt', {
+    id: 'modifiedAt',
+    header: () => t('common-fields.modified-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
   columnHelper.display({
     id: 'actions',
     header: () => null,
@@ -107,17 +138,56 @@ const columns = [
     },
   }),
 ]
+
+function handlePaginationChange(pagination: PaginationState) {
+  emit('update:page', pagination.pageIndex)
+  emit('update:size', pagination.pageSize)
+}
+
+function handleSortingChange(sorting: SortingState) {
+  const sortToEmit = sorting.map<Sort<LibrarySort>>(sort => ({
+    property: sort.id as LibrarySort,
+    direction: sort.desc ? 'desc' : 'asc',
+  }))
+
+  emit('update:sort', sortToEmit)
+}
 </script>
 
 <template>
   <Table
     v-model:row-selection="rowSelection"
-    :data="libraries"
+    :pagination="pagination"
+    :sorting="sorting"
+    :data="libraries?.data"
     :columns="columns"
-    :loading="isLoading"
+    :page-count="libraries?.pagination?.totalPages"
+    :items-count="libraries?.pagination?.totalElements"
+    :loading="loading"
+    :column-order="['select', ...columnOrder, 'actions']"
+    :column-visibility="columnVisibility"
+    @update:pagination="handlePaginationChange"
+    @update:sorting="handleSortingChange"
   >
     <template #empty>
-      <slot name="empty" />
+      <slot name="empty">
+        <EmptyState
+          :icon="BuildingLibraryIcon"
+          :title="$t('libraries.empty-header')"
+          :description="$t('libraries.empty-description')"
+        >
+          <template #actions>
+            <Button
+              v-if="showNewButton"
+              kind="primary"
+              @click="$emit('click:new')"
+            >
+              <PlusIcon class="w-5 h-5" />
+              <span>{{ $t('libraries.new') }}</span>
+            </Button>
+          </template>
+        </EmptyState>
+      </slot>
     </template>
   </Table>
 </template>

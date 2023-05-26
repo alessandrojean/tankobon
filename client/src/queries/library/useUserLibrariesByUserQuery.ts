@@ -1,30 +1,41 @@
 import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
-import type { MaybeRef } from '@vueuse/core'
+import type { GetAllLibrariesByUserParameters } from '@/services/tankobon-libraries'
 import { getAllLibrariesByUser } from '@/services/tankobon-libraries'
-import type { LibraryEntity, LibraryIncludes } from '@/types/tankobon-library'
-import type { TankobonApiError } from '@/types/tankobon-response'
+import type { LibraryEntity } from '@/types/tankobon-library'
+import type { PaginatedResponse, TankobonApiError } from '@/types/tankobon-response'
+import type { MaybeRefDeep } from '@/types/reactivity'
 
-interface UseUserLibrariesQueryByUserOptions<S = LibraryEntity[]>
-  extends UseQueryOptions<LibraryEntity[], ErrorResponse, S> {
-  userId: MaybeRef<string>
-  includeShared?: MaybeRef<boolean>
-  includes?: MaybeRef<LibraryIncludes[]>
-}
+type UseUserLibrariesByUserQueryOptions<S = PaginatedResponse<LibraryEntity>> =
+  UseQueryOptions<PaginatedResponse<LibraryEntity>, ErrorResponse, S> &
+  MaybeRefDeep<GetAllLibrariesByUserParameters>
 
 type ErrorResponse = TankobonApiError | Error
 
-export default function useUserLibrariesByUserQuery<S = LibraryEntity[]>(
-  options: UseUserLibrariesQueryByUserOptions<S>,
+export default function useUserLibrariesByUserQuery<S = PaginatedResponse<LibraryEntity>>(
+  options: UseUserLibrariesByUserQueryOptions<S> = {},
 ) {
-  const { userId, includes, includeShared } = (options ?? {})
-
-  return useQuery<LibraryEntity[], ErrorResponse, S>({
-    queryKey: ['libraries-owned', { userId, includes, includeShared }],
+  return useQuery<PaginatedResponse<LibraryEntity>, ErrorResponse, S>({
+    queryKey: [
+      'libraries',
+      {
+        userId: options.userId,
+        includeShared: options.includeShared,
+        page: options.page,
+        sort: options.sort,
+        size: options.size,
+        includes: options.includes,
+        unpaged: options.unpaged,
+      },
+    ],
     queryFn: async () => {
       return await getAllLibrariesByUser({
-        userId: unref(userId),
-        includeShared: unref(includeShared),
-        includes: unref(includes),
+        userId: unref(options.userId),
+        includeShared: unref(options.includeShared),
+        page: unref(options.page),
+        sort: unref(options.sort),
+        size: unref(options.size),
+        includes: unref(options.includes),
+        unpaged: unref(options.unpaged),
       })
     },
     ...options,

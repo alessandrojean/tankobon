@@ -54,7 +54,7 @@ const rowSelection = ref<Record<string, boolean>>({})
 
 const columnHelper = createColumnHelper<UserEntity>()
 
-const columns = [
+const columns = computed(() => [
   columnHelper.display({
     id: 'select',
     header: ({ table }) => h(BasicCheckbox, {
@@ -176,7 +176,7 @@ const columns = [
       headerClass: 'w-12',
     },
   }),
-]
+])
 
 function handlePaginationChange(pagination: PaginationState) {
   emit('update:page', pagination.pageIndex)

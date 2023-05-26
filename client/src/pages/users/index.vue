@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { PlusIcon } from '@heroicons/vue/20/solid'
 import type { ColumnOrderState, SortDirection } from '@tanstack/vue-table'
-import type { UserCreation, UserSort } from '@/types/tankobon-user'
+import type { UserSort } from '@/types/tankobon-user'
 import { safeNumber } from '@/utils/route'
 import type { Sort } from '@/types/tankobon-api'
 import type { SortPropertyOption } from '@/components/SortControls.vue'
@@ -13,26 +13,7 @@ const libraryId = computed(() => libraryStore.library!.id)
 const { t, locale } = useI18n()
 const notificator = useToaster()
 
-const router = useRouter()
-const showCreateDialog = ref(false)
-const { mutate } = useCreateUserMutation()
-
 useHead({ title: () => t('entities.users') })
-
-function handleCreateUser(user: UserCreation) {
-  mutate(user, {
-    onSuccess: async ({ id }) => {
-      notificator.success({ title: t('users.created-with-success') })
-      await router.push({ name: 'users-id', params: { id } })
-    },
-    onError: async (error) => {
-      await notificator.failure({
-        title: t('users.created-with-failure'),
-        body: error.message,
-      })
-    },
-  })
-}
 
 const size = useRouteQuery('size', '20', {
   mode: 'push',
@@ -140,7 +121,8 @@ const { preference: columnOrder } = useUserPreference<ColumnOrderState>('users_c
       <template #actions>
         <Button
           kind="primary"
-          @click="showCreateDialog = true"
+          is-router-link
+          :to="{ name: 'users-new' }"
         >
           <PlusIcon class="w-5 h-5" />
           <span>{{ $t('users.new') }}</span>
@@ -183,12 +165,6 @@ const { preference: columnOrder } = useUserPreference<ColumnOrderState>('users_c
         @update:sort="handleSortChange"
       />
     </div>
-
-    <UserCreateDialog
-      :is-open="showCreateDialog"
-      @submit="handleCreateUser"
-      @close="showCreateDialog = false"
-    />
   </div>
 </template>
 

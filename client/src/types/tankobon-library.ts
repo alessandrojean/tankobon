@@ -7,6 +7,8 @@ export type LibraryEntity = Entity<LibraryAttributes> & {
 export interface LibraryAttributes {
   name: string
   description: string
+  createdAt: string
+  modifiedAt: string
 }
 
 export interface LibraryCreation {
@@ -23,4 +25,5 @@ export interface LibraryUpdate {
   sharedUsers: string[]
 }
 
+export type LibrarySort = 'name' | 'createdAt' | 'modifiedAt'
 export type LibraryIncludes = 'owner'

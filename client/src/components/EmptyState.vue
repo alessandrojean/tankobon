@@ -8,6 +8,10 @@ export interface EmptyStateProps {
 }
 
 defineProps<EmptyStateProps>()
+
+const slots = useSlots()
+
+const hasActions = computed(() => slots.actions && slots.actions() && slots.actions()[0]?.children !== 'v-if')
 </script>
 
 <template>
@@ -40,7 +44,7 @@ defineProps<EmptyStateProps>()
       </slot>
     </div>
 
-    <div v-if="$slots.actions" class="mt-4">
+    <div v-if="hasActions" class="mt-4">
       <slot name="actions" />
     </div>
   </div>

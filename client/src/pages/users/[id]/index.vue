@@ -1,73 +1,94 @@
 <script lang="ts" setup>
+import { BuildingLibraryIcon, InformationCircleIcon, KeyIcon } from '@heroicons/vue/20/solid'
+import { UserIcon } from '@heroicons/vue/24/outline'
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
-import { BuildingOffice2Icon } from '@heroicons/vue/24/outline'
-import { BookOpenIcon, InformationCircleIcon } from '@heroicons/vue/20/solid'
 import { getRelationship } from '@/utils/api'
-import type { Sort } from '@/types/tankobon-api'
-import type { BookSort } from '@/types/tankobon-book'
 import type { PillTab } from '@/components/PillTabsList.vue'
 import { safeNumber } from '@/utils/route'
+import type { LibrarySort } from '@/types/tankobon-library'
+import type { Sort } from '@/types/tankobon-api'
+import type { AuthenticationActivitySort } from '@/types/tankobon-authentication-activity'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const publisherId = useRouteParams<string | undefined>('id', undefined)
+const userIdRoute = useRouteParams<string | undefined>('id', undefined)
+const userStore = useUserStore()
 const notificator = useToaster()
 
-const { mutate: deletePublisher, isLoading: isDeleting, isSuccess: isDeleted } = useDeletePublisherMutation()
-
-const queryEnabled = computed(() => {
-  return !!publisherId.value && !isDeleting.value && !isDeleted.value && route.name === 'publishers-id'
+const userId = computed(() => {
+  return userIdRoute.value === 'me' ? userStore.me?.id : userIdRoute.value
 })
 
-const { data: publisher, isLoading } = usePublisherQuery({
-  publisherId: publisherId as Ref<string>,
-  includes: ['library', 'publisher_picture'],
+const { mutate: deleteUser, isLoading: isDeleting, isSuccess: isDeleted } = useDeleteUserMutation()
+
+const queryEnabled = computed(() => {
+  return !!userId.value && !isDeleting.value && !isDeleted.value && route.name === 'users-id'
+})
+
+const { data: user, isLoading } = useUserQuery({
+  userId: userId as Ref<string>,
   enabled: queryEnabled,
   onError: async (error) => {
     await notificator.failure({
-      title: t('publishers.fetch-one-failure'),
+      title: t('users.fetch-one-failure'),
       body: error.message,
     })
   },
 })
 
-const sort = ref<Sort<BookSort> | null>({ property: 'number', direction: 'asc' })
+const sortLibraries = ref<Sort<LibrarySort> | null>({ property: 'name', direction: 'asc' })
 
-const { data: books, isLoading: isLoadingBooks } = usePublisherBooksQuery({
-  publisherId: publisherId as Ref<string>,
-  includes: ['cover_art', 'collection', 'series', 'publisher'],
-  sort: computed(() => sort.value ? [sort.value] : undefined),
-  enabled: computed(() => queryEnabled.value && !!publisher.value?.id),
+const { data: libraries, isLoading: isLoadingLibraries } = useUserLibrariesByUserQuery({
+  userId: userId as Ref<string>,
+  includeShared: true,
+  sort: computed(() => sortLibraries.value ? [sortLibraries.value] : undefined),
+  enabled: computed(() => queryEnabled.value && !!user.value?.id),
   keepPreviousData: true,
   onError: async (error) => {
     await notificator.failure({
-      title: t('books.fetch-failure'),
+      title: t('libraries.fetch-failure'),
+      body: error.message,
+    })
+  },
+})
+
+const sortAuthentication = ref<Sort<AuthenticationActivitySort> | null>()
+
+const { data: authenticationActivity, isLoading: isLoadingAuthentication } = useUserAuthenticationActivityQuery({
+  userId: userId as Ref<string>,
+  sort: computed(() => sortAuthentication.value ? [sortAuthentication.value] : undefined),
+  enabled: computed(() => queryEnabled.value && !!user.value?.id),
+  keepPreviousData: true,
+  onError: async (error) => {
+    await notificator.failure({
+      title: t('libraries.fetch-failure'),
       body: error.message,
     })
   },
 })
 
 function handleDelete() {
-  deletePublisher(publisherId.value!, {
+  deleteUser(userId.value!, {
     onSuccess: async () => {
-      notificator.success({ title: t('publishers.deleted-with-success') })
-      await router.replace({ name: 'publishers' })
+      notificator.success({ title: t('users.deleted-with-success') })
+      await router.replace({ name: 'users' })
     },
     onError: async (error) => {
       await notificator.failure({
-        title: t('publishers.deleted-with-failure'),
+        title: t('users.deleted-with-failure'),
         body: error.message,
       })
     },
   })
 }
 
-useHead({ title: () => publisher.value?.attributes.name ?? '' })
+useHead({ title: () => user.value?.attributes.name ?? '' })
 
 const tabs: PillTab[] = [
-  { key: '0', text: 'publishers.information', icon: InformationCircleIcon },
-  { key: '1', text: 'entities.books', icon: BookOpenIcon },
+  { key: '0', text: 'users.information', icon: InformationCircleIcon },
+  { key: '1', text: 'entities.libraries', icon: BuildingLibraryIcon },
+  { key: '2', text: 'authentication-activity.header-short', icon: KeyIcon },
 ]
 
 const activeTabHash = useRouteQuery('tab', '0', { transform: v => safeNumber(v, 0, { min: 0, max: tabs.length - 1 }) })
@@ -90,9 +111,9 @@ const activeTab = computed({
     <div class="absolute inset-x-0 top-0">
       <ImageBanner
         class="!h-52"
-        :alt="publisher?.attributes.name ?? ''"
+        :alt="user?.attributes.name ?? ''"
         :loading="isLoading"
-        :image="getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes"
+        :image="getRelationship(user, 'AVATAR')?.attributes"
         size="64"
         kind="repeated"
       />
@@ -101,37 +122,27 @@ const activeTab = computed({
     <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
       <TabGroup
         as="div"
-        class="publisher-grid"
+        class="user-grid"
         :selected-index="Number(activeTab.key)"
         @change="activeTab = tabs[$event]"
       >
         <ImageCover
-          class="publisher-cover"
+          class="user-avatar"
           version="256"
           aspect-ratio="1 / 1"
-          :icon="BuildingOffice2Icon"
+          :icon="UserIcon"
           :loading="isLoading"
-          :image="getRelationship(publisher, 'PUBLISHER_PICTURE')?.attributes"
-          :alt="publisher?.attributes.name ?? ''"
-        >
-          <Flag
-            v-if="!isLoading"
-            :region="publisher?.attributes.location"
-            :class="[
-              'inline-block z-10',
-              'absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3',
-              'pointer-events-none',
-            ]"
-          />
-        </ImageCover>
-
-        <PublisherName
-          class="publisher-name"
-          :loading="isLoading"
-          :publisher="publisher"
+          :image="getRelationship(user, 'AVATAR')?.attributes"
+          :alt="user?.attributes.name ?? ''"
         />
 
-        <div class="publisher-buttons pt-1.5 flex items-center justify-between">
+        <UserName
+          class="user-name"
+          :loading="isLoading"
+          :user="user"
+        />
+
+        <div class="user-buttons pt-1.5 flex items-center justify-between">
           <PillTabsList
             v-model="activeTab"
             :tabs="tabs"
@@ -150,7 +161,7 @@ const activeTab = computed({
               class="aspect-1"
               size="small"
               is-router-link
-              :to="{ name: 'publishers-id-edit', params: { id: publisher?.id } }"
+              :to="{ name: 'users-id-edit', params: { id: user?.id } }"
               :disabled="isDeleting"
               :title="$t('common-actions.edit')"
             >
@@ -171,53 +182,42 @@ const activeTab = computed({
           </Toolbar>
         </div>
 
-        <TabPanels class="publisher-tabs">
+        <TabPanels class="user-tabs">
           <TabPanel class="flex flex-col gap-4 sm:gap-6 -mb-4 sm:mb-0" :unmount="false">
             <BlockMarkdown
               :loading="isLoading"
-              :markdown="publisher?.attributes?.description"
-              :title="$t('common-fields.description')"
-            />
-
-            <EntityExternalLinks
-              :links="(publisher?.attributes?.links as Record<string, string | null> | undefined)"
-              :loading="isLoading"
+              :markdown="user?.attributes?.biography"
+              :title="$t('common-fields.biography')"
             />
           </TabPanel>
 
           <TabPanel :unmount="false">
-            <BooksListViewer
-              v-model:sort="sort"
-              column-order-key="publisher_books_column_order"
-              column-visibility-key="publisher_books_column_visibility"
-              view-mode-key="publisher_books_view_mode"
-              :books="books"
-              :default-column-order="['title', 'collection', 'boughtAt']"
-              :default-column-visibility="{
-                collection: true,
-                series: false,
-                createdAt: false,
-                modifiedAt: false,
-                boughtAt: true,
-                billedAt: false,
-                arrivedAt: false,
-                weight: false,
-                publishers: false,
-                title: true,
-                number: false,
-                pageCount: false,
-              }"
-              :loading="isLoadingBooks || isLoading"
-              :with-search="false"
+            <LibrariesListViewer
+              v-model:sort="sortLibraries"
+              column-order-key="user_libraries_column_order"
+              column-visibility-key="user_libraries_column_visibility"
+              :show-new-button="false"
+              :libraries="libraries"
+              :loading="isLoadingLibraries || isLoading"
+            />
+          </TabPanel>
+
+          <TabPanel :unmount="false">
+            <UserAuthenticationActivityListViewer
+              v-model:sort="sortAuthentication"
+              column-order-key="user_authentication_activity_column_order"
+              column-visibility-key="user_authentication_activity_column_visibility"
+              :authentication-activity="authenticationActivity"
+              :loading="isLoadingAuthentication || isLoading"
             />
           </TabPanel>
         </TabPanels>
 
-        <div class="publisher-attributes">
-          <PublisherAttributes
+        <div class="user-attributes">
+          <UserAttributes
             class="sm:sticky sm:top-24"
             :loading="isLoading"
-            :publisher="publisher"
+            :user="user"
           />
         </div>
       </TabGroup>
@@ -228,15 +228,16 @@ const activeTab = computed({
 <route lang="yaml">
 meta:
   layout: dashboard
+  isAdminOnly: true
   transparentNavbar: true
 </route>
 
 <style lang="postcss">
-.publisher-grid {
+.user-grid {
   display: grid;
   gap: 1rem;
   grid-template-areas:
-    'cover name'
+    'avatar name'
     'buttons buttons'
     'tabs tabs'
     'attributes attributes';
@@ -245,30 +246,30 @@ meta:
   @media (min-width: theme('screens.sm')) {
     gap: 1.5rem;
     grid-template-areas:
-      'cover name'
-      'cover buttons'
-      'cover padding'
+      'avatar name'
+      'avatar buttons'
+      'avatar padding'
       'attributes tabs';
     grid-template-columns: 12rem 1fr;
   }
 
-  .publisher-cover {
-    grid-area: cover / cover / cover / cover;
+  .user-avatar {
+    grid-area: avatar / avatar / avatar / avatar;
   }
 
-  .publisher-buttons {
+  .user-buttons {
     grid-area: buttons / buttons / buttons / buttons;
   }
 
-  .publisher-name {
+  .user-name {
     grid-area: name / name / name / name;
   }
 
-  .publisher-tabs {
+  .user-tabs {
     grid-area: tabs / tabs / tabs / tabs;
   }
 
-  .publisher-attributes {
+  .user-attributes {
     grid-area: attributes / attributes / attributes / attributes;
   }
 }

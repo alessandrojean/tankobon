@@ -60,14 +60,16 @@ data class UserCreationDto(
   val email: String,
   @get:NotBlank
   @get:Schema(format = "password")
+  @get:NotNull val biography: String = "",
   val password: String,
   val roles: Set<RoleDto>,
 ) {
   fun toDomain(): TankobonUser = TankobonUser(
-    email,
-    password,
+    email = email,
+    password = password,
+    name = name,
+    biography = biography,
     isAdmin = roles.contains(RoleDto.ROLE_ADMIN),
-    name,
   )
 }
 
