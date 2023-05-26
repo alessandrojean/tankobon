@@ -1,10 +1,6 @@
 <script lang="ts" setup>
-import {
-  type ColumnSort,
-  type PaginationState,
-  type SortingState,
-  createColumnHelper,
-} from '@tanstack/vue-table'
+import { createColumnHelper } from '@tanstack/vue-table'
+import type { ColumnOrderState, PaginationState, SortingState } from '@tanstack/vue-table'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import type { UserEntity, UserSort } from '@/types/tankobon-user'
 import type { Sort } from '@/types/tankobon-api'
@@ -14,45 +10,49 @@ import Badge from '@/components/Badge.vue'
 import BasicCheckbox from '@/components/form/BasicCheckbox.vue'
 import Button from '@/components/form/Button.vue'
 import { getRelationship } from '@/utils/api'
+import type { PaginatedResponse } from '@/types/tankobon-response'
 
-const notificator = useToaster()
-const { t, locale } = useI18n()
+export interface UsersTableProps {
+  users?: PaginatedResponse<UserEntity>
+  columnOrder?: ColumnOrderState
+  columnVisibility?: Record<string, boolean>
+  loading?: boolean
+  page: number
+  size: number
+  sort: Sort<UserSort>[]
+}
 
-const defaultSorting: ColumnSort = { id: 'createdAt', desc: true }
-const pagination = ref<PaginationState>({ pageIndex: 0, pageSize: 20 })
-const sorting = ref<SortingState>([defaultSorting])
+const props = withDefaults(defineProps<UsersTableProps>(), {
+  users: undefined,
+  columnOrder: () => [],
+  columnVisibility: () => ({}),
+  loading: false,
+})
+
+const emit = defineEmits<{
+  (e: 'update:page', page: number): void
+  (e: 'update:size', size: number): void
+  (e: 'update:sort', sort: Sort<UserSort>[]): void
+}>()
+
+const { page, size, sort, columnVisibility } = toRefs(props)
+const { t, d } = useI18n()
+
+const pagination = computed<PaginationState>(() => ({
+  pageIndex: page.value,
+  pageSize: size.value,
+}))
+
+const sorting = computed<SortingState>(() => {
+  return sort.value.map(sorting => ({
+    id: sorting.property,
+    desc: sorting.direction === 'desc',
+  }))
+})
+
 const rowSelection = ref<Record<string, boolean>>({})
 
-const { data: users, isLoading } = useUsersQuery({
-  includes: ['avatar'],
-  page: computed(() => pagination.value.pageIndex),
-  size: computed(() => pagination.value.pageSize),
-  sort: computed<Sort<UserSort>[]>(() => {
-    return sorting.value.map(sort => ({
-      property: sort.id as UserSort,
-      direction: sort.desc ? 'desc' : 'asc',
-    }))
-  }),
-  onError: async (error) => {
-    await notificator.failure({
-      title: t('users.fetch-failure'),
-      body: error.message,
-    })
-  },
-})
-
 const columnHelper = createColumnHelper<UserEntity>()
-const dateFormatter = computed(() => {
-  return new Intl.DateTimeFormat(locale.value, {
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
-})
 
 const columns = [
   columnHelper.display({
@@ -78,13 +78,14 @@ const columns = [
   columnHelper.accessor(
     user => ({
       name: user.attributes.name,
+      email: user.attributes.email,
       avatar: getRelationship(user, 'AVATAR'),
     }),
     {
       id: 'name',
       header: () => t('common-fields.name'),
       cell: (info) => {
-        const { name, avatar } = info.getValue()
+        const { name, email, avatar } = info.getValue()
 
         return h('div', { class: 'flex items-center space-x-3' }, [
           h(Avatar, {
@@ -92,9 +93,20 @@ const columns = [
               fileName: avatar?.attributes?.versions?.['64'],
               timeHex: avatar?.attributes?.timeHex,
             }),
-            size: 'sm',
           }),
-          h('span', { innerText: name }),
+          h('div', { class: 'flex flex-col' }, [
+            h('span', { innerText: name, class: 'font-medium', title: name }),
+            (!columnVisibility.value.email)
+              ? h('a', {
+                class: [
+                  'text-xs text-primary-600 dark:text-gray-100',
+                  'underline hover:no-underline',
+                ],
+                href: `mailto:${email}`,
+                innerText: email,
+              })
+              : undefined,
+          ]),
         ])
       },
       meta: {
@@ -117,12 +129,12 @@ const columns = [
     }),
   }),
   columnHelper.accessor(user => user.attributes.roles.includes('ROLE_ADMIN'), {
-    id: 'isAdmin',
+    id: 'role',
     enableSorting: false,
     header: () => t('common-fields.role'),
     cell: info => h(
       Badge,
-      { color: info.getValue() ? 'blue' : 'gray', class: '!font-medium' },
+      { color: info.getValue() ? 'blue' : 'green' },
       { default: () => info.getValue() ? t('user.role-admin') : t('user.role-user') },
     ),
     meta: {
@@ -133,7 +145,13 @@ const columns = [
   columnHelper.accessor('attributes.createdAt', {
     id: 'createdAt',
     header: () => t('common-fields.created-at'),
-    cell: info => dateFormatter.value.format(new Date(info.getValue())),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
+    meta: { tabular: true },
+  }),
+  columnHelper.accessor('attributes.modifiedAt', {
+    id: 'modifiedAt',
+    header: () => t('common-fields.modified-at'),
+    cell: info => d(new Date(info.getValue()), 'dateTime'),
     meta: { tabular: true },
   }),
   columnHelper.display({
@@ -159,17 +177,35 @@ const columns = [
     },
   }),
 ]
+
+function handlePaginationChange(pagination: PaginationState) {
+  emit('update:page', pagination.pageIndex)
+  emit('update:size', pagination.pageSize)
+}
+
+function handleSortingChange(sorting: SortingState) {
+  const sortToEmit = sorting.map<Sort<UserSort>>(sort => ({
+    property: sort.id as UserSort,
+    direction: sort.desc ? 'desc' : 'asc',
+  }))
+
+  emit('update:sort', sortToEmit)
+}
 </script>
 
 <template>
   <Table
-    v-model:pagination="pagination"
     v-model:row-selection="rowSelection"
-    v-model:sorting="sorting"
+    :pagination="pagination"
+    :sorting="sorting"
     :data="users?.data"
     :columns="columns"
     :page-count="users?.pagination?.totalPages"
     :items-count="users?.pagination?.totalElements"
-    :loading="isLoading"
+    :loading="loading"
+    :column-order="['select', ...columnOrder, 'actions']"
+    :column-visibility="columnVisibility"
+    @update:pagination="handlePaginationChange"
+    @update:sorting="handleSortingChange"
   />
 </template>

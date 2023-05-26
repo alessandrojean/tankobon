@@ -11,6 +11,7 @@ export interface UserAttributes {
   biography: string
   roles: UserRole[]
   createdAt: string
+  modifiedAt: string
 }
 
 export type UserRole = 'ROLE_ADMIN' | 'ROLE_USER'

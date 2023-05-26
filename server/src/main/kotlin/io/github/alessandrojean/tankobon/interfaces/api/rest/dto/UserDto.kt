@@ -24,6 +24,7 @@ data class UserAttributesDto(
   val email: String,
   val roles: Set<RoleDto> = emptySet(),
   val createdAt: LocalDateTime,
+  val modifiedAt: LocalDateTime,
 ) : EntityAttributesDto()
 
 enum class RoleDto {
@@ -46,6 +47,7 @@ fun TankobonUser.toAttributesDto() = UserAttributesDto(
   email = email,
   roles = roles.map { RoleDto.valueOf("ROLE_$it") }.toSet(),
   createdAt = createdAt.toUtcTimeZone(),
+  modifiedAt = modifiedAt.toUtcTimeZone(),
 )
 
 fun TankobonPrincipal.toDto() = user.toDto()
