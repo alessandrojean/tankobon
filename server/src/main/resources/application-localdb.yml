@@ -1,7 +1,7 @@
 tankobon:
   workspace: localdb
   database:
-    file: \${tankobon.config-dir}/app_\${tankobon.workspace}.sqlite
+    file: \${tankobon.config-dir}/\${tankobon.workspace}.sqlite
   lucene:
     data-directory: \${tankobon.config-dir}/lucene/\${tankobon.workspace}
 

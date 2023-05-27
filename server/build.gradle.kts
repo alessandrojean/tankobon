@@ -182,7 +182,7 @@ sourceSets {
 }
 
 val dbSqlite = mapOf(
-  "url" to "jdbc:sqlite:${project.buildDir}/generated/flyway/app_database.sqlite",
+  "url" to "jdbc:sqlite:${project.buildDir}/generated/flyway/database.sqlite",
 )
 
 val migrationDirsSqlite = listOf(
