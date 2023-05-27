@@ -99,7 +99,7 @@ create table if not exists Book(
   id varchar not null primary key,
   created_at datetime not null default CURRENT_TIMESTAMP,
   modified_at datetime not null default CURRENT_TIMESTAMP,
-  code varchar not null,
+  code varchar not null unique,
   barcode varchar default null,
   collection_id varchar not null,
   store_id varchar default null,
