@@ -17,7 +17,7 @@ describe('Language name', () => {
       'en-US': 'English (US)',
       'pt-PT': 'Portuguese',
       'pt-BR': 'Portuguese (Brazil)',
-      'zz-AA': 'zz (AA)',
+      'zz-AA': 'Zz (AA)',
       'undefined': 'Unknown',
     }
 
