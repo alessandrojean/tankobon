@@ -15,6 +15,7 @@ interface PersonRepository {
   fun findAll(): Collection<Person>
   fun findAll(search: PersonSearch, pageable: Pageable): Page<Person>
   fun findAllByIds(personIds: Collection<String>): Collection<Person>
+  fun findAllByIds(personIds: Collection<String>, libraryId: String): Collection<Person>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

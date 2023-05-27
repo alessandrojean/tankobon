@@ -54,7 +54,7 @@ fun BookEntityDto.toDocument() = Document().apply {
       add(TextField("contributor", attributes.person.name, Field.Store.NO))
       add(TextField(attributes.role.name.lowercase(), attributes.person.name, Field.Store.NO))
     }
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Book.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Book.type, Field.Store.YES))
   add(StringField(LuceneEntity.Book.id, id, Field.Store.YES))
 }
 
@@ -69,45 +69,45 @@ fun Series.toDocument() = Document().apply {
   val typeDashCase = type?.toString()?.lowercase()?.replace("_", "-") ?: "unknown"
   add(TextField("series-type", typeDashCase, Field.Store.NO))
 
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Series.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Series.type, Field.Store.YES))
   add(StringField(LuceneEntity.Series.id, id, Field.Store.YES))
 }
 
 fun Collection.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Collection.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Collection.type, Field.Store.YES))
   add(StringField(LuceneEntity.Collection.id, id, Field.Store.YES))
 }
 
 fun Publisher.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
   add(TextField("legal-name", legalName, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Publisher.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Publisher.type, Field.Store.YES))
   add(StringField(LuceneEntity.Publisher.id, id, Field.Store.YES))
 }
 
 fun Person.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
   add(TextField("native-name", nativeName, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Person.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Person.type, Field.Store.YES))
   add(StringField(LuceneEntity.Person.id, id, Field.Store.YES))
 }
 
 fun ContributorRole.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.ContributorRole.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.ContributorRole.type, Field.Store.YES))
   add(StringField(LuceneEntity.ContributorRole.id, id, Field.Store.YES))
 }
 
 fun Tag.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Tag.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Tag.type, Field.Store.YES))
   add(StringField(LuceneEntity.Tag.id, id, Field.Store.YES))
 }
 
 fun Store.toDocument() = Document().apply {
   add(TextField("name", name, Field.Store.NO))
   add(TextField("legal-name", legalName, Field.Store.NO))
-  add(StringField(LuceneEntity.TYPE, LuceneEntity.Store.type, Field.Store.NO))
+  add(StringField(LuceneEntity.TYPE, LuceneEntity.Store.type, Field.Store.YES))
   add(StringField(LuceneEntity.Store.id, id, Field.Store.YES))
 }

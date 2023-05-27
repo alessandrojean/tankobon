@@ -14,6 +14,7 @@ interface PublisherRepository {
   fun findAll(): Collection<Publisher>
   fun findAll(search: PublisherSearch, pageable: Pageable): Page<Publisher>
   fun findAllByIds(publisherIds: Collection<String>): Collection<Publisher>
+  fun findAllByIds(publisherIds: Collection<String>, libraryId: String): Collection<Publisher>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

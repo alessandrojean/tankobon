@@ -124,6 +124,19 @@ class PersonDao(
       .fetchInto(TablePerson)
       .map { it.toDomain() }
 
+  override fun findAllByIds(personIds: Collection<String>, libraryId: String): Collection<Person> {
+    if (personIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.selectFrom(TablePerson)
+      .where(TablePerson.ID.`in`(personIds))
+      .and(TablePerson.LIBRARY_ID.eq(libraryId))
+      .orderBy(TablePerson.ID.sortByValues(personIds.toList(), true))
+      .fetchInto(TablePerson)
+      .map { it.toDomain() }
+  }
+
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TablePerson)

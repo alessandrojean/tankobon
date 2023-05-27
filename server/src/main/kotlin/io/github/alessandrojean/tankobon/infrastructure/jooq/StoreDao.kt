@@ -107,6 +107,19 @@ class StoreDao(
       .fetchInto(TableStore)
       .map { it.toDomain() }
 
+  override fun findAllByIds(storeIds: Collection<String>, libraryId: String): Collection<Store> {
+    if (storeIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.selectFrom(TableStore)
+      .where(TableStore.ID.`in`(storeIds))
+      .and(TableStore.LIBRARY_ID.eq(libraryId))
+      .orderBy(TableStore.ID.sortByValues(storeIds.toList(), true))
+      .fetchInto(TableStore)
+      .map { it.toDomain() }
+  }
+
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TableStore)

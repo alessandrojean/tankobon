@@ -13,6 +13,7 @@ interface StoreRepository {
   fun findAll(): Collection<Store>
   fun findAll(search: StoreSearch, pageable: Pageable): Page<Store>
   fun findAllByIds(storeIds: Collection<String>): Collection<Store>
+  fun findAllByIds(storeIds: Collection<String>, libraryId: String): Collection<Store>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

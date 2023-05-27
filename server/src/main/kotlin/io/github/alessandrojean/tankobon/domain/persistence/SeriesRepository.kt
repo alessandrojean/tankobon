@@ -18,6 +18,7 @@ interface SeriesRepository {
   fun findAll(): Collection<Series>
   fun findAll(search: SeriesSearch, pageable: Pageable): Page<Series>
   fun findAllByIds(seriesIds: Collection<String>): Collection<Series>
+  fun findAllByIds(seriesIds: Collection<String>, libraryId: String): Collection<Series>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

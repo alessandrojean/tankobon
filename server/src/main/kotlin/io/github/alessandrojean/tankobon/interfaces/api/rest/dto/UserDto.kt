@@ -60,7 +60,8 @@ data class UserCreationDto(
   val email: String,
   @get:NotBlank
   @get:Schema(format = "password")
-  @get:NotNull val biography: String = "",
+  @get:NotNull
+  val biography: String = "",
   val password: String,
   val roles: Set<RoleDto>,
 ) {

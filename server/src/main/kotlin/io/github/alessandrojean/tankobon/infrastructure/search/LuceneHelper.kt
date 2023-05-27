@@ -55,7 +55,36 @@ class LuceneHelper(
       ?.toIntOrNull() ?: 1
   }
 
-  @Suppress("DEPRECATION")
+  fun searchEntitiesIds(searchTerm: String?): Map<LuceneEntity, List<String>>? {
+    if (searchTerm.isNullOrEmpty()) {
+      return null
+    }
+
+    return try {
+      val defaultFields = LuceneEntity.values().flatMap { it.defaultFields.toList() }.toTypedArray()
+      val fieldsQuery = MultiFieldQueryParser(defaultFields, searchAnalyzer)
+        .apply { defaultOperator = QueryParser.Operator.AND }
+        .parse("$searchTerm *:*")
+
+      getIndexReader().use { index ->
+        val searcher = IndexSearcher(index)
+        val entityMap = LuceneEntity.values().associateBy { it.type }
+
+        val hits = searcher.search(fieldsQuery, index.numDocs())
+        val storedFields = searcher.storedFields()
+
+        hits.scoreDocs.map { storedFields.document(it.doc) }
+          .filter { entityMap.containsKey(it[LuceneEntity.TYPE]) }
+          .groupBy({ entityMap[it[LuceneEntity.TYPE]]!! }) { it[entityMap[it[LuceneEntity.TYPE]]!!.id] }
+      }
+    } catch (e: ParseException) {
+      emptyMap()
+    } catch (e: Exception) {
+      logger.error(e) { "Error fetching entities from index" }
+      emptyMap()
+    }
+  }
+
   fun searchEntitiesIds(searchTerm: String?, entity: LuceneEntity): List<String>? {
     if (searchTerm.isNullOrEmpty()) {
       return null
@@ -76,8 +105,10 @@ class LuceneHelper(
       getIndexReader().use { index ->
         val searcher = IndexSearcher(index)
 
-        searcher.search(booleanQuery, index.numDocs())
-          .scoreDocs.map { searcher.doc(it.doc)[entity.id] }
+        val hits = searcher.search(booleanQuery, index.numDocs())
+        val storedFields = searcher.storedFields()
+
+        hits.scoreDocs.map { storedFields.document(it.doc)[entity.id] }
       }
     } catch (e: ParseException) {
       emptyList()

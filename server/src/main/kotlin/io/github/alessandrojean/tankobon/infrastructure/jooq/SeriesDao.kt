@@ -147,6 +147,21 @@ class SeriesDao(
       .map { it.toDomain(alternativeNames[it.id].orEmpty()) }
   }
 
+  override fun findAllByIds(seriesIds: Collection<String>, libraryId: String): Collection<Series> {
+    if (seriesIds.isEmpty()) {
+      return emptyList()
+    }
+
+    val alternativeNames = findAlternativeNamesByIds(seriesIds)
+
+    return dsl.selectFrom(TableSeries)
+      .where(TableSeries.ID.`in`(seriesIds))
+      .and(TableSeries.LIBRARY_ID.eq(libraryId))
+      .orderBy(TableSeries.ID.sortByValues(seriesIds.toList(), true))
+      .fetchInto(TableSeries)
+      .map { it.toDomain(alternativeNames[it.id].orEmpty()) }
+  }
+
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TableSeries)

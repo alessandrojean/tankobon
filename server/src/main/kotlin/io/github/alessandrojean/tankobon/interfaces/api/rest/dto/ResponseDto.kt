@@ -35,7 +35,12 @@ abstract class SuccessResponseDto<T>(val data: T) : ResponseDto {
 }
 
 enum class SuccessResponseTypeDto {
-  ENTITY, COLLECTION
+  ENTITY, COLLECTION, OBJECT
+}
+
+class SuccessObjectResponseDto<T>(data: T) : SuccessResponseDto<T>(data) {
+  @Schema(type = "string", allowableValues = ["OBJECT"])
+  override val response = SuccessResponseTypeDto.OBJECT
 }
 
 class SuccessEntityResponseDto<T : EntityDto<*>>(data: T) : SuccessResponseDto<T>(data) {

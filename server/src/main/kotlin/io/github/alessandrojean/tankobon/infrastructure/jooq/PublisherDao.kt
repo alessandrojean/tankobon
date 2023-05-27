@@ -115,6 +115,19 @@ class PublisherDao(
       .fetchInto(TablePublisher)
       .map { it.toDomain() }
 
+  override fun findAllByIds(publisherIds: Collection<String>, libraryId: String): Collection<Publisher> {
+    if (publisherIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.selectFrom(TablePublisher)
+      .where(TablePublisher.ID.`in`(publisherIds))
+      .and(TablePublisher.LIBRARY_ID.eq(libraryId))
+      .orderBy(TablePublisher.ID.sortByValues(publisherIds.toList(), true))
+      .fetchInto(TablePublisher)
+      .map { it.toDomain() }
+  }
+
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TablePublisher)

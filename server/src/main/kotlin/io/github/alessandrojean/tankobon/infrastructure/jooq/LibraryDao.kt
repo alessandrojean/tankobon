@@ -96,9 +96,9 @@ class LibraryDao(
           TableLibrary.ID.`in`(
             dsl.select(TableUserLibrarySharing.LIBRARY_ID)
               .from(TableUserLibrarySharing)
-              .where(TableUserLibrarySharing.USER_ID.eq(ownerId))
-          )
-        )
+              .where(TableUserLibrarySharing.USER_ID.eq(ownerId)),
+          ),
+        ),
     )
     val orderBy = pageable.sort.toOrderBy(sorts)
 
@@ -108,8 +108,8 @@ class LibraryDao(
         TableLibrary.ID.`in`(
           dsl.select(TableUserLibrarySharing.LIBRARY_ID)
             .from(TableUserLibrarySharing)
-            .where(TableUserLibrarySharing.USER_ID.eq(ownerId))
-        )
+            .where(TableUserLibrarySharing.USER_ID.eq(ownerId)),
+        ),
       )
       .orderBy(orderBy)
       .apply { if (pageable.isPaged) limit(pageable.pageSize).offset(pageable.offset) }
