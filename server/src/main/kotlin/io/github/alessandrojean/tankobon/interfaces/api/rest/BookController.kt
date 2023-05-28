@@ -495,7 +495,7 @@ class BookController(
       throw UserDoesNotHaveAccessException()
     }
 
-    bookDtoRepository.update(bookId, book, principal.user)
+    bookLifecycle.updateBook(bookId, book, principal.user)
   }
 
   @DeleteMapping("v1/books/{bookId}")
