@@ -44,10 +44,10 @@ class SecurityConfiguration(
 
         auth
           .requestMatchers(
+            "/docs/**",
             "/api/v1/system-status",
             "/api/v1/claim",
             "/api",
-            "/api/api-docs/**",
             "/images/**",
             "/set-cookie",
             "/error**",

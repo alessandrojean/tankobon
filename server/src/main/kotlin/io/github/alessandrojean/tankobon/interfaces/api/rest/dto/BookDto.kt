@@ -92,6 +92,11 @@ enum class ReferenceExpansionBook : ReferenceExpansionEnum {
   NEXT_BOOK,
 }
 
+@Schema(
+  type = "object",
+  title = "CodeDto",
+  subTypes = [SimpleCodeDto::class, IsbnCodeDto::class],
+)
 interface CodeDto {
   val type: CodeType
   val code: String
@@ -102,6 +107,11 @@ data class SimpleCodeDto(
   override val code: String,
 ) : CodeDto
 
+@Schema(
+  type = "object",
+  title = "IsbnCodeDto",
+  description = "When type is of ISBN-13 or ISBN-10",
+)
 data class IsbnCodeDto(
   override val type: CodeType,
   override val code: String,
