@@ -157,7 +157,11 @@ Check the documentation at the website (to be written).
 
 ### API
 
-For the API there is a OpenAPI V3 documentation included with the server. It can be accessed through `/docs/swagger-ui.html` for a graphical experience, or through `/docs/openapi-v3` or `/docs/openapi-v3.yaml` to get the Tankobon OpenAPI V3 specification in a raw format.
+For the API there is a OpenAPI V3 documentation included with the server.
+It can be accessed through `/docs/swagger-ui.html` or `/docs/redoc.html`
+for a graphical experience, or through `/docs/openapi-v3` or
+`/docs/openapi-v3.yaml` to get the Tankobon OpenAPI V3 specification
+in a raw format.
 
 ## Project structure
 
