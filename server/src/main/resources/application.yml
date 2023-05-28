@@ -74,5 +74,7 @@ management:
 springdoc:
   writer-with-order-by-keys: true
   default-produces-media-type: application/json
+  swagger-ui:
+    path: /docs/swagger-ui.html
   api-docs:
-    path: /api/api-docs
+    path: /docs/openapi-v3

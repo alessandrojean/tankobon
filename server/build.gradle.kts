@@ -73,8 +73,7 @@ dependencies {
   implementation("org.zalando:jackson-datatype-money:1.3.0")
 
   val springdocVersion = "2.0.2"
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:$springdocVersion")
-  implementation("org.springdoc:springdoc-openapi-starter-common:$springdocVersion")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
 
   val luceneVersion = "9.5.0"
   implementation("org.apache.lucene:lucene-core:$luceneVersion")
