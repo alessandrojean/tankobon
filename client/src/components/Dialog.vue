@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
+import { SetDialogOpenKey } from '@/symbols'
+import { injectStrict } from '@/utils/injetion'
 
 export interface DialogProps {
   as?: string
@@ -31,6 +33,10 @@ onBeforeRouteLeave(() => {
   emit('close')
   return false
 })
+
+const setDialogOpen = injectStrict(SetDialogOpenKey)
+
+watch(isOpen, open => setDialogOpen(open))
 </script>
 
 <script lang="ts">

@@ -9,13 +9,15 @@ export interface SearchPaletteProps {
   open: boolean
 }
 
-defineProps<SearchPaletteProps>()
+const props = defineProps<SearchPaletteProps>()
 
 const emit = defineEmits<{
   (e: 'update:open', open: boolean): void
 }>()
 
 const router = useRouter()
+
+const { open } = toRefs(props)
 
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
@@ -132,6 +134,15 @@ function clearSearch() {
   search.value = ''
   input.value?.$el.focus?.()
 }
+
+onBeforeRouteLeave(() => {
+  if (!open.value) {
+    return true
+  }
+
+  emit('update:open', false)
+  return false
+})
 </script>
 
 <template>

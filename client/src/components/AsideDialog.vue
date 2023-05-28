@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
+import { SetDialogOpenKey } from '@/symbols'
+import { injectStrict } from '@/utils/injetion'
 
 export interface AsideDialogProps {
   collapsible?: boolean
@@ -17,6 +19,10 @@ const props = withDefaults(defineProps<AsideDialogProps>(), {
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { isOpen, isAdmin } = toRefs(props)
+
+const setDialogOpen = injectStrict(SetDialogOpenKey)
+
+watch(isOpen, open => setDialogOpen(open))
 </script>
 
 <script lang="ts">

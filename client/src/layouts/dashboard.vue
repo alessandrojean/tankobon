@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { breakpointsTailwind } from '@vueuse/core'
-import { ShowAsideDialogKey, ShowSearchPaletteKey } from '@/symbols'
+import { SetDialogOpenKey, ShowAsideDialogKey, ShowSearchPaletteKey } from '@/symbols'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
@@ -31,15 +31,20 @@ function closeAsideDialog() {
 provide(ShowAsideDialogKey, openAsideDialog)
 
 const searchPaletteOpen = ref(false)
+const dialogOpen = ref(false)
 
 provide(ShowSearchPaletteKey, () => {
   searchPaletteOpen.value = true
 })
 
+provide(SetDialogOpenKey, (open) => {
+  dialogOpen.value = open
+})
+
 const keys = useMagicKeys({
   passive: false,
   onEventFired(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.type === 'keydown') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.type === 'keydown' && !dialogOpen.value) {
       e.preventDefault()
     }
   },
@@ -48,7 +53,9 @@ const ctrlK = keys['Ctrl+K']
 const metaK = keys['Meta+K']
 
 whenever(logicOr(ctrlK, metaK), () => {
-  searchPaletteOpen.value = true
+  if (!dialogOpen.value) {
+    searchPaletteOpen.value = true
+  }
 })
 </script>
 

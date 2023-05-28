@@ -14,3 +14,8 @@ export type ShowSearchPalette = () => void
 
 export const ShowSearchPaletteKey: InjectionKey<ShowSearchPalette>
   = Symbol('showSearchPalette')
+
+export type SetDialogOpen = (open: boolean) => void
+
+export const SetDialogOpenKey: InjectionKey<SetDialogOpen>
+  = Symbol('setDialogOpen')

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { Dialog as HeadlessUiDialog } from '@headlessui/vue'
+import { SetDialogOpenKey } from '@/symbols'
+import { injectStrict } from '@/utils/injetion'
 
 export interface BookCoverDialogProps {
   aspectRatio?: string
@@ -25,6 +27,10 @@ onBeforeRouteLeave(() => {
   emit('close')
   return false
 })
+
+const setDialogOpen = injectStrict(SetDialogOpenKey)
+
+watch(open, open => setDialogOpen(open))
 </script>
 
 <template>
