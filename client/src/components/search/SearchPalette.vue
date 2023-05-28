@@ -9,7 +9,7 @@ export interface SearchPaletteProps {
   open: boolean
 }
 
-const props = defineProps<SearchPaletteProps>()
+defineProps<SearchPaletteProps>()
 
 const emit = defineEmits<{
   (e: 'update:open', open: boolean): void
@@ -23,7 +23,7 @@ const searchTerm = refDebounced(search, 500)
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library?.id)
 
-const { data: results, isLoading } = useSearchQuery({
+const { data: results } = useSearchQuery({
   libraryId: libraryId as ComputedRef<string>,
   search: searchTerm,
   enabled: computed(() => libraryId.value !== undefined && searchTerm.value.length > 0),
@@ -80,14 +80,6 @@ async function handleResultSelected(result: Entity<any> | null | undefined) {
     params: { id: result.id },
   })
 }
-
-const defaultValue = computed(() => {
-  if (!results.value || groups.value.length === 0) {
-    return null
-  }
-
-  return results.value[groups.value[0]][0]
-})
 
 function title(result: Entity<any>): string {
   switch (result?.type) {
