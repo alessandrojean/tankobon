@@ -13,6 +13,7 @@ interface TagRepository {
   fun findAll(): Collection<Tag>
   fun findAll(search: TagSearch, pageable: Pageable): Page<Tag>
   fun findAllByIds(tagIds: Collection<String>): Collection<Tag>
+  fun findAllByIds(tagIds: Collection<String>, libraryId: String): Collection<Tag>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

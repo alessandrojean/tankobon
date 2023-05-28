@@ -103,6 +103,19 @@ class TagDao(
       .fetchInto(TableTag)
       .map { it.toDomain() }
 
+  override fun findAllByIds(tagIds: Collection<String>, libraryId: String): Collection<Tag> {
+    if (tagIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.selectFrom(TableTag)
+      .where(TableTag.ID.`in`(tagIds))
+      .and(TableTag.LIBRARY_ID.eq(libraryId))
+      .orderBy(TableTag.ID.sortByValues(tagIds.toList(), true))
+      .fetchInto(TableTag)
+      .map { it.toDomain() }
+  }
+
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(
       dsl.selectFrom(TableTag)

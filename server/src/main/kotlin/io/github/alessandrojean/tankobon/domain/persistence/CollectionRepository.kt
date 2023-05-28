@@ -13,6 +13,7 @@ interface CollectionRepository {
   fun findAll(): Collection<DomainCollection>
   fun findAll(search: CollectionSearch, pageable: Pageable): Page<DomainCollection>
   fun findAllByIds(collectionIds: Collection<String>): Collection<DomainCollection>
+  fun findAllByIds(collectionIds: Collection<String>, libraryId: String): Collection<DomainCollection>
 
   fun existsByNameInLibrary(name: String, libraryId: String): Boolean
 

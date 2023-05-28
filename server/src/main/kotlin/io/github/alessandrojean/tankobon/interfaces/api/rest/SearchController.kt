@@ -2,14 +2,17 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 
 import io.github.alessandrojean.tankobon.domain.model.IdDoesNotExistException
 import io.github.alessandrojean.tankobon.domain.model.UserDoesNotHaveAccessException
+import io.github.alessandrojean.tankobon.domain.persistence.CollectionRepository
 import io.github.alessandrojean.tankobon.domain.persistence.LibraryRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PersonRepository
 import io.github.alessandrojean.tankobon.domain.persistence.PublisherRepository
 import io.github.alessandrojean.tankobon.domain.persistence.SeriesRepository
 import io.github.alessandrojean.tankobon.domain.persistence.StoreRepository
+import io.github.alessandrojean.tankobon.domain.persistence.TagRepository
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneEntity
 import io.github.alessandrojean.tankobon.infrastructure.search.LuceneHelper
 import io.github.alessandrojean.tankobon.infrastructure.security.TankobonPrincipal
+import io.github.alessandrojean.tankobon.interfaces.api.persistence.BookDtoRepository
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SearchDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.SuccessObjectResponseDto
 import io.github.alessandrojean.tankobon.interfaces.api.rest.dto.toDto
@@ -39,6 +42,9 @@ class SearchController(
   private val seriesRepository: SeriesRepository,
   private val storeRepository: StoreRepository,
   private val personRepository: PersonRepository,
+  private val tagRepository: TagRepository,
+  private val collectionRepository: CollectionRepository,
+  private val bookDtoRepository: BookDtoRepository,
 ) {
 
   @GetMapping("v1/libraries/{libraryId}/search")
@@ -60,6 +66,7 @@ The search is backed by Apache Lucene, so `search` accepts a Lucene query syntax
     @Schema(format = "uuid")
     @UUID(version = [4])
     libraryId: String,
+    @RequestParam(required = false, defaultValue = "10") size: Int = 10,
   ): SuccessObjectResponseDto<SearchDto> {
     val library = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
@@ -72,17 +79,26 @@ The search is backed by Apache Lucene, so `search` accepts a Lucene query syntax
 
     return SuccessObjectResponseDto(
       SearchDto(
+        books = bookDtoRepository
+          .findAllByIds(results[LuceneEntity.Book].orEmpty().take(size), libraryId)
+          .toList(),
         publishers = publisherRepository
-          .findAllByIds(results[LuceneEntity.Publisher].orEmpty().take(10), libraryId)
+          .findAllByIds(results[LuceneEntity.Publisher].orEmpty().take(size), libraryId)
           .map { it.toDto() },
         series = seriesRepository
-          .findAllByIds(results[LuceneEntity.Series].orEmpty().take(10), libraryId)
+          .findAllByIds(results[LuceneEntity.Series].orEmpty().take(size), libraryId)
           .map { it.toDto() },
         stores = storeRepository
-          .findAllByIds(results[LuceneEntity.Store].orEmpty().take(10), libraryId)
+          .findAllByIds(results[LuceneEntity.Store].orEmpty().take(size), libraryId)
           .map { it.toDto() },
         people = personRepository
-          .findAllByIds(results[LuceneEntity.Person].orEmpty().take(10), libraryId)
+          .findAllByIds(results[LuceneEntity.Person].orEmpty().take(size), libraryId)
+          .map { it.toDto() },
+        tags = tagRepository
+          .findAllByIds(results[LuceneEntity.Tag].orEmpty().take(size), libraryId)
+          .map { it.toDto() },
+        collections = collectionRepository
+          .findAllByIds(results[LuceneEntity.Collection].orEmpty().take(size), libraryId)
           .map { it.toDto() },
       ),
     )

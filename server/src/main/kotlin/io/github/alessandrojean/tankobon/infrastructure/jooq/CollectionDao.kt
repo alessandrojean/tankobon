@@ -32,6 +32,8 @@ class CollectionDao(
 
   private val sorts = mapOf(
     "name" to TableCollection.NAME.collate(SqliteUdfDataSource.collationUnicode3),
+    "createdAt" to TableCollection.CREATED_AT,
+    "modifiedAt" to TableCollection.MODIFIED_AT,
   )
 
   override fun findById(collectionId: String): DomainCollection = findByIdOrNull(collectionId)!!
@@ -101,6 +103,19 @@ class CollectionDao(
       .orderBy(TableCollection.ID.sortByValues(collectionIds.toList(), true))
       .fetchInto(TableCollection)
       .map { it.toDomain() }
+
+  override fun findAllByIds(collectionIds: Collection<String>, libraryId: String): Collection<DomainCollection> {
+    if (collectionIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.selectFrom(TableCollection)
+      .where(TableCollection.ID.`in`(collectionIds))
+      .and(TableCollection.LIBRARY_ID.eq(libraryId))
+      .orderBy(TableCollection.ID.sortByValues(collectionIds.toList(), true))
+      .fetchInto(TableCollection)
+      .map { it.toDomain() }
+  }
 
   override fun existsByNameInLibrary(name: String, libraryId: String): Boolean =
     dsl.fetchExists(

@@ -184,6 +184,23 @@ class BookDtoDao(
       .toDto()
   }
 
+  override fun findAllByIds(bookIds: Collection<String>, libraryId: String): Collection<BookEntityDto> {
+    if (bookIds.isEmpty()) {
+      return emptyList()
+    }
+
+    return dsl.select(*TableBook.fields())
+      .from(TableBook)
+      .leftJoin(TableCollection)
+      .on(TableCollection.ID.eq(TableBook.COLLECTION_ID))
+      .where(TableBook.ID.`in`(bookIds))
+      .and(TableCollection.LIBRARY_ID.eq(libraryId))
+      .orderBy(TableBook.ID.sortByValues(bookIds.toList(), true))
+      .fetchInto(TableBook)
+      .map { it.toDomain() }
+      .toDto()
+  }
+
   @Transactional
   @Throws(
     RelationIdDoesNotExistException::class,
