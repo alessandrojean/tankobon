@@ -28,13 +28,13 @@ class RedocController {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
           <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
-          
+
           <style>
             body {
               margin: 0;
               padding: 0;
             }
-            
+
             @font-face {
               font-family: "Inter Rounded";
               font-style: normal;
@@ -43,7 +43,7 @@ class RedocController {
               font-feature-settings: "cv02", "cv03", "cv04", "cv11";
               src: url("https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.19") format("woff2");
             }
-            
+
             @font-face {
               font-family: "Inter Rounded";
               font-style: italic;
@@ -52,7 +52,7 @@ class RedocController {
               font-feature-settings: "cv02", "cv03", "cv04", "cv11";
               src: url("https://rsms.me/inter/font-files/Inter-Italic.woff2?v=3.19") format("woff2");
             }
-            
+
             @font-face {
               font-family: "Inter Rounded";
               font-style: normal;
@@ -61,7 +61,7 @@ class RedocController {
               font-feature-settings: "cv02", "cv03", "cv04", "cv11";
               src: url("https://rsms.me/inter/font-files/Inter-Bold.woff2?v=3.19") format("woff2");
             }
-            
+
             @font-face {
               font-family: "Inter Rounded";
               font-style: italic;
@@ -103,7 +103,7 @@ class RedocController {
               },
             };
             const redocContainer = document.getElementById('redoc-container');
-            Redoc.init('/api/api-docs', redocOptions, redocContainer);
+            Redoc.init('/docs/openapi-v3', redocOptions, redocContainer);
           </script>
         </body>
       </html>
