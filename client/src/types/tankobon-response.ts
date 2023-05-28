@@ -4,6 +4,12 @@ export interface EntityResponse<Entity> {
   data: Entity
 }
 
+export interface ObjectResponse<Object> {
+  result: 'OK'
+  response: 'OBJECT'
+  data: Object
+}
+
 export interface CollectionResponse<Entity> {
   result: 'OK'
   response: 'COLLECTION'
@@ -37,6 +43,7 @@ export interface Pagination {
 }
 
 export type TankobonResponse<T> = EntityResponse<T>
+| ObjectResponse<T>
 | CollectionResponse<T>
 | PaginatedResponse<T>
 | ErrorResponse

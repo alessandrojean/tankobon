@@ -428,6 +428,7 @@
     "useDeleteStorePictureMutation": true,
     "useUploadStorePictureMutation": true,
     "useStoreBooksQuery": true,
-    "usePersonBooksQuery": true
+    "usePersonBooksQuery": true,
+    "useSearchQuery": true
   }
 }

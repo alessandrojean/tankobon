@@ -5,6 +5,10 @@ withDefaults(defineProps<SearchButtonProps>(), {
   transparent: undefined,
 })
 
+defineEmits<{
+  (e: 'click'): void
+}>()
+
 const searchButton = cva(
   'flex items-center motion-safe:transition-colors rounded-md h-8',
   {
@@ -71,10 +75,11 @@ const isMac = navigator.userAgentData
     <button
       type="button"
       class="flex items-center px-2 py-1.5 group rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90"
+      @click="$emit('click')"
     >
       <MagnifyingGlassIcon class="w-5 h-5" />
       <span class="ml-3 text-sm w-56 text-left">
-        {{ $t('common-actions.search-collection') }}
+        {{ $t('common-actions.search-library') }}
       </span>
       <div
         aria-hidden="true"

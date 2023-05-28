@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Bars3Icon } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
-import { ShowAsideDialogKey } from '@/symbols'
+import { ShowAsideDialogKey, ShowSearchPaletteKey } from '@/symbols'
 import { injectStrict } from '@/utils/injetion'
 
 export interface NavbarProps {
@@ -18,6 +18,7 @@ const { y: scrollY } = useScroll(window)
 const isScrolling = computed(() => scrollY.value > 0)
 
 const showAsideDialog = injectStrict(ShowAsideDialogKey)
+const showSearchPalette = injectStrict(ShowSearchPaletteKey)
 </script>
 
 <template>
@@ -57,16 +58,18 @@ const showAsideDialog = injectStrict(ShowAsideDialogKey)
           <SearchButton
             class="hidden lg:block mr-3"
             :transparent="transparent && !isScrolling"
+            @click="showSearchPalette"
           />
 
           <Button
             class="h-8 w-8 mr-2 lg:hidden"
             :kind="transparent && !isScrolling ? 'navbar-light' : 'navbar-dark-elevated'"
             size="mini"
-            :title="$t('common-actions.search-collection')"
+            :title="$t('common-actions.search-library')"
+            @click="showSearchPalette"
           >
             <div class="sr-only">
-              {{ $t('common-actions.search-collection') }}
+              {{ $t('common-actions.search-library') }}
             </div>
             <MagnifyingGlassIcon class="w-5 h-5" />
           </Button>

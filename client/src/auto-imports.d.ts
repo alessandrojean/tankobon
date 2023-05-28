@@ -306,6 +306,7 @@ declare global {
   const useScriptTag: typeof import('@vueuse/core')['useScriptTag']
   const useScroll: typeof import('@vueuse/core')['useScroll']
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
+  const useSearchQuery: typeof import('./queries/search/useSearchQuery')['default']
   const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
   const useSeriesBooksQuery: typeof import('./queries/book/useSeriesBooksQuery')['default']
   const useSeriesQuery: typeof import('./queries/series/useSeriesQuery')['default']
@@ -740,6 +741,7 @@ declare module 'vue' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
+    readonly useSearchQuery: UnwrapRef<typeof import('./queries/search/useSearchQuery')['default']>
     readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>
     readonly useSeriesBooksQuery: UnwrapRef<typeof import('./queries/book/useSeriesBooksQuery')['default']>
     readonly useSeriesQuery: UnwrapRef<typeof import('./queries/series/useSeriesQuery')['default']>
@@ -1164,6 +1166,7 @@ declare module '@vue/runtime-core' {
     readonly useScriptTag: UnwrapRef<typeof import('@vueuse/core')['useScriptTag']>
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
+    readonly useSearchQuery: UnwrapRef<typeof import('./queries/search/useSearchQuery')['default']>
     readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>
     readonly useSeriesBooksQuery: UnwrapRef<typeof import('./queries/book/useSeriesBooksQuery')['default']>
     readonly useSeriesQuery: UnwrapRef<typeof import('./queries/series/useSeriesQuery')['default']>

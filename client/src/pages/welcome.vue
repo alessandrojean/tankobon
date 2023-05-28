@@ -24,8 +24,8 @@ const { data: libraries, refetch: refetchLibraries } = useUserLibrariesByUserQue
 const { mutate: createLibrary, isLoading, error } = useCreateLibraryMutation()
 
 const hasNoLibraries = computed(() => {
-  return libraries.value?.length !== undefined
-    && libraries.value?.length === 0
+  return libraries.value?.data.length !== undefined
+    && libraries.value?.data.length === 0
 })
 
 watch(hasNoLibraries, (hasNoLibraries) => {

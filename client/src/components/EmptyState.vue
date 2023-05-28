@@ -24,7 +24,7 @@ const hasActions = computed(() => slots.actions && slots.actions() && slots.acti
       />
     </slot>
 
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center mt-2">
       <slot name="title">
         <p
           v-if="title"

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { breakpointsTailwind } from '@vueuse/core'
-import { ShowAsideDialogKey } from '@/symbols'
+import { ShowAsideDialogKey, ShowSearchPaletteKey } from '@/symbols'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
@@ -13,7 +13,7 @@ const userId = computed(() => userStore.me?.id)
 const { data: hasNoLibraries } = useUserLibrariesByUserQuery({
   enabled: computed(() => userStore.isAuthenticated),
   userId: userId as ComputedRef<string>,
-  select: libraries => libraries.length === 0,
+  select: libraries => libraries.data.length === 0,
 })
 
 whenever(hasNoLibraries, async () => await router.replace({ name: 'welcome' }))
@@ -29,6 +29,27 @@ function closeAsideDialog() {
 }
 
 provide(ShowAsideDialogKey, openAsideDialog)
+
+const searchPaletteOpen = ref(false)
+
+provide(ShowSearchPaletteKey, () => {
+  searchPaletteOpen.value = true
+})
+
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k' && e.type === 'keydown') {
+      e.preventDefault()
+    }
+  },
+})
+const ctrlK = keys['Ctrl+K']
+const metaK = keys['Meta+K']
+
+whenever(logicOr(ctrlK, metaK), () => {
+  searchPaletteOpen.value = true
+})
 </script>
 
 <template>
@@ -54,13 +75,17 @@ provide(ShowAsideDialogKey, openAsideDialog)
             </FadeTransition>
           </RouterView>
         </main>
-        <!-- <DashboardFooter class="shrink-0" /> -->
       </div>
     </div>
+
     <AsideDialog
       :is-open="asideDialogOpen"
       :is-admin="isAdmin"
       @close="closeAsideDialog"
+    />
+
+    <SearchPalette
+      v-model:open="searchPaletteOpen"
     />
   </div>
 </template>
