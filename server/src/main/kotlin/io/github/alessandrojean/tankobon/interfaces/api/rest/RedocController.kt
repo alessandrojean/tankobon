@@ -3,16 +3,14 @@ package io.github.alessandrojean.tankobon.interfaces.api.rest
 import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api")
 @Hidden
 class RedocController {
 
-  @GetMapping(produces = [MediaType.TEXT_HTML_VALUE])
+  @GetMapping(value = ["api", "docs/redoc.html"], produces = [MediaType.TEXT_HTML_VALUE])
   @ResponseBody
   fun redocDocumentation(): String =
     """

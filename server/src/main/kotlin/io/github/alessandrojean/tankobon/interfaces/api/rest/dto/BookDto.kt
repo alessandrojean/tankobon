@@ -5,6 +5,8 @@ import io.github.alessandrojean.tankobon.domain.model.LengthUnit
 import io.github.alessandrojean.tankobon.domain.model.MassUnit
 import io.github.alessandrojean.tankobon.infrastructure.jooq.toUtcTimeZone
 import io.github.alessandrojean.tankobon.infrastructure.parser.CodeType
+import io.github.alessandrojean.tankobon.infrastructure.parser.CodeTypeIsbn
+import io.github.alessandrojean.tankobon.infrastructure.parser.CodeTypeOther
 import io.github.alessandrojean.tankobon.infrastructure.parser.guessCodeType
 import io.github.alessandrojean.tankobon.infrastructure.parser.toIsbnInformation
 import io.github.alessandrojean.tankobon.infrastructure.validation.NullOrNotBlank
@@ -103,7 +105,7 @@ interface CodeDto {
 }
 
 data class SimpleCodeDto(
-  override val type: CodeType,
+  override val type: CodeTypeOther,
   override val code: String,
 ) : CodeDto
 
@@ -113,7 +115,7 @@ data class SimpleCodeDto(
   description = "When type is of ISBN-13 or ISBN-10",
 )
 data class IsbnCodeDto(
-  override val type: CodeType,
+  override val type: CodeTypeIsbn,
   override val code: String,
   val group: Int?,
   val region: String?,
@@ -121,7 +123,7 @@ data class IsbnCodeDto(
 ) : CodeDto
 
 fun String.toCodeDto(): CodeDto = when (val type = guessCodeType()) {
-  CodeType.ISBN_13, CodeType.ISBN_10 -> {
+  is CodeTypeIsbn -> {
     val isbnInformation = toIsbnInformation()
 
     IsbnCodeDto(
@@ -132,7 +134,7 @@ fun String.toCodeDto(): CodeDto = when (val type = guessCodeType()) {
       language = isbnInformation?.language,
     )
   }
-  else -> SimpleCodeDto(type = type, code = this)
+  else -> SimpleCodeDto(type = type as CodeTypeOther, code = this)
 }
 
 fun Book.toAttributesDto() = BookAttributesDto(

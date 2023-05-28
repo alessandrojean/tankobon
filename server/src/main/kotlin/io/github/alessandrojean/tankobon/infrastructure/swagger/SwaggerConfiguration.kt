@@ -34,7 +34,7 @@ class SwaggerConfiguration {
           .description(
             """
               Tankobon offers a REST API.
-               
+
               The API is secured using HTTP Basic Authentication.
             """.trimIndent(),
           )
@@ -67,7 +67,7 @@ class SwaggerConfiguration {
               to authenticate yourself, you need to send your username (the e-mail) and
               password through a simple `Authorization` HTTP header with the basic
               base 64 encoding preceded by the keyword `Basic`.
-              
+
               Requests done with the HTTP Basic Authentication will set a `SESSION` cookie
               with the authenticated session, which can be reused if needed. Alternatively,
               you can also send a `X-Auth-Token` header. If sent empty, the response will
@@ -85,7 +85,7 @@ class SwaggerConfiguration {
               the [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) timezone.
               In the same way, all returned date-time values will be in the UTC timezone as well,
               which can be converted to the user local timezone when you need to show it.
-              
+
               Make sure you're converting the date-time values to UTC when sending the requests,
               otherwise you will create some time inconsistencies in the database that can lead
               to wrong date-time values when presenting.
@@ -100,7 +100,7 @@ class SwaggerConfiguration {
               Some endpoints supports the reference expansion feature, which allows relationships
               of a resource to be expanded with their attributes, reducing the amount of requests
               that need to be sent to the API to retrieve a complete set of data.
-              
+
               Endpoints that supports this feature are indicated by the presence of an optional
               `includes` query parameter, which can be set to a list of includes with the type
               names from the relationships, in lowercase, separated by a comma (`,`).
@@ -116,9 +116,9 @@ class SwaggerConfiguration {
   }
 
   @Bean
-  fun customizeOperations(): OperationCustomizer = OperationCustomizer { operation, handlerMethod ->
+  fun customizeOperations(): OperationCustomizer = OperationCustomizer { operation, _ ->
     when {
-      operation.operationId.contains("^(create|update|import|add|claim)".toRegex()) -> {
+      operation.operationId.contains("^(create|update|import|add|claim|search)".toRegex()) -> {
         val contentType = Parameter()
           .`in`(ParameterIn.HEADER.toString())
           .schema(StringSchema().apply { setDefault(MediaType.APPLICATION_JSON_VALUE) })
@@ -150,13 +150,13 @@ class SwaggerConfiguration {
   }
 
   data class MonetaryAmountDto(
-    @get:Schema(example = "10.99")
+    @get:Schema(example = "10.99", minimum = "0")
     val amount: Float,
     @get:Schema(
       format = "iso-4217",
       pattern = "^[A-Z]{3}$",
       example = "USD",
-      description = "[ISO 4217](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes) currency code",
+      description = "[ISO-4217](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes) currency code",
     )
     val currency: String,
   )
