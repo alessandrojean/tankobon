@@ -14,7 +14,7 @@ interface CodeType
 
 enum class CodeTypeIsbn : CodeType {
   ISBN_13,
-  ISBN_10
+  ISBN_10,
 }
 
 enum class CodeTypeOther : CodeType {
