@@ -249,6 +249,8 @@ declare global {
   const useLibraryTagsQuery: typeof import('./queries/tag/useLibraryTagsQuery')['default']
   const useLink: typeof import('vue-router')['useLink']
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
+  const useLuceneQuery: typeof import('./composables/useLuceneQuery')['default']
+  const useLuceneQueryParser: typeof import('./composables/useLuceneQueryParser')['default']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
   const useManualRefHistory: typeof import('@vueuse/core')['useManualRefHistory']
   const useMarkdown: typeof import('./composables/useMarkdown')['default']
@@ -684,6 +686,7 @@ declare module 'vue' {
     readonly useLibraryTagsQuery: UnwrapRef<typeof import('./queries/tag/useLibraryTagsQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
+    readonly useLuceneQuery: UnwrapRef<typeof import('./composables/useLuceneQuery')['default']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
     readonly useManualRefHistory: UnwrapRef<typeof import('@vueuse/core')['useManualRefHistory']>
     readonly useMarkdown: UnwrapRef<typeof import('./composables/useMarkdown')['default']>
@@ -1109,6 +1112,7 @@ declare module '@vue/runtime-core' {
     readonly useLibraryTagsQuery: UnwrapRef<typeof import('./queries/tag/useLibraryTagsQuery')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
+    readonly useLuceneQuery: UnwrapRef<typeof import('./composables/useLuceneQuery')['default']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
     readonly useManualRefHistory: UnwrapRef<typeof import('@vueuse/core')['useManualRefHistory']>
     readonly useMarkdown: UnwrapRef<typeof import('./composables/useMarkdown')['default']>

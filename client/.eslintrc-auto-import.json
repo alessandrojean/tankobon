@@ -429,6 +429,8 @@
     "useUploadStorePictureMutation": true,
     "useStoreBooksQuery": true,
     "usePersonBooksQuery": true,
-    "useSearchQuery": true
+    "useSearchQuery": true,
+    "useLuceneQueryParser": true,
+    "useLuceneQuery": true
   }
 }

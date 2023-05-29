@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios'
+import qs from 'qs'
 import { api } from '@/modules/api'
 import type { ErrorResponse, ObjectResponse } from '@/types/tankobon-response'
 import { TankobonApiError } from '@/types/tankobon-response'
@@ -16,6 +17,7 @@ export async function search(options: SearchParameters): Promise<SearchObject> {
 
   try {
     const { data: searchResponse } = await api.get<SearchOnly>(`libraries/${libraryId}/search`, {
+      paramsSerializer: params => qs.stringify(params, { indices: false }),
       params: { search },
     })
 

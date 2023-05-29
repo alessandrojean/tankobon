@@ -4,6 +4,7 @@ import { ArchiveBoxIcon, BookOpenIcon, BuildingOffice2Icon, BuildingStorefrontIc
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 import type { SearchObject } from '@/types/tankobon-search'
 import type { Entity, EntityType } from '@/types/tankobon-entity'
+import useLuceneQuery from '@/composables/useLuceneQuery'
 
 export interface SearchPaletteProps {
   open: boolean
@@ -21,6 +22,8 @@ const { open } = toRefs(props)
 
 const search = ref('')
 const searchTerm = refDebounced(search, 500)
+
+const { highlighted } = useLuceneQuery(search)
 
 const libraryStore = useLibraryStore()
 const libraryId = computed(() => libraryStore.library?.id)
@@ -48,8 +51,6 @@ const groups = computed(() => {
     .filter(([_, entities]) => entities.length > 0)
     .map(([group]) => group as keyof SearchObject)
 })
-
-const showHeaders = computed(() => groups.value.length > 1)
 
 const entityRouteMap: Partial<Record<EntityType, string>> = {
   PUBLISHER: 'publishers-id',
@@ -99,11 +100,6 @@ function title(result: Entity<any>): string {
   }
 }
 
-const KEYWORDS_REGEX
-  = /(\S+:'(?:[^'\\]|\\.)*'?)|(\S+:"(?:[^"\\]|\\.)*"?)|(\S+:\((?:[^\)\\]|\\.)*\)?)|\S+:\S+/g
-const AND_OR_NOT_REGEX
- = /(?<!\<span\>)(?:\s+)(AND|OR|NOT)(?:\s+)(?!\<\/span\>)/g
-
 const inputRenderer = ref<HTMLDivElement>()
 
 function syncScroll(event: Event) {
@@ -112,21 +108,6 @@ function syncScroll(event: Event) {
   inputRenderer.value!.scrollTop = target.scrollTop
   inputRenderer.value!.scrollLeft = target.scrollLeft
 }
-
-const { escapeHtml } = useMarkdown()
-
-const inputRendererHtml = computed(() => {
-  return escapeHtml(search.value)
-    .replace(/&quot;/g, '"')
-    .replace(KEYWORDS_REGEX, (string) => {
-      const [keyword, ...value] = string.split(':')
-      return `<span class="filter-keyword">${keyword}</span>:<span class="filter-value">${value.join('')}</span>`
-    })
-    .replace(AND_OR_NOT_REGEX, (string) => {
-      return `<span class="logic-operator">${string}</span>`
-    })
-    .replace(/<\/span>(.*?)<span/g, '</span><span>$1</span><span')
-})
 
 const input = ref<InstanceType<typeof ComboboxInput>>()
 
@@ -218,11 +199,11 @@ onBeforeRouteLeave(() => {
                       ref="inputRenderer"
                       :class="[
                         'pl-9 pr-4 absolute inset-x-0 -inset-y-1 flex',
-                        'items-center whitespace-pre text-base',
+                        'items-center whitespace-pre break-words text-base',
                         'font-normal overflow-x-auto select-none pointer-events-none',
                         '[scrollbar-width:0] [&::-webkit-scrollbar]:hidden',
                       ]"
-                      v-html="inputRendererHtml"
+                      v-html="highlighted"
                     />
                     <ComboboxInput
                       id="search-palette-input"
@@ -282,7 +263,6 @@ onBeforeRouteLeave(() => {
                       :class="[
                         'block font-medium font-display-safe text-sm',
                         'px-2 py-1',
-                        { 'sr-only': !showHeaders },
                       ]"
                     >
                       {{ $t(`entities.${group}`) }}
@@ -342,7 +322,7 @@ onBeforeRouteLeave(() => {
                   'shrink-0 hidden md:flex justify-between items-center',
                   'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-400',
                   'border-t border-gray-200 dark:border-gray-700 px-3 py-3',
-                  '[&_kbd]:font-sans-safe [&_kbd]:text-xs/4',
+                  '[&_kbd]:font-sans-safe [&_kbd]:text-xs/4 [&_kbd]:shadow-sm',
                   '[&_kbd]:bg-white dark:[&_kbd]:bg-gray-900',
                   '[&_kbd]:border [&_kbd]:rounded-md',
                   '[&_kbd]:border-gray-400 dark:[&_kbd]:border-gray-500',
@@ -420,7 +400,7 @@ onBeforeRouteLeave(() => {
 </template>
 
 <style lang="postcss">
-.filter-value {
+.tag-expression {
   @apply text-primary-700 bg-primary-100 rounded-sm
     dark:bg-primary-900/40 dark:text-primary-400;
 }
@@ -428,4 +408,11 @@ onBeforeRouteLeave(() => {
 .logic-operator {
   @apply text-purple-600 dark:text-purple-400;
 }
+
+/* .syntax-error {
+  @apply text-red-700 bg-red-50 rounded-sm
+    dark:bg-red-900/40 dark:text-red-400
+    underline decoration-wavy underline-offset-4
+    decoration-red-600 dark:decoration-red-400;
+} */
 </style>
