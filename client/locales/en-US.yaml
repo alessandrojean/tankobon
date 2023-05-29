@@ -431,6 +431,7 @@ publishers:
   status-closed: Closed ({years})
   status-closed-no-years: Closed
   status-unknown: Unknown
+  metadata: Metadata
 
 people:
   fetch-failure: There was an error while fetching the person
