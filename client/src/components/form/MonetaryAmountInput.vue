@@ -200,7 +200,6 @@ function handleCurrency(newCurrency: string) {
                 : 'hover:enabled:ring-1 hover:enabled:ring-gray-300 dark:hover:enabled:ring-gray-700 focus:ring-1 focus:!ring-primary-500 dark:focus:!ring-primary-500',
             ]"
             type="text"
-            inputmode="decimal"
             :required="required"
             :placeholder="placeholderCurrency"
             @focus="handleFocus({ event: $event, type: 'currency' })"
