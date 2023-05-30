@@ -9,6 +9,8 @@ export default defineConfig({
   title: 'Tankobon',
   description: 'Self-hosted physical book collection manager',
 
+  base: '/tankobon/',
+
   srcDir: './src',
 
   lastUpdated: true,

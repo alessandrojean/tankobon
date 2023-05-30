@@ -17,7 +17,7 @@ you will be using to create your library series.
 If you also want to categorize a book by multiple criteria, [Tags] are
 meant for this usage.
 
-[Tags]: /guides/tags
+[Tags]: /entities/tags
 
 ## Creating a series
 

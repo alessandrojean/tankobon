@@ -27,7 +27,7 @@ Here are some basic instructions on how you can start developing Tankobon.
   $ pnpm dev
   ```
 
-And that's it! Open [http://localhost:8081](http://localhost:8081) in a browser
+And that's it! Open `http://localhost:8081` in a browser
 and follow the [Accessing the web client] guide to claim the server and
 create your first library.
 
@@ -46,7 +46,7 @@ Spring profiles such as `localdb`, `noclaim` and `dev`.
 [pnpm]: https://pnpm.io/
 [Node.js]: https://nodejs.org/
 [JDK 17]: https://openjdk.org/projects/jdk/17/
-[Accessing the web client]: /guides/webclient
+[Accessing the web client]: /installation/webclient
 [IntelliJ IDEA]: https://www.jetbrains.com/idea/
 [Visual Studio Code]: https://code.visualstudio.com/
 
