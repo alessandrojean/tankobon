@@ -11,8 +11,8 @@ in the [releases] section.
 In order to run Tankobon, use the following command (replace `x.y.z`
 with the actual version number).
 
-```bash
-java -jar tankobon-x.y.z.jar
+```console
+$ java -jar tankobon-x.y.z.jar
 ```
 
 Once Tankobon is started, you can access the [web client].
@@ -36,8 +36,8 @@ To do so, you can use the `-Xmx<limit>` command line flag, where `<limit>`
 can be any amount like `2048m`, `4g` etc. For example, to run Tankobon
 with a maximum of 4GB of memory:
 
-```bash
-java -jar -Xmx4g tankobon-x.y.z.jar
+```console
+$ java -jar -Xmx4g tankobon-x.y.z.jar
 ```
 
 ## Updating

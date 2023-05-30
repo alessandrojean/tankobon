@@ -26,19 +26,19 @@ Here are some example snippets to help you get started creating a container.
 
 ### Using `docker`
 
-```bash
-docker create \
-  --name=tankobon \
-  -p 25565:8080 \
-  -v /path/to/user_home/.tankobon:/root/.tankobon \
-  --restart unless-stopped \
-  alessandrojean/tankobon:nightly
+```console
+$ docker create \
+    --name=tankobon \
+    -p 25565:8080 \
+    -v /path/to/user_home/.tankobon:/root/.tankobon \
+    --restart unless-stopped \
+    alessandrojean/tankobon:nightly
 ```
 
 Then start the container:
 
-```bash
-docker start tankobon -d
+```console
+$ docker start tankobon -d
 ```
 
 ### Using `docker-compose`
@@ -60,8 +60,8 @@ services:
 
 Then start the container:
 
-```bash
-docker-compose up -d
+```console
+$ docker-compose up -d
 ```
 
 ## Parameters
@@ -97,13 +97,13 @@ JAVA_TOOL_OPTIONS=-Xmx4g
 
 - Shell access whilst the container is running:
 
-  ```bash
-  docker exec -it tankobon /bin/bash
+  ```console
+  $ docker exec -it tankobon /bin/bash
   ```
 - To monitor the logs of the container in realtime:
 
-  ```bash
-  docker logs -f tankobon
+  ```console
+  $ docker logs -f tankobon
   ```
 
 ## Updating
@@ -114,61 +114,61 @@ Below are the instructions for updating containers.
 
 1. Update the image.
 
-   ```bash
-   docker pull alessandrojean/tankobon:nightly
+   ```console
+   $ docker pull alessandrojean/tankobon:nightly
    ```
 2. Stop the running container.
 
-   ```bash
-   docker stop tankobon
+   ```console
+   $ docker stop tankobon
    ```
 3. Delete the container.
 
-   ```bash
-   docker rm tankobon
+   ```console
+   $ docker rm tankobon
    ```
 4. Recreate a new container with the same `docker create` parameters
    as instructed above (if mapped correctly to a host folder, your
    `.tankobon` folder and settings will be preserved).
 5. Start the new container.
 
-   ```bash
-   docker start tankobon -d
+   ```console
+   $ docker start tankobon -d
    ```
 6. You can also remove the old dangling images.
 
-   ```bash
-   docker image prune
+   ```console
+   $ docker image prune
    ```
 
 ### Via `docker-compose`
 
 1. Update all images.
 
-   ```bash
-   docker-compose pull
+   ```console
+   $ docker-compose pull
    ```
 
    Alternatively update a single image.
 
-   ```bash
-   docker-compose pull tankobon
+   ```console
+   $ docker-compose pull tankobon
    ```
 2. Let `docker-compose` update all containers as necessary.
 
-   ```bash
-   docker-compose up -d
+   ```console
+   $ docker-compose up -d
    ```
 
    Alternatively update a single container.
 
-   ```bash
-   docker-compose up -d tankobon
+   ```console
+   $ docker-compose up -d tankobon
    ```
 3. You can also remove the old dangling images.
 
-   ```bash
-   docker image prune
+   ```console
+   $ docker image prune
    ```
 
 ### Automatic updates

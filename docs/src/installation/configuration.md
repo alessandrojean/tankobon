@@ -27,10 +27,8 @@ In the following section both formats will be provided.
 You can also specify configuration via the command line, when launching
 the Jar. Use the `application-property` form, and prefix with `--`.
 
-```bash
-java -jar tankobon-x.y.z.jar \
-  --server.servlet.context-path="/tankobon" \
-  --server.port=8443
+```console
+$ java -jar tankobon-x.y.z.jar --server.servlet.context-path="/tankobon" --server.port=8443
 ```
 
 [Spring Boot's configuration]: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
