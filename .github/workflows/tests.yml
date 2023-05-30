@@ -9,6 +9,9 @@ on:
   push:
     branches-ignore:
       - 'dependabot/**'
+    paths-ignore:
+      - 'client/locales/*'
+      - 'docs/**'
 
 jobs:
   validate-wrapper:
