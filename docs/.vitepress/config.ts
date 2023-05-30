@@ -25,8 +25,18 @@ export default defineConfig({
     }
   },
 
+  head: [
+    ['link', {
+      rel: 'icon',
+      type: 'image/svg+xml',
+      href: '/logo.svg',
+    }],
+  ],
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    logo: '/logo.svg',
+
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Guides', link: '/guides/' }
