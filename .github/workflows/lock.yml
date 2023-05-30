@@ -6,7 +6,13 @@ on:
     - cron: '0 0 * * *'
   # Manual trigger
   workflow_dispatch:
-    inputs:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: lock
 
 jobs:
   lock:
