@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - 'client/locales/*'
       - '**.md'
+      - 'docs/**'
   push:
     branches-ignore:
       - 'dependabot/**'
