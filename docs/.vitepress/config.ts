@@ -31,7 +31,7 @@ export default defineConfig({
     ['link', {
       rel: 'icon',
       type: 'image/svg+xml',
-      href: '/logo.svg',
+      href: '/tankobon/logo.svg',
     }],
   ],
 
