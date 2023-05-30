@@ -222,6 +222,7 @@ onBeforeRouteLeave(() => {
                       :display-value="(item) => title(item as Entity<any>)"
                       autocomplete="off"
                       spellcheck="false"
+                      autocapitalize="off"
                       @change="search = $event.target.value"
                       @scroll="syncScroll"
                     />
