@@ -53,7 +53,7 @@ const { data: libraries, isLoading: isLoadingLibraries } = useUserLibrariesByUse
   },
 })
 
-const sortAuthentication = ref<Sort<AuthenticationActivitySort> | null>()
+const sortAuthentication = ref<Sort<AuthenticationActivitySort> | null>(null)
 
 const { data: authenticationActivity, isLoading: isLoadingAuthentication } = useUserAuthenticationActivityQuery({
   userId: userId as Ref<string>,
