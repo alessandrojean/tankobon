@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { CollectionEntity } from '@/types/tankobon-collection'
 import type { LibraryEntity } from '@/types/tankobon-library'
+import { createEmptyPaginatedResponse } from '@/utils/api'
 
 export interface ImporterCollectionFormProps {
   collectionId?: string
@@ -26,13 +27,15 @@ const library = ref<LibraryEntity | undefined>()
 const { data: libraries, isLoading: loadingLibraries } = useUserLibrariesByUserQuery({
   enabled: computed(() => userStore.isAuthenticated),
   userId: userId as ComputedRef<string>,
+  unpaged: true,
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),
       body: error.message,
     })
   },
-  initialData: [],
+  initialData: createEmptyPaginatedResponse(),
+  select: response => response.data,
 })
 
 const { data: collections, isLoading: loadingCollections } = useLibraryCollectionsUnpagedQuery({
