@@ -99,6 +99,7 @@ jobs:
         run: pnpm test
 
   build-push-image:
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
       contents: read
