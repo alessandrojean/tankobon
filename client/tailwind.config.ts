@@ -174,15 +174,22 @@ export default {
     }),
 
     /** Custom variants */
-    plugin(({ addVariant }) => {
+    plugin(({ addVariant, matchVariant }) => {
       addVariant('light', 'html:not(.dark) &')
       addVariant('hocus', ['&:hover', '&:focus-visible'])
-      addVariant(
-        'group-hocus',
-        ':merge(.group):where(:hover, :focus-visible) &',
-      )
       addVariant('not-disabled', '&:not(:disabled)')
-      addVariant('group-not-disabled', ':merge(.group):not(:disabled) &')
+
+      matchVariant('group-hocus', (_, { modifier }) => {
+        return modifier
+          ? `:merge(.group\\/${modifier}):where(:hover, :focus-visible) &`
+          : ':merge(.group):where(:hover, :focus-visible) &'
+      }, { values: { DEFAULT: '' } })
+
+      matchVariant('group-not-disabled', (_, { modifier }) => {
+        return modifier
+          ? `:merge(.group\\/${modifier}):not(:disabled) &`
+          : ':merge(.group):not(:disabled) &'
+      }, { values: { DEFAULT: '' } })
     }),
 
     /** Skeleton loading. */

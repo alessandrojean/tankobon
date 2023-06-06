@@ -78,13 +78,13 @@ async function handleNavigation({ navigate, close, event }: HandleNavigationProp
             :class="[
               open ? '-scale-y-100' : '',
               light && !transparent
-                ? 'text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100 group-focus-visible:text-gray-500 dark:group-focus-visible:text-gray-100'
+                ? 'text-gray-400 dark:text-gray-300 group-hocus:text-gray-500 dark:group-hocus:text-gray-100'
                 : '',
               !light && !transparent
-                ? 'text-gray-300 group-hover:text-gray-100 group-focus-visible:text-gray-100'
+                ? 'text-gray-300 group-hocus:text-gray-100'
                 : '',
               transparent
-                ? 'text-white/80 group-hover:text-white/95 group-focus-visible:text-white/95'
+                ? 'text-white/80 group-hocus:text-white/95'
                 : '',
             ]"
           />

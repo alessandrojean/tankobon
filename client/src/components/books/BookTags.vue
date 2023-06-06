@@ -88,8 +88,7 @@ useFocusZone({
               'w-1.5 h-1.5 mr-2 -ml-0.5',
               'inline-block rounded',
               'motion-safe:transition-colors',
-              'group-hover/tag:bg-primary-300 dark:group-hover/tag:bg-gray-400',
-              'group-focus/tag:bg-primary-300 dark:group-focus/tag:bg-gray-400',
+              'group-hocus/tag:bg-primary-300 dark:group-hocus/tag:bg-gray-400',
             ]"
           />
           <span>{{ tag.attributes!.name }}</span>
@@ -132,8 +131,7 @@ useFocusZone({
                   'w-1.5 h-1.5 mr-2 -ml-0.5',
                   'inline-block rounded',
                   'motion-safe:transition-colors',
-                  'group-hover/tag:bg-primary-300 dark:group-hover/tag:bg-gray-400',
-                  'group-focus/tag:bg-primary-300 dark:group-focus/tag:bg-gray-400',
+                  'group-hocus/tag:bg-primary-300 dark:group-hocus/tag:bg-gray-400',
                 ]"
               />
               <span>{{ tag.attributes!.name.substring(tag.attributes!.name.indexOf(': ')) }}</span>

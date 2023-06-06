@@ -376,10 +376,8 @@ onBeforeRouteLeave(() => {
                     :class="[
                       'flex items-center gap-2 font-normal',
                       'text-gray-700 dark:text-gray-400',
-                      'group-hover/button:text-gray-800',
-                      'group-focus/button:text-gray-800',
-                      'dark:group-hover/button:text-gray-100',
-                      'dark:group-focus/button:text-gray-100',
+                      'group-hocus/button:text-gray-800',
+                      'dark:group-hocus/button:text-gray-100',
                       'motion-safe:transition-colors',
                     ]"
                     tag="span"
