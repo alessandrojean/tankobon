@@ -1,4 +1,4 @@
-name: Tests
+name: Continuous Integration
 
 on:
   pull_request:
@@ -12,6 +12,10 @@ on:
     paths-ignore:
       - 'client/locales/*'
       - 'docs/**'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   validate-wrapper:
@@ -59,6 +63,7 @@ jobs:
   test-client:
     runs-on: ubuntu-latest
     name: Test client
+    needs: validate-wrapper
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
@@ -92,3 +97,52 @@ jobs:
       - name: Run tests
         working-directory: client
         run: pnpm test
+
+  build-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: [test-client, test-server]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Clone repository (latest)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=nightly
+            type=sha,prefix=,format=short
+          labels: |
+            org.opencontainers.image.title=Tankobon
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            NIGHTLY=true
