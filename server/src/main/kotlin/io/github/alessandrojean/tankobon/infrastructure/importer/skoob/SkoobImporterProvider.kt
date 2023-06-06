@@ -83,7 +83,9 @@ class SkoobImporterProvider(
     publisher = publisher.orEmpty(),
     synopsis = synopsis.orEmpty().trim(),
     pageCount = pageCount ?: 0,
-    coverUrl = coverUrl?.substringAfter("format(jpeg)/"),
+    coverUrl = coverUrl
+      ?.substringAfter("format(jpeg)/")
+      ?.takeIf { !it.contains("sem-capa") },
     url = this@SkoobImporterProvider.url + url,
     links = BookLinksDto(skoob = this@SkoobImporterProvider.url + url),
     provider = ImporterSource.SKOOB,
