@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
 import type { LibraryUpdate } from '@/types/tankobon-library'
+import { createEmptyPaginatedResponse } from '@/utils/api';
 
 const { t } = useI18n()
 const router = useRouter()
@@ -16,8 +17,8 @@ const { data: canDelete } = useUserLibrariesByUserQuery<boolean>({
   userId: userId as ComputedRef<string>,
   includeShared: false,
   enabled: computed(() => userStore.isAuthenticated),
-  select: libraries => libraries.length > 1,
-  initialData: [],
+  select: response => response.data.length > 1,
+  initialData: createEmptyPaginatedResponse(),
 })
 
 const { data: library, isLoading } = useLibraryQuery({

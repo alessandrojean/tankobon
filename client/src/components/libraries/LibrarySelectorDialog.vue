@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { UserIcon } from '@heroicons/vue/20/solid'
 import { CheckIcon } from '@heroicons/vue/24/outline'
-import { getRelationship } from '@/utils/api'
+import { createEmptyPaginatedResponse, getRelationship } from '@/utils/api'
 
 export interface LibrarySelectorDialogProps {
   isOpen: boolean
@@ -25,6 +25,7 @@ const { data: libraries } = useUserLibrariesByUserQuery({
   userId: userId as ComputedRef<string>,
   includes: ['owner'],
   includeShared: true,
+  unpaged: true,
   enabled: computed(() => userStore.isAuthenticated),
   onError: async (error) => {
     await notificator.failure({
@@ -32,7 +33,8 @@ const { data: libraries } = useUserLibrariesByUserQuery({
       body: error.message,
     })
   },
-  initialData: [],
+  initialData: createEmptyPaginatedResponse(),
+  select: response => response.data,
 })
 
 const library = computed(() => libraryStore.library!)

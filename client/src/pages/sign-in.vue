@@ -39,8 +39,10 @@ const {
   data: userLibraries,
   refetch: refetchUserLibraries,
 } = useUserLibrariesByUserQuery({
+  unpaged: true,
   userId: computed(() => userStore.me?.id ?? ''),
   enabled: computed(() => userStore.isAuthenticated),
+  select: response => response.data,
   onError: async (error) => {
     await notificator.failure({
       title: t('libraries.fetch-failure'),
