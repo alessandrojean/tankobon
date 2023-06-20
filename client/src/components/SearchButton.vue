@@ -37,20 +37,14 @@ const searchButton = cva(
 
 const kbd = cva(
   [
-    'font-sans-safe block rounded px-1.5 py-px text-xs border',
-    'motion-safe:transition-colors shadow-sm',
+    'font-sans-safe block py-px text-xxs',
+    'motion-safe:transition-colors',
   ],
   {
     variants: {
       transparent: {
-        false: [
-          'border-gray-500 text-gray-200',
-        ],
-        true: [
-          'border-transparent bg-white/80 text-gray-950',
-          'dark:bg-transparent dark:text-gray-100',
-          'dark:border-gray-500/50 group-hover:dark:border-gray-500/70',
-        ],
+        false: 'text-gray-400',
+        true: 'text-gray-700 dark:text-gray-400',
       },
     },
     defaultVariants: {
@@ -83,7 +77,7 @@ const isMac = navigator.userAgentData
       </span>
       <div
         aria-hidden="true"
-        class="space-x-1 flex"
+        :class="['flex', { 'gap-1': !isMac }]"
       >
         <kbd :class="kbd({ transparent })">
           <abbr v-if="!isMac" title="Control" class="no-underline">Ctrl</abbr>
