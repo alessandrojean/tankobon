@@ -83,6 +83,7 @@ export default {
         'fade-in': 'fade-in .3s ease',
         'fade-out': 'fade-out 3s ease 3s',
         'slide-in': 'slide-in .3s ease',
+        'slide-in-neg': 'slide-in-neg .3s ease',
         'toast': 'fade-in .3s ease, fade-out 3s ease 3s, slide-in .3s ease',
       },
       transitionTimingFunction: {
@@ -97,6 +98,9 @@ export default {
         },
         'slide-in': {
           from: { transform: 'translateX(100%)' },
+        },
+        'slide-in-neg': {
+          from: { transform: 'translateX(-100%)' },
         },
       },
       typography: ({ theme }: PluginUtils) => ({

@@ -86,12 +86,4 @@ const options = computed(() => {
       </div>
     </template>
   </BasicListbox>
-
-  <!--
-    <span
-          class="shrink-0 text-center text-sm/none select-none text-gray-500"
-        >
-          cm
-        </span>
-  -->
 </template>

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-export interface ScaleTransitionProps {
+export interface MenuTransitionProps {
   mode?: 'in-out' | 'out-in' | undefined
   simultaneous?: boolean
 }
 
-withDefaults(defineProps<ScaleTransitionProps>(), {
+withDefaults(defineProps<MenuTransitionProps>(), {
   mode: 'out-in',
   simultaneous: false,
 })
@@ -14,8 +14,8 @@ withDefaults(defineProps<ScaleTransitionProps>(), {
   <Transition
     :mode="!simultaneous ? mode : undefined"
     enter-active-class="motion-safe:transition motion-safe:duration-200 motion-safe:ease-in-out-primer"
-    enter-from-class="opacity-0 -translate-y-1.5"
-    enter-to-class="opacity-100 translate-y-0"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
   >
     <slot />
   </Transition>
