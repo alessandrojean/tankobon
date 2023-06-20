@@ -219,7 +219,7 @@ onBeforeRouteLeave(() => {
                         'dark:placeholder:text-gray-400',
                       ]"
                       :placeholder="$t('common-actions.search-library')"
-                      :display-value="(item) => title(item as Entity<any>)"
+                      :display-value="(item: any) => title(item as Entity<any>)"
                       autocomplete="off"
                       spellcheck="false"
                       autocapitalize="off"
@@ -334,21 +334,21 @@ onBeforeRouteLeave(() => {
                 <ul class="flex items-center gap-4 text-sm">
                   <i18n-t
                     class="flex items-center gap-0.5"
-                    keypath="search-palette.enter-to-select"
-                    tag="li"
-                  >
-                    <template #enter>
-                      <kbd class="w-5 h-5 mr-1">&crarr;</kbd>
-                    </template>
-                  </i18n-t>
-                  <i18n-t
-                    class="flex items-center gap-0.5"
                     keypath="search-palette.arrows-to-navigate"
                     tag="li"
                   >
                     <template #arrows>
                       <kbd class="w-5 h-5">&uarr;</kbd>
                       <kbd class="w-5 h-5 mr-1">&darr;</kbd>
+                    </template>
+                  </i18n-t>
+                  <i18n-t
+                    class="flex items-center gap-0.5"
+                    keypath="search-palette.enter-to-select"
+                    tag="li"
+                  >
+                    <template #enter>
+                      <kbd class="w-5 h-5 mr-1">&crarr;</kbd>
                     </template>
                   </i18n-t>
                   <i18n-t
