@@ -84,10 +84,11 @@ defineExpose({ v$ })
 
 const notificator = useToaster()
 const libraryStore = useLibraryStore()
-const libraryId = computed(() => libraryStore.library!.id)
+const libraryId = computed(() => libraryStore.library?.id)
 
 const { data: librarySeries } = useLibrarySeriesQuery({
-  libraryId,
+  libraryId: libraryId as Ref<string>,
+  enabled: computed(() => libraryId.value !== undefined),
   sort: [{ property: 'name', direction: 'asc' }],
   unpaged: true,
   select: response => response.data,
@@ -101,7 +102,8 @@ const { data: librarySeries } = useLibrarySeriesQuery({
 })
 
 const { data: libraryPublishers, isLoading: isLoadingPublishers } = useLibraryPublishersQuery({
-  libraryId,
+  libraryId: libraryId as Ref<string>,
+  enabled: computed(() => libraryId.value !== undefined),
   sort: [{ property: 'name', direction: 'asc' }],
   includes: ['publisher_picture'],
   unpaged: true,
