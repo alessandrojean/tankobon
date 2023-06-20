@@ -198,7 +198,7 @@ onBeforeRouteLeave(() => {
                       v-if="search.length > 0"
                       ref="inputRenderer"
                       :class="[
-                        'pl-9 pr-4 absolute inset-x-0 -inset-y-1 flex',
+                        'pl-10 pr-4 absolute inset-x-0 -inset-y-1 flex',
                         'items-center whitespace-pre break-words text-base',
                         'font-normal overflow-x-auto select-none pointer-events-none',
                         '[scrollbar-width:0] [&::-webkit-scrollbar]:hidden',
@@ -214,7 +214,7 @@ onBeforeRouteLeave(() => {
                         'focus:outline-none focus:border-primary-500 focus:ring',
                         'dark:focus:border-primary-400 focus:ring-primary-200',
                         'dark:focus:ring-primary-200/30',
-                        'motion-safe:transition pl-9 pr-4 peer',
+                        'motion-safe:transition pl-10 pr-4 peer',
                         'text-transparent caret-gray-800 dark:caret-gray-100 bg-transparent',
                         'dark:placeholder:text-gray-400',
                       ]"
@@ -229,7 +229,7 @@ onBeforeRouteLeave(() => {
 
                     <MagnifyingGlassIcon
                       :class="[
-                        'w-5 h-5 absolute left-2 top-1/2 -translate-y-1/2',
+                        'w-6 h-6 absolute left-2 top-1/2 -translate-y-1/2',
                         'text-gray-500 dark:text-gray-400',
                         'peer-focus:text-primary-600 dark:peer-focus:text-primary-400',
                         'motion-safe:transition-colors',
