@@ -113,7 +113,7 @@ function handleContainerClick(event: MouseEvent) {
           kind="ghost"
           size="mini"
           rounded="full"
-          :aria-expanded="collapsed"
+          :aria-expanded="!collapsed"
           @click.stop="toggleCollapsed"
         >
           {{
