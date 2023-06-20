@@ -58,8 +58,11 @@ export default { inheritAttrs: false }
     <div class="relative">
       <input
         ref="input"
-        class="peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8 dark:text-gray-200 focus:ring focus:ring-opacity-50 motion-safe:transition-shadow placeholder:text-gray-500"
         :class="[
+          'peer w-full bg-white dark:bg-gray-950 shadow-sm rounded-md pt-8',
+          'autofill:[background:white] dark:autofill:[background:theme(colors.gray.950)] filter-none',
+          'dark:text-gray-200 focus:ring focus:ring-opacity-50',
+          'motion-safe:transition-shadow placeholder:text-gray-500',
           { 'pl-16': $slots['left-icon'], 'pr-16': $slots['right-icon'], 'pr-9': unit },
           invalid
             ? 'border-red-500 dark:border-red-500/95 focus:border-red-500 dark:focus:border-red-500/95 focus:ring-red-200 dark:focus:ring-red-200/30'
