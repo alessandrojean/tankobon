@@ -226,6 +226,10 @@ class LibraryController(
     val existing = libraryRepository.findByIdOrNull(libraryId)
       ?: throw IdDoesNotExistException("Library not found")
 
+    if (existing.ownerId != principal.user.id && !principal.user.isAdmin) {
+      throw UserDoesNotHaveAccessException()
+    }
+
     if (library.owner != null && existing.ownerId != library.owner && !principal.user.isAdmin) {
       throw LibraryOwnerChangedException()
     }
