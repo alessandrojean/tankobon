@@ -1,5 +1,10 @@
 # Tankobon
 
+> [!WARNING]
+> Tankobon isn't in active development anymore. This repository
+> is now archived and read-only. Using it in production is not
+> recommended, use alternative and mantained tools instead.
+
 Tankobon is a free and open source physical book collection manager,
 created with [Kotlin], [Spring Boot] and [Vue.js].
 
